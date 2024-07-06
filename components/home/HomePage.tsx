@@ -13,6 +13,7 @@ interface Project {
     title: string;
     description: string;
     link: string;
+    github: string;
 }
 
 export default function HomePage({ projects }: { projects: Project[] }) {
@@ -53,14 +54,16 @@ export default function HomePage({ projects }: { projects: Project[] }) {
                                         <CardTitle>{project.title} </CardTitle>
                                     </Link></div>
                                     <div>
-                                        <SocialButton icon={ExternalLink} className="p-0 hover:text-gray-900 ml-1 h-4 w-3 " />
+                                        <Link href={project.link}>
+                                            <SocialButton icon={ExternalLink} className="p-0 hover:text-gray-900 ml-1 h-4 w-3 " />
+                                        </Link>
                                     </div>
                                 </div>
                                 <CardDescription>{project.description}</CardDescription>
                             </CardHeader>
                             <CardContent>
                                 <div>
-                                    <Link href={project.link}>
+                                    <Link href={project.github}>
                                         <Button variant="link" size="sm" className="p-0 hover:text-gray-900">
                                             view_source() <ExternalLink className="ml-1 h-3 w-3" />
                                         </Button>

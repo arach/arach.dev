@@ -3,8 +3,8 @@ import DottedBackground from "@/components/DottedBackground";
 
 export default function Home() {
   const projects = [
-    { title: "arach.io", description: "Personal website.", link: "https://arach.io" },
-    { title: "clueso.xyz", description: "AI agent that monitors top github repos and generates reports.", link: "https://clueso.xyz" },
+    { title: "arach.io", description: "Personal website.", link: "https://arach.io", github: "https://github.com/arach/arach-io" },
+    { title: "clueso.xyz", description: "AI agent that monitors top github repos and generates reports.", link: "https://clueso.xyz", github: "https://github.com/arach/clueso.xyz" },
   ];
   return (
     <DottedBackground>
