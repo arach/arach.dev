@@ -45,9 +45,9 @@ export default function HomePage({ projects }: { projects: Project[] }) {
 
 
             <Section title="Projects">
-                <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
+                <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6 ">
                     {projects.map((project) => (
-                        <Card key={project.title}>
+                        <Card key={project.title} className="backdrop-blur-sm">
                             <CardHeader>
                                 <div className="flex flex-row items-center justify-between">
                                     <div><Link href={project.link}>
