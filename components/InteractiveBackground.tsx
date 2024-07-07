@@ -36,6 +36,7 @@ const TargetCircle: React.FC<{ x: number; y: number }> = React.memo(({ x, y }) =
         <line x1={x} y1={y + 3} x2={x} y2={y + 5} stroke="#999" strokeWidth="0.5" opacity="0.3" />
     </g>
 ));
+TargetCircle.displayName = 'TargetCircle';
 
 const Dots: React.FC<{ dots: Dot[] }> = React.memo(({ dots }) => (
     <>
@@ -51,6 +52,8 @@ const Dots: React.FC<{ dots: Dot[] }> = React.memo(({ dots }) => (
         ))}
     </>
 ));
+
+Dots.displayName = 'Dots';
 
 const InteractiveBackground: React.FC<InteractiveBackgroundProps> = ({ maxEdges }) => {
     const [dots, setDots] = useState<Dot[]>([]);
@@ -85,7 +88,7 @@ const InteractiveBackground: React.FC<InteractiveBackgroundProps> = ({ maxEdges 
     const calculatePaths = useCallback(() => {
         if (!isFollowingRef.current) return;
 
-        const maxDistance = 150;
+        const maxDistance = 50;
         const newMousePosition = mousePositionRef.current;
         const closeDots = dots.filter(dot => getDistance(dot, newMousePosition) < maxDistance);
 
@@ -229,5 +232,6 @@ const InteractiveBackground: React.FC<InteractiveBackgroundProps> = ({ maxEdges 
         </div>
     );
 };
-
+InteractiveBackground.displayName = 'InteractiveBackground';
 export default InteractiveBackground;
+
