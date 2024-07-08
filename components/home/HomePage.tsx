@@ -8,6 +8,7 @@ import { SocialButton } from "@/components/ui/SocialButton";
 import { motion } from "framer-motion";
 import { Card, CardHeader, CardTitle, CardDescription, CardContent } from "@/components/ui/card";
 import { fadeInUp } from "@/lib/utils";
+import TypewriterEffect from "@/components/ui/TypeWriter";
 
 interface Project {
     title: string;
@@ -30,14 +31,16 @@ export default function HomePage({ projects }: { projects: Project[] }) {
                         className="w-20 h-20 rounded-full mr-6 border-2 border-gray-600 opacity-90"
                     />
                     <div>
-                        <h1 className="text-4xl font-bold mb-2">Arach_</h1>
-                        <p className="text-lg text-gray-400">Programming_ && AI_</p>
+                        <h1 className="text-2xl font-bold mb-2">
+                            <TypewriterEffect text="Arach_" className="inline-block" />
+                        </h1>
+                        <p className="text-md text-gray-400">Programming_ && AI_</p>
                     </div>
                 </div>
                 <p className="leading-relaxed border-l-2 border-gray-600 pl-4 text-gray-600">
                     {`{`}<br />
-                    &nbsp;&nbsp;passion: "Crafting elegant solutions",<br />
-                    &nbsp;&nbsp;specialties: ["Web Development", "AI", "Startups"],<br />
+                    &nbsp;&nbsp;passion: ["Building companies", "Crafting elegant solutions"],<br />
+                    &nbsp;&nbsp;specialties: ["Startups", "Web Development", "AI"],<br />
                     &nbsp;&nbsp;hobbies: ["Hiking", "Coding", "Reading"]<br />
                     {`}`}
                 </p>
