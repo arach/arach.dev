@@ -13,29 +13,32 @@ interface InteractiveBackgroundProps {
     maxEdges: number;
 }
 
-interface StickyNodes {
-    source: Dot;
-    target: Dot;
-}
+const TargetCircle: React.FC<{ x: number; y: number; label?: string; isSelected: boolean }> = React.memo(({ x, y, label, isSelected }) => {
+    const opacity = isSelected ? "0.4" : "0.15";
+    const textOpacity = isSelected ? "0.6" : "0.2";
 
-type State = {
-    dots: Dot[];
-    mousePosition: Dot;
-    nodesToRender: (Dot[] | StickyNodes)[];
-    isFollowing: boolean;
-    isFixed: boolean;
-};
-
-const TargetCircle: React.FC<{ x: number; y: number }> = React.memo(({ x, y }) => (
-    <g>
-        <circle cx={x} cy={y} r="4" stroke="#999" strokeWidth="0.5" fill="none" opacity="0.3" />
-        <circle cx={x} cy={y} r="2" stroke="#999" strokeWidth="0.5" fill="none" opacity="0.3" />
-        <line x1={x - 5} y1={y} x2={x - 3} y2={y} stroke="#999" strokeWidth="0.5" opacity="0.3" />
-        <line x1={x + 3} y1={y} x2={x + 5} y2={y} stroke="#999" strokeWidth="0.5" opacity="0.3" />
-        <line x1={x} y1={y - 5} x2={x} y2={y - 3} stroke="#999" strokeWidth="0.5" opacity="0.3" />
-        <line x1={x} y1={y + 3} x2={x} y2={y + 5} stroke="#999" strokeWidth="0.5" opacity="0.3" />
-    </g>
-));
+    return (
+        <g>
+            <circle cx={x} cy={y} r="4" stroke="#999" strokeWidth="0.5" fill="none" opacity={opacity} />
+            <circle cx={x} cy={y} r="2" stroke="#999" strokeWidth="0.5" fill="none" opacity={opacity} />
+            <line x1={x - 5} y1={y} x2={x - 3} y2={y} stroke="#999" strokeWidth="0.5" opacity={opacity} />
+            <line x1={x + 3} y1={y} x2={x + 5} y2={y} stroke="#999" strokeWidth="0.5" opacity={opacity} />
+            <line x1={x} y1={y - 5} x2={x} y2={y - 3} stroke="#999" strokeWidth="0.5" opacity={opacity} />
+            <line x1={x} y1={y + 3} x2={x} y2={y + 5} stroke="#999" strokeWidth="0.5" opacity={opacity} />
+            {label && (
+                <text
+                    x={label === 'source' ? x - 25 : x + 7}
+                    y={y - 7}
+                    fill="#999"
+                    fontSize="8"
+                    opacity={textOpacity}
+                >
+                    {label}
+                </text>
+            )}
+        </g>
+    );
+});
 TargetCircle.displayName = 'TargetCircle';
 
 const Dots: React.FC<{ dots: Dot[] }> = React.memo(({ dots }) => (
@@ -47,111 +50,82 @@ const Dots: React.FC<{ dots: Dot[] }> = React.memo(({ dots }) => (
                 cy={dot.y}
                 r="1"
                 fill="#555"
-                opacity="0.35"
+                opacity="0.1"
             />
         ))}
     </>
 ));
-
 Dots.displayName = 'Dots';
 
 const InteractiveBackground: React.FC<InteractiveBackgroundProps> = ({ maxEdges }) => {
     const [dots, setDots] = useState<Dot[]>([]);
-    const [nodesToRender, setNodesToRender] = useState<(Dot[] | StickyNodes)[]>([]);
+    const [paths, setPaths] = useState<Dot[][]>([]);
+    const [mousePosition, setMousePosition] = useState<Dot>({ x: 0, y: 0 });
+    const [targetDot, setTargetDot] = useState<Dot | null>(null);
     const [isFollowing, setIsFollowing] = useState(true);
-    const isFollowingRef = useRef(true);
-
-    const mousePositionRef = useRef<Dot>({ x: 0, y: 0 });
 
     const getDistance = useCallback((dot1: Dot, dot2: Dot) => {
         return Math.sqrt(Math.pow(dot1.x - dot2.x, 2) + Math.pow(dot1.y - dot2.y, 2));
     }, []);
 
-    const getClosestDot = useCallback((position: Dot) => {
-        return dots.reduce((closest, dot) =>
-            getDistance(position, dot) < getDistance(position, closest) ? dot : closest
-        );
+    const findFarDots = useCallback((position: Dot, minDistance: number) => {
+        return dots.filter(dot => getDistance(position, dot) > minDistance);
     }, [dots, getDistance]);
 
-    const findPath = useCallback((start: Dot, end: Dot): Dot[] => {
-        const path: Dot[] = [];
-        const steps = Math.max(Math.abs(end.x - start.x), Math.abs(end.y - start.y));
-        for (let i = 0; i <= steps; i++) {
-            path.push({
-                x: Math.round(start.x + (end.x - start.x) * (i / steps)),
-                y: Math.round(start.y + (end.y - start.y) * (i / steps)),
-            });
+    const generatePath = useCallback((start: Dot, end: Dot) => {
+        const path: Dot[] = [start];
+        let current = start;
+        while (getDistance(current, end) > 30) {
+            const nearDots = dots.filter(dot =>
+                getDistance(dot, current) < 60 &&
+                getDistance(dot, end) < getDistance(current, end) &&
+                !path.includes(dot)
+            );
+            if (nearDots.length === 0) break;
+            const next = nearDots[Math.floor(Math.random() * nearDots.length)];
+            path.push(next);
+            current = next;
         }
+        path.push(end);
         return path;
-    }, []);
+    }, [dots, getDistance]);
 
     const calculatePaths = useCallback(() => {
-        if (!isFollowingRef.current) return;
+        const farDots = findFarDots(mousePosition, 200);
+        if (farDots.length === 0) return;
 
-        const maxDistance = 50;
-        const newMousePosition = mousePositionRef.current;
-        const closeDots = dots.filter(dot => getDistance(dot, newMousePosition) < maxDistance);
+        const newTarget = farDots[Math.floor(Math.random() * farDots.length)];
+        setTargetDot(newTarget);
 
-        if (closeDots.length === 0) {
-            setNodesToRender([]);
-            return;
-        }
-
-        const startDot = getClosestDot(newMousePosition);
-        const targetDot = closeDots[Math.floor(Math.random() * closeDots.length)];
-        const newEdges: Dot[][] = [];
-
+        const newPaths: Dot[][] = [];
         for (let i = 0; i < maxEdges; i++) {
-            const randomStartDot = closeDots[Math.floor(Math.random() * closeDots.length)];
-            const path = findPath(randomStartDot, targetDot);
+            const path = generatePath(mousePosition, newTarget);
             if (path.length > 1) {
-                newEdges.push(path);
+                newPaths.push(path);
             }
         }
-
-        setNodesToRender(newEdges);
-    }, [dots, maxEdges, getDistance, getClosestDot, findPath]);
+        setPaths(newPaths);
+    }, [mousePosition, maxEdges, findFarDots, generatePath]);
 
     const debouncedCalculatePaths = useMemo(
-        () => debounce(calculatePaths, 10),
+        () => debounce(calculatePaths, 50),
         [calculatePaths]
     );
 
-    const handleMouseMove = useCallback((e: MouseEvent) => {
-        mousePositionRef.current = { x: e.clientX, y: e.clientY };
-        if (isFollowingRef.current) {
+    const handleMouseMove = useCallback((e: React.MouseEvent) => {
+        if (isFollowing) {
+            setMousePosition({ x: e.clientX, y: e.clientY });
             debouncedCalculatePaths();
         }
-    }, [debouncedCalculatePaths]);
+    }, [debouncedCalculatePaths, isFollowing]);
 
     const handleClick = useCallback(() => {
-        setIsFollowing(prev => {
-            const newIsFollowing = !prev;
-            isFollowingRef.current = newIsFollowing;
-            return newIsFollowing;
-        });
-        if (isFollowingRef.current) {
+        setIsFollowing(prev => !prev);
+        if (isFollowing) {
+            // If we're about to stop following, calculate paths one last time
             debouncedCalculatePaths();
-        } else {
-            // Optionally, you can clear the paths when stopping
-            setNodesToRender([]);
         }
-    }, [debouncedCalculatePaths]);
-
-    useEffect(() => {
-        const mouseMoveHandler = (e: MouseEvent) => {
-            handleMouseMove(e);
-        };
-
-        window.addEventListener('mousemove', mouseMoveHandler);
-        window.addEventListener('click', handleClick);
-
-        return () => {
-            window.removeEventListener('mousemove', mouseMoveHandler);
-            window.removeEventListener('click', handleClick);
-            debouncedCalculatePaths.cancel();
-        };
-    }, [handleMouseMove, handleClick, debouncedCalculatePaths]);
+    }, [isFollowing, debouncedCalculatePaths]);
 
     useEffect(() => {
         const handleResize = () => {
@@ -164,69 +138,53 @@ const InteractiveBackground: React.FC<InteractiveBackgroundProps> = ({ maxEdges 
             setDots(newDots);
         };
 
-        handleResize(); // Initial calculation
+        handleResize();
         window.addEventListener('resize', handleResize);
         return () => window.removeEventListener('resize', handleResize);
     }, []);
 
-    const isStickyNodes = (nodes: Dot[] | StickyNodes): nodes is StickyNodes => 'source' in nodes;
-
-    const getTarget = (nodes: Dot[] | StickyNodes): Dot =>
-        Array.isArray(nodes) ? nodes[nodes.length - 1] : nodes.target;
-
     return (
         <div className="fixed inset-0" style={{ pointerEvents: 'none' }}>
-            <svg width="100%" height="100%" style={{ pointerEvents: 'auto' }} onMouseMove={(e) => handleMouseMove(e as unknown as MouseEvent)} onClick={handleClick} role="img" aria-label="Interactive background with dynamic nodes and edges">
+            <svg
+                width="100%"
+                height="100%"
+                style={{ pointerEvents: 'auto' }}
+                onMouseMove={handleMouseMove}
+                onClick={handleClick}
+                role="img"
+                aria-label="Interactive background with dynamic nodes and edges"
+            >
                 <Dots dots={dots} />
                 <AnimatePresence>
-                    {nodesToRender.map((nodes, index) => (
+                    {paths.map((path, pathIndex) => (
                         <motion.g
-                            key={index}
+                            key={pathIndex}
                             initial={{ opacity: 0 }}
                             animate={{ opacity: 1 }}
                             exit={{ opacity: 0 }}
-                            transition={{ duration: 0.1 }}
+                            transition={{ duration: 0.3 }}
                         >
-                            {/* Edge */}
-                            <line
-                                x1={(isStickyNodes(nodes) ? nodes.source : nodes[0]).x}
-                                y1={(isStickyNodes(nodes) ? nodes.source : nodes[0]).y}
-                                x2={getTarget(nodes).x}
-                                y2={getTarget(nodes).y}
-                                stroke="#999"
-                                strokeWidth="1"
-                                opacity="0.5"
-                            />
-
-                            {/* Target node */}
-                            <TargetCircle x={getTarget(nodes).x} y={getTarget(nodes).y} />
-                            <text
-                                x={getTarget(nodes).x + 7}
-                                y={getTarget(nodes).y - 7}
-                                fill="#999"
-                                fontSize="8"
-                                opacity="0.5"
-                            >
-                                target
-                            </text>
-
-                            {/* Source node */}
-                            {index === 0 && (
-                                <>
-                                    <TargetCircle x={(isStickyNodes(nodes) ? nodes.source : nodes[0]).x} y={(isStickyNodes(nodes) ? nodes.source : nodes[0]).y} />
-                                    <text
-                                        x={(isStickyNodes(nodes) ? nodes.source : nodes[0]).x - 25}
-                                        y={(isStickyNodes(nodes) ? nodes.source : nodes[0]).y - 7}
-                                        fill="#999"
-                                        fontSize="8"
-                                        opacity="0.5"
-                                    >
-                                        source
-                                    </text>
-                                </>
-                            )}
+                            {path.map((dot, dotIndex) => (
+                                dotIndex < path.length - 1 && (
+                                    <motion.line
+                                        key={`${pathIndex}-${dotIndex}`}
+                                        x1={dot.x}
+                                        y1={dot.y}
+                                        x2={path[dotIndex + 1].x}
+                                        y2={path[dotIndex + 1].y}
+                                        stroke="#999"
+                                        strokeWidth="1"
+                                        opacity={isFollowing ? "0.15" : "0.3"}
+                                        initial={{ pathLength: 0 }}
+                                        animate={{ pathLength: 1 }}
+                                        transition={{ duration: 0.5, delay: dotIndex * 0.1 }}
+                                    />
+                                )
+                            ))}
                         </motion.g>
                     ))}
+                    {targetDot && <TargetCircle x={targetDot.x} y={targetDot.y} label="target" isSelected={!isFollowing} />}
+                    <TargetCircle x={mousePosition.x} y={mousePosition.y} label="source" isSelected={!isFollowing} />
                 </AnimatePresence>
             </svg>
         </div>
@@ -234,4 +192,3 @@ const InteractiveBackground: React.FC<InteractiveBackgroundProps> = ({ maxEdges 
 };
 InteractiveBackground.displayName = 'InteractiveBackground';
 export default InteractiveBackground;
-
