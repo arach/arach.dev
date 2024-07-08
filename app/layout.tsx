@@ -18,7 +18,7 @@ export default function RootLayout({
 }>) {
   return (
     <html lang="en" className="h-full">
-      <body className={`${ibmPlexMono.variable} font-mono text-gray-300 flex flex-col `}>
+      <body className={`${ibmPlexMono.variable} font-mono text-gray-300 flex flex-col min-h-screen`}>
         <Header />
         <main className="flex-grow">
           {children}
