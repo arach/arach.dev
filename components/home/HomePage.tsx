@@ -28,7 +28,7 @@ export default function HomePage({ projects }: { projects: Project[] }) {
                         alt="Arach"
                         width={80}
                         height={80}
-                        className="w-20 h-20 rounded-full mr-6 border-2 border-gray-600 opacity-90"
+                        className="w-20 h-20 rounded-full mr-6 border-gray-600 border-thin opacity-90"
                     />
                     <div>
                         <h1 className="text-2xl font-bold mb-2">

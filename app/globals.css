@@ -65,4 +65,18 @@
   .animate-blink {
     animation: blink 1s step-end infinite;
   }
+
+  pre.font-mono {
+    font-size: 0.69rem;
+    font-weight: 200;
+    font-family: "ui-monospace", SFMono-Regular, Menlo, Monaco, Consolas,
+      monospace;
+  }
+
+  .font-mono-small {
+    font-size: 0.69rem;
+    font-weight: 200;
+    font-family: "ui-monospace", SFMono-Regular, Menlo, Monaco, Consolas,
+      monospace;
+  }
 }

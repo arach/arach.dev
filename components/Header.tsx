@@ -4,7 +4,7 @@ import { SocialButton } from "@/components/ui/SocialButton";
 
 export default function Header() {
     return (
-        <header className="bg-black py-2 shadow-md h-8 text-xs relative z-50">
+        <header className="bg-black py-2 shadow-sm h-8 text-xs relative z-50  border-thin border-gray-800">
             <div className="container mx-auto px-4 flex justify-between items-center">
                 <Link href="/" className="font-bold text-white hover:text-gray-300 transition-colors cursor-pointer">
                     arach.dev
