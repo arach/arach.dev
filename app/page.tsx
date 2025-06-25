@@ -8,8 +8,11 @@ export default function Home() {
     { title: "clueso.xyz", description: "AI agent that monitors top github repos and generates reports.", link: "https://clueso.xyz", github: "https://github.com/arach/clueso.xyz" },
     { title: "highlight", description: "Raycast Extension that shares screenshots and content from your browser", link: "https://highlight.xyz", github: "https://github.com/arach/highlight" },
     { title: "arach.dev", description: "✋🏼 {here} ✋🏼", link: "https://arach.dev", github: "https://github.com/arach/arach.dev" },
-    { title: "fwdhq.com", description: "Forward helps vertical SaaS companies develop automation APIs", link: "https://fwdhq.com", github: "https://github.com/arach/fwdhq" },
-    { title: "browsermate.co", description: "A website where people can learn about browser automation and find the right tool for the job", link: "https://browsermate.co", github: "https://github.com/arach/browsermate" },
+    { title: "Scout", description: "Cross-platform local-first dictation app optimized for agentic use cases", link: "https://github.com/arach/scout", github: "https://github.com/arach/scout" },
+    { title: "Pomo", description: "Beautifully designed floating Pomodoro timer", link: "https://github.com/arach/pomo", github: "https://github.com/arach/pomo" },
+    { title: "Tempo", description: "A mindful weekly planner without the pressure of exact times", link: "https://github.com/arach/tempo", github: "https://github.com/arach/tempo" },
+    { title: "Konfigurater", description: "Visual editor for Karabiner-Elements keyboard configurations", link: "https://github.com/arach/Konfigurater", github: "https://github.com/arach/Konfigurater" },
+    { title: "Kit", description: "Professional text-based icon generator", link: "https://github.com/arach/Kit", github: "https://github.com/arach/Kit" },
   ];
   return (
     <>
