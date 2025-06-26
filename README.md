@@ -1,36 +1,62 @@
-This is a [Next.js](https://nextjs.org/) project bootstrapped with [`create-next-app`](https://github.com/vercel/next.js/tree/canary/packages/create-next-app).
+# arach.dev
+
+Personal developer portfolio website showcasing projects and skills.
+
+![arach.dev screenshot](screenshot.png)
+
+## Overview
+
+A modern, terminal-inspired portfolio website built with Next.js 14, TypeScript, and Tailwind CSS. Features interactive background animations, project showcases, and a clean dark theme.
+
+## Tech Stack
+
+- **Framework**: Next.js 14.2.4 with App Router
+- **Language**: TypeScript
+- **Styling**: Tailwind CSS with custom animations
+- **UI Components**: shadcn/ui
+- **Animations**: Framer Motion
+- **Font**: IBM Plex Mono
 
 ## Getting Started
 
-First, run the development server:
+First, install dependencies:
 
 ```bash
-npm run dev
-# or
-yarn dev
-# or
+pnpm install
+```
+
+Then, run the development server:
+
+```bash
 pnpm dev
-# or
-bun dev
 ```
 
 Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+## Project Structure
 
-This project uses [`next/font`](https://nextjs.org/docs/basic-features/font-optimization) to automatically optimize and load Inter, a custom Google Font.
+```
+/app              # Next.js App Router pages and layouts
+/components       # Reusable React components
+  /ui            # shadcn/ui components
+  /home          # Homepage-specific components
+/lib             # Utilities and shared code
+/public          # Static assets
+```
 
-## Learn More
+## Features
 
-To learn more about Next.js, take a look at the following resources:
+- Interactive node-based background animation
+- Terminal-inspired aesthetic
+- Project showcase with GitHub links
+- Responsive design
+- Typewriter text effects
+- Dark theme with custom gray color palette
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
+## Deployment
 
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js/) - your feedback and contributions are welcome!
+The site can be deployed on any platform that supports Next.js applications, such as Vercel, Netlify, or similar services.
 
-## Deploy on Vercel
+## License
 
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
-
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/deployment) for more details.
+© 2025 Arach Tchoupani. All rights reserved.
