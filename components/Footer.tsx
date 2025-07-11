@@ -7,7 +7,7 @@ export default function Footer() {
     return (
         <footer className="bg-black text-white sticky bottom-0 w-full z-10">
             <div className="container mx-auto px-4 py-2 flex flex-row items-center justify-between text-xs">
-                <div>© {new Date().getFullYear()} Arach_Tchoupani.all_rights_reserved()</div>
+                <div>© {new Date().getFullYear()} Arach Techpanal · All projects handcrafted in Montreal 🛠</div>
                 <div className="flex space-x-4">
                     <Link href="https://github.com/arach">
                         <SocialButton icon={GithubIcon} className="h-4 w-4" />

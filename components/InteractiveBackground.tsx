@@ -158,7 +158,7 @@ const InteractiveBackground: React.FC<InteractiveBackgroundProps> = ({ maxEdges 
                 <AnimatePresence>
                     {paths.map((path, pathIndex) => (
                         <motion.g
-                            key={pathIndex}
+                            key={`path-${pathIndex}-${path[0]?.x}-${path[0]?.y}-${path[path.length-1]?.x}-${path[path.length-1]?.y}`}
                             initial={{ opacity: 0 }}
                             animate={{ opacity: 1 }}
                             exit={{ opacity: 0 }}
@@ -183,8 +183,24 @@ const InteractiveBackground: React.FC<InteractiveBackgroundProps> = ({ maxEdges 
                             ))}
                         </motion.g>
                     ))}
-                    {targetDot && <TargetCircle x={targetDot.x} y={targetDot.y} label="target" isSelected={!isFollowing} />}
-                    <TargetCircle x={mousePosition.x} y={mousePosition.y} label="source" isSelected={!isFollowing} />
+                    {targetDot && (
+                        <motion.g
+                            key={`target-${targetDot.x}-${targetDot.y}`}
+                            initial={{ opacity: 0 }}
+                            animate={{ opacity: 1 }}
+                            exit={{ opacity: 0 }}
+                        >
+                            <TargetCircle x={targetDot.x} y={targetDot.y} label="target" isSelected={!isFollowing} />
+                        </motion.g>
+                    )}
+                    <motion.g
+                        key={`source-${mousePosition.x}-${mousePosition.y}`}
+                        initial={{ opacity: 0 }}
+                        animate={{ opacity: 1 }}
+                        exit={{ opacity: 0 }}
+                    >
+                        <TargetCircle x={mousePosition.x} y={mousePosition.y} label="source" isSelected={!isFollowing} />
+                    </motion.g>
                 </AnimatePresence>
             </svg>
         </div>
