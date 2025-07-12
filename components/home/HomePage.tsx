@@ -1,14 +1,11 @@
 'use client';
 
 import { Button } from "@/components/ui/button";
-import { Github, Linkedin, Mail, ExternalLink, Globe, Calendar } from "lucide-react";
+import { Github, Linkedin, Mail, ExternalLink, Globe } from "lucide-react";
 import Link from "next/link";
-import { SocialButton } from "@/components/ui/SocialButton";
 import { motion } from "framer-motion";
 import { Card, CardHeader, CardTitle, CardDescription, CardContent } from "@/components/ui/card";
 import { fadeInUp } from "@/lib/utils";
-import BookerEmbed, { getCalApi } from "@calcom/embed-react";
-import { useEffect, useState } from "react";
 import TypewriterEffect from "@/components/ui/TypeWriter";
 import {
     Tooltip,
@@ -27,16 +24,7 @@ interface Project {
 }
 
 export default function HomePage({ projects }: { projects: Project[] }) {
-    const [showCalendar, setShowCalendar] = useState(false);
     
-    useEffect(() => {
-        if (showCalendar) {
-            (async function () {
-              const cal = await getCalApi({"namespace":"intro-chat"});
-              cal("ui", {"hideEventTypeDetails":false,"layout":"month_view"});
-            })();
-        }
-    }, [showCalendar])
 
     return (
         <div className="max-w-4xl mx-auto  py-16 text-gray-900 text-xs ">
@@ -50,26 +38,6 @@ export default function HomePage({ projects }: { projects: Project[] }) {
                 <p className="border-l-2 border-gray-600 pl-4 text-gray-600 mb-4">
                     4x ex-CTO, 2x ex-founder, ex-Meta Engineering
                 </p>
-                <div className="mt-4">
-                    {!showCalendar ? (
-                        <Button 
-                            onClick={() => setShowCalendar(true)} 
-                            variant="outline"
-                            className="flex items-center gap-2"
-                        >
-                            <Calendar className="h-4 w-4" />
-                            Book a call
-                        </Button>
-                    ) : (
-                        <BookerEmbed
-                            calLink="arach/intro-chat"
-                            config={{
-                                layout: "month_view",
-                                hideEventTypeDetails: "false",
-                            }}
-                        />
-                    )}
-                </div>
             </motion.div>
 
 
