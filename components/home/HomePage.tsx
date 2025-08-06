@@ -30,14 +30,25 @@ export default function HomePage({ projects }: { projects: Project[] }) {
         <div className="max-w-4xl mx-auto  py-16 text-gray-900 text-xs ">
             <motion.div className="mb-20" {...fadeInUp}>
                 <div className="mb-8">
-                    <h1 className="text-2xl font-bold mb-2">
-                        <TypewriterEffect text="Arach_" className="inline-block" />
-                    </h1>
-                    <p className="text-md text-gray-400 mb-6">Foundering_ && Engineering_ </p>
+                    <pre className="text-[6px] text-black mb-6 overflow-hidden font-mono leading-none tracking-tighter" style={{ fontFamily: 'ui-monospace, "Cascadia Code", "Source Code Pro", Menlo, Consolas, "DejaVu Sans Mono", monospace' }}>
+{`╔──────────────────────────────────────────────────────────────────────────╗
+│                                                                          │
+│    █████╗ ██████╗  █████╗  ██████╗██╗  ██╗   ██████╗ ███████╗██╗   ██╗   │
+│   ██╔══██╗██╔══██╗██╔══██╗██╔════╝██║  ██║   ██╔══██╗██╔════╝██║   ██║   │
+│   ███████║██████╔╝███████║██║     ███████║   ██║  ██║█████╗  ██║   ██║   │
+│   ██╔══██║██╔══██╗██╔══██║██║     ██╔══██║   ██║  ██║██╔══╝  ╚██╗ ██╔╝   │
+│   ██║  ██║██║  ██║██║  ██║╚██████╗██║  ██║██╗██████╔╝███████╗ ╚████╔╝    │
+│   ╚═╝  ╚═╝╚═╝  ╚═╝╚═╝  ╚═╝ ╚═════╝╚═╝  ╚═╝╚═╝╚═════╝ ╚══════╝  ╚═══╝     │
+│                                                                          │
+╚──────────────────────────────────────────────────────────────────────────╝`}
+                    </pre>
                 </div>
-                <p className="border-l-2 border-gray-600 pl-4 text-gray-600 mb-4">
-                    4x ex-CTO, 2x ex-founder, ex-Meta Engineering
-                </p>
+                <div className="border-l-2 border-gray-600 pl-4 text-gray-600 mb-4 relative z-10">
+                    <span>4x ex-CTO, 2x ex-founder, ex-Meta Engineering</span>{" "}
+                    <a href="https://arach.io" target="_blank" rel="noopener noreferrer" className="text-gray-500 hover:text-gray-700 transition-colors text-xs underline cursor-pointer relative z-20">
+                        → more info
+                    </a>
+                </div>
             </motion.div>
 
 

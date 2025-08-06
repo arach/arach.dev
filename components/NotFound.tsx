@@ -31,7 +31,7 @@ const TypewriterEffect: React.FC<{ text: string }> = ({ text }) => {
             } else {
                 clearInterval(intervalId);
             }
-        }, 5);
+        }, 1);
         return () => clearInterval(intervalId);
     }, [text]);
 
@@ -56,7 +56,18 @@ const NotFound: React.FC<NotFoundProps> = ({
         return () => clearTimeout(timer);
     }, []);
 
-    const errorText = `Last login: ${new Date().toUTCString()}
+    const errorText = `╔──────────────────────────────────────────────────────────────────────────╗
+│                                                                          │
+│    █████╗ ██████╗  █████╗  ██████╗██╗  ██╗   ██████╗ ███████╗██╗   ██╗   │
+│   ██╔══██╗██╔══██╗██╔══██╗██╔════╝██║  ██║   ██╔══██╗██╔════╝██║   ██║   │
+│   ███████║██████╔╝███████║██║     ███████║   ██║  ██║█████╗  ██║   ██║   │
+│   ██╔══██║██╔══██╗██╔══██║██║     ██╔══██║   ██║  ██║██╔══╝  ╚██╗ ██╔╝   │
+│   ██║  ██║██║  ██║██║  ██║╚██████╗██║  ██║██╗██████╔╝███████╗ ╚████╔╝    │
+│   ╚═╝  ╚═╝╚═╝  ╚═╝╚═╝  ╚═╝ ╚═════╝╚═╝  ╚═╝╚═╝╚═════╝ ╚══════╝  ╚═══╝     │
+│                                                                          │
+╚──────────────────────────────────────────────────────────────────────────╝
+
+Last login: ${new Date().toUTCString()}
 ${domain.split('.')[0]}@dev:~$ sudo ${domain.split('.')[0]}-cli --find-page "${typeof window !== 'undefined' ? window.location.pathname : ''}"
 [sudo] password for ${domain.split('.')[0]}: ********
 Initializing ${domain} page search...

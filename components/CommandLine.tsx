@@ -11,7 +11,10 @@ interface CommandLineProps {
 
 export default function CommandLine({ onGameStart }: CommandLineProps) {
     const [command, setCommand] = useState('')
-    const [output, setOutput] = useState<string[]>([])
+    const [output, setOutput] = useState<string[]>([
+        `Welcome to arach.dev terminal. Type 'help' for available commands.`,
+        ``
+    ])
     const inputRef = useRef<HTMLInputElement>(null)
     const [currentGame, setCurrentGame] = useState<string | null>(null)
 
