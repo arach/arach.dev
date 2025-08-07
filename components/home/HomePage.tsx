@@ -58,37 +58,37 @@ export default function HomePage({ projects }: { projects: Project[] }) {
                         {projects.map((project) => (
                             <Tooltip key={project.title}>
                                 <TooltipTrigger asChild>
-                                    <Card className="backdrop-blur-sm flex flex-col h-full cursor-pointer hover:shadow-lg transition-shadow">
-                                        <CardHeader className="flex-grow">
-                                            <div className="flex justify-between items-start mb-2">
-                                                <CardTitle>{project.title}</CardTitle>
-                                                <div className="flex gap-1">
-                                                    {project.tags.map((tag) => (
-                                                        <span key={tag} className="text-[10px] px-2 py-0.5 bg-gray-100 text-gray-600 rounded-full">
-                                                            {tag}
-                                                        </span>
-                                                    ))}
+                                    <Link href={project.link} className="block">
+                                        <Card className="backdrop-blur-sm flex flex-col h-full cursor-pointer hover:shadow-lg transition-shadow">
+                                            <CardHeader className="flex-grow">
+                                                <div className="flex justify-between items-start mb-2">
+                                                    <CardTitle>{project.title}</CardTitle>
+                                                    <div className="flex gap-1">
+                                                        {project.tags.map((tag) => (
+                                                            <span key={tag} className="text-[10px] px-2 py-0.5 bg-gray-100 text-gray-600 rounded-full">
+                                                                {tag}
+                                                            </span>
+                                                        ))}
+                                                    </div>
                                                 </div>
-                                            </div>
-                                            <CardDescription className="text-xs font-light">{project.description}</CardDescription>
-                                        </CardHeader>
-                                        <CardContent className="pt-0">
-                                            <div className="flex gap-2">
-                                                <Link href={project.link}>
-                                                    <Button variant="outline" size="icon" className="h-8 w-8 hover:bg-gray-100">
+                                                <CardDescription className="text-xs font-light">{project.description}</CardDescription>
+                                            </CardHeader>
+                                            <CardContent className="pt-0">
+                                                <div className="flex gap-2">
+                                                    <Button variant="outline" size="icon" className="h-8 w-8 hover:bg-gray-100 pointer-events-none">
                                                         <Globe className="h-4 w-4" />
                                                         <span className="sr-only">Visit site</span>
                                                     </Button>
-                                                </Link>
-                                                <Link href={project.github}>
-                                                    <Button variant="outline" size="icon" className="h-8 w-8 hover:bg-gray-100">
-                                                        <Github className="h-4 w-4" />
-                                                        <span className="sr-only">View source</span>
-                                                    </Button>
-                                                </Link>
-                                            </div>
-                                        </CardContent>
-                                    </Card>
+                                                    <Link href={project.github} onClick={(e) => e.stopPropagation()} className="pointer-events-auto">
+                                                        <Button variant="outline" size="icon" className="h-8 w-8 hover:bg-gray-100">
+                                                            <Github className="h-4 w-4" />
+                                                            <span className="sr-only">View source</span>
+                                                        </Button>
+                                                    </Link>
+                                                </div>
+                                            </CardContent>
+                                        </Card>
+                                    </Link>
                                 </TooltipTrigger>
                                 <TooltipContent>
                                     <p className="text-xs">{project.preview}</p>
