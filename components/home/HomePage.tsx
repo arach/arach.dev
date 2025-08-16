@@ -311,6 +311,25 @@ export default function HomePage({ projects }: { projects: Project[] }) {
 
   const handleKeyDown = useCallback(
     (e: KeyboardEvent) => {
+      // Check if this is a navigation key
+      const isNavigationKey = [
+        "arrowdown", "arrowup", "arrowright", "arrowleft",
+        "j", "k", "l", "h"
+      ].includes(e.key.toLowerCase())
+
+      // Auto-enter keyboard mode when navigation keys are pressed
+      if (isNavigationKey && !keyboardMode) {
+        e.preventDefault()
+        setKeyboardMode(true)
+        if (focusedIndex === -1) {
+          setFocusedIndex(0)
+          setTimeout(() => scrollToCard(0), 0)
+        }
+        // Don't process the key on the first press that activates keyboard mode
+        // This gives visual feedback that keyboard mode is active
+        return
+      }
+
       // Always handle help toggle
       if (e.key === "?" || (e.shiftKey && e.key === "/")) {
         e.preventDefault()
@@ -324,13 +343,14 @@ export default function HomePage({ projects }: { projects: Project[] }) {
         return
       }
 
-      // Stats toggle
-      if (e.key === "s" && !keyboardMode) {
+      // Stats toggle (works in any mode)
+      if (e.key === "s") {
         e.preventDefault()
         setShowStats(!showStats)
         return
       }
 
+      // Exit if not in keyboard mode (shouldn't happen now with auto-enter)
       if (!keyboardMode) return
 
       switch (e.key.toLowerCase()) {
@@ -440,6 +460,7 @@ export default function HomePage({ projects }: { projects: Project[] }) {
       showHelp,
       showStats,
       categories,
+      scrollToCard,
     ],
   )
 
