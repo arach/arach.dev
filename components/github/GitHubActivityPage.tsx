@@ -96,7 +96,7 @@ export default function GitHubActivityPage() {
   const [stats, setStats] = useState<GitHubStats | null>(null)
   const [monthlyStats, setMonthlyStats] = useState<MonthlyStats[]>([])
   const [streaks, setStreaks] = useState<Streak[]>([])
-  const [loading, setLoading] = useState(false) // Changed from true to false
+  const [loading, setLoading] = useState(false)
   const [error, setError] = useState<string | null>(null)
   const [dataSource, setDataSource] = useState<string>("loading")
   const [selectedView, setSelectedView] = useState<"overview" | "calendar" | "streaks" | "repos">("overview")
@@ -577,26 +577,9 @@ export default function GitHubActivityPage() {
     }
   }, [])
 
-  if (loading) {
-    return (
-      <>
-        {/* Main content with overlay */}
-        <div className="min-h-screen bg-gray-50 py-8 relative">
-          {/* Loading Overlay - positioned absolutely over everything */}
-          <div className="fixed inset-0 bg-white/90 backdrop-blur-sm flex items-center justify-center z-[9999]">
-            <motion.div
-              initial={{ opacity: 0, scale: 0.9 }}
-              animate={{ opacity: 1, scale: 1 }}
-              exit={{ opacity: 0, scale: 0.9 }}
-              className="flex items-center gap-3 bg-white rounded-lg shadow-xl border p-6"
-            >
-              <RefreshCw className="w-6 h-6 animate-spin text-blue-500" />
-              <div>
-                <p className="font-medium text-gray-900">Refreshing GitHub data...</p>
-                <p className="text-sm text-gray-500">Fetching latest contributions</p>
-              </div>
-            </motion.div>
-          </div>
+  // Remove loading overlay entirely - data loads fast enough with cache
+  if (false) {
+    return null
 
           {/* Render the rest of the component content but make it non-interactive */}
           <div className="max-w-7xl mx-auto px-4 pointer-events-none opacity-50">
@@ -628,10 +611,13 @@ export default function GitHubActivityPage() {
                   >
                     {sourceInfo.icon} {sourceInfo.label}
                   </span>
-                  <Button onClick={handleRefresh} variant="outline" size="sm">
-                    <RefreshCw className="w-4 h-4 mr-2" />
-                    Refresh
-                  </Button>
+                  {/* Refresh only for dev mode */}
+                  {process.env.NODE_ENV === 'development' && (
+                    <Button onClick={handleRefresh} variant="outline" size="sm">
+                      <RefreshCw className="w-4 h-4 mr-2" />
+                      Refresh
+                    </Button>
+                  )}
                 </div>
               </div>
 
@@ -718,7 +704,7 @@ export default function GitHubActivityPage() {
 
   return (
     <TooltipProvider>
-      <div className="min-h-screen bg-gray-50 py-8">
+      <div className="min-h-screen py-8">
         <div className="max-w-7xl mx-auto px-4">
           {/* Header */}
           <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} className="mb-8">

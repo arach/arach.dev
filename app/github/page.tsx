@@ -10,7 +10,7 @@ export default function GitHubPage() {
   return (
     <>
       <InteractiveBackground maxEdges={3} />
-      <div className="container mx-auto px-4 py-6 min-h-[90vh]">
+      <div className="container mx-auto px-4 py-6 min-h-[90vh] relative z-10">
         <GitHubActivityPage />
       </div>
     </>

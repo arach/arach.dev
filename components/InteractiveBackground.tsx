@@ -144,11 +144,10 @@ const InteractiveBackground: React.FC<InteractiveBackgroundProps> = ({ maxEdges 
     }, []);
 
     return (
-        <div className="fixed inset-0" style={{ pointerEvents: 'none' }}>
+        <div className="fixed inset-0 -z-10">
             <svg
                 width="100%"
                 height="100%"
-                style={{ pointerEvents: 'auto' }}
                 onMouseMove={handleMouseMove}
                 onClick={handleClick}
                 role="img"
