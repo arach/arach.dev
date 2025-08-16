@@ -830,7 +830,22 @@ export default function HomePage({ projects }: { projects: Project[] }) {
               className="mb-4 p-4 bg-blue-50 border border-blue-200 rounded-md text-xs text-blue-800 relative z-45"
             >
               <div className="flex items-center justify-between mb-2">
-                <p className="font-medium">Keyboard Navigation {keyboardMode ? "Active" : "Available"}</p>
+                <div className="flex items-center gap-4">
+                  <p className="font-medium">Keyboard Navigation {keyboardMode ? "Active" : "Available"}</p>
+                  {keyboardMode && !showHelp && (
+                    <div className="flex items-center gap-3 text-blue-600">
+                      <span className="flex items-center gap-1">
+                        <kbd className="px-1.5 py-0.5 text-xs font-semibold bg-white border border-blue-200 rounded">Esc</kbd>
+                        <span>to exit</span>
+                      </span>
+                      <span className="text-blue-400">•</span>
+                      <span className="flex items-center gap-1">
+                        <kbd className="px-1.5 py-0.5 text-xs font-semibold bg-white border border-blue-200 rounded">?</kbd>
+                        <span>for help</span>
+                      </span>
+                    </div>
+                  )}
+                </div>
                 <Button
                   variant="ghost"
                   size="sm"
