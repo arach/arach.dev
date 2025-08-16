@@ -424,7 +424,14 @@ export default function GitHubActivityPage() {
   }
 
   const getContributionColor = (level: number) => {
-    const colors = ["#ebedf0", "#9be9a8", "#40c463", "#30a14e", "#216e39"]
+    // Using a blue-purple gradient instead of GitHub green
+    const colors = [
+      "#f3f4f6", // gray-100 for no contributions
+      "#ddd6fe", // violet-200
+      "#a78bfa", // violet-400
+      "#7c3aed", // violet-600
+      "#5b21b6"  // violet-800
+    ]
     return colors[level] || colors[0]
   }
 
@@ -604,8 +611,8 @@ export default function GitHubActivityPage() {
                     </Button>
                   </Link>
                   <div className="h-6 w-px bg-gray-300" />
-                  <h1 className="text-3xl font-bold text-gray-900 flex items-center gap-3">
-                    <Github className="w-8 h-8" />
+                  <h1 className="text-xl font-bold text-gray-900 flex items-center gap-2">
+                    <Github className="w-5 h-5" />
                     GitHub Activity
                   </h1>
                 </div>
@@ -639,29 +646,9 @@ export default function GitHubActivityPage() {
                         className="w-20 h-20 rounded-full border-4 border-gray-200"
                       />
                       <div className="flex-1">
-                        <h2 className="text-2xl font-bold text-gray-900">{user.name || user.login}</h2>
-                        <p className="text-gray-600 mb-2">@{user.login}</p>
-                        {user.bio && <p className="text-xs text-gray-700 mb-3">{user.bio}</p>}
-                        <div className="flex items-center gap-6 text-sm text-gray-600">
-                          <div className="flex items-center gap-1">
-                            <Users className="w-4 h-4" />
-                            <span>{user.followers} followers</span>
-                          </div>
-                          <div className="flex items-center gap-1">
-                            <BookOpen className="w-4 h-4" />
-                            <span>{user.public_repos} repositories</span>
-                          </div>
-                          {user.company && (
-                            <div className="flex items-center gap-1">
-                              <span>{user.company}</span>
-                            </div>
-                          )}
-                          {user.location && (
-                            <div className="flex items-center gap-1">
-                              <span>{user.location}</span>
-                            </div>
-                          )}
-                        </div>
+                        <h2 className="text-lg font-bold text-gray-900">{user.name || user.login}</h2>
+                        <p className="text-sm text-gray-600">@{user.login}</p>
+                        {user.bio && <p className="text-xs text-gray-700 mt-2">{user.bio}</p>}
                       </div>
                       <div className="text-right">
                         <a
@@ -779,29 +766,9 @@ export default function GitHubActivityPage() {
                       className="w-20 h-20 rounded-full border-4 border-gray-200"
                     />
                     <div className="flex-1">
-                      <h2 className="text-2xl font-bold text-gray-900">{user.name || user.login}</h2>
-                      <p className="text-gray-600 mb-2">@{user.login}</p>
-                      {user.bio && <p className="text-xs text-gray-700 mb-3">{user.bio}</p>}
-                      <div className="flex items-center gap-6 text-sm text-gray-600">
-                        <div className="flex items-center gap-1">
-                          <Users className="w-4 h-4" />
-                          <span>{user.followers} followers</span>
-                        </div>
-                        <div className="flex items-center gap-1">
-                          <BookOpen className="w-4 h-4" />
-                          <span>{user.public_repos} repositories</span>
-                        </div>
-                        {user.company && (
-                          <div className="flex items-center gap-1">
-                            <span>{user.company}</span>
-                          </div>
-                        )}
-                        {user.location && (
-                          <div className="flex items-center gap-1">
-                            <span>{user.location}</span>
-                          </div>
-                        )}
-                      </div>
+                      <h2 className="text-lg font-bold text-gray-900">{user.name || user.login}</h2>
+                      <p className="text-sm text-gray-600">@{user.login}</p>
+                      {user.bio && <p className="text-xs text-gray-700 mt-2">{user.bio}</p>}
                     </div>
                     <div className="text-right">
                       <a
@@ -928,7 +895,7 @@ export default function GitHubActivityPage() {
                               <Tooltip key={day.date}>
                                 <TooltipTrigger asChild>
                                   <div
-                                    className="w-3 h-3 rounded-sm cursor-pointer hover:scale-125 transition-transform"
+                                    className="w-5 h-5 rounded-sm cursor-pointer hover:scale-125 transition-transform"
                                     style={{ backgroundColor: getContributionColor(day.level) }}
                                   />
                                 </TooltipTrigger>
@@ -959,7 +926,7 @@ export default function GitHubActivityPage() {
                               {[0, 1, 2, 3, 4].map((level) => (
                                 <div
                                   key={level}
-                                  className="w-3 h-3 rounded-sm"
+                                  className="w-5 h-5 rounded-sm"
                                   style={{ backgroundColor: getContributionColor(level) }}
                                 />
                               ))}
@@ -1099,7 +1066,7 @@ export default function GitHubActivityPage() {
                             {[0, 1, 2, 3, 4].map((level) => (
                               <div
                                 key={level}
-                                className="w-3 h-3 rounded-sm"
+                                className="w-5 h-5 rounded-sm"
                                 style={{ backgroundColor: getContributionColor(level) }}
                               />
                             ))}
