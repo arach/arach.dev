@@ -343,10 +343,10 @@ export default function HomePage({ projects }: { projects: Project[] }) {
         return
       }
 
-      // Stats toggle (works in any mode)
+      // Sound toggle (works in any mode)
       if (e.key === "s") {
         e.preventDefault()
-        setShowStats(!showStats)
+        setAudioEnabled(!audioEnabled)
         return
       }
 
@@ -435,10 +435,6 @@ export default function HomePage({ projects }: { projects: Project[] }) {
             window.open(filteredProjects[focusedIndex].github, "_blank")
           }
           break
-        case "s":
-          e.preventDefault()
-          setShowStats(!showStats)
-          break
         case "escape":
           e.preventDefault()
           setKeyboardMode(false)
@@ -461,6 +457,7 @@ export default function HomePage({ projects }: { projects: Project[] }) {
       showStats,
       categories,
       scrollToCard,
+      audioEnabled,
     ],
   )
 
@@ -582,7 +579,7 @@ export default function HomePage({ projects }: { projects: Project[] }) {
                   </Button>
                 </TooltipTrigger>
                 <TooltipContent>
-                  <p className="text-xs">Show project statistics (s)</p>
+                  <p className="text-xs">Show project statistics</p>
                 </TooltipContent>
               </Tooltip>
               <Tooltip>
@@ -876,7 +873,7 @@ export default function HomePage({ projects }: { projects: Project[] }) {
                       <p className="font-medium mb-1">Actions:</p>
                       <p>• Enter/Space - Open project</p>
                       <p>• g - Open GitHub repo</p>
-                      <p>• s - Show statistics</p>
+                      <p>• s - Toggle sound</p>
                     </div>
                     <div>
                       <p className="font-medium mb-1">Other:</p>
