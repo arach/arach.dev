@@ -11,6 +11,7 @@ import {
     TooltipTrigger,
 } from "@/components/ui/tooltip";
 import CommandLine from '@/components/CommandLine';
+import SpaceGame from '@/components/SpaceGame';
 
 const TypewriterEffect: React.FC<{ text: string; onComplete?: () => void }> = ({ text, onComplete }) => {
     const [displayText, setDisplayText] = useState('');
