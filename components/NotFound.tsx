@@ -21,10 +21,16 @@ interface NotFoundProps {
 
 const TypewriterEffect: React.FC<{ text: string; onComplete?: () => void }> = ({ text, onComplete }) => {
     const [displayText, setDisplayText] = useState('');
+    const [isTyping, setIsTyping] = useState(false);
 
     useEffect(() => {
+        // Prevent re-running if already completed
+        if (isTyping || displayText === text) return;
+        
+        setIsTyping(true);
+        setDisplayText(''); // Clear any existing text
         let i = 0;
-        const charsPerInterval = 5; // Stream 5 characters at a time for faster output
+        const charsPerInterval = 10; // Stream 10 characters at a time for even faster output
         const intervalId = setInterval(() => {
             if (i < text.length) {
                 const nextChunk = text.slice(i, i + charsPerInterval);
@@ -32,13 +38,14 @@ const TypewriterEffect: React.FC<{ text: string; onComplete?: () => void }> = ({
                 i += charsPerInterval;
             } else {
                 clearInterval(intervalId);
+                setIsTyping(false);
                 if (onComplete) {
                     onComplete();
                 }
             }
         }, 1);
         return () => clearInterval(intervalId);
-    }, [text, onComplete]);
+    }, []); // Empty dependency array - only run once on mount
 
     return (
         <pre className="font-mono text-[10px] whitespace-pre-wrap overflow-auto leading-relaxed">
@@ -146,7 +153,7 @@ Suggestion: The page may have been moved or deleted.`;
                         <div className="p-4 text-orange-400 relative min-h-[250px] whitespace-pre-wrap break-words text-[10px] leading-relaxed font-thin">
                             <TypewriterEffect text={errorText} onComplete={() => setTextComplete(true)} />
                             {textComplete && (
-                                <div className="mt-0">
+                                <div className="mt-0 text-[10px] font-thin">
                                     <CommandLine onGameStart={() => setGameActive(true)} />
                                 </div>
                             )}

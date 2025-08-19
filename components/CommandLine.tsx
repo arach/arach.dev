@@ -33,20 +33,20 @@ export default function CommandLine({ onGameStart }: CommandLineProps) {
     }, [])
 
     return (
-        <div className="text-[10px]">
-            <div className="font-mono">
+        <div className="">
+            <div className="font-mono text-[10px] font-thin">
                 {output.map((line, i) => (
-                    <p key={i} className="mb-1">{line}</p>
+                    <p key={i} className="mb-1 text-[10px]">{line}</p>
                 ))}
             </div>
-            <form onSubmit={handleCommand} className="flex font-mono">
-                <span className="mr-2">{'arach@arach.dev:~$ '}</span>
+            <form onSubmit={handleCommand} className="flex font-mono text-[10px] font-thin">
+                <span className="mr-2 text-[10px]">{'arach@arach.dev:~$ '}</span>
                 <input
                     ref={inputRef}
                     type="text"
                     value={command}
                     onChange={(e) => setCommand(e.target.value)}
-                    className="flex-grow bg-transparent outline-none text-orange-400"
+                    className="flex-grow bg-transparent outline-none text-orange-400 text-[10px]"
                     autoFocus
                 />
             </form>
