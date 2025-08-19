@@ -216,6 +216,45 @@ export class NeonCache {
   }
 
   /**
+   * Get all cache entries
+   */
+  async getAllEntries(): Promise<any[]> {
+    try {
+      if (!sql || !(await this.checkConnection())) {
+        return []
+      }
+
+      const result = await sql`
+        SELECT cache_key as key, data as value, expires_at as expiry, created_at
+        FROM github_cache 
+        WHERE expires_at > NOW()
+        ORDER BY created_at DESC
+      `
+
+      return result
+    } catch (error) {
+      console.error("[Cache] Get all entries error:", error)
+      return []
+    }
+  }
+
+  /**
+   * Clear all cache entries
+   */
+  async clear(): Promise<void> {
+    try {
+      if (!sql || !(await this.checkConnection())) {
+        return
+      }
+
+      await sql`DELETE FROM github_cache`
+      console.log('[Cache] Cleared all entries')
+    } catch (error) {
+      console.error("[Cache] Clear error:", error)
+    }
+  }
+
+  /**
    * Get cache statistics
    */
   async getStats(): Promise<CacheStats> {

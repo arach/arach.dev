@@ -3,19 +3,19 @@
 import { useState, useEffect, useRef } from "react"
 import { Button } from "@/components/ui/button"
 import { Github, AlertCircle, RefreshCw, TrendingUp, Zap } from "lucide-react"
-import type { GitHubRepo, GitHubUser, ContributionDay, GitHubStats, GitHubContributionsProps } from "@/types/github"
+import type { ContributionDay, GitHubStats, GitHubContributionsProps } from "@/types/github"
 
 export default function GitHubContributions({
   username = "arach",
   showPrivateRepos = false,
 }: GitHubContributionsProps) {
-  const [user, setUser] = useState<GitHubUser | null>(null)
-  const [repos, setRepos] = useState<GitHubRepo[]>([])
   const [contributions, setContributions] = useState<ContributionDay[]>([])
   const [stats, setStats] = useState<GitHubStats | null>(null)
-  const [loading, setLoading] = useState(true) // Start with loading true
+  const [loading, setLoading] = useState(false) // Start with loading false to not block render
   const [error, setError] = useState<string | null>(null)
   const [dataSource, setDataSource] = useState<string>("loading")
+  const [hasData, setHasData] = useState(false) // Track if we have any data
+  const [isInitialized, setIsInitialized] = useState(false) // Track if we've attempted to load
   const [cacheInfo, setCacheInfo] = useState<{
     status: "loading" | "cache-hit" | "cache-miss" | "error"
     age?: number
@@ -28,7 +28,11 @@ export default function GitHubContributions({
   const previewRef = useRef<HTMLDivElement>(null)
 
   useEffect(() => {
-    fetchGitHubData()
+    // Non-blocking load - fetch in background
+    setTimeout(() => {
+      fetchGitHubData()
+    }, 0)
+    
     return () => {
       if (previewTimeoutRef.current) {
         clearTimeout(previewTimeoutRef.current)
@@ -52,12 +56,21 @@ export default function GitHubContributions({
   }
 
   const fetchGitHubData = async () => {
+    // Don't block initial render
+    if (!isInitialized) {
+      setIsInitialized(true)
+    }
+
     const startTime = Date.now()
 
     try {
       console.log(`[Component] 🚀 Starting fetch for ${username} at ${new Date().toISOString()}`)
       setCacheInfo({ status: "loading" })
       setError(null)
+      // Only show loading if we don't have data yet
+      if (!hasData) {
+        setLoading(true)
+      }
 
       const contributionsResponse = await fetch(`/api/github/contributions?username=${username}`, {
         method: "GET",
@@ -102,21 +115,10 @@ export default function GitHubContributions({
         setContributions(contributionsData.contributions || [])
         setDataSource(contributionsData.source)
 
-        // Fetch user and repo data
-        const [userData, reposData] = await Promise.allSettled([
-          fetchUserData().catch(() => createFallbackUserData()),
-          fetchRepositories().catch(() => []),
-        ])
-
-        const user = userData.status === "fulfilled" ? userData.value : createFallbackUserData()
-        const repos = reposData.status === "fulfilled" ? reposData.value : []
-
-        setUser(user)
-        setRepos(repos)
-
-        const calculatedStats = calculateStats(repos, contributionsData.contributions || [], user)
+        // Calculate stats from contributions only (no need for user/repo data)
+        const calculatedStats = calculateStats(contributionsData.contributions || [])
         setStats(calculatedStats)
-
+        setHasData(true)
         setLoading(false)
         return
       }
@@ -150,79 +152,18 @@ export default function GitHubContributions({
       setError(errorMessage)
       setLoading(false)
 
-      // Try to show fallback data
-      const fallbackUser = createFallbackUserData()
-      setUser(fallbackUser)
+      // Don't show anything if we can't get data
       setContributions([])
-      setRepos([])
-      setStats({
-        totalCommits: 0,
-        totalForks: 0,
-        currentStreak: 0,
-        longestStreak: 0,
-        totalContributions: 0,
-        threeMonthContributions: 0,
-      })
+      setStats(null)
+      setHasData(false)
       setDataSource("error")
     }
   }
 
-  const fetchUserData = async (): Promise<GitHubUser> => {
-    const headers: HeadersInit = {
-      Accept: "application/vnd.github.v3+json",
-      "User-Agent": "arach-dev-portfolio",
-    }
 
-    const response = await fetch(`https://api.github.com/users/${username}`, { headers })
-
-    if (!response.ok) {
-      if (response.status === 403) {
-        throw new Error("GitHub API rate limit exceeded. Please try again later.")
-      }
-      throw new Error(`Failed to fetch user data: ${response.statusText}`)
-    }
-
-    return response.json()
-  }
-
-  const fetchRepositories = async (): Promise<GitHubRepo[]> => {
-    const headers: HeadersInit = {
-      Accept: "application/vnd.github.v3+json",
-      "User-Agent": "arach-dev-portfolio",
-    }
-
-    // Fetch recent repositories
-    const allRepos: GitHubRepo[] = []
-    let page = 1
-    const perPage = 50
-
-    while (page <= 2) {
-      const url = `https://api.github.com/users/${username}/repos?sort=updated&per_page=${perPage}&page=${page}&type=public`
-      const response = await fetch(url, { headers })
-
-      if (!response.ok) {
-        if (response.status === 403) {
-          console.warn("GitHub API rate limit reached for repositories")
-          break
-        }
-        break
-      }
-
-      const repos = await response.json()
-      if (repos.length === 0) break
-
-      allRepos.push(...repos)
-
-      if (repos.length < perPage) break
-      page++
-    }
-
-    return allRepos
-  }
-
-  const calculateStats = (repos: GitHubRepo[], contributions: ContributionDay[], user: GitHubUser): GitHubStats => {
+  const calculateStats = (contributions: ContributionDay[]): GitHubStats => {
     const threeMonthContributions = contributions.reduce((sum, day) => sum + day.count, 0)
-    const totalForks = repos.reduce((sum, repo) => sum + repo.forks_count, 0)
+    const totalForks = 0 // We're not fetching repo data anymore
 
     // Calculate streaks for the 3-month period
     let currentStreak = 0
@@ -267,7 +208,14 @@ export default function GitHubContributions({
   }
 
   const getContributionColor = (level: number) => {
-    const colors = ["#ebedf0", "#9be9a8", "#40c463", "#30a14e", "#216e39"]
+    // Using an orange gradient to match the main activity page
+    const colors = [
+      "#f3f4f6", // gray-100 for no contributions
+      "#fed7aa", // orange-200
+      "#fdba74", // orange-300
+      "#fb923c", // orange-400
+      "#ea580c"  // orange-600
+    ]
     return colors[level] || colors[0]
   }
 
@@ -311,18 +259,6 @@ export default function GitHubContributions({
     }
   }
 
-  const createFallbackUserData = (): GitHubUser => ({
-    login: username,
-    name: username,
-    bio: null,
-    public_repos: 0,
-    followers: 0,
-    following: 0,
-    created_at: new Date().toISOString(),
-    avatar_url: `/placeholder.svg?height=32&width=32&text=${username}`,
-    company: null,
-    location: null,
-  })
 
   const clearPreviewTimeout = () => {
     if (previewTimeoutRef.current) {
@@ -335,7 +271,7 @@ export default function GitHubContributions({
     clearPreviewTimeout()
     previewTimeoutRef.current = setTimeout(() => {
       setShowPreview(false)
-    }, 3000) // 3 second delay
+    }, 100) // 100ms delay for smooth transition
   }
 
   const handleMouseEnter = () => {
@@ -357,7 +293,11 @@ export default function GitHubContributions({
 
   const sourceInfo = getDataSourceInfo()
 
-  // Always show the button, even while loading
+  // Only show button when we have data
+  if (!hasData && !loading) {
+    return null // Graceful degradation - don't show anything if no data
+  }
+
   return (
     <div className="flex items-center justify-center">
       <div ref={buttonRef} className="relative group" onMouseEnter={handleMouseEnter} onMouseLeave={handleMouseLeave}>
@@ -403,31 +343,12 @@ export default function GitHubContributions({
             onMouseLeave={handlePreviewMouseLeave}
           >
             {/* Preview Header */}
-            <div className="flex items-center gap-2 mb-3 pb-2 border-b border-gray-100">
-              {user ? (
-                <>
-                  <img
-                    src={user.avatar_url || "/placeholder.svg?height=32&width=32"}
-                    alt={user.name || username}
-                    className="w-8 h-8 rounded-full border border-gray-200"
-                  />
-                  <div>
-                    <p className="font-medium text-sm">{user.name || username}</p>
-                    <p className="text-xs text-gray-500">@{user.login}</p>
-                  </div>
-                </>
-              ) : (
-                <>
-                  <div className="w-8 h-8 rounded-full border border-gray-200 bg-gray-100 animate-pulse"></div>
-                  <div>
-                    <div className="h-4 w-20 bg-gray-200 rounded animate-pulse mb-1"></div>
-                    <div className="h-3 w-16 bg-gray-200 rounded animate-pulse"></div>
-                  </div>
-                </>
-              )}
-              <div className="ml-auto">
-                <span className="text-xs text-gray-500">{getDateRangeText()}</span>
+            <div className="flex items-center justify-between mb-3 pb-2 border-b border-gray-100">
+              <div className="flex items-center gap-2">
+                <Github className="w-5 h-5 text-gray-600" />
+                <span className="font-medium text-sm">GitHub Activity</span>
               </div>
+              <span className="text-xs text-gray-500">{getDateRangeText()}</span>
             </div>
 
             {/* Loading State */}
@@ -515,35 +436,6 @@ export default function GitHubContributions({
               </div>
             )}
 
-            {/* Recent Repos Preview */}
-            {repos.length > 0 && !error && !loading && (
-              <div className="animate-in fade-in-50 slide-in-from-bottom-6 duration-900">
-                <div className="flex items-center justify-between mb-2">
-                  <span className="text-xs font-medium text-gray-700">Recent Projects</span>
-                  <span className="text-xs text-gray-500">{repos.length} total</span>
-                </div>
-                <div className="space-y-1">
-                  {repos.slice(0, 2).map((repo) => (
-                    <div key={repo.id} className="flex items-center justify-between text-xs">
-                      <div className="flex items-center gap-2 min-w-0 flex-1">
-                        <div className="w-2 h-2 rounded-full bg-blue-500 flex-shrink-0" />
-                        <span className="font-medium text-blue-600 truncate">{repo.name}</span>
-                        {repo.language && <span className="text-gray-500 text-xs">({repo.language})</span>}
-                      </div>
-                      <span className="text-gray-400 flex-shrink-0 ml-2">
-                        {new Date(repo.updated_at).toLocaleDateString("en-US", {
-                          month: "short",
-                          day: "numeric",
-                        })}
-                      </span>
-                    </div>
-                  ))}
-                  {repos.length > 2 && (
-                    <div className="text-xs text-gray-500 text-center pt-1">+{repos.length - 2} more projects</div>
-                  )}
-                </div>
-              </div>
-            )}
 
             {/* Enhanced Call to Action */}
             {!loading && (

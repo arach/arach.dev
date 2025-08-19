@@ -8,7 +8,6 @@ import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "@/comp
 import {
   Github,
   AlertCircle,
-  RefreshCw,
   TrendingUp,
   Calendar,
   Target,
@@ -17,7 +16,6 @@ import {
   ArrowLeft,
   ExternalLink,
   Users,
-  Code,
   BookOpen,
 } from "lucide-react"
 import Link from "next/link"
@@ -90,8 +88,6 @@ interface Streak {
 }
 
 export default function GitHubActivityPage() {
-  const [user, setUser] = useState<GitHubUser | null>(null)
-  const [repos, setRepos] = useState<GitHubRepo[]>([])
   const [contributions, setContributions] = useState<ContributionDay[]>([])
   const [stats, setStats] = useState<GitHubStats | null>(null)
   const [monthlyStats, setMonthlyStats] = useState<MonthlyStats[]>([])
@@ -144,20 +140,8 @@ export default function GitHubActivityPage() {
           setContributions(contributionsData.contributions)
           setDataSource(contributionsData.source)
 
-          // Fetch user and repo data in parallel (these are fast)
-          const [userData, reposData] = await Promise.allSettled([
-            fetchUserData().catch(() => createFallbackUser()),
-            fetchRepositories().catch(() => []),
-          ])
-
-          const user = userData.status === "fulfilled" ? userData.value : createFallbackUser()
-          const repos = reposData.status === "fulfilled" ? reposData.value : []
-
-          setUser(user)
-          setRepos(repos)
-
-          // Calculate stats with cached contribution data
-          const calculatedStats = calculateStats(repos, contributionsData.contributions, user)
+          // Calculate stats directly from contributions (no GitHub API needed)
+          const calculatedStats = calculateStats(contributionsData.contributions)
           setStats(calculatedStats)
 
           const calculatedStreaks = calculateStreaks(contributionsData.contributions)
@@ -176,20 +160,8 @@ export default function GitHubActivityPage() {
         setContributions(contributionsData.contributions)
         setDataSource(contributionsData.source)
 
-        // Fetch user and repo data
-        const [userData, reposData] = await Promise.allSettled([
-          fetchUserData().catch(() => createFallbackUser()),
-          fetchRepositories().catch(() => []),
-        ])
-
-        const user = userData.status === "fulfilled" ? userData.value : createFallbackUser()
-        const repos = reposData.status === "fulfilled" ? reposData.value : []
-
-        setUser(user)
-        setRepos(repos)
-
-        // Calculate stats
-        const calculatedStats = calculateStats(repos, contributionsData.contributions, user)
+        // Calculate stats directly from contributions (no GitHub API needed)
+        const calculatedStats = calculateStats(contributionsData.contributions)
         setStats(calculatedStats)
 
         const calculatedStreaks = calculateStreaks(contributionsData.contributions)
@@ -215,52 +187,10 @@ export default function GitHubActivityPage() {
     }
   }
 
-  const fetchUserData = async (): Promise<GitHubUser> => {
-    const response = await fetch(`https://api.github.com/users/${username}`, {
-      headers: {
-        Accept: "application/vnd.github.v3+json",
-        "User-Agent": "arach-dev-portfolio",
-      },
-    })
 
-    if (!response.ok) {
-      throw new Error(`Failed to fetch user data: ${response.statusText}`)
-    }
-
-    return response.json()
-  }
-
-  const fetchRepositories = async (): Promise<GitHubRepo[]> => {
-    const allRepos: GitHubRepo[] = []
-    let page = 1
-    const perPage = 50
-
-    while (page <= 3) {
-      const url = `https://api.github.com/users/${username}/repos?sort=updated&per_page=${perPage}&page=${page}&type=public`
-      const response = await fetch(url, {
-        headers: {
-          Accept: "application/vnd.github.v3+json",
-          "User-Agent": "arach-dev-portfolio",
-        },
-      })
-
-      if (!response.ok) break
-
-      const repos = await response.json()
-      if (repos.length === 0) break
-
-      allRepos.push(...repos)
-
-      if (repos.length < perPage) break
-      page++
-    }
-
-    return allRepos
-  }
-
-  const calculateStats = (repos: GitHubRepo[], contributions: ContributionDay[], user: GitHubUser): GitHubStats => {
+  const calculateStats = (contributions: ContributionDay[]): GitHubStats => {
     const threeMonthContributions = contributions.reduce((sum, day) => sum + day.count, 0)
-    const totalForks = repos.reduce((sum, repo) => sum + repo.forks_count, 0)
+    const totalForks = 0 // Removed - not displayed in UI
 
     // Calculate streaks
     let currentStreak = 0
@@ -424,13 +354,13 @@ export default function GitHubActivityPage() {
   }
 
   const getContributionColor = (level: number) => {
-    // Using a blue-purple gradient instead of GitHub green
+    // Using an orange gradient
     const colors = [
       "#f3f4f6", // gray-100 for no contributions
-      "#ddd6fe", // violet-200
-      "#a78bfa", // violet-400
-      "#7c3aed", // violet-600
-      "#5b21b6"  // violet-800
+      "#fed7aa", // orange-200
+      "#fdba74", // orange-300
+      "#fb923c", // orange-400
+      "#ea580c"  // orange-600
     ]
     return colors[level] || colors[0]
   }
@@ -449,24 +379,6 @@ export default function GitHubActivityPage() {
   }
 
   const sourceInfo = getDataSourceInfo()
-
-  const createFallbackUser = (): GitHubUser => ({
-    login: username,
-    name: username,
-    bio: null,
-    public_repos: 0,
-    followers: 0,
-    following: 0,
-    created_at: new Date().toISOString(),
-    avatar_url: `/placeholder.svg?height=64&width=64&text=${username}`,
-    company: null,
-    location: null,
-  })
-
-  const handleRefresh = async () => {
-    console.log("[GitHubActivityPage] 🔄 Manual refresh triggered")
-    await fetchGitHubData(true) // Force refresh
-  }
 
   // Add these helper functions before the return statement
   const getCalendarDays = (year: number, month: number) => {
@@ -578,105 +490,6 @@ export default function GitHubActivityPage() {
   }, [])
 
   // Remove loading overlay entirely - data loads fast enough with cache
-  if (false) {
-    return null
-
-          {/* Render the rest of the component content but make it non-interactive */}
-          <div className="max-w-7xl mx-auto px-4 pointer-events-none opacity-50">
-            {/* Header */}
-            <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} className="mb-8">
-              <div className="flex items-center justify-between mb-6">
-                <div className="flex items-center gap-4">
-                  <Link href="/">
-                    <Button variant="ghost" size="sm">
-                      <ArrowLeft className="w-4 h-4 mr-2" />
-                      Back to Home
-                    </Button>
-                  </Link>
-                  <div className="h-6 w-px bg-gray-300" />
-                  <h1 className="text-xl font-bold text-gray-900 flex items-center gap-2">
-                    <Github className="w-5 h-5" />
-                    GitHub Activity
-                  </h1>
-                </div>
-                <div className="flex items-center gap-2">
-                  <span
-                    className={`text-xs px-3 py-1 rounded-full ${
-                      sourceInfo.color === "green"
-                        ? "text-green-700 bg-green-100"
-                        : sourceInfo.color === "blue"
-                          ? "text-blue-700 bg-blue-100"
-                          : "text-yellow-700 bg-yellow-100"
-                    }`}
-                  >
-                    {sourceInfo.icon} {sourceInfo.label}
-                  </span>
-                  {/* Refresh only for dev mode */}
-                  {process.env.NODE_ENV === 'development' && (
-                    <Button onClick={handleRefresh} variant="outline" size="sm">
-                      <RefreshCw className="w-4 h-4 mr-2" />
-                      Refresh
-                    </Button>
-                  )}
-                </div>
-              </div>
-
-              {/* User Profile */}
-              {user && (
-                <Card className="mb-6">
-                  <CardContent className="p-6">
-                    <div className="flex items-center gap-6">
-                      <img
-                        src={user.avatar_url || "/placeholder.svg"}
-                        alt={user.name || username}
-                        className="w-20 h-20 rounded-full border-4 border-gray-200"
-                      />
-                      <div className="flex-1">
-                        <h2 className="text-lg font-bold text-gray-900">{user.name || user.login}</h2>
-                        <p className="text-sm text-gray-600">@{user.login}</p>
-                        {user.bio && <p className="text-xs text-gray-700 mt-2">{user.bio}</p>}
-                      </div>
-                      <div className="text-right">
-                        <a
-                          href={`https://github.com/${user.login}`}
-                          target="_blank"
-                          rel="noopener noreferrer"
-                          className="inline-flex items-center gap-2 text-blue-600 hover:text-blue-800"
-                        >
-                          View on GitHub
-                          <ExternalLink className="w-4 h-4" />
-                        </a>
-                      </div>
-                    </div>
-                  </CardContent>
-                </Card>
-              )}
-
-              {/* Navigation Tabs */}
-              <div className="flex gap-2 mb-6">
-                {[
-                  { id: "overview", label: "Overview", icon: BarChart3 },
-                  { id: "calendar", label: "Calendar", icon: Calendar },
-                  { id: "streaks", label: "Streaks", icon: Target },
-                  { id: "repos", label: "Repositories", icon: Code },
-                ].map((tab) => (
-                  <Button
-                    key={tab.id}
-                    variant={selectedView === tab.id ? "default" : "outline"}
-                    onClick={() => setSelectedView(tab.id as any)}
-                    className="flex items-center gap-2"
-                  >
-                    <tab.icon className="w-4 h-4" />
-                    {tab.label}
-                  </Button>
-                ))}
-              </div>
-            </motion.div>
-          </div>
-        </div>
-      </>
-    )
-  }
 
   if (error) {
     return (
@@ -686,7 +499,7 @@ export default function GitHubActivityPage() {
           <h1 className="text-2xl font-bold text-gray-900 mb-2">Error Loading GitHub Data</h1>
           <p className="text-red-600 mb-6">{error}</p>
           <div className="flex gap-4 justify-center">
-            <Button onClick={fetchGitHubData} variant="outline">
+            <Button onClick={() => fetchGitHubData()} variant="outline">
               <RefreshCw className="w-4 h-4 mr-2" />
               Retry
             </Button>
@@ -703,7 +516,7 @@ export default function GitHubActivityPage() {
   }
 
   return (
-    <TooltipProvider>
+    <TooltipProvider delayDuration={200}>
       <div className="min-h-screen py-8">
         <div className="max-w-7xl mx-auto px-4">
           {/* Header */}
@@ -717,60 +530,13 @@ export default function GitHubActivityPage() {
                   </Button>
                 </Link>
                 <div className="h-6 w-px bg-gray-300" />
-                <h1 className="text-3xl font-bold text-gray-900 flex items-center gap-3">
-                  <Github className="w-8 h-8" />
+                <h1 className="text-xl font-bold text-gray-900 flex items-center gap-2">
+                  <Github className="w-5 h-5" />
                   GitHub Activity
                 </h1>
               </div>
-              <div className="flex items-center gap-2">
-                <span
-                  className={`text-xs px-3 py-1 rounded-full ${
-                    sourceInfo.color === "green"
-                      ? "text-green-700 bg-green-100"
-                      : sourceInfo.color === "blue"
-                        ? "text-blue-700 bg-blue-100"
-                        : "text-yellow-700 bg-yellow-100"
-                  }`}
-                >
-                  {sourceInfo.icon} {sourceInfo.label}
-                </span>
-                <Button onClick={handleRefresh} variant="outline" size="sm">
-                  <RefreshCw className="w-4 h-4 mr-2" />
-                  Refresh
-                </Button>
-              </div>
             </div>
 
-            {/* User Profile */}
-            {user && (
-              <Card className="mb-6">
-                <CardContent className="p-6">
-                  <div className="flex items-center gap-6">
-                    <img
-                      src={user.avatar_url || "/placeholder.svg"}
-                      alt={user.name || username}
-                      className="w-20 h-20 rounded-full border-4 border-gray-200"
-                    />
-                    <div className="flex-1">
-                      <h2 className="text-lg font-bold text-gray-900">{user.name || user.login}</h2>
-                      <p className="text-sm text-gray-600">@{user.login}</p>
-                      {user.bio && <p className="text-xs text-gray-700 mt-2">{user.bio}</p>}
-                    </div>
-                    <div className="text-right">
-                      <a
-                        href={`https://github.com/${user.login}`}
-                        target="_blank"
-                        rel="noopener noreferrer"
-                        className="inline-flex items-center gap-2 text-blue-600 hover:text-blue-800"
-                      >
-                        View on GitHub
-                        <ExternalLink className="w-4 h-4" />
-                      </a>
-                    </div>
-                  </div>
-                </CardContent>
-              </Card>
-            )}
 
             {/* Navigation Tabs */}
             <div className="flex gap-2 mb-6">
@@ -778,15 +544,15 @@ export default function GitHubActivityPage() {
                 { id: "overview", label: "Overview", icon: BarChart3 },
                 { id: "calendar", label: "Calendar", icon: Calendar },
                 { id: "streaks", label: "Streaks", icon: Target },
-                { id: "repos", label: "Repositories", icon: Code },
               ].map((tab) => (
                 <Button
                   key={tab.id}
                   variant={selectedView === tab.id ? "default" : "outline"}
                   onClick={() => setSelectedView(tab.id as any)}
-                  className="flex items-center gap-2"
+                  size="sm"
+                  className="flex items-center gap-1 text-xs px-3 py-1.5"
                 >
-                  <tab.icon className="w-4 h-4" />
+                  <tab.icon className="w-3 h-3" />
                   {tab.label}
                 </Button>
               ))}
@@ -813,7 +579,7 @@ export default function GitHubActivityPage() {
                           <div>
                             <p className="text-sm font-medium text-gray-600">Total Contributions</p>
                             <p className="text-3xl font-bold text-blue-600">{stats.threeMonthContributions}</p>
-                            <p className="text-xs text-gray-500">Last 3 months</p>
+                            <p className="text-xs text-gray-500">Last 6 months</p>
                           </div>
                           <Activity className="w-8 h-8 text-blue-500" />
                         </div>
@@ -867,52 +633,132 @@ export default function GitHubActivityPage() {
                     {/* Contribution Graph - Spans 2 columns */}
                     <Card className="md:col-span-2">
                       <CardHeader className="pb-3">
-                        <CardTitle className="flex items-center gap-2 text-lg">
-                          <Activity className="w-5 h-5" />
+                        <CardTitle className="flex items-center gap-2 text-sm">
+                          <Activity className="w-4 h-4" />
                           Contribution Activity
                         </CardTitle>
-                        <CardDescription className="text-sm">Last 3 months</CardDescription>
+                        <CardDescription className="text-xs">Last 6 months</CardDescription>
                       </CardHeader>
                       <CardContent className="pt-0">
-                        <div className="space-y-3">
-                          {/* Contribution grid */}
-                          <div className="grid grid-cols-7 gap-1 max-w-full overflow-x-auto">
-                            {contributions.map((day) => (
-                              <Tooltip key={day.date}>
-                                <TooltipTrigger asChild>
-                                  <div
-                                    className="w-5 h-5 rounded-sm cursor-pointer hover:scale-125 transition-transform"
-                                    style={{ backgroundColor: getContributionColor(day.level) }}
-                                  />
-                                </TooltipTrigger>
-                                <TooltipContent>
-                                  <div className="text-xs">
-                                    <p className="font-medium">
-                                      {day.count === 0
-                                        ? "No contributions"
-                                        : `${day.count} contribution${day.count === 1 ? "" : "s"}`}
-                                    </p>
-                                    <p className="text-gray-500">
-                                      {new Date(day.date).toLocaleDateString("en-US", {
-                                        weekday: "short",
-                                        month: "short",
-                                        day: "numeric",
-                                      })}
-                                    </p>
+                        <div className="space-y-4">
+                          {/* Monthly calendar grids */}
+                          {(() => {
+                            // Group contributions by month
+                            const monthlyContributions = new Map<string, ContributionDay[]>()
+                            const monthOrder: string[] = []
+                            
+                            contributions.forEach(day => {
+                              const date = new Date(day.date)
+                              const monthKey = `${date.getFullYear()}-${date.getMonth()}`
+                              
+                              if (!monthlyContributions.has(monthKey)) {
+                                monthlyContributions.set(monthKey, [])
+                                monthOrder.push(monthKey)
+                              }
+                              monthlyContributions.get(monthKey)!.push(day)
+                            })
+
+                            // Create calendar grids for each month
+                            const monthGrids = monthOrder.map(monthKey => {
+                              const [year, month] = monthKey.split('-').map(Number)
+                              const monthData = monthlyContributions.get(monthKey) || []
+                              const monthName = new Date(year, month).toLocaleDateString('en-US', { month: 'short' })
+                              
+                              // Create a full calendar grid for the month
+                              const firstDay = new Date(year, month, 1)
+                              const lastDay = new Date(year, month + 1, 0)
+                              const startPadding = firstDay.getDay()
+                              const totalDays = lastDay.getDate()
+                              
+                              const calendarDays: (ContributionDay | null)[] = []
+                              
+                              // Add padding for start of month
+                              for (let i = 0; i < startPadding; i++) {
+                                calendarDays.push(null)
+                              }
+                              
+                              // Add actual days
+                              for (let day = 1; day <= totalDays; day++) {
+                                const dateStr = `${year}-${String(month + 1).padStart(2, '0')}-${String(day).padStart(2, '0')}`
+                                const contribution = monthData.find(c => c.date === dateStr)
+                                calendarDays.push(contribution || { date: dateStr, count: 0, level: 0 })
+                              }
+                              
+                              return { monthName, year, calendarDays, monthKey }
+                            })
+
+                            // Display months in rows of 3
+                            const rows = []
+                            for (let i = 0; i < monthGrids.length; i += 3) {
+                              rows.push(monthGrids.slice(i, i + 3))
+                            }
+
+                            return (
+                              <>
+                                {rows.map((row, rowIndex) => (
+                                  <div key={rowIndex} className="grid grid-cols-1 md:grid-cols-3 gap-4">
+                                    {row.map(({ monthName, year, calendarDays, monthKey }) => (
+                                      <div key={monthKey} className="bg-gray-50 rounded-lg p-3">
+                                        <h4 className="text-xs font-semibold text-gray-700 mb-2">
+                                          {monthName} {year}
+                                        </h4>
+                                        <div className="grid grid-cols-7 gap-0.5 text-xs text-gray-500 mb-1">
+                                          {['S', 'M', 'T', 'W', 'T', 'F', 'S'].map((day, i) => (
+                                            <div key={i} className="w-4 h-4 flex items-center justify-center text-[10px]">
+                                              {day}
+                                            </div>
+                                          ))}
+                                        </div>
+                                        <div className="grid grid-cols-7 gap-0.5">
+                                          {calendarDays.map((day, index) => (
+                                            <div key={index}>
+                                              {day ? (
+                                                <Tooltip delayDuration={0}>
+                                                  <TooltipTrigger asChild>
+                                                    <div
+                                                      className="w-4 h-4 rounded-sm cursor-pointer hover:scale-125 transition-transform"
+                                                      style={{ backgroundColor: getContributionColor(day.level) }}
+                                                    />
+                                                  </TooltipTrigger>
+                                                  <TooltipContent>
+                                                    <div>
+                                                      <p className="font-medium">
+                                                        {day.count === 0
+                                                          ? "No contributions"
+                                                          : `${day.count} contribution${day.count === 1 ? "" : "s"}`}
+                                                      </p>
+                                                      <p className="opacity-75">
+                                                        {new Date(day.date).toLocaleDateString("en-US", {
+                                                          weekday: "short",
+                                                          month: "short",
+                                                          day: "numeric",
+                                                        })}
+                                                      </p>
+                                                    </div>
+                                                  </TooltipContent>
+                                                </Tooltip>
+                                              ) : (
+                                                <div className="w-4 h-4" />
+                                              )}
+                                            </div>
+                                          ))}
+                                        </div>
+                                      </div>
+                                    ))}
                                   </div>
-                                </TooltipContent>
-                              </Tooltip>
-                            ))}
-                          </div>
+                                ))}
+                              </>
+                            )
+                          })()}
 
                           {/* Legend */}
-                          <div className="flex items-center justify-between text-xs text-gray-500">
+                          <div className="flex items-center justify-center gap-2 text-xs text-gray-500">
                             <span>Less</span>
-                            <div className="flex gap-1">
+                            <div className="flex gap-0.5">
                               {[0, 1, 2, 3, 4].map((level) => (
                                 <div
                                   key={level}
-                                  className="w-5 h-5 rounded-sm"
+                                  className="w-3 h-3 rounded-sm"
                                   style={{ backgroundColor: getContributionColor(level) }}
                                 />
                               ))}
@@ -1081,7 +927,7 @@ export default function GitHubActivityPage() {
                             const isInStreak = streaks.some((streak) => streak.dates.includes(day.dateString))
 
                             return (
-                              <Tooltip key={index}>
+                              <Tooltip delayDuration={0} key={index}>
                                 <TooltipTrigger asChild>
                                   <div
                                     className={`
@@ -1096,7 +942,7 @@ export default function GitHubActivityPage() {
                                           ? "#f3f4f6"
                                           : "#f9fafb",
                                     }}
-                                    onClick={() => setSelectedDay(dayData)}
+                                    onClick={() => dayData && setSelectedDay(dayData)}
                                   >
                                     {/* Day number */}
                                     <div
@@ -1486,7 +1332,7 @@ export default function GitHubActivityPage() {
                             const isStreakEnd = streaks.some((streak) => streak.endDate === day.date)
 
                             return (
-                              <Tooltip key={day.date}>
+                              <Tooltip delayDuration={0} key={day.date}>
                                 <TooltipTrigger asChild>
                                   <div className="relative">
                                     <div
@@ -1607,7 +1453,7 @@ export default function GitHubActivityPage() {
                               {streak.dates.map((date) => {
                                 const dayData = contributions.find((d) => d.date === date)
                                 return (
-                                  <Tooltip key={date}>
+                                  <Tooltip delayDuration={0} key={date}>
                                     <TooltipTrigger asChild>
                                       <div
                                         className="w-2 h-6 bg-orange-400 hover:bg-orange-500 cursor-pointer transition-colors rounded-sm"
@@ -1748,9 +1594,9 @@ export default function GitHubActivityPage() {
             )}
 
             {/* Other views placeholder */}
-            {selectedView !== "overview" && selectedView !== "streaks" && (
+            {selectedView !== "overview" && selectedView !== "streaks" && selectedView !== "calendar" && (
               <motion.div
-                key={selectedView}
+                key={`${selectedView}-placeholder`}
                 initial={{ opacity: 0, y: 20 }}
                 animate={{ opacity: 1, y: 0 }}
                 exit={{ opacity: 0, y: -20 }}

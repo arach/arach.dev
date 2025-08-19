@@ -535,7 +535,7 @@ export default function HomePage({ projects }: { projects: Project[] }) {
         <motion.div className="mb-20" {...fadeInUp}>
           <div className="mb-8">
             <pre
-              className="text-[6px] text-black mb-6 overflow-hidden font-mono leading-none tracking-tighter"
+              className="text-[5px] sm:text-[6px] text-black mb-6 overflow-hidden font-mono leading-none tracking-tighter"
               style={{
                 fontFamily:
                   'ui-monospace, "Cascadia Code", "Source Code Pro", Menlo, Consolas, "DejaVu Sans Mono", monospace',
@@ -550,7 +550,7 @@ export default function HomePage({ projects }: { projects: Project[] }) {
 │   ██║  ██║██║  ██║██║  ██║╚██████╗██║  ██║██╗██████╔╝███████╗ ╚████╔╝    │
 │   ╚═╝  ╚═╝╚═╝  ╚═╝╚═╝  ╚═╝ ╚═════╝╚═╝  ╚═╝╚═╝╚═════╝ ╚══════╝  ╚═══╝     │
 │                                                                          │
-╚──────────────────────────────────────────────────────────────────────────╗`}
+╚──────────────────────────────────────────────────────────────────────────╝`}
             </pre>
           </div>
           <div className="border-l-2 border-gray-600 pl-4 text-gray-600 mb-4 relative z-10 flex items-center justify-between">

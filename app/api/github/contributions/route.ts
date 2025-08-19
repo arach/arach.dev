@@ -21,7 +21,7 @@ interface GitHubContributionsAPIResponse {
 export async function GET(request: NextRequest) {
   const { searchParams } = new URL(request.url)
   const username = searchParams.get("username") || "arach"
-  const cacheKey = `github-contributions-${username}-3months`
+  const cacheKey = `github-contributions-${username}-6months`
 
   const requestStart = Date.now()
   console.log(`[API] 🚀 Processing request for ${username} at ${new Date().toISOString()}`)
@@ -29,7 +29,7 @@ export async function GET(request: NextRequest) {
   try {
     // Step 1: Check Neon database cache first
     console.log(`[API] 🔍 Checking Neon cache for key: ${cacheKey}`)
-    const cachedData = await neonCache.get(cacheKey)
+    const cachedData = await neonCache.get<any>(cacheKey)
 
     if (cachedData) {
       const responseTime = Date.now() - requestStart
@@ -63,7 +63,7 @@ export async function GET(request: NextRequest) {
     const responseData = {
       contributions,
       source: "api",
-      period: "3months",
+      period: "6months",
       message: "Fresh data from GitHub Contributions API",
       cached: false,
       _performance: {
@@ -73,9 +73,9 @@ export async function GET(request: NextRequest) {
       },
     }
 
-    // Step 3: Store in Neon cache (1 hour TTL)
+    // Step 3: Store in Neon cache (24 hour TTL)
     console.log(`[API] 💾 Storing fresh data in Neon cache`)
-    const cacheSuccess = await neonCache.set(cacheKey, username, responseData, 3600, "api")
+    const cacheSuccess = await neonCache.set(cacheKey, username, responseData, 86400, "api")
 
     if (cacheSuccess) {
       console.log(`[API] ✅ Successfully cached ${contributions.length} days for ${username}`)
@@ -89,7 +89,7 @@ export async function GET(request: NextRequest) {
 
     // Step 4: Try to get stale cache data as fallback
     console.log(`[API] 🔄 Attempting to get stale cache data as fallback`)
-    const staleData = await neonCache.getStale(cacheKey)
+    const staleData = await neonCache.getStale<any>(cacheKey)
 
     if (staleData) {
       const responseTime = Date.now() - requestStart
@@ -122,7 +122,7 @@ export async function GET(request: NextRequest) {
     const mockResponse = {
       contributions: mockContributions,
       source: "mock",
-      period: "3months",
+      period: "6months",
       message: "Using demo data - API unavailable and no cache",
       error: error instanceof Error ? error.message : "Unknown error",
       cached: false,
@@ -143,16 +143,16 @@ export async function GET(request: NextRequest) {
   }
 }
 
-function getTrailing3MonthsDateRange() {
+function getTrailing6MonthsDateRange() {
   const today = new Date()
   const yesterday = new Date(today)
   yesterday.setDate(yesterday.getDate() - 1)
 
-  const threeMonthsAgo = new Date(yesterday)
-  threeMonthsAgo.setMonth(threeMonthsAgo.getMonth() - 3)
+  const sixMonthsAgo = new Date(yesterday)
+  sixMonthsAgo.setMonth(sixMonthsAgo.getMonth() - 6)
 
   return {
-    startDate: threeMonthsAgo,
+    startDate: sixMonthsAgo,
     endDate: yesterday,
   }
 }
@@ -193,8 +193,8 @@ async function fetchContributionsFromAPI(username: string): Promise<Contribution
       throw new Error("Invalid response format from GitHub Contributions API")
     }
 
-    // Filter to only include trailing 3 months
-    const { startDate, endDate } = getTrailing3MonthsDateRange()
+    // Filter to only include trailing 6 months
+    const { startDate, endDate } = getTrailing6MonthsDateRange()
 
     const contributions: ContributionDay[] = data.contributions
       .filter((contrib) => {
@@ -222,7 +222,7 @@ function generateRealisticMockData(username: string): ContributionDay[] {
   console.log(`[API] 🎭 Generating realistic mock data for ${username}`)
 
   const contributions: ContributionDay[] = []
-  const { startDate, endDate } = getTrailing3MonthsDateRange()
+  const { startDate, endDate } = getTrailing6MonthsDateRange()
 
   // Use username to seed randomness for consistent mock data
   let seed = username.split("").reduce((acc, char) => acc + char.charCodeAt(0), 0)
