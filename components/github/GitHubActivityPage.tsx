@@ -499,10 +499,6 @@ export default function GitHubActivityPage() {
           <h1 className="text-2xl font-bold text-gray-900 mb-2">Error Loading GitHub Data</h1>
           <p className="text-red-600 mb-6">{error}</p>
           <div className="flex gap-4 justify-center">
-            <Button onClick={() => fetchGitHubData()} variant="outline">
-              <RefreshCw className="w-4 h-4 mr-2" />
-              Retry
-            </Button>
             <Link href="/">
               <Button variant="ghost">
                 <ArrowLeft className="w-4 h-4 mr-2" />

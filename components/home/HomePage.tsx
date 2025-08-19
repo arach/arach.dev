@@ -897,7 +897,9 @@ export default function HomePage({ projects }: { projects: Project[] }) {
               {filteredProjects.map((project, index) => (
                 <motion.div
                   key={`${selectedCategory}-${project.title}`}
-                  ref={(el) => (cardRefs.current[index] = el)}
+                  ref={(el) => {
+                    if (el) cardRefs.current[index] = el;
+                  }}
                   initial={{ opacity: 0, y: 20 }}
                   animate={{ opacity: 1, y: 0 }}
                   transition={{ duration: 0.5, delay: index * 0.1 }}
