@@ -3,6 +3,7 @@ import type { Metadata } from 'next'
 import "./globals.css";
 import Footer from "@/components/Footer";
 import Header from "@/components/Header";
+import { DebugToolbar } from "@/components/debug/DebugToolbar";
 
 const ibmPlexMono = IBM_Plex_Mono({ subsets: ["latin"], weight: ['300', '400', '500', '600'], variable: "--font-ibm-plex-mono" });
 
@@ -24,6 +25,7 @@ export default function RootLayout({
           {children}
         </main>
         <Footer />
+        <DebugToolbar />
       </body>
     </html>
   );
