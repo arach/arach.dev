@@ -16,6 +16,7 @@ export function executeCommand(command: string, onGameStart: (game: string) => v
                 '',
                 '  GitHub:   @arach',
                 '  Email:    arach@arach.dev',
+                '  Calendar: cal.com/arach/intro-chat',
                 '  Location: San Francisco, CA',
                 '',
                 '  Feel free to reach out for:',
