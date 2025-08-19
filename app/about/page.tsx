@@ -89,11 +89,6 @@ Tech Stack Expertise:
 - Infrastructure: AWS, GCP, Kubernetes, Terraform
 - Databases: PostgreSQL, Redis, DynamoDB, MongoDB
 
-Open Source & Projects:
-- Active maintainer of several open source projects
-- Building developer tools and productivity applications
-- Contributing to the tech community through code and content
-
 Current Focus:
 - Building innovative developer tools
 - Exploring AI/ML applications in software development
