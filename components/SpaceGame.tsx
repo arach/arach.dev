@@ -103,7 +103,7 @@ export default function SpaceGame() {
 
     return (
         <>
-            <div className="mb-2 text-orange-400 text-[10px]">
+            <div className="mb-2 text-orange-400 font-terminal">
                 Controls: [h/←] Left | [l/→] Right | [j] Pause | [k] Resume | [Space] Toggle | [ESC] Stop
             </div>
             <div

@@ -41,7 +41,7 @@ const TypewriterEffect: React.FC<{ text: string; onComplete?: () => void }> = ({
     }, []); // Empty dependency array - only run once on mount
 
     return (
-        <pre className="font-mono text-[10px] whitespace-pre-wrap overflow-auto leading-relaxed">
+        <pre className="font-terminal whitespace-pre-wrap overflow-auto leading-relaxed">
             {displayText}
         </pre>
     );
@@ -165,10 +165,10 @@ Feel free to reach out for collaborations or just to chat about tech!`;
                             </div>
                             <div className="text-xs">About</div>
                         </div>
-                        <div className="p-4 text-orange-400 relative min-h-[250px] whitespace-pre-wrap break-words text-[10px] leading-relaxed font-thin">
+                        <div className="p-4 text-orange-400 relative min-h-[250px] whitespace-pre-wrap break-words font-terminal leading-relaxed">
                             <TypewriterEffect text={aboutText} onComplete={() => setTextComplete(true)} />
                             {textComplete && (
-                                <div className="mt-0 text-[10px] font-thin">
+                                <div className="mt-0 font-terminal">
                                     <CommandLine onGameStart={() => setGameActive(true)} />
                                 </div>
                             )}
