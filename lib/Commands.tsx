@@ -3,9 +3,28 @@ export function executeCommand(command: string, onGameStart: (game: string) => v
         case 'help':
             return [
                 'Available commands:',
+                '  contact - Show contact information',
                 '  start space - Start the space game',
                 '  start tetris - Start the Tetris game',
                 '  exit - Return to homepage'
+            ]
+        case 'contact':
+            return [
+                '════════════════════════════════════════',
+                '           Contact Information          ',
+                '════════════════════════════════════════',
+                '',
+                '  GitHub:   @arach',
+                '  Email:    arach@arach.dev',
+                '  Location: San Francisco, CA',
+                '',
+                '  Feel free to reach out for:',
+                '  • Collaborations',
+                '  • Consulting opportunities',
+                '  • Technical discussions',
+                '  • Or just to chat about tech!',
+                '',
+                '════════════════════════════════════════'
             ]
         case 'start space':
             onGameStart('space')
