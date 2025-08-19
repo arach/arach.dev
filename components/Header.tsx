@@ -12,9 +12,7 @@ export default function Header() {
                 </Link>
                 <nav>
                     <ul className="flex space-x-6">
-                        <li><Link href="/projects" className="hover:text-white transition-colors cursor-pointer">Projects</Link></li>
                         <li><Link href="/github" className="hover:text-white transition-colors cursor-pointer">GitHub</Link></li>
-                        <li><Link href="/notes" className="hover:text-white transition-colors cursor-pointer">Notes</Link></li>
                         <li><Link href="/about" className="hover:text-white transition-colors cursor-pointer">About</Link></li>
                     </ul>
                 </nav>

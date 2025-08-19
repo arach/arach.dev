@@ -111,17 +111,15 @@ export function DebugToolbar() {
                    flex items-center justify-center
                    text-white hover:text-white
                    hover:bg-gray-800
-                   transition-all duration-300
+                   transition-all duration-150
                    hover:scale-110 active:scale-95
-                   group z-[9999] debug-button
+                   group z-[9999]
                    ${isRefreshing ? 'debug-button-loading' : ''}`}
         title={isCollapsed ? "Show debug toolbar" : "Hide debug toolbar"}
       >
-        <div className="debug-button-inner">
-          <Bug className={`w-5 h-5 transition-transform duration-300 ${
-            isCollapsed ? 'rotate-180' : ''
-          }`} />
-        </div>
+        <Bug className={`w-5 h-5 transition-transform duration-150 ease-out ${
+          isCollapsed ? '' : 'rotate-180'
+        } group-hover:scale-110`} />
       </button>
 
       {/* Debug panel - only visible when not collapsed */}
@@ -132,12 +130,15 @@ export function DebugToolbar() {
             animate={{ opacity: 1, y: 0, scale: 1 }}
             exit={{ opacity: 0, y: 20, scale: 0.95 }}
             transition={{ duration: 0.3, ease: [0.4, 0, 0.2, 1] }}
-            className={`fixed bottom-4 right-4 rounded-xl text-xs font-sans z-50 
+            className={`fixed bottom-16 right-4 rounded-xl text-xs font-sans z-50 
                        bg-gray-900/95 dark:bg-black/95 
                        backdrop-blur-sm
                        border border-gray-700/50 dark:border-gray-800
                        transition-all duration-700
-                       ${isExpanded ? 'w-[640px] shadow-[0_20px_50px_rgba(0,0,0,0.7)]' : 'w-[480px] shadow-2xl shadow-black/50'}`}
+                       max-h-[80vh] overflow-hidden
+                       ${isExpanded 
+                         ? 'w-[90vw] sm:w-[640px] max-w-[640px] shadow-[0_20px_50px_rgba(0,0,0,0.7)]' 
+                         : 'w-[90vw] sm:w-[480px] max-w-[480px] shadow-2xl shadow-black/50'}`}
           >
             {/* Header */}
             <div className="flex items-center justify-between p-3 border-b border-gray-700/50">
@@ -184,7 +185,7 @@ export function DebugToolbar() {
             </div>
 
             {/* Content */}
-            <div className="p-3">
+            <div className="p-3 max-h-[calc(80vh-60px)] overflow-y-auto">
               {/* Tab Navigation */}
               <div className="flex gap-1 mb-3">
                 <button
