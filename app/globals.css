@@ -82,8 +82,8 @@
 
   /* Terminal font styling with Geist Mono */
   .font-terminal {
-    font-family: var(--font-geist-mono), 'Courier New', monospace;
-    font-weight: 100;
+    font-family: var(--font-geist-mono), "ui-monospace", SFMono-Regular, Menlo, Monaco, Consolas, monospace;
+    font-weight: 400;
     letter-spacing: 0.02em;
     font-size: 10px;
   }
