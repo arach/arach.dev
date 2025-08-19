@@ -1,4 +1,5 @@
 import { IBM_Plex_Mono } from "next/font/google";
+import { GeistMono } from "geist/font/mono";
 import type { Metadata } from 'next'
 import "./globals.css";
 import Footer from "@/components/Footer";
@@ -18,8 +19,8 @@ export default function RootLayout({
   children: React.ReactNode;
 }>) {
   return (
-    <html lang="en" className="h-full">
-      <body className={`${ibmPlexMono.variable} font-mono text-gray-300 flex flex-col min-h-screen`}>
+    <html lang="en" className={`h-full ${GeistMono.variable}`}>
+      <body className={`${ibmPlexMono.variable} ${GeistMono.className} font-mono text-gray-300 flex flex-col min-h-screen`}>
         <Header />
         <main className="flex-grow">
           {children}
