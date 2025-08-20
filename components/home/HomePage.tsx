@@ -531,11 +531,11 @@ export default function HomePage({ projects }: { projects: Project[] }) {
 
   return (
     <TooltipProvider>
-      <div ref={containerRef} className="max-w-4xl mx-auto py-16 text-gray-900 text-xs relative z-45">
-        <motion.div className="mb-20" {...fadeInUp}>
-          <div className="mb-8">
+      <div ref={containerRef} className="max-w-4xl mx-auto py-4 sm:py-16 text-gray-900 text-xs relative z-45">
+        <motion.div className="mb-4 sm:mb-20" {...fadeInUp}>
+          <div className="mb-4 sm:mb-8">
             <pre
-              className="text-[3px] xs:text-[4px] sm:text-[5px] md:text-[6px] text-black mb-3 sm:mb-6 overflow-x-auto font-mono leading-none tracking-tighter"
+              className="text-[4px] xs:text-[5px] sm:text-[8px] md:text-[10px] lg:text-[12px] text-black mb-2 sm:mb-6 overflow-x-hidden leading-none tracking-tighter mx-auto text-center sm:text-left"
               style={{
                 fontFamily:
                   'ui-monospace, "Cascadia Code", "Source Code Pro", Menlo, Consolas, "DejaVu Sans Mono", monospace',
@@ -564,57 +564,6 @@ export default function HomePage({ projects }: { projects: Project[] }) {
               >
                 → more info
               </a>
-            </div>
-            <div className="flex flex-wrap items-center gap-1 sm:gap-2">
-              <GitHubContributions username="arach" />
-              <Tooltip>
-                <TooltipTrigger asChild>
-                  <Button
-                    variant="ghost"
-                    size="icon"
-                    className="h-6 w-6 text-gray-400 hover:text-gray-600"
-                    onClick={() => setShowStats(!showStats)}
-                  >
-                    <BarChart3 className="h-3 w-3" />
-                  </Button>
-                </TooltipTrigger>
-                <TooltipContent>
-                  <p className="text-xs">Show project statistics</p>
-                </TooltipContent>
-              </Tooltip>
-              <Tooltip>
-                <TooltipTrigger asChild>
-                  <Button
-                    variant="ghost"
-                    size="icon"
-                    className="h-6 w-6 text-gray-400 hover:text-gray-600"
-                    onClick={() => {
-                      setShowHelp(!showHelp)
-                      if (!keyboardMode) enterKeyboardMode()
-                    }}
-                  >
-                    <HelpCircle className="h-3 w-3" />
-                  </Button>
-                </TooltipTrigger>
-                <TooltipContent>
-                  <p className="text-xs">Show keyboard shortcuts (?)</p>
-                </TooltipContent>
-              </Tooltip>
-              <Tooltip>
-                <TooltipTrigger asChild>
-                  <Button
-                    variant="ghost"
-                    size="icon"
-                    className="h-6 w-6 text-gray-400 hover:text-gray-600"
-                    onClick={() => setAudioEnabled(!audioEnabled)}
-                  >
-                    {audioEnabled ? <Volume2 className="h-3 w-3" /> : <VolumeX className="h-3 w-3" />}
-                  </Button>
-                </TooltipTrigger>
-                <TooltipContent>
-                  <p className="text-xs">{audioEnabled ? "Disable" : "Enable"} audio feedback</p>
-                </TooltipContent>
-              </Tooltip>
             </div>
           </div>
         </motion.div>
@@ -770,10 +719,124 @@ export default function HomePage({ projects }: { projects: Project[] }) {
           )}
         </AnimatePresence>
 
-        <Section title="Projects">
-          {/* Category Filter */}
-          <div className="mb-6 relative z-45">
-            <div className="flex flex-wrap gap-2 mb-4">
+        <Section title="Projects" headerAction={
+          <div className="flex items-center gap-2">
+            <GitHubContributions username="arach" />
+            <Tooltip>
+              <TooltipTrigger asChild>
+                <Button
+                  variant="ghost"
+                  size="icon"
+                  className="h-7 w-7 text-gray-400 hover:text-gray-600"
+                  onClick={() => setShowStats(!showStats)}
+                >
+                  <BarChart3 className="h-3.5 w-3.5" />
+                </Button>
+              </TooltipTrigger>
+              <TooltipContent>
+                <p className="text-xs">Show project statistics</p>
+              </TooltipContent>
+            </Tooltip>
+            <Tooltip>
+              <TooltipTrigger asChild>
+                <Button
+                  variant="ghost"
+                  size="icon"
+                  className="h-7 w-7 text-gray-400 hover:text-gray-600"
+                  onClick={() => {
+                    setShowHelp(!showHelp)
+                    if (!keyboardMode) enterKeyboardMode()
+                  }}
+                >
+                  <HelpCircle className="h-3.5 w-3.5" />
+                </Button>
+              </TooltipTrigger>
+              <TooltipContent>
+                <p className="text-xs">Show keyboard shortcuts (?)</p>
+              </TooltipContent>
+            </Tooltip>
+            <Tooltip>
+              <TooltipTrigger asChild>
+                <Button
+                  variant="ghost"
+                  size="icon"
+                  className="h-7 w-7 text-gray-400 hover:text-gray-600"
+                  onClick={() => setAudioEnabled(!audioEnabled)}
+                >
+                  {audioEnabled ? <Volume2 className="h-3.5 w-3.5" /> : <VolumeX className="h-3.5 w-3.5" />}
+                </Button>
+              </TooltipTrigger>
+              <TooltipContent>
+                <p className="text-xs">{audioEnabled ? "Disable" : "Enable"} audio feedback</p>
+              </TooltipContent>
+            </Tooltip>
+          </div>
+        }>
+          {/* Category Filter - Desktop only */}
+          <div className="mb-4 sm:mb-6 relative z-45">
+            {/* Mobile projects header */}
+            <div className="sm:hidden mb-4">
+              <div className="flex items-center justify-between">
+                <div className="flex items-center gap-2">
+                  <span className="text-sm font-semibold text-gray-700">Projects</span>
+                  <span className="text-xs text-gray-500">({projects.length})</span>
+                </div>
+                <div className="flex items-center gap-1">
+                  <GitHubContributions username="arach" />
+                  <Tooltip>
+                    <TooltipTrigger asChild>
+                      <Button
+                        variant="ghost"
+                        size="icon"
+                        className="h-6 w-6 text-gray-400 hover:text-gray-600"
+                        onClick={() => setShowStats(!showStats)}
+                      >
+                        <BarChart3 className="h-3 w-3" />
+                      </Button>
+                    </TooltipTrigger>
+                    <TooltipContent>
+                      <p className="text-xs">Show project statistics</p>
+                    </TooltipContent>
+                  </Tooltip>
+                  <Tooltip>
+                    <TooltipTrigger asChild>
+                      <Button
+                        variant="ghost"
+                        size="icon"
+                        className="h-6 w-6 text-gray-400 hover:text-gray-600"
+                        onClick={() => {
+                          setShowHelp(!showHelp)
+                          if (!keyboardMode) enterKeyboardMode()
+                        }}
+                      >
+                        <HelpCircle className="h-3 w-3" />
+                      </Button>
+                    </TooltipTrigger>
+                    <TooltipContent>
+                      <p className="text-xs">Show keyboard shortcuts (?)</p>
+                    </TooltipContent>
+                  </Tooltip>
+                  <Tooltip>
+                    <TooltipTrigger asChild>
+                      <Button
+                        variant="ghost"
+                        size="icon"
+                        className="h-6 w-6 text-gray-400 hover:text-gray-600"
+                        onClick={() => setAudioEnabled(!audioEnabled)}
+                      >
+                        {audioEnabled ? <Volume2 className="h-3 w-3" /> : <VolumeX className="h-3 w-3" />}
+                      </Button>
+                    </TooltipTrigger>
+                    <TooltipContent>
+                      <p className="text-xs">{audioEnabled ? "Disable" : "Enable"} audio feedback</p>
+                    </TooltipContent>
+                  </Tooltip>
+                </div>
+              </div>
+            </div>
+            
+            {/* Desktop category buttons */}
+            <div className="hidden sm:flex flex-wrap gap-2 mb-4">
               <Button
                 variant={selectedCategory === "all" ? "default" : "outline"}
                 size="sm"
@@ -824,7 +887,7 @@ export default function HomePage({ projects }: { projects: Project[] }) {
             <motion.div
               initial={{ opacity: 0, y: -10 }}
               animate={{ opacity: 1, y: 0 }}
-              className="mb-4 p-4 bg-blue-50 border border-blue-200 rounded-md text-xs text-blue-800 relative z-45"
+              className="hidden sm:block mb-4 p-4 bg-blue-50 border border-blue-200 rounded-md text-xs text-blue-800 relative z-45"
             >
               <div className="flex items-center justify-between mb-2">
                 <div className="flex items-center gap-4">
@@ -892,7 +955,7 @@ export default function HomePage({ projects }: { projects: Project[] }) {
               animate={{ opacity: 1, y: 0 }}
               exit={{ opacity: 0, y: -20 }}
               transition={{ duration: 0.3 }}
-              className="grid grid-cols-1 lg:grid-cols-2 gap-6"
+              className="grid grid-cols-2 lg:grid-cols-2 gap-2 sm:gap-4 lg:gap-6"
             >
               {filteredProjects.map((project, index) => (
                 <motion.div
@@ -935,16 +998,53 @@ export default function HomePage({ projects }: { projects: Project[] }) {
                           }
                         }}
                       >
-                        <CardHeader className="flex-grow transition-all duration-300 group-hover:pb-4">
-                          <div className="flex justify-between items-start mb-2">
-                            <CardTitle
-                              className={`transition-colors duration-300 group-hover:text-blue-600 ${
-                                focusedIndex === index && keyboardMode ? "text-blue-600" : ""
-                              }`}
-                            >
-                              {project.title}
-                            </CardTitle>
-                            <div className="flex gap-1 transition-transform duration-300 group-hover:scale-105">
+                        <CardHeader className="flex-grow transition-all duration-300 group-hover:pb-4 p-3 sm:p-6">
+                          <div className="flex flex-col sm:flex-row sm:justify-between sm:items-start mb-2 gap-1 sm:gap-0">
+                            <div className="flex items-center justify-between w-full sm:w-auto">
+                              <div className="flex items-center gap-1.5">
+                                <CardTitle
+                                  className={`text-sm sm:text-base transition-colors duration-300 group-hover:text-blue-600 ${
+                                    focusedIndex === index && keyboardMode ? "text-blue-600" : ""
+                                  }`}
+                                >
+                                  {project.title}
+                                </CardTitle>
+                                {/* Show category inline on mobile */}
+                                <span className="sm:hidden text-[9px] text-gray-500">
+                                  {project.category === "Tool" && "🛠️"}
+                                  {project.category === "AI/ML" && "🤖"}
+                                  {project.category === "Web" && "🌐"}
+                                </span>
+                              </div>
+                              {/* Mobile buttons - inline with title */}
+                              <div className="flex gap-1 sm:hidden">
+                                <Button
+                                  variant="outline"
+                                  size="icon"
+                                  className="h-5 w-5 transition-all duration-300 bg-transparent hover:bg-blue-50 hover:border-blue-200 hover:text-blue-600"
+                                  tabIndex={-1}
+                                  onClick={(e) => {
+                                    e.stopPropagation()
+                                    window.open(project.link, "_blank")
+                                  }}
+                                >
+                                  <Globe className="h-2.5 w-2.5" />
+                                </Button>
+                                <Button
+                                  variant="outline"
+                                  size="icon"
+                                  className="h-5 w-5 transition-all duration-300 bg-transparent hover:bg-gray-900 hover:border-gray-700 hover:text-white"
+                                  tabIndex={-1}
+                                  onClick={(e) => {
+                                    e.stopPropagation()
+                                    window.open(project.github, "_blank")
+                                  }}
+                                >
+                                  <Github className="h-2.5 w-2.5" />
+                                </Button>
+                              </div>
+                            </div>
+                            <div className="hidden sm:flex gap-1 transition-transform duration-300 group-hover:scale-105">
                               {project.tags.map((tag) => (
                                 <span
                                   key={tag}
@@ -958,19 +1058,19 @@ export default function HomePage({ projects }: { projects: Project[] }) {
                             </div>
                           </div>
                           <CardDescription
-                            className={`text-xs font-light transition-colors duration-300 group-hover:text-gray-700 ${
+                            className={`text-[10px] sm:text-xs font-light transition-colors duration-300 group-hover:text-gray-700 line-clamp-2 sm:line-clamp-none ${
                               focusedIndex === index && keyboardMode ? "text-gray-700" : ""
                             }`}
                           >
                             {project.description}
                           </CardDescription>
                         </CardHeader>
-                        <CardContent className="pt-0 transition-all duration-300 group-hover:pt-2">
-                          <div className="flex gap-2 transition-transform duration-300 group-hover:translate-x-1">
+                        <CardContent className="hidden sm:block pt-0 transition-all duration-300 group-hover:pt-2 px-3 pb-3 sm:px-6 sm:pb-6">
+                          <div className="flex gap-1 sm:gap-2 transition-transform duration-300 group-hover:translate-x-1">
                             <Button
                               variant="outline"
                               size="icon"
-                              className="h-8 w-8 transition-all duration-300 bg-transparent hover:bg-blue-50 hover:border-blue-200 hover:text-blue-600 hover:shadow-md hover:scale-110 transform"
+                              className="h-6 w-6 sm:h-8 sm:w-8 transition-all duration-300 bg-transparent hover:bg-blue-50 hover:border-blue-200 hover:text-blue-600 hover:shadow-md hover:scale-110 transform"
                               style={{ willChange: "transform" }}
                               tabIndex={-1}
                               onMouseEnter={() => {
@@ -981,13 +1081,13 @@ export default function HomePage({ projects }: { projects: Project[] }) {
                                 window.open(project.link, "_blank")
                               }}
                             >
-                              <Globe className="h-4 w-4 transition-transform duration-300 hover:rotate-12" />
+                              <Globe className="h-3 w-3 sm:h-4 sm:w-4 transition-transform duration-300 hover:rotate-12" />
                               <span className="sr-only">Visit site</span>
                             </Button>
                             <Button
                               variant="outline"
                               size="icon"
-                              className="h-8 w-8 transition-all duration-300 bg-transparent hover:bg-gray-900 hover:border-gray-700 hover:text-white hover:shadow-md hover:scale-110 transform"
+                              className="h-6 w-6 sm:h-8 sm:w-8 transition-all duration-300 bg-transparent hover:bg-gray-900 hover:border-gray-700 hover:text-white hover:shadow-md hover:scale-110 transform"
                               style={{ willChange: "transform" }}
                               tabIndex={-1}
                               onMouseEnter={() => {
@@ -998,7 +1098,7 @@ export default function HomePage({ projects }: { projects: Project[] }) {
                                 window.open(project.github, "_blank")
                               }}
                             >
-                              <Github className="h-4 w-4 transition-transform duration-300 hover:rotate-12" />
+                              <Github className="h-3 w-3 sm:h-4 sm:w-4 transition-transform duration-300 hover:rotate-12" />
                               <span className="sr-only">View source</span>
                             </Button>
                           </div>
@@ -1019,9 +1119,12 @@ export default function HomePage({ projects }: { projects: Project[] }) {
   )
 }
 
-const Section = ({ title, children }: { title: string; children: React.ReactNode }) => (
-  <motion.section className="mb-16" {...fadeInUp}>
-    <h2 className="text-2xl font-bold mb-6 border-b border-gray-700 pb-2">{title}</h2>
+const Section = ({ title, children, headerAction }: { title: string; children: React.ReactNode; headerAction?: React.ReactNode }) => (
+  <motion.section className="mb-8 sm:mb-16" {...fadeInUp}>
+    <div className="hidden sm:flex items-center justify-between mb-6 border-b border-gray-700 pb-2">
+      <h2 className="text-2xl font-bold">{title}</h2>
+      {headerAction}
+    </div>
     {children}
   </motion.section>
 )

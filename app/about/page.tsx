@@ -4,16 +4,10 @@ import React, { useState, useEffect } from 'react';
 import Link from "next/link";
 import { Button } from "@/components/ui/button";
 import { motion } from "framer-motion";
-import {
-    Tooltip,
-    TooltipContent,
-    TooltipProvider,
-    TooltipTrigger,
-} from "@/components/ui/tooltip";
 import CommandLine from '@/components/CommandLine';
 import SpaceGame from '@/components/SpaceGame';
 
-const TypewriterEffect: React.FC<{ text: string; onComplete?: () => void }> = ({ text, onComplete }) => {
+const TypewriterEffect: React.FC<{ text: string; onComplete?: () => void; isMobile?: boolean }> = ({ text, onComplete, isMobile = false }) => {
     const [displayText, setDisplayText] = useState('');
     const [isTyping, setIsTyping] = useState(false);
 
@@ -24,7 +18,7 @@ const TypewriterEffect: React.FC<{ text: string; onComplete?: () => void }> = ({
         setIsTyping(true);
         setDisplayText(''); // Clear any existing text
         let i = 0;
-        const charsPerInterval = 10; // Stream 10 characters at a time for even faster output
+        const charsPerInterval = isMobile ? 20 : 10; // Faster on mobile since less text
         const intervalId = setInterval(() => {
             if (i < text.length) {
                 const nextChunk = text.slice(i, i + charsPerInterval);
@@ -42,8 +36,19 @@ const TypewriterEffect: React.FC<{ text: string; onComplete?: () => void }> = ({
     }, []); // Empty dependency array - only run once on mount
 
     return (
-        <pre className="text-[8px] sm:text-[10px] font-mono whitespace-pre-wrap overflow-x-auto leading-relaxed">
-            {displayText}
+        <pre className="font-terminal whitespace-pre-wrap overflow-hidden leading-relaxed">
+            {displayText.split('\n').map((line, index) => {
+                // Check if this line is part of the ASCII art box
+                if (line.includes('╔') || line.includes('│') || line.includes('╚') || 
+                    line.includes('█') || line.includes('██') || line.includes('╗')) {
+                    return (
+                        <span key={index} className="text-[4px] xs:text-[5px] sm:text-[8px] md:text-[10px] block">
+                            {line}{'\n'}
+                        </span>
+                    );
+                }
+                return <span key={index}>{line}{'\n'}</span>;
+            })}
         </pre>
     );
 };
@@ -51,8 +56,25 @@ const TypewriterEffect: React.FC<{ text: string; onComplete?: () => void }> = ({
 export default function AboutPage() {
     const [gameActive, setGameActive] = useState(false);
     const [textComplete, setTextComplete] = useState(false);
+    const [isMobile, setIsMobile] = useState(false);
+    
+    useEffect(() => {
+        const checkMobile = () => {
+            setIsMobile(window.innerWidth < 640);
+        };
+        checkMobile();
+        window.addEventListener('resize', checkMobile);
+        return () => window.removeEventListener('resize', checkMobile);
+    }, []);
 
-    const aboutText = `╔──────────────────────────────────────────────────────────────────────────╗
+    const mobileAboutText = `$ whoami
+Arach Tchoupani
+4x CTO · ex-Meta
+
+$ _
+`;
+
+    const desktopAboutText = `╔──────────────────────────────────────────────────────────────────────────╗
 │                                                                          │
 │    █████╗ ██████╗  █████╗  ██████╗██╗  ██╗   ██████╗ ███████╗██╗   ██╗   │
 │   ██╔══██╗██╔══██╗██╔══██╗██╔════╝██║  ██║   ██╔══██╗██╔════╝██║   ██║   │
@@ -63,133 +85,96 @@ export default function AboutPage() {
 │                                                                          │
 ╚──────────────────────────────────────────────────────────────────────────╝
 
-Last login: ${new Date().toUTCString()}
-arach@arach.dev:~$ whoami
-Arach Tchoupani
+arach@arach.dev:~$ cat about.txt
+========================================
+           ARACH TCHOUPANI
+========================================
 
-arach@arach.dev:~$ cat /etc/about.txt
-================================================================================
-                            About Arach Tchoupani
-================================================================================
+PROFESSIONAL EXPERIENCE:
+• 4x ex-CTO (led engineering teams from seed to Series B)
+• 2x ex-founder (built and scaled technical products)
+• ex-Meta Engineering (infrastructure and developer tools)
 
-Professional Experience:
-- 4x ex-CTO (led engineering teams from seed to Series B)
-- 2x ex-founder (built and scaled technical products)
-- ex-Meta Engineering (infrastructure and developer tools)
+TECHNICAL LEADERSHIP:
+• Built and led engineering teams of 5-50+ engineers
+• Architected systems handling millions of users
+• Specialized in developer experience and platform
+  engineering
 
-Technical Leadership:
-- Built and led engineering teams of 5-50+ engineers
-- Architected systems handling millions of users
-- Specialized in developer experience and platform engineering
-- Strong focus on distributed systems and cloud infrastructure
+TECH STACK:
+• Languages: TypeScript, Python, Go, Rust, Swift
+• Frontend: React, Next.js, Tauri, SwiftUI
+• Backend: Node.js, FastAPI, GraphQL, gRPC
+• Infrastructure: AWS, GCP, Kubernetes, Terraform
+• Databases: PostgreSQL, Redis, DynamoDB, MongoDB
 
-Tech Stack Expertise:
-- Languages: TypeScript, Python, Go, Rust, Swift
-- Frontend: React, Next.js, Tauri, SwiftUI
-- Backend: Node.js, FastAPI, GraphQL, gRPC
-- Infrastructure: AWS, GCP, Kubernetes, Terraform
-- Databases: PostgreSQL, Redis, DynamoDB, MongoDB
+CURRENT FOCUS:
+• code every day
 
-Current Focus:
-- Building innovative developer tools
-- Exploring AI/ML applications in software development
-- Mentoring the next generation of engineers
+CONTACT:
+• GitHub: @arach
+• Email: arach@arach.dev
+• Location: San Francisco, CA or Montreal, CA
 
-Contact:
-- GitHub: @arach
-- Email: arach@arach.dev
-- Location: San Francisco, CA
+========================================
+arach@arach.dev:~$ echo "Feel free to reach out!"
+Feel free to reach out!
 
-================================================================================
+arach@arach.dev:~$ _`;
 
-arach@arach.dev:~$ ls -la /home/arach/interests/
-total 42
-drwxr-xr-x  2 arach arach 4096 Nov 21 10:00 .
-drwxr-xr-x 10 arach arach 4096 Nov 21 10:00 ..
--rw-r--r--  1 arach arach  512 Nov 21 10:00 ai_ml.txt
--rw-r--r--  1 arach arach  512 Nov 21 10:00 developer_tools.txt
--rw-r--r--  1 arach arach  512 Nov 21 10:00 distributed_systems.txt
--rw-r--r--  1 arach arach  512 Nov 21 10:00 open_source.txt
--rw-r--r--  1 arach arach  512 Nov 21 10:00 team_building.txt
-
-arach@arach.dev:~$ uptime
-up 10+ years, building awesome stuff
-
-arach@arach.dev:~$ echo "Feel free to reach out for collaborations or just to chat about tech!"
-Feel free to reach out for collaborations or just to chat about tech!`;
+    const aboutText = isMobile ? mobileAboutText : desktopAboutText;
 
     return (
-        <TooltipProvider>
-            <div className="min-h-screen flex flex-col font-mono text-[8px] sm:text-[10px] text-orange-400
-           p-2 sm:p-4 rounded-lg shadow-lg mb-4 bg-slate-800">
-                <div className="flex-grow flex items-start justify-center p-2 sm:p-4 overflow-auto h-[80vh]">
-                    <motion.div
-                        initial={{ opacity: 0, y: -20 }}
-                        animate={{ opacity: 1, y: 0 }}
-                        transition={{ duration: 0.5 }}
-                        className="w-full max-w-4xl lg:max-w-6xl mx-auto bg-slate-700 border border-slate-600 rounded-md shadow-lg overflow-hidden mt-2 sm:mt-4 min-h-[70vh] sm:min-h-[90vh]"
-                    >
-                        <div className="border-b border-slate-600 p-1.5 sm:p-2 text-orange-400 font-thin text-[8px] sm:text-[10px] flex items-center justify-between">
+        <div className="min-h-screen flex flex-col font-terminal text-orange-400 bg-slate-800">
+            <div className="flex-grow flex items-start justify-center overflow-auto">
+                <motion.div
+                    initial={{ opacity: 0 }}
+                    animate={{ opacity: 1 }}
+                    transition={{ duration: 0.3 }}
+                    className="w-full h-full bg-slate-800"
+                >
+                    {/* Desktop terminal header */}
+                    <div className="hidden sm:block border-b border-slate-600 p-2 text-orange-400 font-terminal">
+                        <div className="flex items-center justify-between max-w-4xl mx-auto">
                             <div className="flex items-center">
                                 <div className="mr-2 flex space-x-1">
-                                    <Tooltip>
-                                        <TooltipTrigger>
-                                            <div className="w-3 h-3 rounded-full bg-red-500 cursor-pointer"></div>
-                                        </TooltipTrigger>
-                                        <TooltipContent>
-                                            <p>Close</p>
-                                        </TooltipContent>
-                                    </Tooltip>
-                                    <Tooltip>
-                                        <TooltipTrigger>
-                                            <div className="w-3 h-3 rounded-full bg-yellow-500 cursor-pointer"></div>
-                                        </TooltipTrigger>
-                                        <TooltipContent>
-                                            <p>Minimize</p>
-                                        </TooltipContent>
-                                    </Tooltip>
-                                    <Tooltip>
-                                        <TooltipTrigger>
-                                            <div className="w-3 h-3 rounded-full bg-green-500 cursor-pointer"></div>
-                                        </TooltipTrigger>
-                                        <TooltipContent>
-                                            <p>Maximize</p>
-                                        </TooltipContent>
-                                    </Tooltip>
+                                    <div className="w-3 h-3 rounded-full bg-red-500"></div>
+                                    <div className="w-3 h-3 rounded-full bg-yellow-500"></div>
+                                    <div className="w-3 h-3 rounded-full bg-green-500"></div>
                                 </div>
                                 arach.dev Terminal
                             </div>
-                            <div className="text-[10px] sm:text-xs">About</div>
+                            <div className="text-xs">About</div>
                         </div>
-                        <div className="p-2 sm:p-4 text-orange-400 relative min-h-[200px] sm:min-h-[250px] whitespace-pre-wrap break-all sm:break-words overflow-x-auto">
-                            <TypewriterEffect text={aboutText} onComplete={() => setTextComplete(true)} />
-                            {textComplete && (
-                                <div className="mt-0 font-terminal">
-                                    <CommandLine onGameStart={() => setGameActive(true)} />
-                                </div>
-                            )}
-                            {gameActive && <SpaceGame />}
-                        </div>
-                    </motion.div>
-                </div>
-                <motion.div
-                    initial={{ opacity: 0, y: 20 }}
-                    animate={{ opacity: 1, y: 0 }}
-                    transition={{ duration: 0.5, delay: 0.5 }}
-                    className="flex justify-center pb-6 gap-4"
-                >
-                    <Link href="/">
-                        <Button variant="outline" className="bg-slate-700 text-orange-400 border-orange-400 hover:bg-orange-400 hover:text-slate-800 transition-colors duration-300 font-thin text-xs">
-                            Back to Home
-                        </Button>
-                    </Link>
-                    <Link href="/github">
-                        <Button variant="outline" className="bg-slate-700 text-orange-400 border-orange-400 hover:bg-orange-400 hover:text-slate-800 transition-colors duration-300 font-thin text-xs">
-                            View GitHub Activity
-                        </Button>
-                    </Link>
+                    </div>
+                    <div className="p-4 sm:p-8 text-orange-400 max-w-4xl mx-auto">
+                        <TypewriterEffect text={aboutText} onComplete={() => setTextComplete(true)} isMobile={isMobile} />
+                        {textComplete && (
+                            <div className="mt-4 font-terminal">
+                                <CommandLine onGameStart={() => setGameActive(true)} />
+                            </div>
+                        )}
+                        {gameActive && <SpaceGame />}
+                    </div>
                 </motion.div>
             </div>
-        </TooltipProvider>
+            <motion.div
+                initial={{ opacity: 0, y: 20 }}
+                animate={{ opacity: 1, y: 0 }}
+                transition={{ duration: 0.5, delay: 0.5 }}
+                className="flex justify-center pb-6 gap-4"
+            >
+                <Link href="/">
+                    <Button variant="outline" className="bg-slate-700 text-orange-400 border-orange-400 hover:bg-orange-400 hover:text-slate-800 transition-colors duration-300 font-terminal text-xs">
+                        Back to Home
+                    </Button>
+                </Link>
+                <Link href="/github">
+                    <Button variant="outline" className="bg-slate-700 text-orange-400 border-orange-400 hover:bg-orange-400 hover:text-slate-800 transition-colors duration-300 font-terminal text-xs">
+                        View GitHub Activity
+                    </Button>
+                </Link>
+            </motion.div>
+        </div>
     );
 }

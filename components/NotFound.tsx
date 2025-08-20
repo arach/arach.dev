@@ -3,12 +3,6 @@ import React, { useState, useEffect } from 'react';
 import Link from "next/link";
 import { Button } from "@/components/ui/button";
 import { motion, AnimatePresence } from "framer-motion";
-import {
-    Tooltip,
-    TooltipContent,
-    TooltipProvider,
-    TooltipTrigger,
-} from "@/components/ui/tooltip";
 import CommandLine from '@/components/CommandLine'
 import SpaceGame from '@/components/SpaceGame'
 
@@ -19,7 +13,7 @@ interface NotFoundProps {
     buttonLink?: string;
 }
 
-const TypewriterEffect: React.FC<{ text: string; onComplete?: () => void }> = ({ text, onComplete }) => {
+const TypewriterEffect: React.FC<{ text: string; onComplete?: () => void; isMobile?: boolean }> = ({ text, onComplete, isMobile = false }) => {
     const [displayText, setDisplayText] = useState('');
     const [isTyping, setIsTyping] = useState(false);
 
@@ -30,7 +24,7 @@ const TypewriterEffect: React.FC<{ text: string; onComplete?: () => void }> = ({
         setIsTyping(true);
         setDisplayText(''); // Clear any existing text
         let i = 0;
-        const charsPerInterval = 10; // Stream 10 characters at a time for even faster output
+        const charsPerInterval = isMobile ? 20 : 10; // Faster on mobile since less text
         const intervalId = setInterval(() => {
             if (i < text.length) {
                 const nextChunk = text.slice(i, i + charsPerInterval);
@@ -48,8 +42,19 @@ const TypewriterEffect: React.FC<{ text: string; onComplete?: () => void }> = ({
     }, []); // Empty dependency array - only run once on mount
 
     return (
-        <pre className="text-[8px] sm:text-[10px] font-mono whitespace-pre-wrap overflow-x-auto leading-relaxed">
-            {displayText}
+        <pre className="font-terminal whitespace-pre-wrap overflow-hidden leading-relaxed">
+            {displayText.split('\n').map((line, index) => {
+                // Check if this line is part of the ASCII art box
+                if (line.includes('╔') || line.includes('│') || line.includes('╚') || 
+                    line.includes('█') || line.includes('██') || line.includes('╗')) {
+                    return (
+                        <span key={index} className="text-[4px] xs:text-[5px] sm:text-[8px] md:text-[10px] block">
+                            {line}{'\n'}
+                        </span>
+                    );
+                }
+                return <span key={index}>{line}{'\n'}</span>;
+            })}
         </pre>
     );
 };
@@ -69,7 +74,17 @@ const NotFound: React.FC<NotFoundProps> = ({
         return () => clearTimeout(timer);
     }, []);
 
-    const errorText = `╔──────────────────────────────────────────────────────────────────────────╗
+    // Mobile-first simple terminal text
+    const mobileErrorText = `$ pwd
+${typeof window !== 'undefined' ? window.location.pathname : ''}
+
+404: Not Found
+
+$ help
+`;
+
+    // Desktop full terminal experience  
+    const desktopErrorText = `╔──────────────────────────────────────────────────────────────────────────╗
 │                                                                          │
 │    █████╗ ██████╗  █████╗  ██████╗██╗  ██╗   ██████╗ ███████╗██╗   ██╗   │
 │   ██╔══██╗██╔══██╗██╔══██╗██╔════╝██║  ██║   ██╔══██╗██╔════╝██║   ██║   │
@@ -107,80 +122,72 @@ Unable to locate "${typeof window !== 'undefined' ? window.location.pathname : '
 ${domain.split('.')[0]}@arach.dev:~$ echo "Suggestion: The page may have been moved or deleted."
 Suggestion: The page may have been moved or deleted.`;
 
+    // Detect if mobile
+    const [isMobile, setIsMobile] = useState(false);
+    
+    useEffect(() => {
+        const checkMobile = () => {
+            setIsMobile(window.innerWidth < 640);
+        };
+        checkMobile();
+        window.addEventListener('resize', checkMobile);
+        return () => window.removeEventListener('resize', checkMobile);
+    }, []);
+
+    const errorText = isMobile ? mobileErrorText : desktopErrorText;
+
     return (
-        <TooltipProvider>
-            <div className="min-h-screen flex flex-col font-mono text-[8px] sm:text-[10px] text-orange-400
-           p-2 sm:p-4 rounded-lg shadow-lg mb-4 bg-slate-800">
-                <div className="flex-grow flex items-start justify-center p-2 sm:p-4 overflow-auto h-[80vh]">
-                    <motion.div
-                        initial={{ opacity: 0, y: -20 }}
-                        animate={{ opacity: 1, y: 0 }}
-                        transition={{ duration: 0.5 }}
-                        className="w-full max-w-4xl mx-auto bg-slate-700 border border-slate-600 rounded-md shadow-lg overflow-hidden mt-2 sm:mt-4 min-h-[70vh] sm:min-h-[90vh]"
-                    >
-                        <div className="border-b border-slate-600 p-1.5 sm:p-2 text-orange-400 font-thin text-[8px] sm:text-[10px] flex items-center justify-between">
+        <div className="min-h-screen flex flex-col font-terminal text-orange-400 bg-slate-800">
+            <div className="flex-grow flex items-start justify-center overflow-auto">
+                <motion.div
+                    initial={{ opacity: 0 }}
+                    animate={{ opacity: 1 }}
+                    transition={{ duration: 0.3 }}
+                    className="w-full h-full bg-slate-800"
+                >
+                    {/* Desktop terminal header */}
+                    <div className="hidden sm:block border-b border-slate-600 p-2 text-orange-400 font-terminal">
+                        <div className="flex items-center justify-between max-w-4xl mx-auto">
                             <div className="flex items-center">
                                 <div className="mr-2 flex space-x-1">
-                                    <Tooltip>
-                                        <TooltipTrigger>
-                                            <div className="w-3 h-3 rounded-full bg-red-500 cursor-pointer"></div>
-                                        </TooltipTrigger>
-                                        <TooltipContent>
-                                            <p>Close</p>
-                                        </TooltipContent>
-                                    </Tooltip>
-                                    <Tooltip>
-                                        <TooltipTrigger>
-                                            <div className="w-3 h-3 rounded-full bg-yellow-500 cursor-pointer"></div>
-                                        </TooltipTrigger>
-                                        <TooltipContent>
-                                            <p>Minimize</p>
-                                        </TooltipContent>
-                                    </Tooltip>
-                                    <Tooltip>
-                                        <TooltipTrigger>
-                                            <div className="w-3 h-3 rounded-full bg-green-500 cursor-pointer"></div>
-                                        </TooltipTrigger>
-                                        <TooltipContent>
-                                            <p>Maximize</p>
-                                        </TooltipContent>
-                                    </Tooltip>
+                                    <div className="w-3 h-3 rounded-full bg-red-500"></div>
+                                    <div className="w-3 h-3 rounded-full bg-yellow-500"></div>
+                                    <div className="w-3 h-3 rounded-full bg-green-500"></div>
                                 </div>
                                 {domain} Terminal
                             </div>
-                            <div className="text-[10px] sm:text-xs">404 Not Found</div>
+                            <div className="text-xs">404 Not Found</div>
                         </div>
-                        <div className="p-2 sm:p-4 text-orange-400 relative min-h-[200px] sm:min-h-[250px] whitespace-pre-wrap break-all sm:break-words overflow-x-auto">
-                            <TypewriterEffect text={errorText} onComplete={() => setTextComplete(true)} />
-                            {textComplete && (
-                                <div className="mt-0 font-terminal">
-                                    <CommandLine onGameStart={() => setGameActive(true)} />
-                                </div>
-                            )}
-                            {gameActive && <SpaceGame />}
-                        </div>
-
-                    </motion.div>
-                </div>
-                <AnimatePresence>
-                    {showButton && (
-                        <motion.div
-                            initial={{ opacity: 0, y: 20 }}
-                            animate={{ opacity: 1, y: 0 }}
-                            exit={{ opacity: 0, y: 20 }}
-                            transition={{ duration: 0.5 }}
-                            className="flex justify-center pb-6"
-                        >
-                            <Link href={buttonLink}>
-                                <Button variant="outline" className="bg-slate-700 text-orange-400 border-orange-400 hover:bg-orange-400 hover:text-slate-800 transition-colors duration-300 font-thin text-xs">
-                                    {buttonText}
-                                </Button>
-                            </Link>
-                        </motion.div>
-                    )}
-                </AnimatePresence>
+                    </div>
+                    <div className="p-4 sm:p-8 text-orange-400 max-w-4xl mx-auto">
+                        <TypewriterEffect text={errorText} onComplete={() => setTextComplete(true)} isMobile={isMobile} />
+                        {textComplete && (
+                            <div className="mt-4 font-terminal">
+                                <CommandLine onGameStart={() => setGameActive(true)} />
+                            </div>
+                        )}
+                        {gameActive && <SpaceGame />}
+                    </div>
+                </motion.div>
             </div>
-        </TooltipProvider >
+            <AnimatePresence>
+                {showButton && (
+                    <motion.div
+                        initial={{ opacity: 0, y: 20 }}
+                        animate={{ opacity: 1, y: 0 }}
+                        exit={{ opacity: 0, y: 20 }}
+                        transition={{ duration: 0.5 }}
+                        className="flex justify-center pb-6"
+                    >
+                        <Link href={buttonLink}>
+                            <Button variant="outline" className="bg-slate-700 text-orange-400 border-orange-400 hover:bg-orange-400 hover:text-slate-800 transition-colors duration-300 font-terminal text-xs">
+                                {buttonText}
+                            </Button>
+                        </Link>
+                    </motion.div>
+                )}
+            </AnimatePresence>
+        </div>
     );
 }
 
