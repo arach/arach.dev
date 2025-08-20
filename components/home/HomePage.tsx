@@ -1011,9 +1011,12 @@ export default function HomePage({ projects }: { projects: Project[] }) {
                                 </CardTitle>
                                 {/* Show category inline on mobile */}
                                 <span className="sm:hidden text-[9px] text-gray-500">
-                                  {project.category === "Tool" && "🛠️"}
-                                  {project.category === "AI/ML" && "🤖"}
-                                  {project.category === "Web" && "🌐"}
+                                  {(() => {
+                                    const category = categories.find(cat => 
+                                      cat.projects.some(p => p.title === project.title)
+                                    );
+                                    return category?.icon || "";
+                                  })()}
                                 </span>
                               </div>
                               {/* Mobile buttons - inline with title */}
