@@ -9,9 +9,9 @@
   }
 }
 
-/* Loading state animation */
+/* Loading state animation - faster */
 .debug-button-loading svg {
-  animation: spinLoad 1s linear infinite;
+  animation: spinLoad 0.3s linear infinite;
 }
 
 /* Smooth transitions for state changes */

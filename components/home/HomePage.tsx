@@ -721,7 +721,7 @@ export default function HomePage({ projects }: { projects: Project[] }) {
 
         <Section title="Projects" headerAction={
           <div className="flex items-center gap-2">
-            <GitHubContributions username="arach" />
+            {/* <GitHubContributions username="arach" /> */}
             <Tooltip>
               <TooltipTrigger asChild>
                 <Button
@@ -782,7 +782,7 @@ export default function HomePage({ projects }: { projects: Project[] }) {
                   <span className="text-xs text-gray-500">({projects.length})</span>
                 </div>
                 <div className="flex items-center gap-1">
-                  <GitHubContributions username="arach" />
+                  {/* <GitHubContributions username="arach" /> */}
                   <Tooltip>
                     <TooltipTrigger asChild>
                       <Button

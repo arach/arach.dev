@@ -1,8 +1,53 @@
-import HomePage from "@/components/home/HomePage";
-import DottedBackground from "@/components/DottedBackground";
-import InteractiveBackground from "@/components/InteractiveBackground";
+'use client';
 
-export default function Home() {
+import { useState, useCallback, useEffect, Suspense } from "react";
+import { useSearchParams, useRouter } from "next/navigation";
+import HomePage from "@/components/home/HomePage";
+import StaticPathBackground from "@/components/StaticPathBackground";
+import { backgroundThemes, type BackgroundTheme } from "@/components/InteractiveBackground";
+import { DebugToolbar } from "@/components/debug/DebugToolbar";
+
+function HomeContent() {
+  const searchParams = useSearchParams();
+  const router = useRouter();
+  
+  // Get theme from URL or default to first theme
+  const getThemeFromParams = () => {
+    const themeName = searchParams.get('theme');
+    if (themeName) {
+      const theme = backgroundThemes.find(t => t.name === themeName);
+      if (theme) return theme;
+    }
+    return backgroundThemes[0];
+  };
+  
+  const [currentTheme, setCurrentTheme] = useState<BackgroundTheme>(getThemeFromParams());
+  const [themeChangeNotification, setThemeChangeNotification] = useState<string | null>(null);
+  const [mounted, setMounted] = useState(false);
+  
+  // Ensure we're on the client
+  useEffect(() => {
+    setMounted(true);
+  }, []);
+  
+  // Update theme when URL changes
+  useEffect(() => {
+    const theme = getThemeFromParams();
+    setCurrentTheme(theme);
+  }, [searchParams]);
+  
+  // Handle theme changes by updating URL
+  const handleThemeChange = useCallback((theme: BackgroundTheme) => {
+    // Update URL with new theme
+    const params = new URLSearchParams(searchParams.toString());
+    params.set('theme', theme.name);
+    router.push(`?${params.toString()}`, { scroll: false });
+    
+    // Show notification
+    setThemeChangeNotification(`Theme changed to ${theme.name}`);
+    setTimeout(() => setThemeChangeNotification(null), 3000);
+  }, [searchParams, router]);
+  
   const projects = [
     { title: "Scout", description: "Privacy-focused dictation app with local Whisper models", link: "https://arach.github.io/scout", github: "https://github.com/arach/scout", tags: ["desktop", "Tauri"], preview: "Voice to text, all local. Multiple models, file upload, native overlays." },
     { title: "Blink", description: "AI-native spatial notes where notes become intelligent agents", link: "https://arach.github.io/blink", github: "https://github.com/arach/blink", tags: ["desktop", "Tauri"], preview: "Drag-to-detach windows. Notes that think, process, and connect autonomously." },
@@ -16,10 +61,40 @@ export default function Home() {
   ];
   return (
     <>
-      <InteractiveBackground maxEdges={5} />
-      <div className="container mx-auto px-4 py-6 min-h-[90vh] relative z-10">
-        <HomePage projects={projects} />
+      <StaticPathBackground theme={currentTheme} maxActivePaths={5} />
+      <div className="container mx-auto px-4 py-6 min-h-[90vh] relative z-10 pointer-events-none">
+        <div className="pointer-events-auto">
+          <HomePage projects={projects} />
+        </div>
       </div>
+      
+      {/* Theme Change Notification */}
+      {themeChangeNotification && (
+        <div className="fixed top-4 right-4 z-[10000] px-4 py-2 rounded-lg bg-green-500/20 border border-green-500/30 text-green-400 text-sm animate-fade-in">
+          ✓ {themeChangeNotification}
+        </div>
+      )}
+      
+      {/* Debug Toolbar with Theme Picker - Only render on client after mount */}
+      {mounted && (
+        <DebugToolbar 
+          currentTheme={currentTheme}
+          onThemeChange={handleThemeChange}
+          backgroundThemes={backgroundThemes}
+        />
+      )}
     </>
+  );
+}
+
+export default function Home() {
+  return (
+    <Suspense fallback={
+      <div className="container mx-auto px-4 py-6 min-h-[90vh] relative z-10">
+        <div className="text-gray-500">Loading...</div>
+      </div>
+    }>
+      <HomeContent />
+    </Suspense>
   );
 }
