@@ -145,10 +145,13 @@ const InteractiveBackground: React.FC<InteractiveBackgroundProps> = ({ maxEdges 
         return () => window.removeEventListener('resize', handleResize);
     }, []);
 
-    // Add document-level mouse tracking
+    // Add document-level mouse tracking with grid snapping
     useEffect(() => {
         const handleDocumentMouseMove = (e: MouseEvent) => {
-            setMousePosition({ x: e.clientX, y: e.clientY });
+            // Snap to nearest grid point (30px grid)
+            const snappedX = Math.round(e.clientX / 30) * 30;
+            const snappedY = Math.round(e.clientY / 30) * 30;
+            setMousePosition({ x: snappedX, y: snappedY });
             if (isFollowing) {
                 debouncedCalculatePaths();
             }
