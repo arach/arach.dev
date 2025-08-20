@@ -28,11 +28,12 @@ export async function POST(request: NextRequest) {
           AND max_y <= ${viewport.height + 100}
       `;
       
-      console.log(`[Paths API] Cleared ${result.count} paths for viewport area`);
+      const rowCount = result.length;
+      console.log(`[Paths API] Cleared ${rowCount} paths for viewport area`);
       
       return NextResponse.json({
         success: true,
-        cleared: result.count,
+        cleared: rowCount,
         message: `Cleared paths for viewport ${viewport.width}x${viewport.height}`
       });
     } else {
@@ -41,11 +42,12 @@ export async function POST(request: NextRequest) {
       
       const result = await sql`DELETE FROM background_paths`;
       
-      console.log(`[Paths API] Cleared ${result.count} paths`);
+      const rowCount = result.length;
+      console.log(`[Paths API] Cleared ${rowCount} paths`);
       
       return NextResponse.json({
         success: true,
-        cleared: result.count,
+        cleared: rowCount,
         message: "Cleared all cached paths"
       });
     }
