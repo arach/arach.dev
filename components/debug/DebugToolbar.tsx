@@ -40,12 +40,12 @@ export function DebugToolbar({
   onThemeChange, 
   backgroundThemes = defaultThemes 
 }: DebugToolbarProps) {
-  const themes = backgroundThemes.length > 0 ? backgroundThemes : defaultThemes;
+  const bgThemes = backgroundThemes.length > 0 ? backgroundThemes : defaultThemes;
   const [isCollapsed, setIsCollapsed] = useState(true);
   const [isExpanded, setIsExpanded] = useState(false);
   const [cacheStats, setCacheStats] = useState<CacheStats | null>(null);
   const [cacheEntries, setCacheEntries] = useState<CacheEntry[]>([]);
-  const [activeTab, setActiveTab] = useState<'stats' | 'entries' | 'theme' | 'background'>('stats');
+  const [activeTab, setActiveTab] = useState<'stats' | 'entries' | 'background'>('stats');
   const [isRefreshing, setIsRefreshing] = useState(false);
   const [copiedAction, setCopiedAction] = useState<string | null>(null);
   const [selectedEntry, setSelectedEntry] = useState<CacheEntry | null>(null);
@@ -111,6 +111,7 @@ export function DebugToolbar({
       // No auto-refresh - manual refresh only via button
     }
   }, [isCollapsed]);
+
 
   // Only show in development
   // if (process.env.NODE_ENV !== 'development') {
@@ -243,22 +244,6 @@ export function DebugToolbar({
                   <Database className="w-3.5 h-3.5" />
                   <span>Cache Entries</span>
                 </button>
-                {true && (
-                  <button
-                    onClick={(e) => {
-                      e.stopPropagation();
-                      setActiveTab('theme');
-                    }}
-                    className={`flex-1 px-3 py-2 rounded-lg text-xs font-medium transition-all duration-200
-                              flex items-center justify-center gap-2
-                              ${activeTab === 'theme' 
-                                ? 'bg-blue-500/20 text-blue-400 border border-blue-500/30' 
-                                : 'bg-gray-800/50 text-gray-400 border border-gray-700/50 hover:bg-gray-800'}`}
-                  >
-                    <Palette className="w-3.5 h-3.5" />
-                    <span>Theme</span>
-                  </button>
-                )}
                 <button
                   onClick={(e) => {
                     e.stopPropagation();
@@ -384,83 +369,6 @@ export function DebugToolbar({
                   </motion.div>
                 )}
 
-                {activeTab === 'theme' && (
-                  <motion.div
-                    key="theme"
-                    initial={{ opacity: 0, x: -10 }}
-                    animate={{ opacity: 1, x: 0 }}
-                    exit={{ opacity: 0, x: 10 }}
-                    transition={{ duration: 0.2 }}
-                    className="space-y-3"
-                  >
-                    {/* Site Theme Settings */}
-                    <div className="p-3 rounded-lg bg-gray-800/50 border border-gray-700/50">
-                      <div className="text-xs text-gray-400 mb-3">Typography</div>
-                      <div className="space-y-2">
-                        <div className="flex items-center justify-between">
-                          <span className="text-xs text-gray-300">Font Family</span>
-                          <span className="text-xs font-mono text-gray-400">IBM Plex Mono</span>
-                        </div>
-                        <div className="flex items-center justify-between">
-                          <span className="text-xs text-gray-300">Base Size</span>
-                          <span className="text-xs font-mono text-gray-400">16px</span>
-                        </div>
-                        <div className="flex items-center justify-between">
-                          <span className="text-xs text-gray-300">Line Height</span>
-                          <span className="text-xs font-mono text-gray-400">1.5</span>
-                        </div>
-                      </div>
-                    </div>
-
-                    {/* Color Palette */}
-                    <div className="p-3 rounded-lg bg-gray-800/50 border border-gray-700/50">
-                      <div className="text-xs text-gray-400 mb-3">Color Palette</div>
-                      <div className="grid grid-cols-2 gap-2">
-                        <div className="flex items-center gap-2">
-                          <div className="w-4 h-4 rounded bg-gray-950 border border-gray-700"></div>
-                          <span className="text-[10px] text-gray-400">Background</span>
-                        </div>
-                        <div className="flex items-center gap-2">
-                          <div className="w-4 h-4 rounded bg-gray-100 border border-gray-700"></div>
-                          <span className="text-[10px] text-gray-400">Foreground</span>
-                        </div>
-                        <div className="flex items-center gap-2">
-                          <div className="w-4 h-4 rounded bg-green-500 border border-gray-700"></div>
-                          <span className="text-[10px] text-gray-400">Primary</span>
-                        </div>
-                        <div className="flex items-center gap-2">
-                          <div className="w-4 h-4 rounded bg-blue-500 border border-gray-700"></div>
-                          <span className="text-[10px] text-gray-400">Accent</span>
-                        </div>
-                        <div className="flex items-center gap-2">
-                          <div className="w-4 h-4 rounded bg-gray-800 border border-gray-700"></div>
-                          <span className="text-[10px] text-gray-400">Card</span>
-                        </div>
-                        <div className="flex items-center gap-2">
-                          <div className="w-4 h-4 rounded bg-gray-700 border border-gray-700"></div>
-                          <span className="text-[10px] text-gray-400">Border</span>
-                        </div>
-                      </div>
-                    </div>
-
-                    {/* Theme Mode */}
-                    <div className="p-3 rounded-lg bg-gray-800/50 border border-gray-700/50">
-                      <div className="text-xs text-gray-400 mb-2">Theme Mode</div>
-                      <div className="flex gap-2">
-                        <button className="flex-1 px-3 py-2 rounded-lg bg-gray-900/50 border border-gray-700/50 text-xs text-gray-300">
-                          System
-                        </button>
-                        <button className="flex-1 px-3 py-2 rounded-lg bg-gray-900/50 border border-gray-700/50 text-xs text-gray-300">
-                          Light
-                        </button>
-                        <button className="flex-1 px-3 py-2 rounded-lg bg-blue-500/20 border border-blue-500/30 text-xs text-blue-400">
-                          Dark
-                        </button>
-                      </div>
-                    </div>
-                  </motion.div>
-                )}
-
                 {activeTab === 'background' && (
                   <motion.div
                     key="background"
@@ -500,7 +408,7 @@ export function DebugToolbar({
 
                     {/* Background Theme Selection */}
                     <div className="grid grid-cols-2 gap-2">
-                      {themes.map((theme) => (
+                      {bgThemes.map((theme) => (
                         <button
                           key={theme.name}
                           onClick={(e) => {
