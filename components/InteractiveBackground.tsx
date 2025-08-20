@@ -14,8 +14,8 @@ interface InteractiveBackgroundProps {
 }
 
 const TargetCircle: React.FC<{ x: number; y: number; label?: string; isSelected: boolean }> = React.memo(({ x, y, label, isSelected }) => {
-    const opacity = isSelected ? "0.4" : "0.15";
-    const textOpacity = isSelected ? "0.6" : "0.2";
+    const opacity = isSelected ? "0.6" : "0.3";
+    const textOpacity = isSelected ? "0.7" : "0.4";
 
     return (
         <g>
@@ -49,8 +49,8 @@ const Dots: React.FC<{ dots: Dot[] }> = React.memo(({ dots }) => (
                 cx={dot.x}
                 cy={dot.y}
                 r="1"
-                fill="#555"
-                opacity="0.1"
+                fill="#888"
+                opacity="0.2"
             />
         ))}
     </>
@@ -91,6 +91,8 @@ const InteractiveBackground: React.FC<InteractiveBackgroundProps> = ({ maxEdges 
     }, [dots, getDistance]);
 
     const calculatePaths = useCallback(() => {
+        if (dots.length === 0) return;
+        
         const farDots = findFarDots(mousePosition, 200);
         if (farDots.length === 0) return;
 
@@ -105,7 +107,7 @@ const InteractiveBackground: React.FC<InteractiveBackgroundProps> = ({ maxEdges 
             }
         }
         setPaths(newPaths);
-    }, [mousePosition, maxEdges, findFarDots, generatePath]);
+    }, [mousePosition, maxEdges, findFarDots, generatePath, dots.length, isFollowing]);
 
     const debouncedCalculatePaths = useMemo(
         () => debounce(calculatePaths, 50),
@@ -143,13 +145,40 @@ const InteractiveBackground: React.FC<InteractiveBackgroundProps> = ({ maxEdges 
         return () => window.removeEventListener('resize', handleResize);
     }, []);
 
+    // Add document-level mouse tracking
+    useEffect(() => {
+        const handleDocumentMouseMove = (e: MouseEvent) => {
+            setMousePosition({ x: e.clientX, y: e.clientY });
+            if (isFollowing) {
+                debouncedCalculatePaths();
+            }
+        };
+
+        document.addEventListener('mousemove', handleDocumentMouseMove);
+        
+        return () => {
+            document.removeEventListener('mousemove', handleDocumentMouseMove);
+        };
+    }, [isFollowing, debouncedCalculatePaths]);
+    
+    // Handle clicks separately
+    useEffect(() => {
+        const handleDocumentClick = () => {
+            setIsFollowing(prev => !prev);
+        };
+
+        document.addEventListener('click', handleDocumentClick);
+        
+        return () => {
+            document.removeEventListener('click', handleDocumentClick);
+        };
+    }, []);
+
     return (
-        <div className="fixed inset-0 -z-10 pointer-events-none">
+        <div className="fixed inset-0 z-0 pointer-events-none">
             <svg
                 width="100%"
                 height="100%"
-                onMouseMove={handleMouseMove}
-                onClick={handleClick}
                 role="img"
                 aria-label="Interactive background with dynamic nodes and edges"
             >
@@ -171,9 +200,9 @@ const InteractiveBackground: React.FC<InteractiveBackgroundProps> = ({ maxEdges 
                                         y1={dot.y}
                                         x2={path[dotIndex + 1].x}
                                         y2={path[dotIndex + 1].y}
-                                        stroke="#999"
+                                        stroke="#666"
                                         strokeWidth="1"
-                                        opacity={isFollowing ? "0.15" : "0.3"}
+                                        opacity={isFollowing ? "0.3" : "0.5"}
                                         initial={{ pathLength: 0 }}
                                         animate={{ pathLength: 1 }}
                                         transition={{ duration: 0.5, delay: dotIndex * 0.1 }}
