@@ -3,8 +3,9 @@
 import { useState, useEffect, useCallback, useRef } from 'react'
 import { Button } from "@/components/ui/button"
 
-const GAME_WIDTH = 300
-const GAME_HEIGHT = 400
+// Responsive game dimensions
+const GAME_WIDTH = typeof window !== 'undefined' && window.innerWidth < 400 ? 280 : 300
+const GAME_HEIGHT = typeof window !== 'undefined' && window.innerWidth < 400 ? 350 : 400
 const SHIP_SIZE = 20
 const ASTEROID_SIZE = 15
 const ASTEROID_SPEED = 2
@@ -103,8 +104,9 @@ export default function SpaceGame() {
 
     return (
         <>
-            <div className="mb-2 text-orange-400 font-terminal">
-                Controls: [h/←] Left | [l/→] Right | [j] Pause | [k] Resume | [Space] Toggle | [ESC] Stop
+            <div className="mb-2 text-orange-400 text-[8px] sm:text-[10px] font-mono">
+                <span className="hidden sm:inline">Controls: [h/←] Left | [l/→] Right | [j] Pause | [k] Resume | [Space] Toggle | [ESC] Stop</span>
+                <span className="sm:hidden">Touch/Mouse to move | [ESC] Stop</span>
             </div>
             <div
                 ref={gameRef}

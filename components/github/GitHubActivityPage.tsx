@@ -513,21 +513,21 @@ export default function GitHubActivityPage() {
 
   return (
     <TooltipProvider delayDuration={200}>
-      <div className="min-h-screen py-8">
-        <div className="max-w-7xl mx-auto px-4">
+      <div className="min-h-screen py-4 sm:py-8">
+        <div className="max-w-7xl mx-auto px-2 sm:px-4">
           {/* Header */}
-          <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} className="mb-8">
-            <div className="flex items-center justify-between mb-6">
-              <div className="flex items-center gap-4">
+          <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} className="mb-4 sm:mb-8">
+            <div className="flex flex-col sm:flex-row sm:items-center justify-between mb-4 sm:mb-6 gap-2">
+              <div className="flex flex-wrap items-center gap-2 sm:gap-4">
                 <Link href="/">
-                  <Button variant="ghost" size="sm">
+                  <Button variant="ghost" size="sm" className="text-xs sm:text-sm">
                     <ArrowLeft className="w-4 h-4 mr-2" />
                     Back to Home
                   </Button>
                 </Link>
                 <div className="h-6 w-px bg-gray-300" />
-                <h1 className="text-xl font-bold text-gray-900 flex items-center gap-2">
-                  <Github className="w-5 h-5" />
+                <h1 className="text-sm sm:text-xl font-bold text-gray-900 flex items-center gap-1 sm:gap-2">
+                  <Github className="w-4 h-4 sm:w-5 sm:h-5" />
                   GitHub Activity
                 </h1>
               </div>

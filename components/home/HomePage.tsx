@@ -535,7 +535,7 @@ export default function HomePage({ projects }: { projects: Project[] }) {
         <motion.div className="mb-20" {...fadeInUp}>
           <div className="mb-8">
             <pre
-              className="text-[5px] sm:text-[6px] text-black mb-6 overflow-hidden font-mono leading-none tracking-tighter"
+              className="text-[3px] xs:text-[4px] sm:text-[5px] md:text-[6px] text-black mb-3 sm:mb-6 overflow-x-auto font-mono leading-none tracking-tighter"
               style={{
                 fontFamily:
                   'ui-monospace, "Cascadia Code", "Source Code Pro", Menlo, Consolas, "DejaVu Sans Mono", monospace',
@@ -553,19 +553,19 @@ export default function HomePage({ projects }: { projects: Project[] }) {
 ╚──────────────────────────────────────────────────────────────────────────╝`}
             </pre>
           </div>
-          <div className="border-l-2 border-gray-600 pl-4 text-gray-600 mb-4 relative z-10 flex items-center justify-between">
+          <div className="border-l-2 border-gray-600 pl-2 sm:pl-4 text-[10px] sm:text-xs text-gray-600 mb-4 relative z-10 flex flex-col sm:flex-row sm:items-center sm:justify-between gap-2">
             <div>
-              <span>4x ex-CTO, 2x ex-founder, ex-Meta Engineering</span>{" "}
+              <span className="text-[10px] sm:text-xs">4x ex-CTO, 2x ex-founder, ex-Meta Engineering</span>{" "}
               <a
                 href="https://arach.io"
                 target="_blank"
                 rel="noopener noreferrer"
-                className="text-gray-500 hover:text-gray-700 transition-colors text-xs underline cursor-pointer relative z-20"
+                className="text-gray-500 hover:text-gray-700 transition-colors text-[10px] sm:text-xs underline cursor-pointer relative z-20"
               >
                 → more info
               </a>
             </div>
-            <div className="flex items-center gap-2">
+            <div className="flex flex-wrap items-center gap-1 sm:gap-2">
               <GitHubContributions username="arach" />
               <Tooltip>
                 <TooltipTrigger asChild>

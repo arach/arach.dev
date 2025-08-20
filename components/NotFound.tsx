@@ -48,7 +48,7 @@ const TypewriterEffect: React.FC<{ text: string; onComplete?: () => void }> = ({
     }, []); // Empty dependency array - only run once on mount
 
     return (
-        <pre className="font-terminal whitespace-pre-wrap overflow-auto leading-relaxed">
+        <pre className="text-[8px] sm:text-[10px] font-mono whitespace-pre-wrap overflow-x-auto leading-relaxed">
             {displayText}
         </pre>
     );
@@ -109,16 +109,16 @@ Suggestion: The page may have been moved or deleted.`;
 
     return (
         <TooltipProvider>
-            <div className="min-h-screen flex flex-col font-mono text-[10px] text-orange-400
-           p-4 rounded-lg shadow-lg mb-4 bg-slate-800">
-                <div className="flex-grow flex items-start justify-center p-4 overflow-auto h-[80vh]">
+            <div className="min-h-screen flex flex-col font-mono text-[8px] sm:text-[10px] text-orange-400
+           p-2 sm:p-4 rounded-lg shadow-lg mb-4 bg-slate-800">
+                <div className="flex-grow flex items-start justify-center p-2 sm:p-4 overflow-auto h-[80vh]">
                     <motion.div
                         initial={{ opacity: 0, y: -20 }}
                         animate={{ opacity: 1, y: 0 }}
                         transition={{ duration: 0.5 }}
-                        className="container bg-slate-700 border border-slate-600 rounded-md shadow-lg overflow-hidden mt-4 min-h-[90vh]"
+                        className="w-full max-w-4xl mx-auto bg-slate-700 border border-slate-600 rounded-md shadow-lg overflow-hidden mt-2 sm:mt-4 min-h-[70vh] sm:min-h-[90vh]"
                     >
-                        <div className="border-b border-slate-600 p-2 text-orange-400 font-thin text-[10px] flex items-center justify-between">
+                        <div className="border-b border-slate-600 p-1.5 sm:p-2 text-orange-400 font-thin text-[8px] sm:text-[10px] flex items-center justify-between">
                             <div className="flex items-center">
                                 <div className="mr-2 flex space-x-1">
                                     <Tooltip>
@@ -148,9 +148,9 @@ Suggestion: The page may have been moved or deleted.`;
                                 </div>
                                 {domain} Terminal
                             </div>
-                            <div className="text-xs">404 Not Found</div>
+                            <div className="text-[10px] sm:text-xs">404 Not Found</div>
                         </div>
-                        <div className="p-4 text-orange-400 relative min-h-[250px] whitespace-pre-wrap break-words font-terminal leading-relaxed">
+                        <div className="p-2 sm:p-4 text-orange-400 relative min-h-[200px] sm:min-h-[250px] whitespace-pre-wrap break-all sm:break-words overflow-x-auto">
                             <TypewriterEffect text={errorText} onComplete={() => setTextComplete(true)} />
                             {textComplete && (
                                 <div className="mt-0 font-terminal">
