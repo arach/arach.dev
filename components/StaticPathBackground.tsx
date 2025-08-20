@@ -351,9 +351,9 @@ const StaticPathBackground: React.FC<StaticPathBackgroundProps> = ({
       if (rafId) cancelAnimationFrame(rafId);
       
       rafId = requestAnimationFrame(() => {
-        // Calculate grid position for mouse
-        const mouseGridX = Math.round(e.clientX / GRID_SIZE);
-        const mouseGridY = Math.round(e.clientY / GRID_SIZE);
+        // Calculate grid position for mouse - ensure exact grid alignment
+        const mouseGridX = Math.floor(e.clientX / GRID_SIZE + 0.5); // Round to nearest grid position
+        const mouseGridY = Math.floor(e.clientY / GRID_SIZE + 0.5);
         
         // If we have a last source position, limit movement to avoid large jumps
         let newGridX = mouseGridX;
@@ -499,12 +499,13 @@ const StaticPathBackground: React.FC<StaticPathBackgroundProps> = ({
 
   return (
     <>
-      {/* CSS Dot Grid Background */}
+      {/* CSS Dot Grid Background - positioned to align dots with grid intersections */}
       <div 
         className="fixed inset-0 z-0"
         style={{
           backgroundImage: `radial-gradient(circle, ${theme.dotColor} 1.5px, transparent 1.5px)`,
           backgroundSize: '30px 30px',
+          backgroundPosition: '15px 15px', // Offset to put dots at grid intersections
           opacity: theme.dotOpacity,
         }}
       />
@@ -532,13 +533,27 @@ const StaticPathBackground: React.FC<StaticPathBackgroundProps> = ({
           ))}
         </AnimatePresence>
         
-        {/* Show source (mouse position) */}
+        {/* Show source (mouse position) - snapped to grid */}
         {sourcePos && (
           <motion.g
-            initial={{ opacity: 0 }}
-            animate={{ opacity: 1 }}
-            exit={{ opacity: 0 }}
+            key={`source-${sourcePos.x}-${sourcePos.y}`}
+            initial={{ opacity: 0, scale: 0.8 }}
+            animate={{ opacity: 1, scale: 1 }}
+            exit={{ opacity: 0, scale: 0.8 }}
+            transition={{ 
+              type: "spring",
+              stiffness: 300,
+              damping: 25
+            }}
           >
+            {/* Debug: Show grid alignment dot */}
+            <circle 
+              cx={sourcePos.x} 
+              cy={sourcePos.y} 
+              r="2" 
+              fill={theme.targetColor} 
+              opacity="0.8"
+            />
             <TargetCircle 
               x={sourcePos.x} 
               y={sourcePos.y} 
