@@ -308,7 +308,7 @@ export default function GitHubContributions({
           }}
           variant="outline"
           size="sm"
-          className="flex items-center gap-1 text-[10px] sm:text-xs hover:shadow-md transition-all duration-300 hover:scale-105 bg-gradient-to-r from-gray-50 to-gray-100 hover:from-blue-50 hover:to-indigo-50 border-gray-200 hover:border-blue-300 px-1.5 sm:px-2 py-1 sm:py-1.5 h-auto"
+          className="flex items-center gap-1 text-[10px] sm:text-xs hover:shadow-md transition-all duration-300 bg-gradient-to-r from-gray-50 to-gray-100 hover:from-blue-50 hover:to-indigo-50 border-gray-200 hover:border-blue-300 px-1.5 sm:px-2 py-1 sm:py-1.5 h-auto"
         >
           <Github className="w-3 h-3" />
           {/* Show streak when ready, no loading indicator */}

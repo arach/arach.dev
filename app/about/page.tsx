@@ -117,10 +117,9 @@ CONTACT:
 • Location: San Francisco, CA or Montreal, CA
 
 ========================================
-arach@arach.dev:~$ echo "Feel free to reach out!"
-Feel free to reach out!
 
-arach@arach.dev:~$ _`;
+arach@arach.dev:~$ _
+Type 'help' for available commands.`;
 
     const aboutText = isMobile ? mobileAboutText : desktopAboutText;
 

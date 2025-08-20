@@ -19,10 +19,10 @@ export default function RootLayout({
   children: React.ReactNode;
 }>) {
   return (
-    <html lang="en" className={`h-full ${GeistMono.variable}`}>
-      <body className={`${ibmPlexMono.variable} ${GeistMono.className} font-mono text-gray-300 flex flex-col min-h-screen`}>
+    <html lang="en" className={`h-full ${GeistMono.variable} bg-white`}>
+      <body className={`${ibmPlexMono.variable} ${GeistMono.className} font-mono text-gray-300 flex flex-col min-h-screen bg-white`}>
         <Header />
-        <main className="flex-grow">
+        <main className="flex-grow pt-0">
           {children}
         </main>
         <Footer />

@@ -16,6 +16,7 @@ export default function Home() {
   ];
   return (
     <>
+      <DottedBackground />
       <InteractiveBackground maxEdges={5} />
       <div className="container mx-auto px-4 py-6 min-h-[90vh] relative z-10">
         <HomePage projects={projects} />
