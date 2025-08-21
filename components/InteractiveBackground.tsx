@@ -65,17 +65,18 @@ export interface BackgroundTheme {
     targetColor: string;
     dotOpacity: number;
     lineOpacity: number;
+    bgColor?: string; // Background color for the theme
 }
 
 export const backgroundThemes: BackgroundTheme[] = [
-    { name: 'Blue Tech', dotColor: '#3b82f6', lineColor: '#3b82f6', targetColor: '#3b82f6', dotOpacity: 0.15, lineOpacity: 0.4 },
-    { name: 'Purple Haze', dotColor: '#8b5cf6', lineColor: '#a855f7', targetColor: '#8b5cf6', dotOpacity: 0.12, lineOpacity: 0.35 },
-    { name: 'Green Matrix', dotColor: '#10b981', lineColor: '#34d399', targetColor: '#10b981', dotOpacity: 0.15, lineOpacity: 0.4 },
-    { name: 'Orange Glow', dotColor: '#f97316', lineColor: '#fb923c', targetColor: '#f97316', dotOpacity: 0.1, lineOpacity: 0.3 },
-    { name: 'Monochrome', dotColor: '#6b7280', lineColor: '#9ca3af', targetColor: '#6b7280', dotOpacity: 0.2, lineOpacity: 0.5 },
-    { name: 'Cyberpunk', dotColor: '#ec4899', lineColor: '#f472b6', targetColor: '#ec4899', dotOpacity: 0.12, lineOpacity: 0.35 },
-    { name: 'Ocean', dotColor: '#06b6d4', lineColor: '#22d3ee', targetColor: '#06b6d4', dotOpacity: 0.15, lineOpacity: 0.4 },
-    { name: 'Sunset', dotColor: '#dc2626', lineColor: '#f87171', targetColor: '#dc2626', dotOpacity: 0.1, lineOpacity: 0.3 },
+    { name: 'Blue Tech', dotColor: '#3b82f6', lineColor: '#3b82f6', targetColor: '#3b82f6', dotOpacity: 0.15, lineOpacity: 0.4, bgColor: '#ffffff' },
+    { name: 'Purple Haze', dotColor: '#8b5cf6', lineColor: '#a855f7', targetColor: '#8b5cf6', dotOpacity: 0.12, lineOpacity: 0.35, bgColor: '#faf5ff' },
+    { name: 'Green Matrix', dotColor: '#10b981', lineColor: '#34d399', targetColor: '#10b981', dotOpacity: 0.15, lineOpacity: 0.4, bgColor: '#022c22' },
+    { name: 'Orange Glow', dotColor: '#f97316', lineColor: '#fb923c', targetColor: '#f97316', dotOpacity: 0.1, lineOpacity: 0.3, bgColor: '#fff7ed' },
+    { name: 'Monochrome', dotColor: '#6b7280', lineColor: '#9ca3af', targetColor: '#6b7280', dotOpacity: 0.2, lineOpacity: 0.5, bgColor: '#f3f4f6' },
+    { name: 'Cyberpunk', dotColor: '#ec4899', lineColor: '#f472b6', targetColor: '#ec4899', dotOpacity: 0.12, lineOpacity: 0.35, bgColor: '#0a0014' },
+    { name: 'Ocean', dotColor: '#06b6d4', lineColor: '#22d3ee', targetColor: '#06b6d4', dotOpacity: 0.15, lineOpacity: 0.4, bgColor: '#0c1222' },
+    { name: 'Sunset', dotColor: '#dc2626', lineColor: '#f87171', targetColor: '#dc2626', dotOpacity: 0.1, lineOpacity: 0.3, bgColor: '#1a0f0f' },
 ];
 
 const InteractiveBackground: React.FC<InteractiveBackgroundProps> = ({ maxEdges, theme = backgroundThemes[0] }) => {

@@ -5,6 +5,7 @@ import { useSearchParams, useRouter } from "next/navigation";
 import HomePage from "@/components/home/HomePage";
 import dynamic from 'next/dynamic';
 import ThemedDottedGrid from "@/components/ThemedDottedGrid";
+import { useTheme, themes } from "@/lib/theme-context";
 
 // Lazy load the background to not block initial paint
 const StaticPathBackground = dynamic(
@@ -20,6 +21,7 @@ import { DebugToolbar } from "@/components/debug/DebugToolbar";
 function HomeContent() {
   const searchParams = useSearchParams();
   const router = useRouter();
+  const { setTheme: setSiteTheme } = useTheme();
   
   // Get theme from URL or default to first theme
   const getThemeFromParams = () => {
@@ -43,11 +45,33 @@ function HomeContent() {
     // setShowBackground(true);
   }, []);
   
+  // Map background themes to site themes
+  const mapBackgroundToSiteTheme = (bgTheme: BackgroundTheme) => {
+    const themeMap: Record<string, string> = {
+      'Blue Tech': 'default',
+      'Purple Haze': 'cyberpunk', // Purple -> Cyber Neon theme
+      'Green Matrix': 'dark',     // Green -> Midnight dark theme  
+      'Orange Glow': 'sunset',     // Orange -> Golden Hour theme
+      'Monochrome': 'paper',       // Gray -> Vintage Paper theme
+      'Cyberpunk': 'cyberpunk',    // Pink -> Cyber Neon theme
+      'Ocean': 'ocean',            // Cyan -> Deep Ocean theme
+      'Sunset': 'sunset',          // Red -> Golden Hour theme
+    };
+    
+    const siteThemeName = themeMap[bgTheme.name] || 'default';
+    const siteTheme = themes.find(t => t.name === siteThemeName);
+    return siteTheme || themes[0];
+  };
+  
   // Update theme when URL changes
   useEffect(() => {
     const theme = getThemeFromParams();
     setCurrentTheme(theme);
-  }, [searchParams]);
+    
+    // Apply corresponding site theme for background colors
+    const siteTheme = mapBackgroundToSiteTheme(theme);
+    setSiteTheme(siteTheme);
+  }, [searchParams, setSiteTheme]);
   
   // Handle theme changes by updating URL
   const handleThemeChange = useCallback((theme: BackgroundTheme) => {
