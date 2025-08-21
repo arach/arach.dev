@@ -40,7 +40,7 @@ export default function RootLayout({
         {/* Inline critical CSS for immediate render */}
         <style dangerouslySetInnerHTML={{ __html: criticalCSS }} />
       </head>
-      <body className={`${ibmPlexMono.variable} ${GeistMono.className} font-mono text-gray-300 flex flex-col min-h-screen`}>
+      <body className={`${ibmPlexMono.variable} ${GeistMono.className} font-mono flex flex-col min-h-screen`}>
         <ThemeProvider>
           <Header />
           <main className="flex-grow pt-0">

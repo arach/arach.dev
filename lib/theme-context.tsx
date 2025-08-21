@@ -164,6 +164,7 @@ export function ThemeProvider({ children }: { children: React.ReactNode }) {
   }, []);
 
   const setTheme = (theme: Theme) => {
+    console.log('[ThemeContext] Setting theme:', theme.name, theme);
     setCurrentTheme(theme);
     localStorage.setItem('site-theme', theme.name);
     
@@ -178,6 +179,7 @@ export function ThemeProvider({ children }: { children: React.ReactNode }) {
     
     // Also update CSS variables directly for immediate effect
     const root = document.documentElement;
+    console.log('[ThemeContext] Setting CSS vars - bg:', theme.bgColor, 'text:', theme.textColor);
     root.style.setProperty('--theme-bg-color', theme.bgColor);
     root.style.setProperty('--theme-text-color', theme.textColor);
     root.style.setProperty('--theme-header-bg', theme.headerBg);
@@ -198,12 +200,14 @@ export function ThemeProvider({ children }: { children: React.ReactNode }) {
 
   useEffect(() => {
     // Apply initial theme
+    console.log('[ThemeContext] Applying initial theme:', currentTheme.name, currentTheme);
     if (currentTheme.name !== 'default') {
       document.body.classList.add(`theme-${currentTheme.name}`);
     }
     
     // Set initial CSS variables
     const root = document.documentElement;
+    console.log('[ThemeContext] Initial CSS vars - bg:', currentTheme.bgColor, 'text:', currentTheme.textColor);
     root.style.setProperty('--theme-bg-color', currentTheme.bgColor);
     root.style.setProperty('--theme-text-color', currentTheme.textColor);
     root.style.setProperty('--theme-header-bg', currentTheme.headerBg);

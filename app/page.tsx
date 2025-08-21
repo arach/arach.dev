@@ -1,97 +1,17 @@
 'use client';
 
-import { useState, useCallback, useEffect, Suspense } from "react";
-import { useSearchParams, useRouter } from "next/navigation";
+import { useState, useEffect } from "react";
 import HomePage from "@/components/home/HomePage";
-import dynamic from 'next/dynamic';
 import ThemedDottedGrid from "@/components/ThemedDottedGrid";
-import { useTheme, themes } from "@/lib/theme-context";
-
-// Lazy load the background to not block initial paint
-const StaticPathBackground = dynamic(
-  () => import("@/components/StaticPathBackground"),
-  { 
-    ssr: false,
-    loading: () => null // Don't show loading indicator
-  }
-);
-import { backgroundThemes, type BackgroundTheme } from "@/components/InteractiveBackground";
 import { DebugToolbar } from "@/components/debug/DebugToolbar";
 
 function HomeContent() {
-  const searchParams = useSearchParams();
-  const router = useRouter();
-  const { setTheme: setSiteTheme } = useTheme();
-  
-  // Get initial theme from URL
-  const getInitialTheme = () => {
-    const themeName = searchParams.get('theme');
-    if (themeName) {
-      const theme = backgroundThemes.find(t => t.name === themeName);
-      if (theme) return theme;
-    }
-    return backgroundThemes[0];
-  };
-  
-  const [currentTheme, setCurrentTheme] = useState<BackgroundTheme>(getInitialTheme());
-  const [themeChangeNotification, setThemeChangeNotification] = useState<string | null>(null);
   const [mounted, setMounted] = useState(false);
-  const [showBackground, setShowBackground] = useState(false);
   
-  // Ensure we're on the client - background disabled by default for performance
+  // Ensure we're on the client
   useEffect(() => {
     setMounted(true);
-    // Don't show background by default
-    // setShowBackground(true);
   }, []);
-  
-  // Update theme when URL changes
-  useEffect(() => {
-    const themeName = searchParams.get('theme');
-    let theme = backgroundThemes[0]; // default
-    
-    if (themeName) {
-      const foundTheme = backgroundThemes.find(t => t.name === themeName);
-      if (foundTheme) {
-        theme = foundTheme;
-      }
-    }
-    
-    setCurrentTheme(theme);
-    
-    // Map background themes to site themes
-    const themeMap: Record<string, string> = {
-      'Blue Tech': 'default',
-      'Purple Haze': 'cyberpunk', // Purple -> Cyber Neon theme
-      'Green Matrix': 'dark',     // Green -> Midnight dark theme  
-      'Orange Glow': 'sunset',     // Orange -> Golden Hour theme
-      'Monochrome': 'paper',       // Gray -> Vintage Paper theme
-      'Cyberpunk': 'cyberpunk',    // Pink -> Cyber Neon theme
-      'Ocean': 'ocean',            // Cyan -> Deep Ocean theme
-      'Sunset': 'sunset',          // Red -> Golden Hour theme
-    };
-    
-    const siteThemeName = themeMap[theme.name] || 'default';
-    const siteTheme = themes.find(t => t.name === siteThemeName);
-    if (siteTheme) {
-      setSiteTheme(siteTheme);
-    }
-  }, [searchParams, setSiteTheme]);
-  
-  // Handle theme changes by updating URL
-  const handleThemeChange = useCallback((theme: BackgroundTheme) => {
-    console.log('[Page] Theme change requested:', theme.name);
-    // Update URL with new theme
-    const params = new URLSearchParams(searchParams.toString());
-    params.set('theme', theme.name);
-    const newUrl = `?${params.toString()}`;
-    console.log('[Page] Pushing new URL:', newUrl);
-    router.push(newUrl, { scroll: false });
-    
-    // Show notification
-    setThemeChangeNotification(`Theme changed to ${theme.name}`);
-    setTimeout(() => setThemeChangeNotification(null), 3000);
-  }, [searchParams, router]);
   
   const projects = [
     { title: "Scout", description: "Privacy-focused dictation app with local Whisper models", link: "https://arach.github.io/scout", github: "https://github.com/arach/scout", tags: ["desktop", "Tauri"], preview: "Voice to text, all local. Multiple models, file upload, native overlays." },
@@ -107,10 +27,7 @@ function HomeContent() {
   return (
     <>
       {/* Simple dotted grid background - always visible, theme-aware */}
-      <ThemedDottedGrid theme={currentTheme} />
-      
-      {/* Optional path animations - disabled by default for performance */}
-      {showBackground && <StaticPathBackground theme={currentTheme} maxActivePaths={5} />}
+      <ThemedDottedGrid />
       
       <div className="container mx-auto px-4 py-6 min-h-[90vh] relative z-10 pointer-events-none">
         <div className="pointer-events-auto">
@@ -118,21 +35,8 @@ function HomeContent() {
         </div>
       </div>
       
-      {/* Theme Change Notification */}
-      {themeChangeNotification && (
-        <div className="fixed top-4 right-4 z-[10000] px-4 py-2 rounded-lg bg-green-500/20 border border-green-500/30 text-green-400 text-sm animate-fade-in">
-          ✓ {themeChangeNotification}
-        </div>
-      )}
-      
-      {/* Debug Toolbar with Theme Picker - Only render on client after mount */}
-      {mounted && (
-        <DebugToolbar 
-          currentTheme={currentTheme}
-          onThemeChange={handleThemeChange}
-          backgroundThemes={backgroundThemes}
-        />
-      )}
+      {/* Debug Toolbar - Only render on client after mount */}
+      {mounted && <DebugToolbar />}
     </>
   );
 }

@@ -3,7 +3,6 @@
 import { useState, useEffect } from 'react';
 import { Bug, Database, Activity, X, ChevronRight, ChevronDown, RefreshCw, Trash2, Copy, Check, Maximize2, Minimize2, Palette } from 'lucide-react';
 import { motion, AnimatePresence } from 'framer-motion';
-import { backgroundThemes as defaultThemes, type BackgroundTheme } from '@/components/InteractiveBackground';
 import { useTheme, themes as siteThemes } from '@/lib/theme-context';
 import './debug-animations.css';
 
@@ -30,24 +29,15 @@ interface CacheEntry {
   size?: number;
 }
 
-interface DebugToolbarProps {
-  currentTheme?: BackgroundTheme;
-  onThemeChange?: (theme: BackgroundTheme) => void;
-  backgroundThemes?: BackgroundTheme[];
-}
+interface DebugToolbarProps {}
 
-export function DebugToolbar({ 
-  currentTheme, 
-  onThemeChange, 
-  backgroundThemes = defaultThemes 
-}: DebugToolbarProps) {
-  const bgThemes = backgroundThemes.length > 0 ? backgroundThemes : defaultThemes;
+export function DebugToolbar({}: DebugToolbarProps) {
   const { currentTheme: siteTheme, setTheme: setSiteTheme } = useTheme();
   const [isCollapsed, setIsCollapsed] = useState(true);
   const [isExpanded, setIsExpanded] = useState(false);
   const [cacheStats, setCacheStats] = useState<CacheStats | null>(null);
   const [cacheEntries, setCacheEntries] = useState<CacheEntry[]>([]);
-  const [activeTab, setActiveTab] = useState<'stats' | 'entries' | 'background' | 'theme'>('stats');
+  const [activeTab, setActiveTab] = useState<'stats' | 'entries' | 'theme'>('stats');
   const [isRefreshing, setIsRefreshing] = useState(false);
   const [copiedAction, setCopiedAction] = useState<string | null>(null);
   const [selectedEntry, setSelectedEntry] = useState<CacheEntry | null>(null);
@@ -249,20 +239,6 @@ export function DebugToolbar({
                 <button
                   onClick={(e) => {
                     e.stopPropagation();
-                    setActiveTab('background');
-                  }}
-                  className={`flex-1 px-3 py-2 rounded-lg text-xs font-medium transition-all duration-200
-                            flex items-center justify-center gap-2
-                            ${activeTab === 'background' 
-                              ? 'bg-blue-500/20 text-blue-400 border border-blue-500/30' 
-                              : 'bg-gray-800/50 text-gray-400 border border-gray-700/50 hover:bg-gray-800'}`}
-                >
-                  <Activity className="w-3.5 h-3.5" />
-                  <span>Background</span>
-                </button>
-                <button
-                  onClick={(e) => {
-                    e.stopPropagation();
                     setActiveTab('theme');
                   }}
                   className={`flex-1 px-3 py-2 rounded-lg text-xs font-medium transition-all duration-200
@@ -385,230 +361,6 @@ export function DebugToolbar({
                   </motion.div>
                 )}
 
-                {activeTab === 'background' && (
-                  <motion.div
-                    key="background"
-                    initial={{ opacity: 0, x: -10 }}
-                    animate={{ opacity: 1, x: 0 }}
-                    exit={{ opacity: 0, x: 10 }}
-                    transition={{ duration: 0.2 }}
-                    className="space-y-3"
-                  >
-                    {/* Success Message */}
-                    <AnimatePresence>
-                      {themeChangeMessage && (
-                        <motion.div
-                          initial={{ opacity: 0, y: -10 }}
-                          animate={{ opacity: 1, y: 0 }}
-                          exit={{ opacity: 0, y: -10 }}
-                          className="p-2 rounded-lg bg-green-500/20 border border-green-500/30 text-green-400 text-xs text-center"
-                        >
-                          ✓ {themeChangeMessage}
-                        </motion.div>
-                      )}
-                    </AnimatePresence>
-
-                    {/* Current Background Theme */}
-                    <div className="p-3 rounded-lg bg-gray-800/50 border border-gray-700/50">
-                      <div className="text-xs text-gray-400 mb-2">Active Background Animation</div>
-                      <div className="flex items-center gap-2">
-                        <span 
-                          className="inline-block w-4 h-4 rounded-full border border-gray-600"
-                          style={{ backgroundColor: currentTheme?.dotColor }}
-                        />
-                        <span className="text-sm font-medium text-white">
-                          {currentTheme?.name || 'Default'}
-                        </span>
-                      </div>
-                    </div>
-
-                    {/* Background Theme Selection */}
-                    <div className="grid grid-cols-2 gap-2">
-                      {bgThemes.map((theme) => (
-                        <button
-                          key={theme.name}
-                          onClick={(e) => {
-                            e.stopPropagation();
-                            e.preventDefault();
-                            console.log('[DebugToolbar] Theme button clicked:', theme.name);
-                            console.log('[DebugToolbar] onThemeChange function exists?', typeof onThemeChange);
-                            
-                            if (onThemeChange && typeof onThemeChange === 'function') {
-                              console.log('[DebugToolbar] Calling onThemeChange with:', theme);
-                              onThemeChange(theme);
-                              setThemeChangeMessage(`Background changed to ${theme.name}`);
-                              setTimeout(() => setThemeChangeMessage(null), 2000);
-                            } else {
-                              console.error('[DebugToolbar] No onThemeChange handler or not a function!', onThemeChange);
-                            }
-                          }}
-                          className={`p-3 rounded-lg border transition-all duration-200
-                                    ${theme.name === currentTheme?.name
-                                      ? 'bg-blue-500/20 border-blue-500/30 text-blue-400' 
-                                      : 'bg-gray-800/50 border-gray-700/50 text-gray-300 hover:bg-gray-800 hover:border-gray-600'}`}
-                        >
-                          <div className="flex items-center gap-2">
-                            <div className="flex gap-1">
-                              <span 
-                                className="inline-block w-3 h-3 rounded-full"
-                                style={{ backgroundColor: theme.dotColor }}
-                              />
-                              <span 
-                                className="inline-block w-3 h-3 rounded-full"
-                                style={{ backgroundColor: theme.lineColor }}
-                              />
-                            </div>
-                            <span className="text-xs font-medium">{theme.name}</span>
-                          </div>
-                        </button>
-                      ))}
-                    </div>
-
-                    {/* Grid Debug Controls */}
-                    <div className="p-3 rounded-lg bg-cyan-500/20 border border-cyan-500/30">
-                      <div className="text-xs text-gray-300 mb-2">Grid Visualization</div>
-                      <div className="text-[10px] text-gray-400 mb-3">
-                        Toggle debug mode to see grid system, hotspots, and path indicators
-                      </div>
-                      <button
-                        onClick={() => {
-                          if (typeof window !== 'undefined' && (window as any).__toggleDebug) {
-                            (window as any).__toggleDebug();
-                            setThemeChangeMessage('Grid debug visualization toggled');
-                            setTimeout(() => setThemeChangeMessage(null), 2000);
-                          }
-                        }}
-                        className="w-full px-3 py-2 rounded-lg text-xs font-medium
-                                 bg-cyan-500/20 hover:bg-cyan-500/30 
-                                 text-cyan-400
-                                 border border-cyan-500/30 hover:border-cyan-500/40
-                                 transition-all duration-200
-                                 flex items-center justify-center gap-2"
-                      >
-                        <Bug className="w-3.5 h-3.5" />
-                        <span>Toggle Grid Debug (Ctrl+Shift+D)</span>
-                      </button>
-                    </div>
-
-                    {/* Path Cache Controls */}
-                    <div className="p-3 rounded-lg bg-purple-500/20 border border-purple-500/30">
-                      <div className="text-xs text-gray-300 mb-2">Path Cache Management</div>
-                      <div className="text-[10px] text-gray-400 mb-3">
-                        Regenerate paths to update animations for current viewport
-                      </div>
-                      <div className="flex gap-2">
-                        <button
-                          onClick={() => {
-                            if (typeof window !== 'undefined' && (window as any).__storePaths) {
-                              (window as any).__storePaths();
-                              setThemeChangeMessage('Storing current paths to database...');
-                              setTimeout(() => setThemeChangeMessage(null), 3000);
-                            }
-                          }}
-                          className="flex-1 px-3 py-2 rounded-lg text-xs font-medium
-                                   bg-green-500/20 hover:bg-green-500/30 
-                                   text-green-400
-                                   border border-green-500/30 hover:border-green-500/40
-                                   transition-all duration-200
-                                   flex items-center justify-center gap-2"
-                        >
-                          <Database className="w-3.5 h-3.5" />
-                          <span>Store to DB</span>
-                        </button>
-                        <button
-                          onClick={async () => {
-                            setIsRefreshing(true);
-                            try {
-                              // Clear path cache
-                              const response = await fetch('/api/paths/clear', { 
-                                method: 'POST',
-                                headers: { 'Content-Type': 'application/json' },
-                                body: JSON.stringify({
-                                  viewport: { 
-                                    width: window.innerWidth, 
-                                    height: window.innerHeight 
-                                  }
-                                })
-                              });
-                              if (response.ok) {
-                                // Force reload of the page to regenerate paths
-                                window.location.reload();
-                              }
-                            } catch (error) {
-                              console.error('Failed to regenerate paths:', error);
-                            } finally {
-                              setIsRefreshing(false);
-                            }
-                          }}
-                          disabled={isRefreshing}
-                          className="flex-1 px-3 py-2 rounded-lg text-xs font-medium
-                                   bg-purple-500/20 hover:bg-purple-500/30 
-                                   text-purple-400
-                                   border border-purple-500/30 hover:border-purple-500/40
-                                   transition-all duration-200
-                                   flex items-center justify-center gap-2
-                                   disabled:opacity-50 disabled:cursor-not-allowed"
-                        >
-                          <RefreshCw className={`w-3.5 h-3.5 ${isRefreshing ? 'animate-spin' : ''}`} />
-                          <span>Regenerate</span>
-                        </button>
-                        <button
-                          onClick={async () => {
-                            try {
-                              const response = await fetch('/api/paths/clear', { 
-                                method: 'POST',
-                                headers: { 'Content-Type': 'application/json' },
-                                body: JSON.stringify({})
-                              });
-                              if (response.ok) {
-                                window.location.reload();
-                              }
-                            } catch (error) {
-                              console.error('Failed to clear all paths:', error);
-                            }
-                          }}
-                          className="px-3 py-2 rounded-lg text-xs font-medium
-                                   bg-red-500/20 hover:bg-red-500/30 
-                                   text-red-400
-                                   border border-red-500/30 hover:border-red-500/40
-                                   transition-all duration-200
-                                   flex items-center justify-center gap-2"
-                        >
-                          <Trash2 className="w-3.5 h-3.5" />
-                          <span>Clear All</span>
-                        </button>
-                      </div>
-                    </div>
-
-                    {/* Background Details */}
-                    <div className="p-3 rounded-lg bg-gray-900/50 border border-gray-700/30">
-                      <div className="text-xs text-gray-400 mb-2">Background Configuration</div>
-                      <div className="space-y-1.5 text-[10px] font-mono">
-                        <div className="flex justify-between">
-                          <span className="text-gray-500">Dot Color:</span>
-                          <span className="text-gray-300">{currentTheme?.dotColor}</span>
-                        </div>
-                        <div className="flex justify-between">
-                          <span className="text-gray-500">Line Color:</span>
-                          <span className="text-gray-300">{currentTheme?.lineColor}</span>
-                        </div>
-                        <div className="flex justify-between">
-                          <span className="text-gray-500">Target Color:</span>
-                          <span className="text-gray-300">{currentTheme?.targetColor}</span>
-                        </div>
-                        <div className="flex justify-between">
-                          <span className="text-gray-500">Dot Opacity:</span>
-                          <span className="text-gray-300">{currentTheme?.dotOpacity}</span>
-                        </div>
-                        <div className="flex justify-between">
-                          <span className="text-gray-500">Line Opacity:</span>
-                          <span className="text-gray-300">{currentTheme?.lineOpacity}</span>
-                        </div>
-                      </div>
-                    </div>
-                  </motion.div>
-                )}
-
                 {activeTab === 'theme' && (
                   <motion.div
                     key="theme"
@@ -644,9 +396,22 @@ export function DebugToolbar({
                             key={theme.name}
                             onClick={(e) => {
                               e.stopPropagation();
+                              console.log('[DebugToolbar] Theme button clicked:', theme);
                               setSiteTheme(theme);
                               setThemeChangeMessage(`Site theme changed to ${theme.displayName}`);
                               setTimeout(() => setThemeChangeMessage(null), 2000);
+                              
+                              // Debug: Check if CSS variables are set
+                              setTimeout(() => {
+                                const root = document.documentElement;
+                                const bgColor = getComputedStyle(root).getPropertyValue('--theme-bg-color');
+                                const textColor = getComputedStyle(root).getPropertyValue('--theme-text-color');
+                                console.log('[DebugToolbar] CSS variables after change - bg:', bgColor, 'text:', textColor);
+                                console.log('[DebugToolbar] Body computed styles:', {
+                                  background: getComputedStyle(document.body).backgroundColor,
+                                  color: getComputedStyle(document.body).color
+                                });
+                              }, 100);
                             }}
                             className={`p-2 rounded-lg border transition-all duration-200 text-xs
                                       ${theme.name === siteTheme.name

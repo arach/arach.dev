@@ -2,14 +2,11 @@
 
 import React, { useState, useEffect } from 'react';
 import DottedGrid from './DottedGrid';
-import { type BackgroundTheme } from '@/components/InteractiveBackground';
+import { useTheme } from '@/lib/theme-context';
 
-interface ThemedDottedGridProps {
-  theme?: BackgroundTheme;
-}
-
-export default function ThemedDottedGrid({ theme }: ThemedDottedGridProps) {
+export default function ThemedDottedGrid() {
   const [mounted, setMounted] = useState(false);
+  const { currentTheme: siteTheme } = useTheme();
   
   useEffect(() => {
     setMounted(true);
@@ -20,59 +17,35 @@ export default function ThemedDottedGrid({ theme }: ThemedDottedGridProps) {
     return null;
   }
   
-  // Default theme if none provided
-  const defaultTheme: BackgroundTheme = {
-    name: 'default',
-    dotColor: '#6b7280',
-    lineColor: '#e5e7eb',
-    targetColor: '#3b82f6',
-    dotOpacity: 0.15,
-    lineOpacity: 0.1,
-  };
-  
-  const currentTheme = theme || defaultTheme;
-  
-  // Use theme-specific dot colors for visual interest
+  // Use site theme's accent color for dots
   const getDotColor = () => {
-    // Map theme names to better dot colors
-    switch(currentTheme.name) {
-      case 'Purple Haze':
-        return '#a855f7'; // Bright purple
-      case 'Green Matrix':
-        return '#10b981'; // Emerald green
-      case 'Orange Glow':
-        return '#fb923c'; // Bright orange
-      case 'Cyberpunk':
-        return '#ec4899'; // Hot pink
-      case 'Ocean':
-        return '#22d3ee'; // Cyan
-      case 'Sunset':
-        return '#f87171'; // Red/pink
-      case 'Blue Tech':
-      default:
-        return currentTheme.dotColor;
-    }
+    return siteTheme.accentColor || '#3b82f6';
   };
   
-  // Vary dot size based on theme for more character
+  // Vary dot size based on site theme for more character
   const getDotSize = () => {
-    switch(currentTheme.name) {
-      case 'Cyberpunk':
+    switch(siteTheme.name) {
+      case 'cyberpunk':
         return 1.5; // Larger dots for cyber aesthetic
-      case 'Green Matrix':
-        return 0.8; // Smaller dots for matrix rain feel
-      case 'Monochrome':
-        return 2; // Bold dots for minimalist look
+      case 'dark':
+        return 0.8; // Smaller dots for dark theme
+      case 'paper':
+        return 2; // Bold dots for vintage look
       default:
         return 1;
     }
+  };
+  
+  // Use site theme's dot opacity
+  const getDotOpacity = () => {
+    return siteTheme.dotOpacity || 0.15;
   };
   
   return (
     <DottedGrid
       dotSize={getDotSize()}
       dotSpacing={30}
-      dotOpacity={currentTheme.dotOpacity}
+      dotOpacity={getDotOpacity()}
       dotColor={getDotColor()}
     />
   );

@@ -87,8 +87,8 @@
   }
 
   body {
-    @apply text-foreground;
     background: var(--theme-bg-color);
+    color: var(--theme-text-color);
     transition: background-color 0.3s ease, color 0.3s ease;
   }
 

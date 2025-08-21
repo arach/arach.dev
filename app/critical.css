@@ -1,4 +1,16 @@
 /* Critical CSS - Inline this for immediate render */
+
+/* Theme variables defaults - MUST be defined first */
+:root {
+  --theme-bg-color: #ffffff;
+  --theme-text-color: #111827;
+  --theme-ascii-color: #000000;
+  --theme-border-color: #e5e7eb;
+  --theme-muted-text: #6b7280;
+  --theme-header-bg: rgba(0, 0, 0, 1);
+  --theme-header-text: #ffffff;
+}
+
 * {
   margin: 0;
   padding: 0;
@@ -11,8 +23,8 @@ html {
 
 body {
   font-family: ui-monospace, SFMono-Regular, "SF Mono", Monaco, Consolas, "Liberation Mono", "Courier New", monospace;
-  background: #ffffff;
-  color: #374151;
+  background: var(--theme-bg-color);
+  color: var(--theme-text-color);
   display: flex;
   flex-direction: column;
   min-height: 100vh;
@@ -49,7 +61,7 @@ body {
   overflow: hidden;
   text-align: center;
   opacity: 1;
-  color: #000;
+  color: var(--theme-ascii-color, #000);
 }
 
 @media (min-width: 640px) {
@@ -66,15 +78,6 @@ main {
 }
 
 header {
-  background: rgba(0, 0, 0, 1);
-  color: white;
-}
-
-/* Theme variables defaults */
-:root {
-  --theme-bg-color: #ffffff;
-  --theme-text-color: #111827;
-  --theme-ascii-color: #000000;
-  --theme-border-color: #e5e7eb;
-  --theme-muted-text: #6b7280;
+  background: var(--theme-header-bg);
+  color: var(--theme-header-text);
 }
