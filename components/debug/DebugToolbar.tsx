@@ -429,14 +429,17 @@ export function DebugToolbar({
                           key={theme.name}
                           onClick={(e) => {
                             e.stopPropagation();
-                            console.log('[DebugToolbar] Theme clicked:', theme.name);
-                            console.log('[DebugToolbar] onThemeChange exists?', !!onThemeChange);
-                            if (onThemeChange) {
+                            e.preventDefault();
+                            console.log('[DebugToolbar] Theme button clicked:', theme.name);
+                            console.log('[DebugToolbar] onThemeChange function exists?', typeof onThemeChange);
+                            
+                            if (onThemeChange && typeof onThemeChange === 'function') {
+                              console.log('[DebugToolbar] Calling onThemeChange with:', theme);
                               onThemeChange(theme);
                               setThemeChangeMessage(`Background changed to ${theme.name}`);
                               setTimeout(() => setThemeChangeMessage(null), 2000);
                             } else {
-                              console.warn('[DebugToolbar] No onThemeChange handler!');
+                              console.error('[DebugToolbar] No onThemeChange handler or not a function!', onThemeChange);
                             }
                           }}
                           className={`p-3 rounded-lg border transition-all duration-200

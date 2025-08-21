@@ -23,17 +23,17 @@ function HomeContent() {
   const router = useRouter();
   const { setTheme: setSiteTheme } = useTheme();
   
-  // Get theme from URL or default to first theme
-  const getThemeFromParams = useCallback(() => {
+  // Get initial theme from URL
+  const getInitialTheme = () => {
     const themeName = searchParams.get('theme');
     if (themeName) {
       const theme = backgroundThemes.find(t => t.name === themeName);
       if (theme) return theme;
     }
     return backgroundThemes[0];
-  }, [searchParams]);
+  };
   
-  const [currentTheme, setCurrentTheme] = useState<BackgroundTheme>(getThemeFromParams());
+  const [currentTheme, setCurrentTheme] = useState<BackgroundTheme>(getInitialTheme());
   const [themeChangeNotification, setThemeChangeNotification] = useState<string | null>(null);
   const [mounted, setMounted] = useState(false);
   const [showBackground, setShowBackground] = useState(false);
@@ -47,7 +47,16 @@ function HomeContent() {
   
   // Update theme when URL changes
   useEffect(() => {
-    const theme = getThemeFromParams();
+    const themeName = searchParams.get('theme');
+    let theme = backgroundThemes[0]; // default
+    
+    if (themeName) {
+      const foundTheme = backgroundThemes.find(t => t.name === themeName);
+      if (foundTheme) {
+        theme = foundTheme;
+      }
+    }
+    
     setCurrentTheme(theme);
     
     // Map background themes to site themes
@@ -67,7 +76,7 @@ function HomeContent() {
     if (siteTheme) {
       setSiteTheme(siteTheme);
     }
-  }, [searchParams, getThemeFromParams, setSiteTheme]);
+  }, [searchParams, setSiteTheme]);
   
   // Handle theme changes by updating URL
   const handleThemeChange = useCallback((theme: BackgroundTheme) => {
