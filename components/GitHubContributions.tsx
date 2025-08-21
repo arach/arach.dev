@@ -28,12 +28,21 @@ const GitHubContributions = memo(function GitHubContributions({
   const previewRef = useRef<HTMLDivElement>(null)
 
   useEffect(() => {
-    // Non-blocking load - fetch in background
-    setTimeout(() => {
-      fetchGitHubData()
-    }, 0)
+    // Prevent duplicate fetches with a flag
+    let isMounted = true;
+    const fetchController = new AbortController();
+    
+    // Non-blocking load - fetch in background after initial paint
+    const timeoutId = setTimeout(() => {
+      if (isMounted) {
+        fetchGitHubData()
+      }
+    }, 500) // Increased delay to prioritize initial content
     
     return () => {
+      isMounted = false;
+      clearTimeout(timeoutId);
+      fetchController.abort();
       if (previewTimeoutRef.current) {
         clearTimeout(previewTimeoutRef.current)
       }
@@ -56,6 +65,12 @@ const GitHubContributions = memo(function GitHubContributions({
   }
 
   const fetchGitHubData = async () => {
+    // Only run on client side
+    if (typeof window === 'undefined') {
+      console.log('[Component] Skipping fetch - not on client')
+      return
+    }
+    
     // Don't block initial render
     if (!isInitialized) {
       setIsInitialized(true)
@@ -72,6 +87,7 @@ const GitHubContributions = memo(function GitHubContributions({
         setLoading(true)
       }
 
+      console.log(`[Component] Fetching from: /api/github/contributions?username=${username}`)
       const contributionsResponse = await fetch(`/api/github/contributions?username=${username}`, {
         method: "GET",
         headers: {
@@ -79,6 +95,7 @@ const GitHubContributions = memo(function GitHubContributions({
           "Content-Type": "application/json",
         },
       })
+      console.log(`[Component] Response status: ${contributionsResponse.status}`)
 
       if (contributionsResponse.ok) {
         const contributionsData = await contributionsResponse.json()
@@ -127,20 +144,17 @@ const GitHubContributions = memo(function GitHubContributions({
       setLoading(false)
       setCacheInfo({ status: "error" })
 
-      let errorMessage = `API returned ${contributionsResponse.status}: ${contributionsResponse.statusText}`
-
-      try {
-        const errorText = await contributionsResponse.text()
-        if (errorText) {
-          errorMessage += ` - ${errorText}`
-        }
-      } catch (e) {
-        // Ignore error parsing response body
+      if (contributionsResponse.status === 404) {
+        console.warn(`[Component] 404 - API endpoint not found. This may be a routing issue.`)
+        // Don't throw for 404s during development
+        return
       }
 
+      let errorMessage = `API returned ${contributionsResponse.status}: ${contributionsResponse.statusText}`
       console.error(`[Component] API response not ok:`, {
         status: contributionsResponse.status,
         statusText: contributionsResponse.statusText,
+        url: `/api/github/contributions?username=${username}`
       })
 
       throw new Error(errorMessage)
@@ -308,9 +322,14 @@ const GitHubContributions = memo(function GitHubContributions({
           }}
           variant="outline"
           size="sm"
-          className="flex items-center gap-1 text-[10px] sm:text-xs hover:shadow-md transition-all duration-300 bg-gradient-to-r from-gray-50 to-gray-100 hover:from-blue-50 hover:to-indigo-50 border-gray-200 hover:border-blue-300 px-1.5 sm:px-2 py-1 sm:py-1.5 h-auto"
+          className="flex items-center gap-1 text-[10px] sm:text-xs hover:shadow-md transition-all duration-300 px-1.5 sm:px-2 py-1 sm:py-1.5 h-auto"
+          style={{
+            background: 'var(--theme-card-bg)',
+            borderColor: 'var(--theme-border-color)',
+            color: 'var(--theme-text-color)'
+          }}
         >
-          <Github className="w-3 h-3" />
+          <Github className="w-3 h-3" style={{ color: 'var(--theme-accent-color)' }} />
           {/* Show streak when ready, no loading indicator */}
           {stats && stats.currentStreak > 0 && (
             <>
@@ -318,7 +337,7 @@ const GitHubContributions = memo(function GitHubContributions({
               <span className="text-orange-600 font-medium">{stats.currentStreak}</span>
             </>
           )}
-          <TrendingUp className="w-2.5 h-2.5 text-gray-400" />
+          <TrendingUp className="w-2.5 h-2.5" style={{ color: 'var(--theme-muted-text)' }} />
         </Button>
 
         {/* Custom Hover Preview */}

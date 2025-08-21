@@ -3,7 +3,16 @@
 import { useState, useCallback, useEffect, Suspense } from "react";
 import { useSearchParams, useRouter } from "next/navigation";
 import HomePage from "@/components/home/HomePage";
-import StaticPathBackground from "@/components/StaticPathBackground";
+import dynamic from 'next/dynamic';
+
+// Lazy load the background to not block initial paint
+const StaticPathBackground = dynamic(
+  () => import("@/components/StaticPathBackground"),
+  { 
+    ssr: false,
+    loading: () => null // Don't show loading indicator
+  }
+);
 import { backgroundThemes, type BackgroundTheme } from "@/components/InteractiveBackground";
 import { DebugToolbar } from "@/components/debug/DebugToolbar";
 
@@ -24,10 +33,13 @@ function HomeContent() {
   const [currentTheme, setCurrentTheme] = useState<BackgroundTheme>(getThemeFromParams());
   const [themeChangeNotification, setThemeChangeNotification] = useState<string | null>(null);
   const [mounted, setMounted] = useState(false);
+  const [showBackground, setShowBackground] = useState(false);
   
-  // Ensure we're on the client
+  // Ensure we're on the client - background disabled by default for performance
   useEffect(() => {
     setMounted(true);
+    // Don't show background by default
+    // setShowBackground(true);
   }, []);
   
   // Update theme when URL changes
@@ -61,7 +73,7 @@ function HomeContent() {
   ];
   return (
     <>
-      <StaticPathBackground theme={currentTheme} maxActivePaths={5} />
+      {showBackground && <StaticPathBackground theme={currentTheme} maxActivePaths={5} />}
       <div className="container mx-auto px-4 py-6 min-h-[90vh] relative z-10 pointer-events-none">
         <div className="pointer-events-auto">
           <HomePage projects={projects} />

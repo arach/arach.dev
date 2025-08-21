@@ -7,6 +7,24 @@
     --background: 0 0% 100%;
     --foreground: 222.2 84% 4.9%;
 
+    /* Theme-specific variables - only these change with themes */
+    --theme-bg-color: #ffffff;
+    --theme-text-color: #111827; /* gray-900 */
+    --theme-header-bg: rgba(0, 0, 0, 1);
+    --theme-header-text: #ffffff;
+    --theme-header-font: inherit; /* Can be changed per theme */
+    --theme-border-color: #e5e7eb;
+    --theme-accent-color: #3b82f6;
+    --theme-shadow-color: rgba(0, 0, 0, 0.1);
+    --theme-muted-text: #6b7280;
+    --theme-card-bg: #f9fafb;
+    --theme-code-font: inherit;
+    --theme-ascii-color: #000000;
+    --theme-project-card-text: #111827;
+    --theme-project-card-bg: #ffffff;
+    --theme-dot-opacity: 0.15;
+    --theme-heading-color: #111827;
+
     --card: 0 0% 100%;
     --card-foreground: 222.2 84% 4.9%;
 
@@ -35,9 +53,43 @@
     --radius: 0.5rem;
   }
 
+  /* Theme definitions - only change the specific properties */
+  .theme-dark {
+    --theme-bg-color: #0a0a0a;
+    --theme-text-color: #e5e5e5;
+    --theme-header-bg: rgba(17, 17, 17, 0.95);
+    --theme-header-text: #ffffff;
+    --theme-header-font: inherit;
+  }
+
+  .theme-ocean {
+    --theme-bg-color: #0f172a;
+    --theme-text-color: #cbd5e1;
+    --theme-header-bg: rgba(30, 58, 138, 0.9);
+    --theme-header-text: #e0f2fe;
+    --theme-header-font: inherit;
+  }
+
+  .theme-forest {
+    --theme-bg-color: #14532d;
+    --theme-text-color: #dcfce7;
+    --theme-header-bg: rgba(20, 83, 45, 0.95);
+    --theme-header-text: #f0fdf4;
+    --theme-header-font: inherit;
+  }
+
+  .theme-sunset {
+    --theme-bg-color: #fef3c7;
+    --theme-text-color: #7c2d12;
+    --theme-header-bg: rgba(251, 146, 60, 0.9);
+    --theme-header-text: #ffffff;
+    --theme-header-font: inherit;
+  }
+
   body {
     @apply text-foreground;
-    background: transparent;
+    background: var(--theme-bg-color);
+    transition: background-color 0.3s ease, color 0.3s ease;
   }
 
   h1,
@@ -46,7 +98,77 @@
   h4,
   h5,
   h6 {
-    @apply text-gray-900;
+    color: var(--theme-heading-color);
+    font-family: var(--theme-header-font);
+    font-weight: 600;
+    letter-spacing: -0.02em;
+  }
+  
+  /* Ensure good readability for h2, h3, h4 specifically */
+  h2 {
+    color: var(--theme-heading-color);
+    font-size: 1.5rem;
+    font-weight: 700;
+  }
+  
+  h3 {
+    color: var(--theme-heading-color);
+    font-size: 1.25rem;
+    font-weight: 600;
+  }
+  
+  h4 {
+    color: var(--theme-heading-color);
+    font-size: 1.125rem;
+    font-weight: 600;
+  }
+
+  /* Apply theme text color to main content paragraphs only */
+  main > p:not([class*="text-"]),
+  main article p:not([class*="text-"]),
+  main section > p:not([class*="text-"]) {
+    color: var(--theme-text-color);
+  }
+  
+  /* Theme-aware borders */
+  .theme-border {
+    border-color: var(--theme-border-color);
+  }
+  
+  /* Theme-aware shadows */
+  .theme-shadow {
+    box-shadow: 0 1px 3px 0 var(--theme-shadow-color);
+  }
+  
+  .theme-shadow-lg {
+    box-shadow: 0 10px 25px -5px var(--theme-shadow-color),
+                0 10px 10px -5px var(--theme-shadow-color);
+  }
+  
+  /* Theme-aware cards */
+  .theme-card {
+    background: var(--theme-card-bg);
+    border: 1px solid var(--theme-border-color);
+    box-shadow: 0 1px 3px 0 var(--theme-shadow-color);
+  }
+  
+  /* Theme-aware muted text */
+  .theme-muted {
+    color: var(--theme-muted-text);
+  }
+  
+  /* Theme-aware accent elements */
+  .theme-accent {
+    color: var(--theme-accent-color);
+  }
+  
+  .theme-accent-bg {
+    background-color: var(--theme-accent-color);
+  }
+  
+  /* Theme-aware code blocks */
+  code, pre {
+    font-family: var(--theme-code-font, var(--font-geist-mono));
   }
 
   @keyframes blink {

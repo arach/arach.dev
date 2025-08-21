@@ -343,13 +343,16 @@ const StaticPathBackground: React.FC<StaticPathBackgroundProps> = ({
   }, []);
 
   // Fetch or generate paths when window size or hotspots change
+  // Use setTimeout to ensure this doesn't block initial render
   useEffect(() => {
     if (windowSize.width === 0 || windowSize.height === 0 || hotspots.length === 0) {
       return;
     }
 
-    const fetchOrGeneratePaths = async () => {
-      setIsLoadingPaths(true);
+    // Defer path loading to not block initial paint
+    const timer = setTimeout(() => {
+      const fetchOrGeneratePaths = async () => {
+        setIsLoadingPaths(true);
       
       try {
         // First, try to fetch from database - but with a timeout
@@ -469,6 +472,9 @@ const StaticPathBackground: React.FC<StaticPathBackgroundProps> = ({
     };
 
     fetchOrGeneratePaths();
+    }, 100); // Small delay to ensure initial paint happens first
+    
+    return () => clearTimeout(timer);
   }, [windowSize, hotspots]);
 
   // Find nearest hotspot to mouse position
@@ -557,52 +563,86 @@ const StaticPathBackground: React.FC<StaticPathBackgroundProps> = ({
     let lastZone: string | null = null;
     let lastSourceGridX: number | null = null;
     let lastSourceGridY: number | null = null;
+    let lockedSource: { x: number; y: number } | null = null;
     
     const handleMouseMove = (e: MouseEvent) => {
       if (rafId) cancelAnimationFrame(rafId);
       
       rafId = requestAnimationFrame(() => {
+        // Check if we're in the project grid area (rough approximation)
+        // Project grid is typically in the center-bottom area of the screen
+        const isInProjectGrid = e.clientY > windowSize.height * 0.3 && // Below top 30%
+                                e.clientX > windowSize.width * 0.1 &&   // Not in left margin
+                                e.clientX < windowSize.width * 0.9;     // Not in right margin
+        
         // Calculate grid position for mouse - align with dot centers
         const mouseGridX = Math.floor(e.clientX / GRID_SIZE);
         const mouseGridY = Math.floor(e.clientY / GRID_SIZE);
         
-        // If we have a last source position, limit movement to avoid large jumps
-        let newGridX = mouseGridX;
-        let newGridY = mouseGridY;
-        
-        if (lastSourceGridX !== null && lastSourceGridY !== null) {
-          // Maximum grid steps we can move at once (2-3 grid cells)
-          const maxGridMove = 3;
-          
-          // Calculate distance in grid units
-          const gridDistX = Math.abs(mouseGridX - lastSourceGridX);
-          const gridDistY = Math.abs(mouseGridY - lastSourceGridY);
-          
-          // If mouse moved too far, limit the source movement
-          if (gridDistX > maxGridMove || gridDistY > maxGridMove) {
-            // Move source towards mouse but limit the distance
-            const dirX = Math.sign(mouseGridX - lastSourceGridX);
-            const dirY = Math.sign(mouseGridY - lastSourceGridY);
-            
-            newGridX = lastSourceGridX + (dirX * Math.min(gridDistX, maxGridMove));
-            newGridY = lastSourceGridY + (dirY * Math.min(gridDistY, maxGridMove));
+        if (isInProjectGrid) {
+          // In project grid: Lock source, move target
+          if (!lockedSource) {
+            // Lock the source to current position when entering project grid
+            lockedSource = { 
+              x: (lastSourceGridX || mouseGridX) * GRID_SIZE + 15,
+              y: (lastSourceGridY || mouseGridY) * GRID_SIZE + 15
+            };
+            console.log('[Paths] Entered project grid - locking source at', lockedSource);
           }
-        }
-        
-        // Update source position (snapped to dot center)
-        const snappedX = newGridX * GRID_SIZE + 15; // Center of grid cell
-        const snappedY = newGridY * GRID_SIZE + 15; // Center of grid cell
-        
-        // Only update if position actually changed
-        if (lastSourceGridX !== newGridX || lastSourceGridY !== newGridY) {
-          setSourcePos({ x: snappedX, y: snappedY });
-          lastSourceGridX = newGridX;
-          lastSourceGridY = newGridY;
+          
+          // Update target position to follow mouse
+          const targetX = mouseGridX * GRID_SIZE + 15;
+          const targetY = mouseGridY * GRID_SIZE + 15;
+          setTargetPos({ x: targetX, y: targetY });
+          
+        } else {
+          // Normal behavior: source follows mouse, target is randomly selected
+          if (lockedSource) {
+            console.log('[Paths] Left project grid - unlocking source');
+            lockedSource = null;
+          }
+          
+          // Limit source movement to avoid large jumps
+          let newGridX = mouseGridX;
+          let newGridY = mouseGridY;
+          
+          if (lastSourceGridX !== null && lastSourceGridY !== null) {
+            // Maximum grid steps we can move at once (2-3 grid cells)
+            const maxGridMove = 3;
+            
+            // Calculate distance in grid units
+            const gridDistX = Math.abs(mouseGridX - lastSourceGridX);
+            const gridDistY = Math.abs(mouseGridY - lastSourceGridY);
+            
+            // If mouse moved too far, limit the source movement
+            if (gridDistX > maxGridMove || gridDistY > maxGridMove) {
+              // Move source towards mouse but limit the distance
+              const dirX = Math.sign(mouseGridX - lastSourceGridX);
+              const dirY = Math.sign(mouseGridY - lastSourceGridY);
+              
+              newGridX = lastSourceGridX + (dirX * Math.min(gridDistX, maxGridMove));
+              newGridY = lastSourceGridY + (dirY * Math.min(gridDistY, maxGridMove));
+            }
+          }
+          
+          // Update source position (snapped to dot center)
+          const snappedX = newGridX * GRID_SIZE + 15; // Center of grid cell
+          const snappedY = newGridY * GRID_SIZE + 15; // Center of grid cell
+          
+          // Only update if position actually changed
+          if (lastSourceGridX !== newGridX || lastSourceGridY !== newGridY) {
+            setSourcePos({ x: snappedX, y: snappedY });
+            lastSourceGridX = newGridX;
+            lastSourceGridY = newGridY;
+          }
         }
         
         // STEP 1: Find the nearest hotspot to use as a reference for pre-calculated paths
         // Hotspots are positioned every 180px (6 grid cells) across the screen
-        const nearest = findNearestHotspot(e.clientX, e.clientY);
+        // In project grid mode, use locked source position instead of mouse position
+        const nearest = isInProjectGrid && lockedSource 
+          ? findNearestHotspot(lockedSource.x, lockedSource.y)
+          : findNearestHotspot(e.clientX, e.clientY);
         
         if (!nearest) {
           console.warn('[Paths] No hotspot found near mouse position', e.clientX, e.clientY);
@@ -664,47 +704,29 @@ const StaticPathBackground: React.FC<StaticPathBackgroundProps> = ({
               .filter(t => t !== null) as Array<{targetId: string, paths: typeof availablePaths, target: Hotspot, angle: number}>;
             
             if (viableTargets.length > 0) {
-              // Prefer targets on the opposite side of the screen
-              // Calculate which quadrant the source is in
-              const centerX = windowSize.width / 2;
-              const centerY = windowSize.height / 2;
-              const sourceIsLeft = nearest.x < centerX;
-              const sourceIsTop = nearest.y < centerY;
-              
-              // Score targets based on how opposite they are
-              const scoredTargets = viableTargets.map(target => {
-                const targetIsLeft = target.target.x < centerX;
-                const targetIsTop = target.target.y < centerY;
+              // In project grid mode, target is already set by mouse position
+              // In normal mode, randomly select a target
+              if (!isInProjectGrid) {
+                const selectedTarget = viableTargets[Math.floor(Math.random() * viableTargets.length)];
+                const { targetId, paths: targetPaths, target: targetHotspot } = selectedTarget;
                 
-                // Higher score for opposite quadrant
-                let score = 0;
-                if (sourceIsLeft !== targetIsLeft) score += 2;
-                if (sourceIsTop !== targetIsTop) score += 2;
-                
-                // Additional score for distance from source
-                const distance = Math.sqrt(
-                  Math.pow(target.target.x - nearest.x, 2) + 
-                  Math.pow(target.target.y - nearest.y, 2)
-                );
-                score += distance / windowSize.width; // Normalize by screen width
-                
-                return { ...target, score };
-              });
-              
-              // Sort by score and pick from top candidates
-              scoredTargets.sort((a, b) => b.score - a.score);
-              const topCandidates = scoredTargets.slice(0, Math.min(3, scoredTargets.length));
-              const selectedTarget = topCandidates[Math.floor(Math.random() * topCandidates.length)];
-              
-              const { targetId, paths: targetPaths, target: targetHotspot } = selectedTarget;
-              
-              if (targetHotspot) {
-                setTargetPos({ x: targetHotspot.x, y: targetHotspot.y });
-                
-                // Select at least 2 paths, prefer 3 if available, up to maxActivePaths
-                const pathsToShow = Math.min(targetPaths.length, Math.max(2, maxActivePaths));
-                const selected = targetPaths.slice(0, pathsToShow);
-                setActivePaths(selected);
+                if (targetHotspot) {
+                  // Set target position 
+                  setTargetPos({ x: targetHotspot.x, y: targetHotspot.y });
+                  
+                  // Select at least 2 paths, prefer 3 if available
+                  const pathsToShow = Math.min(targetPaths.length, Math.max(2, maxActivePaths));
+                  const selected = targetPaths.slice(0, pathsToShow);
+                  
+                  console.log(`[Paths] Selected ${selected.length} paths from ${nearest.id} to ${targetId}`);
+                  setActivePaths(selected);
+                }
+              } else {
+                // In project grid mode, just select paths to show
+                // Target position is already set by mouse tracking
+                const paths = availablePaths.slice(0, Math.max(2, maxActivePaths));
+                console.log(`[Paths] Project grid mode: showing ${paths.length} paths`);
+                setActivePaths(paths);
               }
             } else {
               // Fallback: if we have any paths, try to show at least 2

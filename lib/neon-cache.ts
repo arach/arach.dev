@@ -39,8 +39,8 @@ export class NeonCache {
       if (!process.env.DATABASE_URL || !sql) {
         return false
       }
-
-      await sql`SELECT 1`
+      // Only check connection when necessary, not on every request
+      // The actual query will fail if connection is bad
       return true
     } catch (error) {
       console.warn("[Cache] Database connection failed:", error)
@@ -53,7 +53,7 @@ export class NeonCache {
    */
   async get<T>(key: string): Promise<T | null> {
     try {
-      if (!sql || !(await this.checkConnection())) {
+      if (!sql) {
         return null
       }
 
@@ -73,15 +73,17 @@ export class NeonCache {
 
       const entry = result[0] as CacheEntry
 
-      // Increment hit count (ignore errors)
-      await sql`
-        UPDATE github_cache 
-        SET hit_count = hit_count + 1 
-        WHERE cache_key = ${key}
-      `.catch(() => {})
-
-      // Record cache hit (ignore errors)
-      await this.recordHit(key).catch(() => {})
+      // Update hit count and stats in background (fire-and-forget)
+      // Don't await - this significantly improves response time
+      setImmediate(() => {
+        sql`
+          UPDATE github_cache 
+          SET hit_count = hit_count + 1 
+          WHERE cache_key = ${key}
+        `.catch(() => {})
+        
+        this.recordHit(key).catch(() => {})
+      })
 
       console.log(`[Cache] HIT for key: ${key} (age: ${this.getAgeInMinutes(entry.created_at)} min)`)
 

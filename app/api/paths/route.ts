@@ -38,6 +38,9 @@ export async function GET(request: NextRequest) {
     // Find paths that cover the current viewport
     // We want paths where the bounding box is at least as large as our viewport
     // But also ensure we get a good distribution across the screen
+    const halfWidth = Math.floor(width / 2);
+    const halfHeight = Math.floor(height / 2);
+    
     let result = await sql`
       WITH path_coverage AS (
         SELECT 
@@ -45,9 +48,9 @@ export async function GET(request: NextRequest) {
           max_x, max_y, min_x, min_y,
           -- Calculate which quadrant the path starts from
           CASE 
-            WHEN (points->0->>'x')::int < ${width/2} AND (points->0->>'y')::int < ${height/2} THEN 'top-left'
-            WHEN (points->0->>'x')::int >= ${width/2} AND (points->0->>'y')::int < ${height/2} THEN 'top-right'
-            WHEN (points->0->>'x')::int < ${width/2} AND (points->0->>'y')::int >= ${height/2} THEN 'bottom-left'
+            WHEN (points->0->>'x')::int < ${halfWidth} AND (points->0->>'y')::int < ${halfHeight} THEN 'top-left'
+            WHEN (points->0->>'x')::int >= ${halfWidth} AND (points->0->>'y')::int < ${halfHeight} THEN 'top-right'
+            WHEN (points->0->>'x')::int < ${halfWidth} AND (points->0->>'y')::int >= ${halfHeight} THEN 'bottom-left'
             ELSE 'bottom-right'
           END as quadrant
         FROM background_paths

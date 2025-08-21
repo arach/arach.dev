@@ -17,8 +17,44 @@ export async function GET() {
     // Get all cache entries from the database
     const entries = await cache.getAllEntries();
     
-    // Calculate statistics
-    const cacheStatistics = getCacheStatistics();
+    // Get real statistics from database
+    let cacheStatistics = { hits: 0, misses: 0 };
+    let lastAccess = null;
+    
+    if (sql) {
+      try {
+        const statsResult = await sql`
+          SELECT 
+            cache_key,
+            SUM(hit_count) as hits,
+            SUM(miss_count) as misses,
+            MAX(last_hit) as last_hit
+          FROM cache_stats
+          GROUP BY cache_key
+        `;
+        
+        // Sum up all cache keys
+        cacheStatistics = statsResult.reduce((acc: { hits: number; misses: number }, row) => ({
+          hits: acc.hits + Number(row.hits || 0),
+          misses: acc.misses + Number(row.misses || 0),
+        }), { hits: 0, misses: 0 });
+        
+        // Get the most recent access
+        const lastHits = statsResult
+          .map(r => r.last_hit)
+          .filter(Boolean)
+          .sort((a, b) => new Date(b).getTime() - new Date(a).getTime());
+        
+        lastAccess = lastHits[0] || null;
+      } catch (err) {
+        console.warn('Could not fetch cache stats from DB, using in-memory:', err);
+        // Fall back to in-memory stats if DB fails
+        const memStats = getCacheStatistics();
+        cacheStatistics = { hits: memStats.hits, misses: memStats.misses };
+        lastAccess = memStats.lastAccess;
+      }
+    }
+    
     const totalEntries = entries.length;
     const totalRequests = cacheStatistics.hits + cacheStatistics.misses;
     const hitRate = totalRequests > 0 
@@ -112,7 +148,7 @@ export async function GET() {
         totalEntries,
         hitRate,
         totalSize: formatSize(totalSize),
-        lastAccess: cacheStatistics.lastAccess,
+        lastAccess: lastAccess,
         pathCache: pathCacheStats
       },
       entries: [...formattedEntries.slice(0, 5), ...pathEntries].slice(0, 15), // Mix both types of entries

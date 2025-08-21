@@ -29,7 +29,10 @@ export async function GET(request: NextRequest) {
   try {
     // Step 1: Check Neon database cache first
     console.log(`[API] 🔍 Checking Neon cache for key: ${cacheKey}`)
+    const cacheStart = Date.now()
     const cachedData = await neonCache.get<any>(cacheKey)
+    const cacheTime = Date.now() - cacheStart
+    console.log(`[API] Cache lookup took ${cacheTime}ms`)
 
     if (cachedData) {
       const responseTime = Date.now() - requestStart

@@ -10,6 +10,7 @@ import { fadeInUp } from "@/lib/utils"
 import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "@/components/ui/tooltip"
 import { useAudioFeedback } from "@/hooks/useAudioFeedback"
 import GitHubContributions from "@/components/GitHubContributions"
+import HeroLCP from "./HeroLCP"
 
 interface Project {
   title: string
@@ -503,8 +504,8 @@ export default function HomePage({ projects }: { projects: Project[] }) {
       <TooltipTrigger asChild>
         <div className="mb-3">
           <div className="flex justify-between items-center mb-1">
-            <span className="text-xs font-medium text-gray-700">{label}</span>
-            <span className="text-xs text-gray-500">
+            <span className="text-xs font-medium" style={{ color: 'var(--theme-text-color)' }}>{label}</span>
+            <span className="text-xs" style={{ color: 'var(--theme-muted-text)' }}>
               {count} ({percentage}%)
             </span>
           </div>
@@ -531,36 +532,20 @@ export default function HomePage({ projects }: { projects: Project[] }) {
 
   return (
     <TooltipProvider>
-      <div ref={containerRef} className="max-w-4xl mx-auto py-4 sm:py-16 text-gray-900 text-xs relative z-45">
+      <div ref={containerRef} className="max-w-4xl mx-auto py-4 sm:py-16 text-xs relative z-45" style={{ color: 'var(--theme-text-color)' }}>
+        {/* Optimized Hero for LCP - renders immediately without animation */}
+        <HeroLCP />
+        
         <motion.div className="mb-4 sm:mb-20" {...fadeInUp}>
-          <div className="mb-4 sm:mb-8">
-            <pre
-              className="text-[4px] xs:text-[5px] sm:text-[8px] md:text-[10px] lg:text-[12px] text-black mb-2 sm:mb-6 overflow-hidden leading-none tracking-tighter mx-auto text-center sm:text-left"
-              style={{
-                fontFamily:
-                  'ui-monospace, "Cascadia Code", "Source Code Pro", Menlo, Consolas, "DejaVu Sans Mono", monospace',
-              }}
-            >
-              {`╔──────────────────────────────────────────────────────────────────────────╗
-│                                                                          │
-│    █████╗ ██████╗  █████╗  ██████╗██╗  ██╗   ██████╗ ███████╗██╗   ██╗   │
-│   ██╔══██╗██╔══██╗██╔══██╗██╔════╝██║  ██║   ██╔══██╗██╔════╝██║   ██║   │
-│   ███████║██████╔╝███████║██║     ███████║   ██║  ██║█████╗  ██║   ██║   │
-│   ██╔══██║██╔══██╗██╔══██║██║     ██╔══██║   ██║  ██║██╔══╝  ╚██╗ ██╔╝   │
-│   ██║  ██║██║  ██║██║  ██║╚██████╗██║  ██║██╗██████╔╝███████╗ ╚████╔╝    │
-│   ╚═╝  ╚═╝╚═╝  ╚═╝╚═╝  ╚═╝ ╚═════╝╚═╝  ╚═╝╚═╝╚═════╝ ╚══════╝  ╚═══╝     │
-│                                                                          │
-╚──────────────────────────────────────────────────────────────────────────╝`}
-            </pre>
-          </div>
-          <div className="border-l-2 border-gray-600 pl-2 sm:pl-4 text-[10px] sm:text-xs text-gray-600 mb-4 relative z-10 flex flex-col sm:flex-row sm:items-center sm:justify-between gap-2">
+          <div className="border-l-2 pl-2 sm:pl-4 text-[10px] sm:text-xs mb-4 relative z-10 flex flex-col sm:flex-row sm:items-center sm:justify-between gap-2" style={{ borderColor: 'var(--theme-border-color)', color: 'var(--theme-muted-text)' }}>
             <div>
               <span className="text-[10px] sm:text-xs">4x ex-CTO, 2x ex-founder, ex-Meta Engineering</span>{" "}
               <a
                 href="https://arach.io"
                 target="_blank"
                 rel="noopener noreferrer"
-                className="text-gray-500 hover:text-gray-700 transition-colors text-[10px] sm:text-xs underline cursor-pointer relative z-20"
+                className="transition-colors text-[10px] sm:text-xs underline cursor-pointer relative z-20 hover:opacity-80"
+                style={{ color: 'var(--theme-muted-text)' }}
               >
                 → more info
               </a>
@@ -582,12 +567,13 @@ export default function HomePage({ projects }: { projects: Project[] }) {
                 initial={{ scale: 0.9, opacity: 0 }}
                 animate={{ scale: 1, opacity: 1 }}
                 exit={{ scale: 0.9, opacity: 0 }}
-                className="bg-white rounded-lg shadow-xl max-w-4xl w-full max-h-[90vh] overflow-y-auto"
+                className="rounded-lg shadow-xl max-w-4xl w-full max-h-[90vh] overflow-y-auto"
+                style={{ backgroundColor: 'var(--theme-card-bg)', boxShadow: '0 20px 50px var(--theme-shadow-color)' }}
                 onClick={(e) => e.stopPropagation()}
               >
                 <div className="p-6">
                   <div className="flex justify-between items-center mb-6">
-                    <h2 className="text-xl font-bold text-gray-900">Project Statistics</h2>
+                    <h2 className="text-xl font-bold" style={{ color: 'var(--theme-heading-color)' }}>Project Statistics</h2>
                     <Button variant="ghost" size="icon" onClick={() => setShowStats(false)} className="h-8 w-8">
                       <X className="h-4 w-4" />
                     </Button>
@@ -602,15 +588,15 @@ export default function HomePage({ projects }: { projects: Project[] }) {
                       <CardContent className="p-0">
                         <div className="space-y-2">
                           <div className="flex justify-between">
-                            <span className="text-xs text-gray-600">Total Projects</span>
+                            <span className="text-xs" style={{ color: 'var(--theme-muted-text)' }}>Total Projects</span>
                             <span className="text-sm font-bold text-blue-600">{projectStats.totalProjects}</span>
                           </div>
                           <div className="flex justify-between">
-                            <span className="text-xs text-gray-600">Categories</span>
+                            <span className="text-xs" style={{ color: 'var(--theme-muted-text)' }}>Categories</span>
                             <span className="text-sm font-bold text-green-600">{projectStats.categories.length}</span>
                           </div>
                           <div className="flex justify-between">
-                            <span className="text-xs text-gray-600">Technologies</span>
+                            <span className="text-xs" style={{ color: 'var(--theme-muted-text)' }}>Technologies</span>
                             <span className="text-sm font-bold text-purple-600">
                               {projectStats.technologies.length}
                             </span>
@@ -845,6 +831,17 @@ export default function HomePage({ projects }: { projects: Project[] }) {
                 variant={selectedCategory === "all" ? "default" : "outline"}
                 size="sm"
                 className="text-xs"
+                style={{
+                  ...(selectedCategory === "all" ? {
+                    backgroundColor: 'var(--theme-accent-color)',
+                    color: 'white',
+                    borderColor: 'var(--theme-accent-color)'
+                  } : {
+                    backgroundColor: 'transparent',
+                    color: 'var(--theme-text-color)',
+                    borderColor: 'var(--theme-border-color)'
+                  })
+                }}
                 onClick={() => {
                   handleButtonClick()
                   setSelectedCategory("all")
@@ -859,6 +856,17 @@ export default function HomePage({ projects }: { projects: Project[] }) {
                   variant={selectedCategory === category.name ? "default" : "outline"}
                   size="sm"
                   className="text-xs"
+                  style={{
+                    ...(selectedCategory === category.name ? {
+                      backgroundColor: 'var(--theme-accent-color)',
+                      color: 'white',
+                      borderColor: 'var(--theme-accent-color)'
+                    } : {
+                      backgroundColor: 'transparent',
+                      color: 'var(--theme-text-color)',
+                      borderColor: 'var(--theme-border-color)'
+                    })
+                  }}
                   onClick={() => {
                     handleButtonClick()
                     setSelectedCategory(category.name)
@@ -874,13 +882,17 @@ export default function HomePage({ projects }: { projects: Project[] }) {
               <motion.div
                 initial={{ opacity: 0, y: -10 }}
                 animate={{ opacity: 1, y: 0 }}
-                className="p-3 bg-gray-50 border border-gray-200 rounded-md mb-4"
+                className="p-3 rounded-md mb-4"
+                style={{ 
+                  backgroundColor: 'var(--theme-card-bg)', 
+                  border: '1px solid var(--theme-border-color)' 
+                }}
               >
                 <div className="flex items-center gap-2 mb-1">
                   <span className="text-lg">{categories.find((cat) => cat.name === selectedCategory)?.icon}</span>
-                  <h3 className="font-medium text-sm">{selectedCategory}</h3>
+                  <h3 className="font-medium text-sm" style={{ color: 'var(--theme-heading-color)' }}>{selectedCategory}</h3>
                 </div>
-                <p className="text-xs text-gray-600">
+                <p className="text-xs" style={{ color: 'var(--theme-muted-text)' }}>
                   {categories.find((cat) => cat.name === selectedCategory)?.description}
                 </p>
               </motion.div>
