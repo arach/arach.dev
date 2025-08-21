@@ -3,6 +3,13 @@ import { neon } from "@neondatabase/serverless"
 // Initialize Neon client
 const sql = process.env.DATABASE_URL ? neon(process.env.DATABASE_URL) : null
 
+// Log initialization status
+if (!process.env.DATABASE_URL) {
+  console.warn("[Cache] DATABASE_URL not found in environment variables - cache will be disabled")
+} else {
+  console.log("[Cache] Neon database initialized with DATABASE_URL")
+}
+
 interface CacheEntry {
   cache_key: string
   username: string
@@ -54,6 +61,7 @@ export class NeonCache {
   async get<T>(key: string): Promise<T | null> {
     try {
       if (!sql) {
+        console.warn("[Cache] Database connection not available - DATABASE_URL may be missing")
         return null
       }
 
@@ -63,7 +71,10 @@ export class NeonCache {
         WHERE cache_key = ${key} 
         AND expires_at > NOW()
         LIMIT 1
-      `
+      `.catch((error) => {
+        console.error(`[Cache] Database query failed for key ${key}:`, error.message || error)
+        throw error
+      })
 
       if (result.length === 0) {
         // Record cache miss

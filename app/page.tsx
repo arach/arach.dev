@@ -7,6 +7,7 @@ import { DebugToolbar } from "@/components/debug/DebugToolbar";
 
 function HomeContent() {
   const [mounted, setMounted] = useState(false);
+  const isDevelopment = process.env.NODE_ENV === 'development';
   
   // Ensure we're on the client
   useEffect(() => {
@@ -35,8 +36,8 @@ function HomeContent() {
         </div>
       </div>
       
-      {/* Debug Toolbar - Only render on client after mount */}
-      {mounted && <DebugToolbar />}
+      {/* Debug Toolbar - Only render in development mode */}
+      {mounted && isDevelopment && <DebugToolbar />}
     </>
   );
 }
