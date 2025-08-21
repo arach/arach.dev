@@ -1,11 +1,11 @@
 "use client"
 
-import { useState, useEffect, useRef } from "react"
+import { useState, useEffect, useRef, memo } from "react"
 import { Button } from "@/components/ui/button"
 import { Github, AlertCircle, RefreshCw, TrendingUp, Zap } from "lucide-react"
 import type { ContributionDay, GitHubStats, GitHubContributionsProps } from "@/types/github"
 
-export default function GitHubContributions({
+const GitHubContributions = memo(function GitHubContributions({
   username = "arach",
   showPrivateRepos = false,
 }: GitHubContributionsProps) {
@@ -455,4 +455,6 @@ export default function GitHubContributions({
       </div>
     </div>
   )
-}
+})
+
+export default GitHubContributions

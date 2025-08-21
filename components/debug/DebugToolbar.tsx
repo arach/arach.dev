@@ -441,6 +441,32 @@ export function DebugToolbar({
                       ))}
                     </div>
 
+                    {/* Grid Debug Controls */}
+                    <div className="p-3 rounded-lg bg-cyan-500/20 border border-cyan-500/30">
+                      <div className="text-xs text-gray-300 mb-2">Grid Visualization</div>
+                      <div className="text-[10px] text-gray-400 mb-3">
+                        Toggle debug mode to see grid system, hotspots, and path indicators
+                      </div>
+                      <button
+                        onClick={() => {
+                          if (typeof window !== 'undefined' && (window as any).__toggleDebug) {
+                            (window as any).__toggleDebug();
+                            setThemeChangeMessage('Grid debug visualization toggled');
+                            setTimeout(() => setThemeChangeMessage(null), 2000);
+                          }
+                        }}
+                        className="w-full px-3 py-2 rounded-lg text-xs font-medium
+                                 bg-cyan-500/20 hover:bg-cyan-500/30 
+                                 text-cyan-400
+                                 border border-cyan-500/30 hover:border-cyan-500/40
+                                 transition-all duration-200
+                                 flex items-center justify-center gap-2"
+                      >
+                        <Bug className="w-3.5 h-3.5" />
+                        <span>Toggle Grid Debug (Ctrl+Shift+D)</span>
+                      </button>
+                    </div>
+
                     {/* Path Cache Controls */}
                     <div className="p-3 rounded-lg bg-purple-500/20 border border-purple-500/30">
                       <div className="text-xs text-gray-300 mb-2">Path Cache Management</div>
@@ -448,6 +474,24 @@ export function DebugToolbar({
                         Regenerate paths to update animations for current viewport
                       </div>
                       <div className="flex gap-2">
+                        <button
+                          onClick={() => {
+                            if (typeof window !== 'undefined' && (window as any).__storePaths) {
+                              (window as any).__storePaths();
+                              setThemeChangeMessage('Storing current paths to database...');
+                              setTimeout(() => setThemeChangeMessage(null), 3000);
+                            }
+                          }}
+                          className="flex-1 px-3 py-2 rounded-lg text-xs font-medium
+                                   bg-green-500/20 hover:bg-green-500/30 
+                                   text-green-400
+                                   border border-green-500/30 hover:border-green-500/40
+                                   transition-all duration-200
+                                   flex items-center justify-center gap-2"
+                        >
+                          <Database className="w-3.5 h-3.5" />
+                          <span>Store to DB</span>
+                        </button>
                         <button
                           onClick={async () => {
                             setIsRefreshing(true);
@@ -483,7 +527,7 @@ export function DebugToolbar({
                                    disabled:opacity-50 disabled:cursor-not-allowed"
                         >
                           <RefreshCw className={`w-3.5 h-3.5 ${isRefreshing ? 'animate-spin' : ''}`} />
-                          <span>Regenerate Paths</span>
+                          <span>Regenerate</span>
                         </button>
                         <button
                           onClick={async () => {

@@ -67,20 +67,19 @@ const generateHotspots = (width: number, height: number): Hotspot[] => {
   const hotspots: Hotspot[] = [];
   
   // Calculate grid dimensions
-  const gridCols = Math.floor(width / GRID_SIZE);
-  const gridRows = Math.floor(height / GRID_SIZE);
+  const gridCols = Math.ceil(width / GRID_SIZE);
+  const gridRows = Math.ceil(height / GRID_SIZE);
   
   // Create hotspots every 6 grid cells (180px apart)
   const stepX = 6;
   const stepY = 6;
   
-  // Start from grid position, ensure we cover edges too
-  // Include hotspots from edge to edge (including 0 and max positions)
-  for (let row = 0; row <= gridRows; row += stepY) {
-    for (let col = 0; col <= gridCols; col += stepX) {
-      // Ensure we don't go beyond screen bounds
-      const x = Math.min(col * GRID_SIZE, width - GRID_SIZE);
-      const y = Math.min(row * GRID_SIZE, height - GRID_SIZE);
+  // Align hotspots with dot centers (15px offset)
+  for (let row = 0; row < gridRows; row += stepY) {
+    for (let col = 0; col < gridCols; col += stepX) {
+      // Position at center of grid cell to align with dots
+      const x = Math.min(col * GRID_SIZE + 15, width - 15);
+      const y = Math.min(row * GRID_SIZE + 15, height - 15);
       
       hotspots.push({
         id: `h-${col}-${row}`,
@@ -92,11 +91,11 @@ const generateHotspots = (width: number, height: number): Hotspot[] => {
   
   // Add additional hotspots along the edges if they're not covered
   // Right edge
-  const rightEdgeCol = gridCols;
+  const rightEdgeCol = gridCols - 1;
   for (let row = stepY; row < gridRows; row += stepY) {
-    const x = Math.min(rightEdgeCol * GRID_SIZE, width - GRID_SIZE);
-    const y = row * GRID_SIZE;
-    if (!hotspots.find(h => h.x === x && h.y === y)) {
+    const x = Math.min(rightEdgeCol * GRID_SIZE + 15, width - 15);
+    const y = row * GRID_SIZE + 15;
+    if (!hotspots.find(h => Math.abs(h.x - x) < 5 && Math.abs(h.y - y) < 5)) {
       hotspots.push({
         id: `h-edge-right-${row}`,
         x: x,
@@ -105,12 +104,12 @@ const generateHotspots = (width: number, height: number): Hotspot[] => {
     }
   }
   
-  // Bottom edge
-  const bottomEdgeRow = gridRows;
+  // Bottom edge  
+  const bottomEdgeRow = gridRows - 1;
   for (let col = stepX; col < gridCols; col += stepX) {
-    const x = col * GRID_SIZE;
-    const y = Math.min(bottomEdgeRow * GRID_SIZE, height - GRID_SIZE);
-    if (!hotspots.find(h => h.x === x && h.y === y)) {
+    const x = col * GRID_SIZE + 15;
+    const y = Math.min(bottomEdgeRow * GRID_SIZE + 15, height - 15);
+    if (!hotspots.find(h => Math.abs(h.x - x) < 5 && Math.abs(h.y - y) < 5)) {
       hotspots.push({
         id: `h-edge-bottom-${col}`,
         x: x,
@@ -127,16 +126,17 @@ const generatePaths = (hotspots: Hotspot[], width: number, height: number): Path
   const paths: Path[] = [];
   let pathId = 0;
 
-  // Generate all grid dots for pathfinding - ensure perfect alignment
+  // Generate all grid dots for pathfinding - align with CSS background dots
+  // CSS dots are at center of each 30px cell (15px offset)
   const dots: Dot[] = [];
-  const gridCols = Math.floor(width / GRID_SIZE);
-  const gridRows = Math.floor(height / GRID_SIZE);
+  const gridCols = Math.ceil(width / GRID_SIZE);
+  const gridRows = Math.ceil(height / GRID_SIZE);
   
-  for (let col = 0; col <= gridCols; col++) {
-    for (let row = 0; row <= gridRows; row++) {
+  for (let col = 0; col < gridCols; col++) {
+    for (let row = 0; row < gridRows; row++) {
       dots.push({ 
-        x: col * GRID_SIZE, 
-        y: row * GRID_SIZE 
+        x: col * GRID_SIZE + 15, // Center of grid cell
+        y: row * GRID_SIZE + 15  // Center of grid cell
       });
     }
   }
@@ -170,18 +170,48 @@ const generatePaths = (hotspots: Hotspot[], width: number, height: number): Path
     return path;
   };
 
-  // Generate multiple path variations between each hotspot pair
+  // Track paths per hotspot to ensure distribution
+  const pathsPerHotspot = new Map<string, number>();
+  hotspots.forEach(h => pathsPerHotspot.set(h.id, 0));
+  
+  // First pass: ensure every hotspot has at least some paths
+  // Generate paths from each hotspot, preferring opposite-side targets
+  const centerX = width / 2;
+  const centerY = height / 2;
+  
   hotspots.forEach((from) => {
-    hotspots.forEach((to) => {
-      if (from.id === to.id) return;
-      
-      const distance = getDistance(from, to);
-      
-      // Only create paths for reasonable distances (200-600 pixels)
-      if (distance < 200 || distance > 600) return;
-      
-      // Generate 3-5 variations of each path for nice visual variety
-      const variations = 3 + Math.floor(Math.random() * 3);
+    const fromIsLeft = from.x < centerX;
+    const fromIsTop = from.y < centerY;
+    
+    // Score all potential targets based on position
+    const potentialTargets = hotspots
+      .filter(h => h.id !== from.id)
+      .map(h => {
+        const distance = getDistance(from, h);
+        const targetIsLeft = h.x < centerX;
+        const targetIsTop = h.y < centerY;
+        
+        let score = 0;
+        // Strongly prefer opposite sides
+        if (fromIsLeft !== targetIsLeft) score += 5;
+        if (fromIsTop !== targetIsTop) score += 5;
+        
+        // Prefer medium to long distances
+        if (distance >= 300 && distance <= 600) score += 3;
+        else if (distance >= 180 && distance <= 800) score += 1;
+        
+        return { hotspot: h, distance, score };
+      })
+      .filter(({ distance }) => distance >= 180 && distance <= 800)
+      .sort((a, b) => b.score - a.score || a.distance - b.distance);
+    
+    // Take top 4 targets (best scoring)
+    const neighbors = potentialTargets.slice(0, 4);
+    
+    // Generate paths to each neighbor
+    neighbors.forEach(({ hotspot: to }) => {
+      // Generate 2-3 variations per neighbor for better visual effect
+      const variations = 3; // Always generate 3 variations
       for (let variation = 0; variation < variations; variation++) {
         const path = generatePath(from, to);
         
@@ -192,10 +222,64 @@ const generatePaths = (hotspots: Hotspot[], width: number, height: number): Path
             to: to.id,
             points: path,
           });
+          
+          // Track paths per hotspot
+          pathsPerHotspot.set(from.id, (pathsPerHotspot.get(from.id) || 0) + 1);
+          pathsPerHotspot.set(to.id, (pathsPerHotspot.get(to.id) || 0) + 1);
         }
       }
     });
   });
+  
+  // Second pass: add longer-distance paths for visual variety
+  // But limit total to prevent overwhelming the system
+  const maxTotalPaths = 1500; // Increased to accommodate more variations
+  
+  if (paths.length < maxTotalPaths) {
+    hotspots.forEach((from) => {
+      hotspots.forEach((to) => {
+        if (from.id === to.id) return;
+        if (paths.length >= maxTotalPaths) return;
+        
+        const distance = getDistance(from, to);
+        
+        // Add some longer-distance paths for variety
+        if (distance >= 400 && distance <= 800) {
+          // Only add if this hotspot doesn't have too many paths already
+          const fromCount = pathsPerHotspot.get(from.id) || 0;
+          const toCount = pathsPerHotspot.get(to.id) || 0;
+          
+          if (fromCount < 15 && toCount < 15 && Math.random() > 0.7) {
+            // Generate 2-3 variations for longer paths too
+            const variations = 2 + Math.floor(Math.random() * 2); // 2 or 3 variations
+            for (let v = 0; v < variations; v++) {
+              if (paths.length >= maxTotalPaths) break;
+              
+              const path = generatePath(from, to);
+              
+              if (path.length > 1) {
+                paths.push({
+                  id: `path-${pathId++}`,
+                  from: from.id,
+                  to: to.id,
+                  points: path,
+                });
+                
+                pathsPerHotspot.set(from.id, fromCount + 1);
+                pathsPerHotspot.set(to.id, toCount + 1);
+              }
+            }
+          }
+        }
+      });
+    });
+  }
+  
+  console.log(`[generatePaths] Generated ${paths.length} paths with distribution:`, 
+    Array.from(pathsPerHotspot.entries())
+      .filter(([_, count]) => count === 0)
+      .map(([id]) => id)
+  );
 
   return paths;
 };
@@ -214,7 +298,7 @@ const StaticPathBackground: React.FC<StaticPathBackgroundProps> = ({
     dotOpacity: 0.15,
     lineOpacity: 0.4,
   },
-  maxActivePaths = 2 
+  maxActivePaths = 3 
 }) => {
   const [windowSize, setWindowSize] = useState({ width: 0, height: 0 });
   const [currentZone, setCurrentZone] = useState<string | null>(null);
@@ -223,20 +307,39 @@ const StaticPathBackground: React.FC<StaticPathBackgroundProps> = ({
   const [targetPos, setTargetPos] = useState<Dot | null>(null);
   const [allPaths, setAllPaths] = useState<Path[]>([]);
   const [isLoadingPaths, setIsLoadingPaths] = useState(false);
+  const [showDebug, setShowDebug] = useState(false);
   
   const hotspots = useMemo(() => 
     windowSize.width > 0 ? generateHotspots(windowSize.width, windowSize.height) : [],
     [windowSize]
   );
 
-  // Update window size
+  // Update window size and setup debug toggle
   useEffect(() => {
     const updateSize = () => {
       setWindowSize({ width: window.innerWidth, height: window.innerHeight });
     };
     updateSize();
     window.addEventListener('resize', updateSize);
-    return () => window.removeEventListener('resize', updateSize);
+    
+    // Debug toggle with keyboard shortcut (Ctrl/Cmd + Shift + D)
+    const handleKeyPress = (e: KeyboardEvent) => {
+      if ((e.ctrlKey || e.metaKey) && e.shiftKey && e.key === 'D') {
+        setShowDebug(prev => !prev);
+        console.log('[Debug] Grid visualization toggled');
+      }
+    };
+    window.addEventListener('keydown', handleKeyPress);
+    
+    // Expose debug toggle to window for console access
+    if (typeof window !== 'undefined') {
+      (window as any).__toggleDebug = () => setShowDebug(prev => !prev);
+    }
+    
+    return () => {
+      window.removeEventListener('resize', updateSize);
+      window.removeEventListener('keydown', handleKeyPress);
+    };
   }, []);
 
   // Fetch or generate paths when window size or hotspots change
@@ -249,25 +352,47 @@ const StaticPathBackground: React.FC<StaticPathBackgroundProps> = ({
       setIsLoadingPaths(true);
       
       try {
-        // First, try to fetch from database
+        // First, try to fetch from database - but with a timeout
         console.log(`[StaticPathBackground] Fetching paths for ${windowSize.width}x${windowSize.height}`);
-        const response = await fetch(`/api/paths?width=${windowSize.width}&height=${windowSize.height}`);
         
-        if (response.ok) {
+        const controller = new AbortController();
+        const timeoutId = setTimeout(() => controller.abort(), 1000); // 1 second timeout
+        
+        const response = await fetch(`/api/paths?width=${windowSize.width}&height=${windowSize.height}`, {
+          signal: controller.signal
+        }).catch(() => null);
+        
+        clearTimeout(timeoutId);
+        
+        if (response && response.ok) {
           const data = await response.json();
           
+          // Check if we got paths AND they're for the correct viewport
+          // (API might return old cached paths from a different viewport)
           if (data.paths && data.paths.length > 0) {
-            console.log(`[StaticPathBackground] Using ${data.paths.length} cached paths from database`);
-            // Transform API response to Path format
-            const paths: Path[] = data.paths.map((p: any) => ({
-              id: p.id,
-              from: p.from,
-              to: p.to,
-              points: p.points,
-            }));
-            setAllPaths(paths);
-            setIsLoadingPaths(false);
-            return;
+            // Check if any path point exceeds our current viewport
+            const pathsAreValid = data.paths.every((p: any) => {
+              if (!p.points || !Array.isArray(p.points)) return false;
+              return p.points.every((point: any) => 
+                point.x <= windowSize.width && point.y <= windowSize.height
+              );
+            });
+            
+            if (pathsAreValid) {
+              console.log(`[StaticPathBackground] Using ${data.paths.length} cached paths from database`);
+              // Transform API response to Path format
+              const paths: Path[] = data.paths.map((p: any) => ({
+                id: p.id,
+                from: p.from,
+                to: p.to,
+                points: p.points,
+              }));
+              setAllPaths(paths);
+              setIsLoadingPaths(false);
+              return;
+            } else {
+              console.log(`[StaticPathBackground] Cached paths don't fit viewport, generating new ones`);
+            }
           }
         }
         
@@ -276,36 +401,62 @@ const StaticPathBackground: React.FC<StaticPathBackgroundProps> = ({
         const generatedPaths = generatePaths(hotspots, windowSize.width, windowSize.height);
         setAllPaths(generatedPaths);
         
-        // Store generated paths in database for future use
-        if (generatedPaths.length > 0) {
-          console.log(`[StaticPathBackground] Storing ${generatedPaths.length} paths in database`);
-          
-          // Transform paths for API
-          const pathsForApi = generatedPaths.map((path, index) => ({
-            from: path.from,
-            to: path.to,
-            variation: index % 5, // Track which variation this is
-            points: path.points,
-            distance: Math.sqrt(
-              Math.pow(path.points[0].x - path.points[path.points.length - 1].x, 2) +
-              Math.pow(path.points[0].y - path.points[path.points.length - 1].y, 2)
-            ),
-          }));
-          
-          fetch('/api/paths', {
-            method: 'POST',
-            headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify({
-              paths: pathsForApi,
-              viewport: { width: windowSize.width, height: windowSize.height },
-            }),
-          }).then(res => {
-            if (res.ok) {
-              console.log('[StaticPathBackground] Paths successfully stored in database');
-            }
-          }).catch(err => {
-            console.error('[StaticPathBackground] Error storing paths:', err);
-          });
+        // Don't auto-store paths - we'll manually populate the database when needed
+        console.log(`[StaticPathBackground] Generated ${generatedPaths.length} paths locally`);
+        
+        // Expose a way to manually store paths if needed (e.g., from debug toolbar)
+        if (typeof window !== 'undefined') {
+          (window as any).__storePaths = () => {
+            console.log('[StaticPathBackground] Manually storing paths to database...');
+            
+            // Group paths by starting hotspot to ensure distribution
+            const pathsByHotspot = new Map<string, typeof generatedPaths>();
+            generatedPaths.forEach(path => {
+              if (!pathsByHotspot.has(path.from)) {
+                pathsByHotspot.set(path.from, []);
+              }
+              pathsByHotspot.get(path.from)!.push(path);
+            });
+            
+            // Select a balanced set of paths - take a few from each hotspot
+            const selectedPaths: typeof generatedPaths = [];
+            const maxPathsPerHotspot = 10;
+            
+            pathsByHotspot.forEach((paths, hotspotId) => {
+              // Take up to maxPathsPerHotspot from each hotspot
+              const pathsToTake = Math.min(paths.length, maxPathsPerHotspot);
+              selectedPaths.push(...paths.slice(0, pathsToTake));
+            });
+            
+            // Limit to 500 total
+            const pathsForApi = selectedPaths.slice(0, 500).map((path, index) => ({
+              from: path.from,
+              to: path.to,
+              variation: index % 5,
+              points: path.points,
+              distance: Math.sqrt(
+                Math.pow(path.points[0].x - path.points[path.points.length - 1].x, 2) +
+                Math.pow(path.points[0].y - path.points[path.points.length - 1].y, 2)
+              ),
+            }));
+            
+            console.log(`[StaticPathBackground] Storing ${pathsForApi.length} paths from ${pathsByHotspot.size} hotspots`);
+            
+            fetch('/api/paths', {
+              method: 'POST',
+              headers: { 'Content-Type': 'application/json' },
+              body: JSON.stringify({
+                paths: pathsForApi,
+                viewport: { width: windowSize.width, height: windowSize.height },
+              }),
+            }).then(res => {
+              if (res.ok) {
+                console.log('[StaticPathBackground] Paths manually stored successfully');
+              }
+            }).catch(err => {
+              console.error('[StaticPathBackground] Manual storage failed:', err);
+            });
+          };
         }
       } catch (error) {
         console.error('[StaticPathBackground] Error fetching/generating paths:', error);
@@ -340,8 +491,68 @@ const StaticPathBackground: React.FC<StaticPathBackgroundProps> = ({
     return nearest;
   }, [hotspots]);
 
+  // Generate a path between two points using grid-based pathfinding
+  const generateDynamicPath = useCallback((start: Hotspot, end: Hotspot): Dot[] => {
+    const path: Dot[] = [{ x: start.x, y: start.y }];
+    
+    // Generate all grid dots for pathfinding - align with dot centers
+    const gridCols = Math.ceil(windowSize.width / GRID_SIZE);
+    const gridRows = Math.ceil(windowSize.height / GRID_SIZE);
+    const dots: Dot[] = [];
+    
+    for (let col = 0; col < gridCols; col++) {
+      for (let row = 0; row < gridRows; row++) {
+        dots.push({ 
+          x: col * GRID_SIZE + 15, // Center of grid cell
+          y: row * GRID_SIZE + 15  // Center of grid cell
+        });
+      }
+    }
+    
+    const getDistance = (dot1: Dot, dot2: Dot) => {
+      return Math.sqrt(Math.pow(dot1.x - dot2.x, 2) + Math.pow(dot1.y - dot2.y, 2));
+    };
+    
+    let current = { x: start.x, y: start.y };
+    const endDot = { x: end.x, y: end.y };
+    
+    // Walk through dots to create path with variation
+    while (getDistance(current, endDot) > GRID_SIZE) {
+      const nearDots = dots.filter(dot =>
+        getDistance(dot, current) < GRID_SIZE * 2 && // Adjacent dots (includes diagonals)
+        getDistance(dot, endDot) < getDistance(current, endDot) && // Moving toward target
+        !path.find(p => p.x === dot.x && p.y === dot.y) // Not already in path
+      );
+      
+      if (nearDots.length === 0) break;
+      
+      // Pick a random near dot for organic variety
+      const next = nearDots[Math.floor(Math.random() * nearDots.length)];
+      path.push(next);
+      current = next;
+    }
+    
+    path.push(endDot);
+    return path;
+  }, [windowSize]);
+  
   // Handle mouse movement with throttling
   useEffect(() => {
+    /**
+     * PATH FINDING LOGIC:
+     * 1. Mouse position is snapped to grid (30px cells) for smooth source indicator movement
+     * 2. Find nearest hotspot (hotspots are placed every 180px across the screen)
+     * 3. Look for pre-calculated paths FROM that hotspot in our cache
+     * 4. If no outgoing paths, look for incoming paths and reverse them
+     * 5. Group paths by target and select the best target with multiple path variations
+     * 6. The actual path rendering starts from mouse position (source) but follows
+     *    the pre-calculated path structure from the nearest hotspot
+     * 
+     * CACHE STRUCTURE:
+     * - Paths are generated between hotspots that are 170-900px apart
+     * - Each hotspot pair has 2-3 path variations for visual variety
+     * - Paths are stored in database/memory with from/to hotspot IDs
+     */
     let rafId: number | null = null;
     let lastZone: string | null = null;
     let lastSourceGridX: number | null = null;
@@ -351,9 +562,9 @@ const StaticPathBackground: React.FC<StaticPathBackgroundProps> = ({
       if (rafId) cancelAnimationFrame(rafId);
       
       rafId = requestAnimationFrame(() => {
-        // Calculate grid position for mouse - ensure exact grid alignment
-        const mouseGridX = Math.floor(e.clientX / GRID_SIZE + 0.5); // Round to nearest grid position
-        const mouseGridY = Math.floor(e.clientY / GRID_SIZE + 0.5);
+        // Calculate grid position for mouse - align with dot centers
+        const mouseGridX = Math.floor(e.clientX / GRID_SIZE);
+        const mouseGridY = Math.floor(e.clientY / GRID_SIZE);
         
         // If we have a last source position, limit movement to avoid large jumps
         let newGridX = mouseGridX;
@@ -378,9 +589,9 @@ const StaticPathBackground: React.FC<StaticPathBackgroundProps> = ({
           }
         }
         
-        // Update source position (snapped to grid)
-        const snappedX = newGridX * GRID_SIZE;
-        const snappedY = newGridY * GRID_SIZE;
+        // Update source position (snapped to dot center)
+        const snappedX = newGridX * GRID_SIZE + 15; // Center of grid cell
+        const snappedY = newGridY * GRID_SIZE + 15; // Center of grid cell
         
         // Only update if position actually changed
         if (lastSourceGridX !== newGridX || lastSourceGridY !== newGridY) {
@@ -389,19 +600,42 @@ const StaticPathBackground: React.FC<StaticPathBackgroundProps> = ({
           lastSourceGridY = newGridY;
         }
         
+        // STEP 1: Find the nearest hotspot to use as a reference for pre-calculated paths
+        // Hotspots are positioned every 180px (6 grid cells) across the screen
         const nearest = findNearestHotspot(e.clientX, e.clientY);
         
-        if (!nearest) return;
+        if (!nearest) {
+          console.warn('[Paths] No hotspot found near mouse position', e.clientX, e.clientY);
+          return;
+        }
         
-        // Only update paths if zone changed
+        // Only update paths if we moved to a different hotspot zone
         if (nearest.id !== lastZone) {
           lastZone = nearest.id;
           setCurrentZone(nearest.id);
           
-          // Find paths from this hotspot
-          const availablePaths = allPaths.filter(
+          console.log(`[Paths] Mouse entered zone: ${nearest.id} at (${nearest.x}, ${nearest.y})`);
+          
+          // STEP 2: Find pre-calculated paths FROM this hotspot
+          let availablePaths = allPaths.filter(
             path => path.from === nearest.id
           );
+          
+          console.log(`[Paths] Found ${availablePaths.length} outgoing paths from ${nearest.id}`);
+          
+          // STEP 3: If no outgoing paths, try to find paths TO this hotspot and reverse them
+          if (availablePaths.length === 0) {
+            console.log(`[Paths] No outgoing paths, checking for incoming paths to ${nearest.id}`);
+            availablePaths = allPaths.filter(
+              path => path.to === nearest.id
+            ).map(path => ({
+              ...path,
+              from: path.to,
+              to: path.from,
+              points: [...path.points].reverse()
+            }));
+            console.log(`[Paths] Found ${availablePaths.length} incoming paths (reversed) to ${nearest.id}`);
+          }
           
           if (availablePaths.length > 0) {
             // Group paths by their target destination
@@ -413,33 +647,190 @@ const StaticPathBackground: React.FC<StaticPathBackgroundProps> = ({
               pathsByTarget.get(path.to)!.push(path);
             });
             
-            // Find targets that have enough path variations
+            // Find targets that have path variations
             const viableTargets = Array.from(pathsByTarget.entries())
-              .filter(([_, paths]) => paths.length >= Math.min(maxActivePaths, 2))
-              .sort((a, b) => b[1].length - a[1].length); // Sort by most paths
+              .filter(([_, paths]) => paths.length >= 1)
+              .map(([targetId, paths]) => {
+                const target = hotspots.find(h => h.id === targetId);
+                if (!target) return null;
+                
+                // Calculate direction from source to target
+                const dx = target.x - nearest.x;
+                const dy = target.y - nearest.y;
+                const angle = Math.atan2(dy, dx);
+                
+                return { targetId, paths, target, angle };
+              })
+              .filter(t => t !== null) as Array<{targetId: string, paths: typeof availablePaths, target: Hotspot, angle: number}>;
             
             if (viableTargets.length > 0) {
-              // Pick the target with the most path variations (or random if multiple)
-              const [targetId, targetPaths] = viableTargets[0];
-              const targetHotspot = hotspots.find(h => h.id === targetId);
+              // Prefer targets on the opposite side of the screen
+              // Calculate which quadrant the source is in
+              const centerX = windowSize.width / 2;
+              const centerY = windowSize.height / 2;
+              const sourceIsLeft = nearest.x < centerX;
+              const sourceIsTop = nearest.y < centerY;
+              
+              // Score targets based on how opposite they are
+              const scoredTargets = viableTargets.map(target => {
+                const targetIsLeft = target.target.x < centerX;
+                const targetIsTop = target.target.y < centerY;
+                
+                // Higher score for opposite quadrant
+                let score = 0;
+                if (sourceIsLeft !== targetIsLeft) score += 2;
+                if (sourceIsTop !== targetIsTop) score += 2;
+                
+                // Additional score for distance from source
+                const distance = Math.sqrt(
+                  Math.pow(target.target.x - nearest.x, 2) + 
+                  Math.pow(target.target.y - nearest.y, 2)
+                );
+                score += distance / windowSize.width; // Normalize by screen width
+                
+                return { ...target, score };
+              });
+              
+              // Sort by score and pick from top candidates
+              scoredTargets.sort((a, b) => b.score - a.score);
+              const topCandidates = scoredTargets.slice(0, Math.min(3, scoredTargets.length));
+              const selectedTarget = topCandidates[Math.floor(Math.random() * topCandidates.length)];
+              
+              const { targetId, paths: targetPaths, target: targetHotspot } = selectedTarget;
               
               if (targetHotspot) {
                 setTargetPos({ x: targetHotspot.x, y: targetHotspot.y });
                 
-                // Select up to maxActivePaths, ALL going to the same target
-                const selected = targetPaths.slice(0, maxActivePaths);
+                // Select at least 2 paths, prefer 3 if available, up to maxActivePaths
+                const pathsToShow = Math.min(targetPaths.length, Math.max(2, maxActivePaths));
+                const selected = targetPaths.slice(0, pathsToShow);
                 setActivePaths(selected);
               }
             } else {
-              // Fallback: just use what we have, even if only 1 path
-              const targetPath = availablePaths[Math.floor(Math.random() * availablePaths.length)];
-              const targetHotspot = hotspots.find(h => h.id === targetPath.to);
-              
-              if (targetHotspot) {
-                setTargetPos({ x: targetHotspot.x, y: targetHotspot.y });
-                const pathsToTarget = availablePaths.filter(p => p.to === targetPath.to);
-                setActivePaths(pathsToTarget.slice(0, maxActivePaths));
+              // Fallback: if we have any paths, try to show at least 2
+              if (availablePaths.length > 0) {
+                // Group all available paths by target
+                const allTargets = new Set(availablePaths.map(p => p.to));
+                
+                // Try to find multiple paths to the same target, or use different targets
+                let pathsToShow: typeof availablePaths = [];
+                
+                // First try to find a target with multiple paths
+                for (const targetId of allTargets) {
+                  const pathsToTarget = availablePaths.filter(p => p.to === targetId);
+                  if (pathsToTarget.length >= 2) {
+                    pathsToShow = pathsToTarget.slice(0, Math.max(2, maxActivePaths));
+                    break;
+                  }
+                }
+                
+                // If no target has multiple paths, combine paths to different targets
+                if (pathsToShow.length < 2) {
+                  pathsToShow = availablePaths.slice(0, Math.max(2, maxActivePaths));
+                }
+                
+                if (pathsToShow.length > 0) {
+                  const firstTarget = hotspots.find(h => h.id === pathsToShow[0].to);
+                  if (firstTarget) {
+                    setTargetPos({ x: firstTarget.x, y: firstTarget.y });
+                    setActivePaths(pathsToShow);
+                  }
+                }
               }
+            }
+          } else {
+            // CACHE MISS: No paths available at all for this hotspot
+            console.warn(`[Paths] CACHE MISS: No paths found for hotspot ${nearest.id} at (${nearest.x}, ${nearest.y})`);
+            console.warn(`[Paths] Total paths in cache: ${allPaths.length}`);
+            
+            // Generate supplemental paths on-demand for this hotspot
+            console.log(`[Paths] Generating supplemental paths for ${nearest.id}`);
+            
+            // Find nearby hotspots that are within reasonable distance
+            const nearbyHotspots = hotspots.filter(h => {
+              if (h.id === nearest.id) return false;
+              const distance = Math.sqrt(
+                Math.pow(h.x - nearest.x, 2) + Math.pow(h.y - nearest.y, 2)
+              );
+              return distance >= 180 && distance <= 600; // Closer range for better coverage
+            });
+            
+            if (nearbyHotspots.length > 0) {
+              // Prefer targets on opposite side of screen
+              const centerX = windowSize.width / 2;
+              const centerY = windowSize.height / 2;
+              const sourceIsLeft = nearest.x < centerX;
+              const sourceIsTop = nearest.y < centerY;
+              
+              // Score and sort targets by how opposite they are
+              const scoredTargets = nearbyHotspots.map(target => {
+                const targetIsLeft = target.x < centerX;
+                const targetIsTop = target.y < centerY;
+                
+                let score = 0;
+                // Prefer opposite horizontal side
+                if (sourceIsLeft !== targetIsLeft) score += 3;
+                // Prefer opposite vertical side
+                if (sourceIsTop !== targetIsTop) score += 3;
+                // Prefer targets closer to center if source is on edge
+                const distanceToCenter = Math.sqrt(
+                  Math.pow(target.x - centerX, 2) + Math.pow(target.y - centerY, 2)
+                );
+                const sourceDistanceToCenter = Math.sqrt(
+                  Math.pow(nearest.x - centerX, 2) + Math.pow(nearest.y - centerY, 2)
+                );
+                if (sourceDistanceToCenter > centerX * 0.7) {
+                  // Source is near edge, prefer center targets
+                  score += (1 - distanceToCenter / Math.max(centerX, centerY)) * 2;
+                }
+                
+                return { hotspot: target, score };
+              });
+              
+              // Sort by score and pick top 3
+              scoredTargets.sort((a, b) => b.score - a.score);
+              const targets = scoredTargets.slice(0, 3).map(t => t.hotspot);
+              
+              // Generate paths to these targets
+              const dynamicPaths: Path[] = [];
+              targets.forEach((target, index) => {
+                // Generate 3 variations for each target for better visual effect
+                for (let v = 0; v < 3; v++) {
+                  const pathPoints = generateDynamicPath(nearest, target);
+                  if (pathPoints.length > 1) {
+                    dynamicPaths.push({
+                      id: `dynamic-${nearest.id}-${target.id}-${v}`,
+                      from: nearest.id,
+                      to: target.id,
+                      points: pathPoints,
+                    });
+                  }
+                }
+              });
+              
+              if (dynamicPaths.length > 0) {
+                console.log(`[Paths] Generated ${dynamicPaths.length} supplemental paths`);
+                // Show at least 2 paths, prefer 3 if available
+                const pathsToShow = dynamicPaths.slice(0, Math.min(dynamicPaths.length, Math.max(2, maxActivePaths)));
+                setActivePaths(pathsToShow);
+                
+                // Set target to first path's destination
+                const firstTarget = hotspots.find(h => h.id === pathsToShow[0].to);
+                if (firstTarget) {
+                  setTargetPos({ x: firstTarget.x, y: firstTarget.y });
+                }
+                
+                // Add these paths to our cache for future use
+                setAllPaths(prev => [...prev, ...dynamicPaths]);
+              } else {
+                console.warn(`[Paths] Could not generate supplemental paths`);
+                setTargetPos(null);
+                setActivePaths([]);
+              }
+            } else {
+              console.warn(`[Paths] No nearby hotspots found within range`);
+              setTargetPos(null);
+              setActivePaths([]);
             }
           }
         }
@@ -509,6 +900,28 @@ const StaticPathBackground: React.FC<StaticPathBackgroundProps> = ({
           opacity: theme.dotOpacity,
         }}
       />
+      
+      {/* Debug Panel */}
+      {showDebug && (
+        <div className="fixed top-20 right-4 bg-black/80 text-green-400 p-4 rounded-lg font-mono text-xs z-50 max-w-sm">
+          <div className="mb-2 text-yellow-400 font-bold">🔧 Debug Mode</div>
+          <div className="space-y-1">
+            <div>Press Ctrl/Cmd+Shift+D to toggle</div>
+            <div className="text-cyan-400">Grid System:</div>
+            <div className="pl-2">• Cell Size: {GRID_SIZE}px</div>
+            <div className="pl-2">• Dot Offset: 15px (center)</div>
+            <div className="pl-2">• Hotspot Spacing: 180px (6 cells)</div>
+            <div className="text-green-400">Visual Indicators:</div>
+            <div className="pl-2">• 🟣 Grid lines (magenta)</div>
+            <div className="pl-2">• 🟢 Hotspots (green circles)</div>
+            <div className="pl-2">• 🔴 Center crosshair (red)</div>
+            <div className="pl-2">• 🔵 Quadrant labels (cyan)</div>
+            <div className="text-yellow-400">Console Commands:</div>
+            <div className="pl-2">• __toggleDebug() - Toggle debug</div>
+            <div className="pl-2">• __storePaths() - Store to DB</div>
+          </div>
+        </div>
+      )}
       
       {/* SVG for paths */}
       <svg
@@ -580,6 +993,131 @@ const StaticPathBackground: React.FC<StaticPathBackgroundProps> = ({
               color={theme.targetColor} 
             />
           </motion.g>
+        )}
+        
+        {/* Debug Visualization */}
+        {showDebug && (
+          <g className="debug-layer" opacity="0.8">
+            {/* Grid lines */}
+            {Array.from({ length: Math.ceil(windowSize.width / GRID_SIZE) }, (_, i) => (
+              <line
+                key={`vline-${i}`}
+                x1={i * GRID_SIZE + 15}
+                y1={0}
+                x2={i * GRID_SIZE + 15}
+                y2={windowSize.height}
+                stroke="#ff00ff"
+                strokeWidth="0.5"
+                opacity="0.2"
+              />
+            ))}
+            {Array.from({ length: Math.ceil(windowSize.height / GRID_SIZE) }, (_, i) => (
+              <line
+                key={`hline-${i}`}
+                x1={0}
+                y1={i * GRID_SIZE + 15}
+                x2={windowSize.width}
+                y2={i * GRID_SIZE + 15}
+                stroke="#ff00ff"
+                strokeWidth="0.5"
+                opacity="0.2"
+              />
+            ))}
+            
+            {/* Hotspots */}
+            {hotspots.map((hotspot, index) => (
+              <g key={hotspot.id}>
+                <circle
+                  cx={hotspot.x}
+                  cy={hotspot.y}
+                  r="8"
+                  fill="#00ff00"
+                  opacity="0.3"
+                />
+                <text
+                  x={hotspot.x}
+                  y={hotspot.y - 10}
+                  fill="#00ff00"
+                  fontSize="8"
+                  textAnchor="middle"
+                >
+                  {hotspot.id}
+                </text>
+              </g>
+            ))}
+            
+            {/* Current zone indicator */}
+            {currentZone && (
+              <text
+                x={10}
+                y={20}
+                fill="#ffff00"
+                fontSize="12"
+                fontFamily="monospace"
+              >
+                Zone: {currentZone}
+              </text>
+            )}
+            
+            {/* Grid info */}
+            <text
+              x={10}
+              y={40}
+              fill="#ffff00"
+              fontSize="12"
+              fontFamily="monospace"
+            >
+              Grid: {GRID_SIZE}px | Hotspots: {hotspots.length} | Paths: {allPaths.length}
+            </text>
+            
+            {/* Viewport info */}
+            <text
+              x={10}
+              y={60}
+              fill="#ffff00"
+              fontSize="12"
+              fontFamily="monospace"
+            >
+              Viewport: {windowSize.width}x{windowSize.height}
+            </text>
+            
+            {/* Active paths info */}
+            <text
+              x={10}
+              y={80}
+              fill="#ffff00"
+              fontSize="12"
+              fontFamily="monospace"
+            >
+              Active Paths: {activePaths.length} | Source: {sourcePos ? `(${Math.floor(sourcePos.x)}, ${Math.floor(sourcePos.y)})` : 'none'}
+            </text>
+            
+            {/* Quadrant indicators */}
+            <text x={windowSize.width / 4} y={windowSize.height / 2} fill="#00ffff" fontSize="20" textAnchor="middle" opacity="0.3">LEFT</text>
+            <text x={windowSize.width * 3 / 4} y={windowSize.height / 2} fill="#00ffff" fontSize="20" textAnchor="middle" opacity="0.3">RIGHT</text>
+            <text x={windowSize.width / 2} y={windowSize.height / 4} fill="#00ffff" fontSize="20" textAnchor="middle" opacity="0.3">TOP</text>
+            <text x={windowSize.width / 2} y={windowSize.height * 3 / 4} fill="#00ffff" fontSize="20" textAnchor="middle" opacity="0.3">BOTTOM</text>
+            
+            {/* Center crosshair */}
+            <line
+              x1={windowSize.width / 2 - 20}
+              y1={windowSize.height / 2}
+              x2={windowSize.width / 2 + 20}
+              y2={windowSize.height / 2}
+              stroke="#ff0000"
+              strokeWidth="1"
+              opacity="0.5"
+            />
+            <line
+              x1={windowSize.width / 2}
+              y1={windowSize.height / 2 - 20}
+              x2={windowSize.width / 2}
+              y2={windowSize.height / 2 + 20}
+              stroke="#ff0000"
+              strokeWidth="1"
+              opacity="0.5"
+            />
+          </g>
         )}
       </svg>
     </>

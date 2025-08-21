@@ -721,7 +721,9 @@ export default function HomePage({ projects }: { projects: Project[] }) {
 
         <Section title="Projects" headerAction={
           <div className="flex items-center gap-2">
-            {/* <GitHubContributions username="arach" /> */}
+            <div className="hidden sm:block">
+              <GitHubContributions username="arach" />
+            </div>
             <Tooltip>
               <TooltipTrigger asChild>
                 <Button
@@ -782,7 +784,9 @@ export default function HomePage({ projects }: { projects: Project[] }) {
                   <span className="text-xs text-gray-500">({projects.length})</span>
                 </div>
                 <div className="flex items-center gap-1">
-                  {/* <GitHubContributions username="arach" /> */}
+                  <div className="block sm:hidden">
+                    <GitHubContributions username="arach" />
+                  </div>
                   <Tooltip>
                     <TooltipTrigger asChild>
                       <Button
@@ -1068,12 +1072,12 @@ export default function HomePage({ projects }: { projects: Project[] }) {
                             {project.description}
                           </CardDescription>
                         </CardHeader>
-                        <CardContent className="hidden sm:block pt-0 transition-all duration-300 group-hover:pt-2 px-3 pb-3 sm:px-6 sm:pb-6">
+                        <CardContent className="sm:block pt-2 transition-all duration-300 group-hover:pt-3 px-3 pb-3 sm:px-6 sm:pb-6">
                           <div className="flex gap-1 sm:gap-2 transition-transform duration-300 group-hover:translate-x-1">
                             <Button
                               variant="outline"
                               size="icon"
-                              className="h-6 w-6 sm:h-8 sm:w-8 transition-all duration-300 bg-transparent hover:bg-blue-50 hover:border-blue-200 hover:text-blue-600 hover:shadow-md hover:scale-110 transform"
+                              className="h-7 w-7 sm:h-8 sm:w-8 transition-all duration-300 bg-white border-gray-300 text-gray-600 hover:bg-blue-50 hover:border-blue-400 hover:text-blue-600 hover:shadow-md hover:scale-110 transform"
                               style={{ willChange: "transform" }}
                               tabIndex={-1}
                               onMouseEnter={() => {
@@ -1084,13 +1088,13 @@ export default function HomePage({ projects }: { projects: Project[] }) {
                                 window.open(project.link, "_blank")
                               }}
                             >
-                              <Globe className="h-3 w-3 sm:h-4 sm:w-4 transition-transform duration-300 hover:rotate-12" />
+                              <Globe className="h-3.5 w-3.5 sm:h-4 sm:w-4 transition-transform duration-300 hover:rotate-12" />
                               <span className="sr-only">Visit site</span>
                             </Button>
                             <Button
                               variant="outline"
                               size="icon"
-                              className="h-6 w-6 sm:h-8 sm:w-8 transition-all duration-300 bg-transparent hover:bg-gray-900 hover:border-gray-700 hover:text-white hover:shadow-md hover:scale-110 transform"
+                              className="h-7 w-7 sm:h-8 sm:w-8 transition-all duration-300 bg-white border-gray-300 text-gray-600 hover:bg-gray-900 hover:border-gray-700 hover:text-white hover:shadow-md hover:scale-110 transform"
                               style={{ willChange: "transform" }}
                               tabIndex={-1}
                               onMouseEnter={() => {
@@ -1101,7 +1105,7 @@ export default function HomePage({ projects }: { projects: Project[] }) {
                                 window.open(project.github, "_blank")
                               }}
                             >
-                              <Github className="h-3 w-3 sm:h-4 sm:w-4 transition-transform duration-300 hover:rotate-12" />
+                              <Github className="h-3.5 w-3.5 sm:h-4 sm:w-4 transition-transform duration-300 hover:rotate-12" />
                               <span className="sr-only">View source</span>
                             </Button>
                           </div>

@@ -37,27 +37,64 @@ export async function GET(request: NextRequest) {
 
     // Find paths that cover the current viewport
     // We want paths where the bounding box is at least as large as our viewport
+    // But also ensure we get a good distribution across the screen
     let result = await sql`
+      WITH path_coverage AS (
+        SELECT 
+          path_key, from_hotspot, to_hotspot, variation, points, distance,
+          max_x, max_y, min_x, min_y,
+          -- Calculate which quadrant the path starts from
+          CASE 
+            WHEN (points->0->>'x')::int < ${width/2} AND (points->0->>'y')::int < ${height/2} THEN 'top-left'
+            WHEN (points->0->>'x')::int >= ${width/2} AND (points->0->>'y')::int < ${height/2} THEN 'top-right'
+            WHEN (points->0->>'x')::int < ${width/2} AND (points->0->>'y')::int >= ${height/2} THEN 'bottom-left'
+            ELSE 'bottom-right'
+          END as quadrant
+        FROM background_paths
+        WHERE max_x >= ${width - 100} AND max_y >= ${height - 100}
+      )
       SELECT path_key, from_hotspot, to_hotspot, variation, points, distance,
              max_x, max_y, min_x, min_y
-      FROM background_paths
-      WHERE max_x >= ${width} AND max_y >= ${height}
-      ORDER BY 
-        -- Prefer paths that are closest to our viewport size (not too oversized)
-        (max_x - ${width}) + (max_y - ${height}) ASC,
-        from_hotspot, to_hotspot, variation
+      FROM (
+        -- Get up to 125 paths from each quadrant to ensure distribution
+        (SELECT * FROM path_coverage WHERE quadrant = 'top-left' LIMIT 125)
+        UNION ALL
+        (SELECT * FROM path_coverage WHERE quadrant = 'top-right' LIMIT 125)
+        UNION ALL
+        (SELECT * FROM path_coverage WHERE quadrant = 'bottom-left' LIMIT 125)
+        UNION ALL
+        (SELECT * FROM path_coverage WHERE quadrant = 'bottom-right' LIMIT 125)
+      ) distributed_paths
+      ORDER BY from_hotspot, to_hotspot, variation
       LIMIT 500
     `;
 
     if (result.length === 0) {
       console.log(`[Paths API] No cached paths that cover ${width}x${height}`);
       
-      // Fallback: get the largest available paths
+      // Fallback: get any available paths with distribution
       result = await sql`
+        WITH all_paths AS (
+          SELECT 
+            path_key, from_hotspot, to_hotspot, variation, points, distance,
+            max_x, max_y, min_x, min_y,
+            -- Group by starting position for distribution
+            NTILE(4) OVER (ORDER BY (points->0->>'x')::int, (points->0->>'y')::int) as position_group
+          FROM background_paths
+        )
         SELECT path_key, from_hotspot, to_hotspot, variation, points, distance,
                max_x, max_y, min_x, min_y
-        FROM background_paths
-        ORDER BY max_x DESC, max_y DESC
+        FROM (
+          -- Get up to 125 paths from each position group
+          (SELECT * FROM all_paths WHERE position_group = 1 LIMIT 125)
+          UNION ALL
+          (SELECT * FROM all_paths WHERE position_group = 2 LIMIT 125)
+          UNION ALL
+          (SELECT * FROM all_paths WHERE position_group = 3 LIMIT 125)
+          UNION ALL
+          (SELECT * FROM all_paths WHERE position_group = 4 LIMIT 125)
+        ) distributed
+        ORDER BY from_hotspot, to_hotspot, variation
         LIMIT 500
       `;
       
@@ -186,15 +223,15 @@ export async function POST(request: NextRequest) {
     }
 
     // Clean up old viewport sizes
-    const cleanupResult = await sql`SELECT cleanup_old_viewport_paths() as deleted_count`;
-    const deletedCount = cleanupResult[0]?.deleted_count || 0;
+    // TODO: Create cleanup_old_viewport_paths() function in database
+    // const cleanupResult = await sql`SELECT cleanup_old_viewport_paths() as deleted_count`;
+    // const deletedCount = cleanupResult[0]?.deleted_count || 0;
 
-    console.log(`[Paths API] Stored ${insertedCount} paths, cleaned up ${deletedCount} old paths`);
+    console.log(`[Paths API] Stored ${insertedCount} paths`);
 
     return NextResponse.json({
       success: true,
       stored: insertedCount,
-      cleaned: deletedCount,
       viewport,
     });
   } catch (error) {
