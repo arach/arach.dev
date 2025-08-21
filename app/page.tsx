@@ -24,14 +24,14 @@ function HomeContent() {
   const { setTheme: setSiteTheme } = useTheme();
   
   // Get theme from URL or default to first theme
-  const getThemeFromParams = () => {
+  const getThemeFromParams = useCallback(() => {
     const themeName = searchParams.get('theme');
     if (themeName) {
       const theme = backgroundThemes.find(t => t.name === themeName);
       if (theme) return theme;
     }
     return backgroundThemes[0];
-  };
+  }, [searchParams]);
   
   const [currentTheme, setCurrentTheme] = useState<BackgroundTheme>(getThemeFromParams());
   const [themeChangeNotification, setThemeChangeNotification] = useState<string | null>(null);
@@ -45,8 +45,12 @@ function HomeContent() {
     // setShowBackground(true);
   }, []);
   
-  // Map background themes to site themes
-  const mapBackgroundToSiteTheme = (bgTheme: BackgroundTheme) => {
+  // Update theme when URL changes
+  useEffect(() => {
+    const theme = getThemeFromParams();
+    setCurrentTheme(theme);
+    
+    // Map background themes to site themes
     const themeMap: Record<string, string> = {
       'Blue Tech': 'default',
       'Purple Haze': 'cyberpunk', // Purple -> Cyber Neon theme
@@ -58,27 +62,22 @@ function HomeContent() {
       'Sunset': 'sunset',          // Red -> Golden Hour theme
     };
     
-    const siteThemeName = themeMap[bgTheme.name] || 'default';
+    const siteThemeName = themeMap[theme.name] || 'default';
     const siteTheme = themes.find(t => t.name === siteThemeName);
-    return siteTheme || themes[0];
-  };
-  
-  // Update theme when URL changes
-  useEffect(() => {
-    const theme = getThemeFromParams();
-    setCurrentTheme(theme);
-    
-    // Apply corresponding site theme for background colors
-    const siteTheme = mapBackgroundToSiteTheme(theme);
-    setSiteTheme(siteTheme);
-  }, [searchParams, setSiteTheme]);
+    if (siteTheme) {
+      setSiteTheme(siteTheme);
+    }
+  }, [searchParams, getThemeFromParams, setSiteTheme]);
   
   // Handle theme changes by updating URL
   const handleThemeChange = useCallback((theme: BackgroundTheme) => {
+    console.log('[Page] Theme change requested:', theme.name);
     // Update URL with new theme
     const params = new URLSearchParams(searchParams.toString());
     params.set('theme', theme.name);
-    router.push(`?${params.toString()}`, { scroll: false });
+    const newUrl = `?${params.toString()}`;
+    console.log('[Page] Pushing new URL:', newUrl);
+    router.push(newUrl, { scroll: false });
     
     // Show notification
     setThemeChangeNotification(`Theme changed to ${theme.name}`);
@@ -130,13 +129,5 @@ function HomeContent() {
 }
 
 export default function Home() {
-  return (
-    <Suspense fallback={
-      <div className="container mx-auto px-4 py-6 min-h-[90vh] relative z-10">
-        <div className="text-gray-500">Loading...</div>
-      </div>
-    }>
-      <HomeContent />
-    </Suspense>
-  );
+  return <HomeContent />;
 }
