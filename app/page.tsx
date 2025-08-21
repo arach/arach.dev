@@ -75,7 +75,7 @@ function HomeContent() {
   return (
     <>
       {/* Simple dotted grid background - always visible, theme-aware */}
-      <ThemedDottedGrid />
+      <ThemedDottedGrid theme={currentTheme} />
       
       {/* Optional path animations - disabled by default for performance */}
       {showBackground && <StaticPathBackground theme={currentTheme} maxActivePaths={5} />}
