@@ -4,6 +4,7 @@ import { useState, useCallback, useEffect, Suspense } from "react";
 import { useSearchParams, useRouter } from "next/navigation";
 import HomePage from "@/components/home/HomePage";
 import dynamic from 'next/dynamic';
+import ThemedDottedGrid from "@/components/ThemedDottedGrid";
 
 // Lazy load the background to not block initial paint
 const StaticPathBackground = dynamic(
@@ -73,7 +74,12 @@ function HomeContent() {
   ];
   return (
     <>
+      {/* Simple dotted grid background - always visible, theme-aware */}
+      <ThemedDottedGrid />
+      
+      {/* Optional path animations - disabled by default for performance */}
       {showBackground && <StaticPathBackground theme={currentTheme} maxActivePaths={5} />}
+      
       <div className="container mx-auto px-4 py-6 min-h-[90vh] relative z-10 pointer-events-none">
         <div className="pointer-events-auto">
           <HomePage projects={projects} />
