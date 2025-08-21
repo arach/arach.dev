@@ -1,0 +1,80 @@
+/* Critical CSS - Inline this for immediate render */
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+html {
+  height: 100%;
+}
+
+body {
+  font-family: ui-monospace, SFMono-Regular, "SF Mono", Monaco, Consolas, "Liberation Mono", "Courier New", monospace;
+  background: #ffffff;
+  color: #374151;
+  display: flex;
+  flex-direction: column;
+  min-height: 100vh;
+  margin: 0;
+}
+
+/* Critical layout styles */
+.max-w-4xl {
+  max-width: 56rem;
+}
+
+.mx-auto {
+  margin-left: auto;
+  margin-right: auto;
+}
+
+.px-4 {
+  padding-left: 1rem;
+  padding-right: 1rem;
+}
+
+.py-4 {
+  padding-top: 1rem;
+  padding-bottom: 1rem;
+}
+
+/* Hero ASCII immediate render */
+.hero-ascii {
+  font-size: 4px;
+  font-family: Monaco, Consolas, "Courier New", monospace;
+  margin: 0 0 0.5rem 0;
+  line-height: 1;
+  white-space: pre;
+  overflow: hidden;
+  text-align: center;
+  opacity: 1;
+  color: #000;
+}
+
+@media (min-width: 640px) {
+  .hero-ascii { 
+    font-size: 8px;
+    text-align: left;
+  }
+}
+
+/* Prevent layout shift */
+main {
+  flex-grow: 1;
+  padding-top: 0;
+}
+
+header {
+  background: rgba(0, 0, 0, 1);
+  color: white;
+}
+
+/* Theme variables defaults */
+:root {
+  --theme-bg-color: #ffffff;
+  --theme-text-color: #111827;
+  --theme-ascii-color: #000000;
+  --theme-border-color: #e5e7eb;
+  --theme-muted-text: #6b7280;
+}
