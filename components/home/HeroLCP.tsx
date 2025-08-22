@@ -39,10 +39,7 @@ export default function HeroLCP() {
           .hero-ascii { font-size: 12px; }
         }
         .hero-wrapper {
-          margin-bottom: 1rem;
-        }
-        @media (min-width: 640px) {
-          .hero-wrapper { margin-bottom: 5rem; }
+          margin-bottom: 0;
         }
       `}} />
       

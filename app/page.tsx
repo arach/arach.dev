@@ -4,15 +4,31 @@ import { useState, useEffect } from "react";
 import HomePage from "@/components/home/HomePage";
 import ThemedDottedGrid from "@/components/ThemedDottedGrid";
 import { DebugToolbar } from "@/components/debug/DebugToolbar";
+import ThemePicker from "@/components/ThemePicker";
 
 function HomeContent() {
   const [mounted, setMounted] = useState(false);
+  const [showDebugToolbar, setShowDebugToolbar] = useState(true);
   const isDevelopment = process.env.NODE_ENV === 'development';
   
-  // Ensure we're on the client
+  // Ensure we're on the client and setup keyboard shortcuts
   useEffect(() => {
     setMounted(true);
-  }, []);
+    
+    // Add keyboard shortcut for debug toolbar toggle
+    const handleKeyDown = (e: KeyboardEvent) => {
+      // Cmd/Ctrl + D to toggle debug toolbar
+      if ((e.metaKey || e.ctrlKey) && e.key === 'd') {
+        e.preventDefault();
+        setShowDebugToolbar(prev => !prev);
+      }
+    };
+    
+    if (isDevelopment) {
+      window.addEventListener('keydown', handleKeyDown);
+      return () => window.removeEventListener('keydown', handleKeyDown);
+    }
+  }, [isDevelopment]);
   
   const projects = [
     { title: "Scout", description: "Privacy-focused dictation app with local Whisper models", link: "https://arach.github.io/scout", github: "https://github.com/arach/scout", tags: ["desktop", "Tauri"], preview: "Voice to text, all local. Multiple models, file upload, native overlays." },
@@ -36,8 +52,18 @@ function HomeContent() {
         </div>
       </div>
       
-      {/* Debug Toolbar - Only render in development mode */}
-      {mounted && isDevelopment && <DebugToolbar />}
+      {/* Debug Toolbar - Only render in development mode, toggle with Cmd/Ctrl + D */}
+      {mounted && isDevelopment && showDebugToolbar && <DebugToolbar />}
+      
+      {/* Debug toolbar hint when hidden */}
+      {mounted && isDevelopment && !showDebugToolbar && (
+        <div className="fixed top-4 right-4 text-[10px] text-gray-400 font-mono opacity-50 pointer-events-none">
+          Cmd+D for debug
+        </div>
+      )}
+      
+      {/* Theme Picker - Always visible */}
+      {mounted && <ThemePicker />}
     </>
   );
 }

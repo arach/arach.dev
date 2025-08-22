@@ -11,6 +11,7 @@ import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "@/comp
 import { useAudioFeedback } from "@/hooks/useAudioFeedback"
 import GitHubContributions from "@/components/GitHubContributions"
 import HeroLCP from "./HeroLCP"
+import CompactTypographyCard from "./CompactTypographyCard"
 
 interface Project {
   title: string
@@ -532,11 +533,11 @@ export default function HomePage({ projects }: { projects: Project[] }) {
 
   return (
     <TooltipProvider>
-      <div ref={containerRef} className="max-w-4xl mx-auto py-4 sm:py-16 text-xs relative z-45" style={{ color: 'var(--theme-text-color)' }}>
+      <div ref={containerRef} className="max-w-4xl mx-auto py-4 sm:py-8 text-xs relative z-45" style={{ color: 'var(--theme-text-color)' }}>
         {/* Optimized Hero for LCP - renders immediately without animation */}
         <HeroLCP />
         
-        <motion.div className="mb-4 sm:mb-20" {...fadeInUp}>
+        <motion.div className="mb-4 sm:mb-8" {...fadeInUp}>
           <div className="border-l-2 pl-2 sm:pl-4 text-[10px] sm:text-xs mb-4 relative z-10 flex flex-col sm:flex-row sm:items-center sm:justify-between gap-2" style={{ borderColor: 'var(--theme-border-color)', color: 'var(--theme-muted-text)' }}>
             <div>
               <span className="text-[10px] sm:text-xs">4x ex-CTO, 2x ex-founder, ex-Meta Engineering</span>{" "}
@@ -826,21 +827,18 @@ export default function HomePage({ projects }: { projects: Project[] }) {
             </div>
             
             {/* Desktop category buttons */}
-            <div className="hidden sm:flex flex-wrap gap-2 mb-4">
-              <Button
-                variant={selectedCategory === "all" ? "default" : "outline"}
-                size="sm"
-                className="text-xs"
+            <div className="hidden sm:flex flex-wrap gap-1.5 mb-4">
+              <button
+                className={`
+                  text-[10px] uppercase tracking-wide px-2 py-1 rounded-sm
+                  transition-all duration-500 backdrop-blur-md
+                  ${selectedCategory === "all" 
+                    ? 'text-blue-500 bg-blue-500/10 border border-blue-500/20' 
+                    : 'text-gray-400 bg-white/[0.02] border border-gray-500/[0.05] hover:bg-white/[0.04] hover:border-gray-500/10'}
+                `}
                 style={{
-                  ...(selectedCategory === "all" ? {
-                    backgroundColor: 'var(--theme-accent-color)',
-                    color: 'white',
-                    borderColor: 'var(--theme-accent-color)'
-                  } : {
-                    backgroundColor: 'transparent',
-                    color: 'var(--theme-text-color)',
-                    borderColor: 'var(--theme-border-color)'
-                  })
+                  color: selectedCategory === "all" ? undefined : 'var(--theme-muted-text)',
+                  fontWeight: 400
                 }}
                 onClick={() => {
                   handleButtonClick()
@@ -849,23 +847,20 @@ export default function HomePage({ projects }: { projects: Project[] }) {
                 }}
               >
                 All Projects ({projects.length})
-              </Button>
+              </button>
               {categories.map((category, index) => (
-                <Button
+                <button
                   key={category.name}
-                  variant={selectedCategory === category.name ? "default" : "outline"}
-                  size="sm"
-                  className="text-xs"
+                  className={`
+                    text-[10px] uppercase tracking-wide px-2 py-1 rounded-sm
+                    transition-all duration-500 backdrop-blur-md
+                    ${selectedCategory === category.name 
+                      ? 'text-blue-500 bg-blue-500/10 border border-blue-500/20' 
+                      : 'text-gray-400 bg-white/[0.02] border border-gray-500/[0.05] hover:bg-white/[0.04] hover:border-gray-500/10'}
+                  `}
                   style={{
-                    ...(selectedCategory === category.name ? {
-                      backgroundColor: 'var(--theme-accent-color)',
-                      color: 'white',
-                      borderColor: 'var(--theme-accent-color)'
-                    } : {
-                      backgroundColor: 'transparent',
-                      color: 'var(--theme-text-color)',
-                      borderColor: 'var(--theme-border-color)'
-                    })
+                    color: selectedCategory === category.name ? undefined : 'var(--theme-muted-text)',
+                    fontWeight: 400
                   }}
                   onClick={() => {
                     handleButtonClick()
@@ -874,7 +869,7 @@ export default function HomePage({ projects }: { projects: Project[] }) {
                   }}
                 >
                   {category.icon} {category.name} ({category.projects.length})
-                </Button>
+                </button>
               ))}
             </div>
 
@@ -971,164 +966,25 @@ export default function HomePage({ projects }: { projects: Project[] }) {
               animate={{ opacity: 1, y: 0 }}
               exit={{ opacity: 0, y: -20 }}
               transition={{ duration: 0.3 }}
-              className="grid grid-cols-2 lg:grid-cols-2 gap-2 sm:gap-4 lg:gap-6"
+              className="grid grid-cols-1 md:grid-cols-2 gap-3 sm:gap-4"
             >
               {filteredProjects.map((project, index) => (
-                <motion.div
+                <CompactTypographyCard
                   key={`${selectedCategory}-${project.title}`}
-                  ref={(el) => {
+                  project={project}
+                  index={index}
+                  isKeyboardFocused={focusedIndex === index && keyboardMode}
+                  onMouseEnter={() => {
+                    if (!keyboardMode) handleCardHover()
+                  }}
+                  onClick={() => {
+                    handleCardClick()
+                    window.open(project.link, "_blank")
+                  }}
+                  cardRef={(el) => {
                     if (el) cardRefs.current[index] = el;
                   }}
-                  initial={{ opacity: 0, y: 20 }}
-                  animate={{ opacity: 1, y: 0 }}
-                  transition={{ duration: 0.5, delay: index * 0.1 }}
-                  style={{ willChange: "transform, opacity" }}
-                >
-                  <Tooltip>
-                    <TooltipTrigger asChild>
-                      <Card
-                        className={`backdrop-blur-sm flex flex-col h-full cursor-pointer transition-all duration-300 ease-out hover:shadow-xl hover:shadow-gray-200/50 hover:-translate-y-1 hover:scale-[1.02] group border border-gray-200/50 hover:border-gray-300/70 ${
-                          focusedIndex === index && keyboardMode
-                            ? "ring-2 ring-blue-500 ring-offset-2 shadow-xl -translate-y-1 scale-[1.02] border-blue-300"
-                            : ""
-                        }`}
-                        style={{ willChange: "transform" }}
-                        tabIndex={0}
-                        onMouseEnter={() => {
-                          if (!keyboardMode) handleCardHover()
-                        }}
-                        onFocus={() => {
-                          if (!keyboardMode) {
-                            enterKeyboardMode()
-                            setFocusedIndex(index)
-                          }
-                        }}
-                        onClick={() => {
-                          handleCardClick()
-                          window.open(project.link, "_blank")
-                        }}
-                        onKeyDown={(e) => {
-                          if (e.key === "Enter" || e.key === " ") {
-                            e.preventDefault()
-                            window.open(project.link, "_blank")
-                          }
-                        }}
-                      >
-                        <CardHeader className="flex-grow transition-all duration-300 group-hover:pb-4 p-3 sm:p-6">
-                          <div className="flex flex-col sm:flex-row sm:justify-between sm:items-start mb-2 gap-1 sm:gap-0">
-                            <div className="flex items-center justify-between w-full sm:w-auto">
-                              <div className="flex items-center gap-1.5">
-                                <CardTitle
-                                  className={`text-sm sm:text-base transition-colors duration-300 group-hover:text-blue-600 ${
-                                    focusedIndex === index && keyboardMode ? "text-blue-600" : ""
-                                  }`}
-                                >
-                                  {project.title}
-                                </CardTitle>
-                                {/* Show category inline on mobile */}
-                                <span className="sm:hidden text-[9px] text-gray-500">
-                                  {(() => {
-                                    const category = categories.find(cat => 
-                                      cat.projects.some(p => p.title === project.title)
-                                    );
-                                    return category?.icon || "";
-                                  })()}
-                                </span>
-                              </div>
-                              {/* Mobile buttons - inline with title */}
-                              <div className="flex gap-1 sm:hidden">
-                                <Button
-                                  variant="outline"
-                                  size="icon"
-                                  className="h-5 w-5 transition-all duration-300 bg-transparent hover:bg-blue-50 hover:border-blue-200 hover:text-blue-600"
-                                  tabIndex={-1}
-                                  onClick={(e) => {
-                                    e.stopPropagation()
-                                    window.open(project.link, "_blank")
-                                  }}
-                                >
-                                  <Globe className="h-2.5 w-2.5" />
-                                </Button>
-                                <Button
-                                  variant="outline"
-                                  size="icon"
-                                  className="h-5 w-5 transition-all duration-300 bg-transparent hover:bg-gray-900 hover:border-gray-700 hover:text-white"
-                                  tabIndex={-1}
-                                  onClick={(e) => {
-                                    e.stopPropagation()
-                                    window.open(project.github, "_blank")
-                                  }}
-                                >
-                                  <Github className="h-2.5 w-2.5" />
-                                </Button>
-                              </div>
-                            </div>
-                            <div className="hidden sm:flex gap-1 transition-transform duration-300 group-hover:scale-105">
-                              {project.tags.map((tag) => (
-                                <span
-                                  key={tag}
-                                  className={`text-[10px] px-2 py-0.5 bg-gray-100 text-gray-600 rounded-full transition-all duration-300 group-hover:bg-blue-50 group-hover:text-blue-700 group-hover:shadow-sm ${
-                                    focusedIndex === index && keyboardMode ? "bg-blue-50 text-blue-700" : ""
-                                  }`}
-                                >
-                                  {tag}
-                                </span>
-                              ))}
-                            </div>
-                          </div>
-                          <CardDescription
-                            className={`text-[10px] sm:text-xs font-light transition-colors duration-300 group-hover:text-gray-700 line-clamp-2 sm:line-clamp-none ${
-                              focusedIndex === index && keyboardMode ? "text-gray-700" : ""
-                            }`}
-                          >
-                            {project.description}
-                          </CardDescription>
-                        </CardHeader>
-                        <CardContent className="sm:block pt-2 transition-all duration-300 group-hover:pt-3 px-3 pb-3 sm:px-6 sm:pb-6">
-                          <div className="flex gap-1 sm:gap-2 transition-transform duration-300 group-hover:translate-x-1">
-                            <Button
-                              variant="outline"
-                              size="icon"
-                              className="h-7 w-7 sm:h-8 sm:w-8 transition-all duration-300 bg-white border-gray-300 text-gray-600 hover:bg-blue-50 hover:border-blue-400 hover:text-blue-600 hover:shadow-md hover:scale-110 transform"
-                              style={{ willChange: "transform" }}
-                              tabIndex={-1}
-                              onMouseEnter={() => {
-                                if (!keyboardMode) handleButtonHover()
-                              }}
-                              onClick={(e) => {
-                                e.stopPropagation()
-                                window.open(project.link, "_blank")
-                              }}
-                            >
-                              <Globe className="h-3.5 w-3.5 sm:h-4 sm:w-4 transition-transform duration-300 hover:rotate-12" />
-                              <span className="sr-only">Visit site</span>
-                            </Button>
-                            <Button
-                              variant="outline"
-                              size="icon"
-                              className="h-7 w-7 sm:h-8 sm:w-8 transition-all duration-300 bg-white border-gray-300 text-gray-600 hover:bg-gray-900 hover:border-gray-700 hover:text-white hover:shadow-md hover:scale-110 transform"
-                              style={{ willChange: "transform" }}
-                              tabIndex={-1}
-                              onMouseEnter={() => {
-                                if (!keyboardMode) handleButtonHover()
-                              }}
-                              onClick={(e) => {
-                                e.stopPropagation()
-                                window.open(project.github, "_blank")
-                              }}
-                            >
-                              <Github className="h-3.5 w-3.5 sm:h-4 sm:w-4 transition-transform duration-300 hover:rotate-12" />
-                              <span className="sr-only">View source</span>
-                            </Button>
-                          </div>
-                        </CardContent>
-                      </Card>
-                    </TooltipTrigger>
-                    <TooltipContent>
-                      <p className="text-xs">{project.preview}</p>
-                    </TooltipContent>
-                  </Tooltip>
-                </motion.div>
+                />
               ))}
             </motion.div>
           </AnimatePresence>
@@ -1139,7 +995,7 @@ export default function HomePage({ projects }: { projects: Project[] }) {
 }
 
 const Section = ({ title, children, headerAction }: { title: string; children: React.ReactNode; headerAction?: React.ReactNode }) => (
-  <motion.section className="mb-8 sm:mb-16" {...fadeInUp}>
+  <motion.section className="mb-6 sm:mb-10" {...fadeInUp}>
     <div className="hidden sm:flex items-center justify-between mb-6 border-b border-gray-700 pb-2">
       <h2 className="text-2xl font-bold">{title}</h2>
       {headerAction}

@@ -137,7 +137,7 @@ export const themes: Theme[] = [
     asciiColor: '#5c4f3b',
     projectCardText: '#3d2817',
     projectCardBg: '#f5f2eb',
-    dotOpacity: 0.35,
+    dotOpacity: 0.08,
     headingColor: '#451a03',
   },
 ];
