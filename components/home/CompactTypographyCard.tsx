@@ -102,19 +102,11 @@ export default function CompactTypographyCard({
           {project.tags.slice(0, 3).map((tag) => (
             <span
               key={tag}
-              className={`
-                text-[10px] uppercase tracking-wide
-                px-1 py-0.5 rounded-sm
-                transition-all duration-500
-                backdrop-blur-md
-                ${isKeyboardFocused 
-                  ? 'text-blue-500 bg-blue-500/10 border border-blue-500/20' 
-                  : 'text-gray-400 bg-white/[0.02] border border-gray-500/[0.05] group-hover:bg-white/[0.04] group-hover:border-gray-500/10'}
-              `}
-              style={{
-                color: isKeyboardFocused ? undefined : 'var(--theme-muted-text)',
-                fontWeight: 400
-              }}
+              className={`text-[10px] uppercase tracking-wide px-1 py-0.5 rounded-sm transition-all duration-300 font-normal ${
+                isKeyboardFocused 
+                  ? 'text-blue-600 bg-blue-50 border border-blue-200' 
+                  : 'text-gray-600 bg-white border border-gray-200 group-hover:border-gray-300'
+              }`}
             >
               {tag}
             </span>
