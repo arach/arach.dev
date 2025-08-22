@@ -98,21 +98,22 @@ export default function CompactTypographyCard({
         </p>
 
         {/* Tags - Minimal, inline */}
-        <div className="flex flex-wrap items-center gap-1.5">
+        <div className="flex flex-wrap items-center gap-1">
           {project.tags.slice(0, 3).map((tag) => (
             <span
               key={tag}
               className={`
-                text-[9px] font-mono uppercase tracking-wider
-                px-1.5 py-0.5 rounded-sm
+                text-[10px] uppercase tracking-wide
+                px-1 py-0.5 rounded-sm
                 transition-all duration-500
-                backdrop-blur-sm
+                backdrop-blur-md
                 ${isKeyboardFocused 
                   ? 'text-blue-500 bg-blue-500/10 border border-blue-500/20' 
-                  : 'text-gray-400 bg-transparent border border-transparent group-hover:bg-gray-500/5 group-hover:border-gray-500/10'}
+                  : 'text-gray-400 bg-white/[0.02] border border-gray-500/[0.05] group-hover:bg-white/[0.04] group-hover:border-gray-500/10'}
               `}
               style={{
-                color: isKeyboardFocused ? undefined : 'var(--theme-muted-text)'
+                color: isKeyboardFocused ? undefined : 'var(--theme-muted-text)',
+                fontWeight: 400
               }}
             >
               {tag}

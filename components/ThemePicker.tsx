@@ -18,7 +18,7 @@ export default function ThemePicker() {
             animate={{ opacity: 1, y: 0, scale: 1 }}
             exit={{ opacity: 0, y: 10, scale: 0.95 }}
             transition={{ duration: 0.2 }}
-            className="absolute bottom-12 right-0 backdrop-blur-xl rounded-lg shadow-2xl border border-gray-500/20 p-1.5 min-w-[140px]"
+            className="absolute bottom-12 right-0 backdrop-blur-xl rounded-lg shadow-2xl border border-gray-500/20 p-1.5 min-w-[160px]"
             style={{
               backgroundColor: 'var(--theme-bg-color)',
               borderColor: 'var(--theme-border-color)',

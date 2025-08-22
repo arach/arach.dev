@@ -827,21 +827,18 @@ export default function HomePage({ projects }: { projects: Project[] }) {
             </div>
             
             {/* Desktop category buttons */}
-            <div className="hidden sm:flex flex-wrap gap-2 mb-4">
-              <Button
-                variant={selectedCategory === "all" ? "default" : "outline"}
-                size="sm"
-                className="text-xs"
+            <div className="hidden sm:flex flex-wrap gap-1.5 mb-4">
+              <button
+                className={`
+                  text-[10px] uppercase tracking-wide px-2 py-1 rounded-sm
+                  transition-all duration-500 backdrop-blur-md
+                  ${selectedCategory === "all" 
+                    ? 'text-blue-500 bg-blue-500/10 border border-blue-500/20' 
+                    : 'text-gray-400 bg-white/[0.02] border border-gray-500/[0.05] hover:bg-white/[0.04] hover:border-gray-500/10'}
+                `}
                 style={{
-                  ...(selectedCategory === "all" ? {
-                    backgroundColor: 'var(--theme-accent-color)',
-                    color: 'white',
-                    borderColor: 'var(--theme-accent-color)'
-                  } : {
-                    backgroundColor: 'transparent',
-                    color: 'var(--theme-text-color)',
-                    borderColor: 'var(--theme-border-color)'
-                  })
+                  color: selectedCategory === "all" ? undefined : 'var(--theme-muted-text)',
+                  fontWeight: 400
                 }}
                 onClick={() => {
                   handleButtonClick()
@@ -850,23 +847,20 @@ export default function HomePage({ projects }: { projects: Project[] }) {
                 }}
               >
                 All Projects ({projects.length})
-              </Button>
+              </button>
               {categories.map((category, index) => (
-                <Button
+                <button
                   key={category.name}
-                  variant={selectedCategory === category.name ? "default" : "outline"}
-                  size="sm"
-                  className="text-xs"
+                  className={`
+                    text-[10px] uppercase tracking-wide px-2 py-1 rounded-sm
+                    transition-all duration-500 backdrop-blur-md
+                    ${selectedCategory === category.name 
+                      ? 'text-blue-500 bg-blue-500/10 border border-blue-500/20' 
+                      : 'text-gray-400 bg-white/[0.02] border border-gray-500/[0.05] hover:bg-white/[0.04] hover:border-gray-500/10'}
+                  `}
                   style={{
-                    ...(selectedCategory === category.name ? {
-                      backgroundColor: 'var(--theme-accent-color)',
-                      color: 'white',
-                      borderColor: 'var(--theme-accent-color)'
-                    } : {
-                      backgroundColor: 'transparent',
-                      color: 'var(--theme-text-color)',
-                      borderColor: 'var(--theme-border-color)'
-                    })
+                    color: selectedCategory === category.name ? undefined : 'var(--theme-muted-text)',
+                    fontWeight: 400
                   }}
                   onClick={() => {
                     handleButtonClick()
@@ -875,7 +869,7 @@ export default function HomePage({ projects }: { projects: Project[] }) {
                   }}
                 >
                   {category.icon} {category.name} ({category.projects.length})
-                </Button>
+                </button>
               ))}
             </div>
 
