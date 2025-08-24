@@ -319,10 +319,16 @@ const GitHubContributions = memo(function GitHubContributions({
         >
           <Github className="w-3 h-3" style={{ color: 'var(--theme-accent-color)' }} />
           {/* Show streak when ready, no loading indicator */}
-          {stats && stats.currentStreak > 0 && (
+          {stats && stats.currentStreak >= 7 && (
             <>
               <span className="text-orange-600">🔥</span>
               <span className="text-orange-600 font-medium">{stats.currentStreak}</span>
+            </>
+          )}
+          {stats && stats.currentStreak >= 3 && stats.currentStreak < 7 && (
+            <>
+              <span className="text-purple-500">✨</span>
+              <span className="text-purple-500 font-medium">{stats.currentStreak}</span>
             </>
           )}
           <TrendingUp className="w-2.5 h-2.5" style={{ color: 'var(--theme-muted-text)' }} />
@@ -330,16 +336,14 @@ const GitHubContributions = memo(function GitHubContributions({
 
         {/* Custom Hover Preview */}
         <div
-          className={`absolute top-full left-1/2 transform -translate-x-1/2 mt-2 transition-all duration-300 ${
+          className={`absolute top-full left-1/2 transform -translate-x-1/2 mt-2 transition-all duration-300 z-50 ${
             showPreview ? "opacity-100 pointer-events-auto" : "opacity-0 pointer-events-none"
           }`}
-          style={{ zIndex: 2147483647 }}
         >
           <div
             ref={previewRef}
-            className="rounded-lg shadow-2xl p-4 w-96 relative border"
+            className="rounded-lg shadow-2xl p-4 w-96 relative border overflow-visible"
             style={{
-              zIndex: 2147483647,
               backgroundColor: theme?.cardBg || theme?.bgColor || '#ffffff',
               borderColor: theme?.borderColor || 'rgb(229, 231, 235)',
               boxShadow: theme?.shadowColor 
@@ -394,31 +398,46 @@ const GitHubContributions = memo(function GitHubContributions({
               <div className="animate-in fade-in-50 slide-in-from-bottom-2 duration-500">
                 <div className="grid grid-cols-3 gap-4 mb-3">
                   <div className="text-center">
-                    <div className="text-lg" style={{ 
+                    <div className="text-2xl" style={{ 
                       color: theme?.textColor || 'rgb(17, 24, 39)',
                       fontFamily: theme?.headerFont || 'inherit',
                       fontWeight: 'bold'
                     }}>
                       {stats.threeMonthContributions.toLocaleString()}
                     </div>
-                    <div className="text-[11px]" style={{ color: theme?.mutedTextColor || 'rgb(107, 114, 128)' }}>Contributions</div>
+                    <div className="text-[11px]" style={{ 
+                      color: theme?.mutedTextColor || 'rgb(107, 114, 128)',
+                      fontFamily: theme?.headerFont || 'inherit'
+                    }}>Contributions</div>
                   </div>
                   <div className="text-center">
-                    <div className="text-lg" style={{ 
+                    <div className="text-2xl" style={{ 
                       color: theme?.textColor || 'rgb(17, 24, 39)',
                       fontFamily: theme?.headerFont || 'inherit',
                       fontWeight: 'bold'
                     }}>
                       {contributions.filter((d) => d.count > 0).length}
                     </div>
-                    <div className="text-[11px]" style={{ color: theme?.mutedTextColor || 'rgb(107, 114, 128)' }}>Active Days</div>
+                    <div className="text-[11px]" style={{ 
+                      color: theme?.mutedTextColor || 'rgb(107, 114, 128)',
+                      fontFamily: theme?.headerFont || 'inherit'
+                    }}>Active Days</div>
                   </div>
                   <div className="text-center">
                     <div className="flex items-center justify-center gap-1">
-                      {stats.currentStreak > 0 && <span className="text-sm">🔥</span>}
-                      <div className="text-lg font-bold" style={{ color: '#f97316' }}>{stats.currentStreak}</div>
+                      {stats.currentStreak >= 7 && <span className="text-base">🔥</span>}
+                      {stats.currentStreak >= 3 && stats.currentStreak < 7 && <span className="text-base">✨</span>}
+                      <div className="text-2xl font-bold" style={{ 
+                        color: stats.currentStreak >= 7 ? '#f97316' : stats.currentStreak >= 3 ? '#8b5cf6' : theme?.textColor || 'rgb(17, 24, 39)',
+                        fontFamily: theme?.headerFont || 'inherit'
+                      }}>
+                        {stats.currentStreak}
+                      </div>
                     </div>
-                    <div className="text-[11px] whitespace-nowrap" style={{ color: theme?.mutedTextColor || 'rgb(107, 114, 128)' }}>Streak</div>
+                    <div className="text-[11px] whitespace-nowrap" style={{ 
+                      color: theme?.mutedTextColor || 'rgb(107, 114, 128)',
+                      fontFamily: theme?.headerFont || 'inherit'
+                    }}>Streak</div>
                   </div>
                 </div>
               </div>
@@ -426,7 +445,7 @@ const GitHubContributions = memo(function GitHubContributions({
 
             {/* Two Month Calendar View */}
             {contributions.length > 0 && !error && !loading && (
-              <div className="mb-3 animate-in fade-in-50 slide-in-from-bottom-4 duration-700">
+              <div className="mb-3 animate-in fade-in-50 slide-in-from-bottom-4 duration-700 overflow-visible">
                 {/* Two Month Calendars */}
                 {(() => {
                   const today = new Date();
@@ -463,7 +482,7 @@ const GitHubContributions = memo(function GitHubContributions({
                     }
                     
                     return (
-                      <div className="flex-1">
+                      <div className="flex-1 overflow-visible">
                         {/* Month header */}
                         <div className="flex items-center justify-between mb-1">
                           <span className="text-[10px] font-medium" style={{ color: theme?.textColor || 'rgb(55, 65, 81)' }}>
@@ -484,17 +503,46 @@ const GitHubContributions = memo(function GitHubContributions({
                         </div>
                         
                         {/* Calendar grid */}
-                        <div className="grid grid-cols-7 gap-0.5">
+                        <div className="grid grid-cols-7 gap-0.5 overflow-visible">
                           {calendarDays.map((day, index) => (
                             <div
                               key={index}
-                              className={day ? "w-full aspect-square rounded-[1px] cursor-pointer hover:scale-125 transition-transform" : ""}
+                              className={day ? "w-full aspect-square rounded-[1px] cursor-pointer hover:scale-125 hover:z-10 transition-transform relative group/day" : ""}
                               style={{
                                 backgroundColor: day ? getContributionColor(day.level) : 'transparent',
                                 opacity: day && new Date(day.date) > today ? 0.3 : 1
                               }}
-                              title={day ? `${day.count} contributions on ${day.date}` : ''}
-                            />
+                            >
+                              {day && (
+                                <div className="absolute bottom-full left-1/2 -translate-x-1/2 mb-1 opacity-0 group-hover/day:opacity-100 pointer-events-none transition-opacity duration-200 z-[60]">
+                                  <div 
+                                    className="px-2 py-1 rounded text-[10px] whitespace-nowrap shadow-lg"
+                                    style={{
+                                      backgroundColor: theme?.cardBg || 'rgb(31, 41, 55)',
+                                      color: theme?.textColor || 'rgb(243, 244, 246)',
+                                      border: `1px solid ${theme?.borderColor || 'rgba(255, 255, 255, 0.1)'}`,
+                                    }}
+                                  >
+                                    <div className="font-semibold" style={{ color: theme?.accentColor || 'rgb(147, 197, 253)' }}>
+                                      {day.count} contribution{day.count !== 1 ? 's' : ''}
+                                    </div>
+                                    <div style={{ color: theme?.mutedTextColor || 'rgb(156, 163, 175)' }}>
+                                      {new Date(day.date).toLocaleDateString('en-US', { 
+                                        month: 'short', 
+                                        day: 'numeric',
+                                        year: 'numeric'
+                                      })}
+                                    </div>
+                                  </div>
+                                  <div 
+                                    className="absolute top-full left-1/2 -translate-x-1/2 w-0 h-0 border-4 border-transparent"
+                                    style={{
+                                      borderTopColor: theme?.cardBg || 'rgb(31, 41, 55)',
+                                    }}
+                                  />
+                                </div>
+                              )}
+                            </div>
                           ))}
                         </div>
                       </div>
@@ -504,38 +552,59 @@ const GitHubContributions = memo(function GitHubContributions({
                   return (
                     <>
                       {/* Two month grid */}
-                      <div className="flex gap-3 mb-3">
+                      <div className="flex gap-3 mb-3 overflow-visible">
                         {renderMonthCalendar(trailingMonth, trailingYear, false)}
                         {renderMonthCalendar(currentMonth, currentYear, true)}
                       </div>
                       
                       {/* 30-day metrics */}
                       <div className="pt-2 border-t" style={{ borderColor: theme?.borderColor || 'rgb(243, 244, 246)' }}>
-                        <div className="text-[10px] font-medium mb-1" style={{ color: theme?.mutedTextColor || 'rgb(107, 114, 128)' }}>
+                        <div className="text-[10px] font-medium mb-1" style={{ 
+                          color: theme?.mutedTextColor || 'rgb(107, 114, 128)',
+                          fontFamily: theme?.headerFont || 'inherit'
+                        }}>
                           Last 30 Days
                         </div>
                         <div className="grid grid-cols-3 gap-2">
                           <div>
-                            <div className="text-sm font-semibold" style={{ color: theme?.textColor || 'rgb(17, 24, 39)' }}>
+                            <div className="text-sm font-semibold" style={{ 
+                              color: theme?.textColor || 'rgb(17, 24, 39)',
+                              fontFamily: theme?.headerFont || 'inherit'
+                            }}>
                               {contributions.slice(-30).reduce((sum, day) => sum + day.count, 0)}
                             </div>
-                            <div className="text-[9px]" style={{ color: theme?.mutedTextColor || 'rgb(156, 163, 175)' }}>
+                            <div className="text-[9px]" style={{ 
+                              color: theme?.mutedTextColor || 'rgb(156, 163, 175)',
+                              fontFamily: theme?.headerFont || 'inherit'
+                            }}>
                               commits
                             </div>
                           </div>
                           <div>
-                            <div className="text-sm font-semibold" style={{ color: theme?.textColor || 'rgb(17, 24, 39)' }}>
+                            <div className="text-sm font-semibold" style={{ 
+                              color: theme?.textColor || 'rgb(17, 24, 39)',
+                              fontFamily: theme?.headerFont || 'inherit'
+                            }}>
                               {contributions.slice(-30).filter(d => d.count > 0).length}
                             </div>
-                            <div className="text-[9px]" style={{ color: theme?.mutedTextColor || 'rgb(156, 163, 175)' }}>
+                            <div className="text-[9px]" style={{ 
+                              color: theme?.mutedTextColor || 'rgb(156, 163, 175)',
+                              fontFamily: theme?.headerFont || 'inherit'
+                            }}>
                               active days
                             </div>
                           </div>
                           <div>
-                            <div className="text-sm font-semibold" style={{ color: theme?.textColor || 'rgb(17, 24, 39)' }}>
+                            <div className="text-sm font-semibold" style={{ 
+                              color: theme?.textColor || 'rgb(17, 24, 39)',
+                              fontFamily: theme?.headerFont || 'inherit'
+                            }}>
                               {Math.round(contributions.slice(-30).reduce((sum, day) => sum + day.count, 0) / 30 * 10) / 10}
                             </div>
-                            <div className="text-[9px]" style={{ color: theme?.mutedTextColor || 'rgb(156, 163, 175)' }}>
+                            <div className="text-[9px]" style={{ 
+                              color: theme?.mutedTextColor || 'rgb(156, 163, 175)',
+                              fontFamily: theme?.headerFont || 'inherit'
+                            }}>
                               daily avg
                             </div>
                           </div>
