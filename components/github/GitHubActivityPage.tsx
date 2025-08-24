@@ -20,8 +20,9 @@ import {
 } from "lucide-react"
 import Link from "next/link"
 import CurrentMonthInsights from "./CurrentMonthInsights"
+import type { ContributionDay, GitHubStats, MonthlyStats } from "@/types/github"
 
-// Keep all the existing interfaces and types
+// Keep only the interfaces not in types/github.ts
 interface GitHubRepo {
   id: number
   name: string
@@ -34,33 +35,6 @@ interface GitHubRepo {
   updated_at: string
   topics: string[]
   homepage: string | null
-}
-
-interface ContributionDay {
-  date: string
-  count: number
-  level: number
-}
-
-interface GitHubStats {
-  totalCommits: number
-  totalForks: number
-  currentStreak: number
-  longestStreak: number
-  totalContributions: number
-  threeMonthContributions: number
-}
-
-interface MonthlyStats {
-  month: string
-  year: number
-  contributions: number
-  activeDays: number
-  averagePerDay: number
-  longestStreak: number
-  weekdayContributions: number
-  weekendContributions: number
-  isCurrentMonth: boolean
 }
 
 interface Streak {
@@ -301,8 +275,9 @@ export default function GitHubActivityPage({ username = "arach" }: { username?: 
         }
       })
       .sort((a, b) => {
-        const dateA = new Date(a.year, a.month)
-        const dateB = new Date(b.year, b.month)
+        const monthOrder = ["Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"]
+        const dateA = new Date(a.year, monthOrder.indexOf(a.month))
+        const dateB = new Date(b.year, monthOrder.indexOf(b.month))
         return dateA.getTime() - dateB.getTime()
       })
   }
@@ -629,7 +604,8 @@ export default function GitHubActivityPage({ username = "arach" }: { username?: 
                               for (let day = 1; day <= totalDays; day++) {
                                 const dateStr = `${year}-${String(month + 1).padStart(2, '0')}-${String(day).padStart(2, '0')}`
                                 const contribution = monthData.find(c => c.date === dateStr)
-                                calendarDays.push(contribution || { date: dateStr, count: 0, level: 0 })
+                                const defaultContribution: ContributionDay = { date: dateStr, count: 0, level: 0 }
+                                calendarDays.push(contribution || defaultContribution)
                               }
                               
                               return { monthName, year, calendarDays, monthKey }

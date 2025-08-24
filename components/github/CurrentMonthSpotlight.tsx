@@ -47,7 +47,8 @@ export default function CurrentMonthSpotlight({
   for (let day = 1; day <= totalDays; day++) {
     const dateStr = `${currentYear}-${String(currentMonth + 1).padStart(2, '0')}-${String(day).padStart(2, '0')}`;
     const contribution = currentMonthContributions.find(c => c.date === dateStr);
-    calendarDays.push(contribution || { date: dateStr, count: 0, level: 0 });
+    const defaultContribution: ContributionDay = { date: dateStr, count: 0, level: 0 };
+    calendarDays.push(contribution || defaultContribution);
   }
   
   // Calculate progress
