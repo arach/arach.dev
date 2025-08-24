@@ -337,7 +337,7 @@ const GitHubContributions = memo(function GitHubContributions({
         >
           <div
             ref={previewRef}
-            className="rounded-lg shadow-2xl p-4 w-80 relative border"
+            className="rounded-lg shadow-2xl p-4 w-96 relative border"
             style={{
               zIndex: 2147483647,
               backgroundColor: theme?.cardBg || theme?.bgColor || '#ffffff',
@@ -392,98 +392,125 @@ const GitHubContributions = memo(function GitHubContributions({
             {/* Quick Stats */}
             {stats && !error && !loading && (
               <div className="animate-in fade-in-50 slide-in-from-bottom-2 duration-500">
-                <div className="grid grid-cols-3 gap-3 mb-3">
+                <div className="grid grid-cols-3 gap-4 mb-3">
                   <div className="text-center">
-                    <div className="text-lg font-bold" style={{ color: theme?.accentColor || 'rgb(59, 130, 246)' }}>
+                    <div className="text-lg" style={{ 
+                      color: theme?.textColor || 'rgb(17, 24, 39)',
+                      fontFamily: theme?.headerFont || 'inherit',
+                      fontWeight: 'bold'
+                    }}>
                       {stats.threeMonthContributions.toLocaleString()}
                     </div>
-                    <div className="text-xs" style={{ color: theme?.mutedTextColor || 'rgb(107, 114, 128)' }}>Contributions</div>
+                    <div className="text-[11px]" style={{ color: theme?.mutedTextColor || 'rgb(107, 114, 128)' }}>Contributions</div>
+                  </div>
+                  <div className="text-center">
+                    <div className="text-lg" style={{ 
+                      color: theme?.textColor || 'rgb(17, 24, 39)',
+                      fontFamily: theme?.headerFont || 'inherit',
+                      fontWeight: 'bold'
+                    }}>
+                      {contributions.filter((d) => d.count > 0).length}
+                    </div>
+                    <div className="text-[11px]" style={{ color: theme?.mutedTextColor || 'rgb(107, 114, 128)' }}>Active Days</div>
                   </div>
                   <div className="text-center">
                     <div className="flex items-center justify-center gap-1">
                       {stats.currentStreak > 0 && <span className="text-sm">🔥</span>}
                       <div className="text-lg font-bold" style={{ color: '#f97316' }}>{stats.currentStreak}</div>
                     </div>
-                    <div className="text-xs" style={{ color: theme?.mutedTextColor || 'rgb(107, 114, 128)' }}>Current Streak</div>
-                  </div>
-                  <div className="text-center">
-                    <div className="text-lg font-bold" style={{ color: '#10b981' }}>
-                      {contributions.filter((d) => d.count > 0).length}
-                    </div>
-                    <div className="text-xs" style={{ color: theme?.mutedTextColor || 'rgb(107, 114, 128)' }}>Active Days</div>
+                    <div className="text-[11px] whitespace-nowrap" style={{ color: theme?.mutedTextColor || 'rgb(107, 114, 128)' }}>Streak</div>
                   </div>
                 </div>
               </div>
             )}
 
-            {/* Current Month Calendar View */}
+            {/* Two Month Calendar View */}
             {contributions.length > 0 && !error && !loading && (
               <div className="mb-3 animate-in fade-in-50 slide-in-from-bottom-4 duration-700">
-                <div className="flex items-center justify-between mb-2">
-                  <span className="text-xs font-medium" style={{ color: theme?.textColor || 'rgb(55, 65, 81)' }}>
-                    {new Date().toLocaleDateString('en-US', { month: 'long', year: 'numeric' })}
-                  </span>
-                  <div className="flex items-center gap-1">
-                    <Zap className="w-3 h-3" style={{ color: theme?.accentColor || 'rgb(96, 165, 250)' }} />
-                  </div>
-                </div>
-
-                {/* Current Month Calendar */}
+                {/* Two Month Calendars */}
                 {(() => {
                   const today = new Date();
                   const currentMonth = today.getMonth();
                   const currentYear = today.getFullYear();
-                  const firstDay = new Date(currentYear, currentMonth, 1);
-                  const lastDay = new Date(currentYear, currentMonth + 1, 0);
-                  const daysInMonth = lastDay.getDate();
-                  const startPadding = firstDay.getDay();
                   
-                  // Get current month contributions
-                  const currentMonthContributions = contributions.filter(c => {
-                    const date = new Date(c.date);
-                    return date.getMonth() === currentMonth && date.getFullYear() === currentYear;
-                  });
+                  // Calculate trailing month
+                  const trailingMonth = currentMonth === 0 ? 11 : currentMonth - 1;
+                  const trailingYear = currentMonth === 0 ? currentYear - 1 : currentYear;
                   
-                  // Create calendar grid
-                  const calendarDays: (ContributionDay | null)[] = [];
-                  for (let i = 0; i < startPadding; i++) {
-                    calendarDays.push(null);
-                  }
-                  
-                  for (let day = 1; day <= daysInMonth; day++) {
-                    const dateStr = `${currentYear}-${String(currentMonth + 1).padStart(2, '0')}-${String(day).padStart(2, '0')}`;
-                    const contribution = currentMonthContributions.find(c => c.date === dateStr);
-                    calendarDays.push(contribution || { date: dateStr, count: 0, level: 0 });
-                  }
+                  // Helper to render a month calendar
+                  const renderMonthCalendar = (month: number, year: number, isCurrentMonth: boolean) => {
+                    const firstDay = new Date(year, month, 1);
+                    const lastDay = new Date(year, month + 1, 0);
+                    const daysInMonth = lastDay.getDate();
+                    const startPadding = firstDay.getDay();
+                    
+                    // Get month contributions
+                    const monthContributions = contributions.filter(c => {
+                      const date = new Date(c.date);
+                      return date.getMonth() === month && date.getFullYear() === year;
+                    });
+                    
+                    // Create calendar grid
+                    const calendarDays: (ContributionDay | null)[] = [];
+                    for (let i = 0; i < startPadding; i++) {
+                      calendarDays.push(null);
+                    }
+                    
+                    for (let day = 1; day <= daysInMonth; day++) {
+                      const dateStr = `${year}-${String(month + 1).padStart(2, '0')}-${String(day).padStart(2, '0')}`;
+                      const contribution = monthContributions.find(c => c.date === dateStr);
+                      calendarDays.push(contribution || { date: dateStr, count: 0, level: 0 });
+                    }
+                    
+                    return (
+                      <div className="flex-1">
+                        {/* Month header */}
+                        <div className="flex items-center justify-between mb-1">
+                          <span className="text-[10px] font-medium" style={{ color: theme?.textColor || 'rgb(55, 65, 81)' }}>
+                            {new Date(year, month).toLocaleDateString('en-US', { month: 'short' })}
+                          </span>
+                          {isCurrentMonth && (
+                            <Zap className="w-2.5 h-2.5" style={{ color: theme?.accentColor || 'rgb(96, 165, 250)' }} />
+                          )}
+                        </div>
+                        
+                        {/* Day labels */}
+                        <div className="grid grid-cols-7 gap-0.5 mb-0.5">
+                          {['S', 'M', 'T', 'W', 'T', 'F', 'S'].map((day, i) => (
+                            <div key={i} className="text-[7px] text-center" style={{ color: theme?.mutedTextColor || 'rgb(156, 163, 175)' }}>
+                              {day}
+                            </div>
+                          ))}
+                        </div>
+                        
+                        {/* Calendar grid */}
+                        <div className="grid grid-cols-7 gap-0.5">
+                          {calendarDays.map((day, index) => (
+                            <div
+                              key={index}
+                              className={day ? "w-full aspect-square rounded-[1px] cursor-pointer hover:scale-125 transition-transform" : ""}
+                              style={{
+                                backgroundColor: day ? getContributionColor(day.level) : 'transparent',
+                                opacity: day && new Date(day.date) > today ? 0.3 : 1
+                              }}
+                              title={day ? `${day.count} contributions on ${day.date}` : ''}
+                            />
+                          ))}
+                        </div>
+                      </div>
+                    );
+                  };
                   
                   return (
                     <>
-                      {/* Day labels */}
-                      <div className="grid grid-cols-7 gap-1 mb-1">
-                        {['S', 'M', 'T', 'W', 'T', 'F', 'S'].map((day, i) => (
-                          <div key={i} className="text-[8px] text-center" style={{ color: theme?.mutedTextColor || 'rgb(156, 163, 175)' }}>
-                            {day}
-                          </div>
-                        ))}
-                      </div>
-                      
-                      {/* Calendar grid */}
-                      <div className="grid grid-cols-7 gap-1">
-                        {calendarDays.map((day, index) => (
-                          <div
-                            key={index}
-                            className={day ? "w-full aspect-square rounded-sm cursor-pointer hover:scale-110 transition-transform" : ""}
-                            style={{
-                              backgroundColor: day ? getContributionColor(day.level) : 'transparent',
-                              opacity: day && new Date(day.date) > today ? 0.3 : 1
-                            }}
-                            title={day ? `${day.count} contributions on ${day.date}` : ''}
-                          />
-                        ))}
+                      {/* Two month grid */}
+                      <div className="flex gap-3 mb-3">
+                        {renderMonthCalendar(trailingMonth, trailingYear, false)}
+                        {renderMonthCalendar(currentMonth, currentYear, true)}
                       </div>
                       
                       {/* 30-day metrics */}
-                      <div className="mt-3 pt-2 border-t" style={{ borderColor: theme?.borderColor || 'rgb(243, 244, 246)' }}>
+                      <div className="pt-2 border-t" style={{ borderColor: theme?.borderColor || 'rgb(243, 244, 246)' }}>
                         <div className="text-[10px] font-medium mb-1" style={{ color: theme?.mutedTextColor || 'rgb(107, 114, 128)' }}>
                           Last 30 Days
                         </div>
