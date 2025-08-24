@@ -3,6 +3,7 @@
 import React from 'react';
 import { motion } from 'framer-motion';
 import { ExternalLink, Github } from 'lucide-react';
+import { useTheme } from '@/lib/theme-context';
 
 interface Project {
   title: string;
@@ -31,6 +32,46 @@ export default function TypographyProjectCard({
   cardRef,
 }: TypographyProjectCardProps) {
   const projectNumber = String(index + 1).padStart(2, '0');
+  const { theme } = useTheme();
+  
+  // Helper to convert hex to rgba
+  const hexToRgba = (hex: string, alpha: number) => {
+    const r = parseInt(hex.slice(1, 3), 16);
+    const g = parseInt(hex.slice(3, 5), 16);
+    const b = parseInt(hex.slice(5, 7), 16);
+    return `rgba(${r}, ${g}, ${b}, ${alpha})`;
+  };
+  
+  // Generate theme-aware tag colors
+  const getTagColors = () => {
+    if (isKeyboardFocused) {
+      // When focused, use accent color
+      return {
+        bg: theme.accentColor ? hexToRgba(theme.accentColor, 0.15) : 'rgb(219 234 254)',
+        text: theme.accentColor || 'rgb(37 99 235)',
+      };
+    }
+    
+    // Use theme colors with subtle opacity
+    if (theme.name === 'dark' || theme.name === 'terminal' || theme.name === 'cyberpunk') {
+      return {
+        bg: theme.accentColor ? hexToRgba(theme.accentColor, 0.08) : 'rgba(255, 255, 255, 0.05)',
+        text: theme.mutedTextColor || 'rgba(255, 255, 255, 0.6)',
+        hoverBg: theme.accentColor ? hexToRgba(theme.accentColor, 0.12) : 'rgba(255, 255, 255, 0.08)',
+        hoverText: theme.accentColor || 'rgba(255, 255, 255, 0.8)',
+      };
+    }
+    
+    // For light themes, use accent color with very low opacity
+    return {
+      bg: theme.accentColor ? hexToRgba(theme.accentColor, 0.06) : 'rgb(249 250 251)',
+      text: theme.mutedTextColor || 'rgb(107 114 128)',
+      hoverBg: theme.accentColor ? hexToRgba(theme.accentColor, 0.10) : 'rgb(243 244 246)',
+      hoverText: theme.textColor || 'rgb(75 85 99)',
+    };
+  };
+  
+  const tagColors = getTagColors();
 
   return (
     <motion.article
@@ -108,14 +149,23 @@ export default function TypographyProjectCard({
           {project.tags.map((tag) => (
             <span
               key={tag}
-              className={`
-                text-[10px] sm:text-xs font-mono uppercase tracking-wider
-                px-2 py-0.5 rounded-sm
-                transition-all duration-500
-                ${isKeyboardFocused 
-                  ? 'text-blue-600 bg-blue-50' 
-                  : 'text-gray-400 bg-gray-50 group-hover:text-gray-500 group-hover:bg-gray-100'}
-              `}
+              className="text-[10px] sm:text-xs font-mono uppercase tracking-wider px-2 py-0.5 rounded-sm transition-all duration-500"
+              style={{
+                backgroundColor: isKeyboardFocused ? tagColors.bg : tagColors.bg,
+                color: isKeyboardFocused ? tagColors.text : tagColors.text,
+              }}
+              onMouseEnter={(e) => {
+                if (!isKeyboardFocused && tagColors.hoverBg) {
+                  e.currentTarget.style.backgroundColor = tagColors.hoverBg;
+                  e.currentTarget.style.color = tagColors.hoverText || tagColors.text;
+                }
+              }}
+              onMouseLeave={(e) => {
+                if (!isKeyboardFocused) {
+                  e.currentTarget.style.backgroundColor = tagColors.bg;
+                  e.currentTarget.style.color = tagColors.text;
+                }
+              }}
             >
               {tag}
             </span>

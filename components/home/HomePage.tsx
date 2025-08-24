@@ -12,6 +12,7 @@ import { useAudioFeedback } from "@/hooks/useAudioFeedback"
 import GitHubContributions from "@/components/GitHubContributions"
 import HeroLCP from "./HeroLCP"
 import CompactTypographyCard from "./CompactTypographyCard"
+import { useTheme } from "@/lib/theme-context"
 
 interface Project {
   title: string
@@ -54,11 +55,20 @@ export default function HomePage({ projects }: { projects: Project[] }) {
   const [selectedCategory, setSelectedCategory] = useState<string>("all")
   const cardRefs = useRef<(HTMLDivElement | null)[]>([])
   const containerRef = useRef<HTMLDivElement>(null)
+  const { theme } = useTheme()
 
   const { playHoverSound, playClickSound, playButtonHoverSound, playButtonClickSound } = useAudioFeedback({
     enabled: audioEnabled,
     volume: 0.05,
   })
+
+  // Helper to convert hex to rgba
+  const hexToRgba = (hex: string, alpha: number) => {
+    const r = parseInt(hex.slice(1, 3), 16);
+    const g = parseInt(hex.slice(3, 5), 16);
+    const b = parseInt(hex.slice(5, 7), 16);
+    return `rgba(${r}, ${g}, ${b}, ${alpha})`;
+  };
 
   // Categorize projects
   const categories = useMemo((): ProjectCategory[] => {
@@ -828,16 +838,30 @@ export default function HomePage({ projects }: { projects: Project[] }) {
             {/* Desktop category buttons */}
             <div className="hidden sm:flex flex-wrap gap-1.5 mb-4">
               <button
-                className={`
-                  text-[10px] uppercase tracking-wide px-2 py-1 rounded-sm
-                  transition-all duration-500 backdrop-blur-md
-                  ${selectedCategory === "all" 
-                    ? 'text-blue-500 bg-blue-500/10 border border-blue-500/20' 
-                    : 'text-gray-400 bg-white/[0.02] border border-gray-500/[0.05] hover:bg-white/[0.04] hover:border-gray-500/10'}
-                `}
+                className="text-[10px] uppercase tracking-wide px-2 py-1 rounded-sm transition-all duration-500 backdrop-blur-md border"
                 style={{
-                  color: selectedCategory === "all" ? undefined : 'var(--theme-muted-text)',
+                  backgroundColor: selectedCategory === "all" 
+                    ? (theme.accentColor ? hexToRgba(theme.accentColor, 0.1) : 'rgba(59, 130, 246, 0.1)') 
+                    : (theme.accentColor ? hexToRgba(theme.accentColor, 0.03) : 'rgba(255, 255, 255, 0.02)'),
+                  borderColor: selectedCategory === "all"
+                    ? (theme.accentColor ? hexToRgba(theme.accentColor, 0.2) : 'rgba(59, 130, 246, 0.2)')
+                    : 'rgba(107, 114, 128, 0.05)',
+                  color: selectedCategory === "all" 
+                    ? (theme.accentColor || 'rgb(59, 130, 246)') 
+                    : (theme.mutedTextColor || 'rgb(156, 163, 175)'),
                   fontWeight: 400
+                }}
+                onMouseEnter={(e) => {
+                  if (selectedCategory !== "all") {
+                    e.currentTarget.style.backgroundColor = theme.accentColor ? hexToRgba(theme.accentColor, 0.05) : 'rgba(255, 255, 255, 0.04)';
+                    e.currentTarget.style.borderColor = 'rgba(107, 114, 128, 0.1)';
+                  }
+                }}
+                onMouseLeave={(e) => {
+                  if (selectedCategory !== "all") {
+                    e.currentTarget.style.backgroundColor = theme.accentColor ? hexToRgba(theme.accentColor, 0.03) : 'rgba(255, 255, 255, 0.02)';
+                    e.currentTarget.style.borderColor = 'rgba(107, 114, 128, 0.05)';
+                  }
                 }}
                 onClick={() => {
                   handleButtonClick()
@@ -850,16 +874,30 @@ export default function HomePage({ projects }: { projects: Project[] }) {
               {categories.map((category, index) => (
                 <button
                   key={category.name}
-                  className={`
-                    text-[10px] uppercase tracking-wide px-2 py-1 rounded-sm
-                    transition-all duration-500 backdrop-blur-md
-                    ${selectedCategory === category.name 
-                      ? 'text-blue-500 bg-blue-500/10 border border-blue-500/20' 
-                      : 'text-gray-400 bg-white/[0.02] border border-gray-500/[0.05] hover:bg-white/[0.04] hover:border-gray-500/10'}
-                  `}
+                  className="text-[10px] uppercase tracking-wide px-2 py-1 rounded-sm transition-all duration-500 backdrop-blur-md border"
                   style={{
-                    color: selectedCategory === category.name ? undefined : 'var(--theme-muted-text)',
+                    backgroundColor: selectedCategory === category.name 
+                      ? (theme.accentColor ? hexToRgba(theme.accentColor, 0.1) : 'rgba(59, 130, 246, 0.1)') 
+                      : (theme.accentColor ? hexToRgba(theme.accentColor, 0.03) : 'rgba(255, 255, 255, 0.02)'),
+                    borderColor: selectedCategory === category.name
+                      ? (theme.accentColor ? hexToRgba(theme.accentColor, 0.2) : 'rgba(59, 130, 246, 0.2)')
+                      : 'rgba(107, 114, 128, 0.05)',
+                    color: selectedCategory === category.name 
+                      ? (theme.accentColor || 'rgb(59, 130, 246)') 
+                      : (theme.mutedTextColor || 'rgb(156, 163, 175)'),
                     fontWeight: 400
+                  }}
+                  onMouseEnter={(e) => {
+                    if (selectedCategory !== category.name) {
+                      e.currentTarget.style.backgroundColor = theme.accentColor ? hexToRgba(theme.accentColor, 0.05) : 'rgba(255, 255, 255, 0.04)';
+                      e.currentTarget.style.borderColor = 'rgba(107, 114, 128, 0.1)';
+                    }
+                  }}
+                  onMouseLeave={(e) => {
+                    if (selectedCategory !== category.name) {
+                      e.currentTarget.style.backgroundColor = theme.accentColor ? hexToRgba(theme.accentColor, 0.03) : 'rgba(255, 255, 255, 0.02)';
+                      e.currentTarget.style.borderColor = 'rgba(107, 114, 128, 0.05)';
+                    }
                   }}
                   onClick={() => {
                     handleButtonClick()

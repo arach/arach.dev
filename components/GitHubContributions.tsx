@@ -27,49 +27,6 @@ const GitHubContributions = memo(function GitHubContributions({
   const buttonRef = useRef<HTMLDivElement>(null)
   const previewRef = useRef<HTMLDivElement>(null)
 
-  useEffect(() => {
-    // Prevent duplicate fetches with a flag
-    let isMounted = true;
-    const fetchController = new AbortController();
-    
-    // Non-blocking load - fetch in background after initial paint
-    const timeoutId = setTimeout(() => {
-      if (isMounted) {
-        fetchGitHubData()
-      }
-    }, 500) // Increased delay to prioritize initial content
-    
-    return () => {
-      isMounted = false;
-      clearTimeout(timeoutId);
-      fetchController.abort();
-      if (previewTimeoutRef.current) {
-        clearTimeout(previewTimeoutRef.current)
-      }
-    }
-  }, [username, showPrivateRepos, fetchGitHubData])
-
-  const getDateRangeText = () => {
-    const today = new Date()
-    const currentMonth = today.getMonth() // 0-11 (August = 7)
-    
-    // Get the months we want to show
-    const months = []
-    
-    // Add the 3 previous full months
-    for (let i = 3; i >= 1; i--) {
-      const monthDate = new Date(today)
-      monthDate.setMonth(currentMonth - i)
-      months.push(monthDate.toLocaleDateString("en-US", { month: "short" }))
-    }
-    
-    // Add current month separately
-    const currentMonthName = today.toLocaleDateString("en-US", { month: "short" })
-    
-    // Format as "May, Jun, Jul + Aug"
-    return `${months.join(", ")} + ${currentMonthName}`
-  }
-
   const fetchGitHubData = useCallback(async () => {
     // Only run on client side
     if (typeof window === 'undefined') {
@@ -179,6 +136,49 @@ const GitHubContributions = memo(function GitHubContributions({
       setDataSource("error")
     }
   }, [username, hasData, isInitialized])
+
+  useEffect(() => {
+    // Prevent duplicate fetches with a flag
+    let isMounted = true;
+    const fetchController = new AbortController();
+    
+    // Non-blocking load - fetch in background after initial paint
+    const timeoutId = setTimeout(() => {
+      if (isMounted) {
+        fetchGitHubData()
+      }
+    }, 500) // Increased delay to prioritize initial content
+    
+    return () => {
+      isMounted = false;
+      clearTimeout(timeoutId);
+      fetchController.abort();
+      if (previewTimeoutRef.current) {
+        clearTimeout(previewTimeoutRef.current)
+      }
+    }
+  }, [username, showPrivateRepos, fetchGitHubData])
+
+  const getDateRangeText = () => {
+    const today = new Date()
+    const currentMonth = today.getMonth() // 0-11 (August = 7)
+    
+    // Get the months we want to show
+    const months = []
+    
+    // Add the 3 previous full months
+    for (let i = 3; i >= 1; i--) {
+      const monthDate = new Date(today)
+      monthDate.setMonth(currentMonth - i)
+      months.push(monthDate.toLocaleDateString("en-US", { month: "short" }))
+    }
+    
+    // Add current month separately
+    const currentMonthName = today.toLocaleDateString("en-US", { month: "short" })
+    
+    // Format as "May, Jun, Jul + Aug"
+    return `${months.join(", ")} + ${currentMonthName}`
+  }
 
 
   const calculateStats = (contributions: ContributionDay[]): GitHubStats => {
