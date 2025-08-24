@@ -64,10 +64,13 @@ interface MonthlyStats {
 }
 
 interface Streak {
-  start: string
-  end: string
+  id: number
+  startDate: string
+  endDate: string
   length: number
-  contributions: number
+  totalContributions: number
+  averagePerDay: number
+  dates: string[]
 }
 
 export default function GitHubActivityPage({ username = "arach" }: { username?: string }) {
@@ -164,33 +167,45 @@ export default function GitHubActivityPage({ username = "arach" }: { username?: 
   }
 
   const calculateStreaks = (contributions: ContributionDay[]): Streak[] => {
-    const streaks: Streak[] = []
-    let currentStreak: ContributionDay[] = []
-
     const sortedContributions = [...contributions].sort(
       (a, b) => new Date(a.date).getTime() - new Date(b.date).getTime(),
     )
 
+    const streaks: Streak[] = []
+    let currentStreak: ContributionDay[] = []
+    let streakId = 0
+
     for (const day of sortedContributions) {
       if (day.count > 0) {
         currentStreak.push(day)
-      } else if (currentStreak.length > 0) {
-        streaks.push({
-          start: currentStreak[0].date,
-          end: currentStreak[currentStreak.length - 1].date,
-          length: currentStreak.length,
-          contributions: currentStreak.reduce((sum, d) => sum + d.count, 0),
-        })
+      } else {
+        if (currentStreak.length >= 3) {
+          const totalContributions = currentStreak.reduce((sum, d) => sum + d.count, 0)
+          streaks.push({
+            id: streakId++,
+            startDate: currentStreak[0].date,
+            endDate: currentStreak[currentStreak.length - 1].date,
+            length: currentStreak.length,
+            totalContributions,
+            averagePerDay: Math.round((totalContributions / currentStreak.length) * 10) / 10,
+            dates: currentStreak.map((d) => d.date),
+          })
+        }
         currentStreak = []
       }
     }
 
-    if (currentStreak.length > 0) {
+    // Handle streak that goes to the end
+    if (currentStreak.length >= 3) {
+      const totalContributions = currentStreak.reduce((sum, d) => sum + d.count, 0)
       streaks.push({
-        start: currentStreak[0].date,
-        end: currentStreak[currentStreak.length - 1].date,
+        id: streakId++,
+        startDate: currentStreak[0].date,
+        endDate: currentStreak[currentStreak.length - 1].date,
         length: currentStreak.length,
-        contributions: currentStreak.reduce((sum, d) => sum + d.count, 0),
+        totalContributions,
+        averagePerDay: Math.round((totalContributions / currentStreak.length) * 10) / 10,
+        dates: currentStreak.map((d) => d.date),
       })
     }
 
@@ -809,99 +824,331 @@ export default function GitHubActivityPage({ username = "arach" }: { username?: 
               exit={{ opacity: 0, y: -20 }}
               className="space-y-6"
             >
-              <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-                {/* Current Streak Card */}
+              {/* Streak Overview Cards */}
+              <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
                 <Card>
-                  <CardHeader>
-                    <CardTitle className="flex items-center gap-2">
-                      <TrendingUp className="w-5 h-5 text-orange-500" />
-                      Current Streak
-                    </CardTitle>
-                  </CardHeader>
-                  <CardContent>
-                    <div className="text-center py-6">
-                      <div className="text-5xl font-bold text-orange-600 mb-2">
-                        {stats?.currentStreak || 0}
+                  <CardContent className="p-6">
+                    <div className="flex items-center justify-between">
+                      <div>
+                        <p className="text-sm font-medium text-gray-600">Current Streak</p>
+                        <p className="text-3xl font-bold text-orange-600 flex items-center gap-2">
+                          {stats && stats.currentStreak > 0 && <span className="text-2xl">🔥</span>}
+                          {stats?.currentStreak || 0}
+                        </p>
+                        <p className="text-xs text-gray-500">Days in a row</p>
                       </div>
-                      <p className="text-gray-600">consecutive days</p>
-                      {stats?.currentStreak > 0 && (
-                        <div className="mt-4 text-2xl">🔥</div>
-                      )}
+                      <Target className="w-8 h-8 text-orange-500" />
                     </div>
                   </CardContent>
                 </Card>
 
-                {/* Longest Streak Card */}
                 <Card>
-                  <CardHeader>
-                    <CardTitle className="flex items-center gap-2">
-                      <Target className="w-5 h-5 text-green-500" />
-                      Longest Streak
-                    </CardTitle>
-                  </CardHeader>
-                  <CardContent>
-                    <div className="text-center py-6">
-                      <div className="text-5xl font-bold text-green-600 mb-2">
-                        {stats?.longestStreak || 0}
+                  <CardContent className="p-6">
+                    <div className="flex items-center justify-between">
+                      <div>
+                        <p className="text-sm font-medium text-gray-600">Longest Streak</p>
+                        <p className="text-3xl font-bold text-green-600">{stats?.longestStreak || 0}</p>
+                        <p className="text-xs text-gray-500">Days (3 months)</p>
                       </div>
-                      <p className="text-gray-600">days (all time best)</p>
-                      {stats?.longestStreak > 0 && (
-                        <div className="mt-4 text-2xl">🏆</div>
-                      )}
+                      <TrendingUp className="w-8 h-8 text-green-500" />
+                    </div>
+                  </CardContent>
+                </Card>
+
+                <Card>
+                  <CardContent className="p-6">
+                    <div className="flex items-center justify-between">
+                      <div>
+                        <p className="text-sm font-medium text-gray-600">Total Streaks</p>
+                        <p className="text-3xl font-bold text-blue-600">{streaks.length}</p>
+                        <p className="text-xs text-gray-500">3+ day streaks</p>
+                      </div>
+                      <Activity className="w-8 h-8 text-blue-500" />
                     </div>
                   </CardContent>
                 </Card>
               </div>
 
-              {/* Streak History */}
+              {/* Streak Timeline */}
+              <Card>
+                <CardHeader>
+                  <CardTitle className="flex items-center gap-2">
+                    <Target className="w-5 h-5" />
+                    Streak Timeline
+                  </CardTitle>
+                  <CardDescription>
+                    Visual representation of your contribution streaks over the last 3 months
+                  </CardDescription>
+                </CardHeader>
+                <CardContent>
+                  <div className="space-y-4">
+                    {/* Timeline visualization */}
+                    <div className="relative">
+                      <div className="flex gap-0.5 overflow-x-auto pb-2">
+                        {contributions.map((day, index) => {
+                          const isInStreak = streaks.some((streak) => streak.dates.includes(day.date))
+                          const isStreakStart = streaks.some((streak) => streak.startDate === day.date)
+                          const isStreakEnd = streaks.some((streak) => streak.endDate === day.date)
+
+                          return (
+                            <Tooltip delayDuration={0} key={day.date}>
+                              <TooltipTrigger asChild>
+                                <div className="relative">
+                                  <div
+                                    className={`w-3 h-8 cursor-pointer transition-all duration-200 hover:scale-110 ${
+                                      day.count > 0
+                                        ? isInStreak
+                                          ? "bg-orange-500 hover:bg-orange-600"
+                                          : "bg-gray-300 hover:bg-gray-400"
+                                        : "bg-gray-100"
+                                    } ${isStreakStart ? "rounded-l-md" : isStreakEnd ? "rounded-r-md" : ""}`}
+                                  />
+                                  {isStreakStart && <div className="absolute -top-2 left-0 text-xs">🔥</div>}
+                                </div>
+                              </TooltipTrigger>
+                              <TooltipContent>
+                                <div className="text-xs">
+                                  <p className="font-medium">
+                                    {new Date(day.date).toLocaleDateString("en-US", {
+                                      weekday: "short",
+                                      month: "short",
+                                      day: "numeric",
+                                    })}
+                                  </p>
+                                  <p>
+                                    {day.count === 0
+                                      ? "No contributions"
+                                      : `${day.count} contribution${day.count === 1 ? "" : "s"}`}
+                                  </p>
+                                  {isInStreak && <p className="text-orange-400">Part of streak</p>}
+                                </div>
+                              </TooltipContent>
+                            </Tooltip>
+                          )
+                        })}
+                      </div>
+
+                      {/* Legend */}
+                      <div className="flex items-center gap-4 text-xs text-gray-500 mt-2">
+                        <div className="flex items-center gap-1">
+                          <div className="w-3 h-3 bg-orange-500 rounded-sm"></div>
+                          <span>Streak days</span>
+                        </div>
+                        <div className="flex items-center gap-1">
+                          <div className="w-3 h-3 bg-gray-300 rounded-sm"></div>
+                          <span>Active days</span>
+                        </div>
+                        <div className="flex items-center gap-1">
+                          <div className="w-3 h-3 bg-gray-100 rounded-sm"></div>
+                          <span>Inactive days</span>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                </CardContent>
+              </Card>
+
+              {/* Detailed Streak List */}
               <Card>
                 <CardHeader>
                   <CardTitle className="flex items-center gap-2">
                     <Activity className="w-5 h-5" />
-                    Streak History
+                    Streak Details
                   </CardTitle>
-                  <CardDescription>
-                    Your contribution streaks from the last 3 months
-                  </CardDescription>
+                  <CardDescription>All streaks of 3+ consecutive days in the last 3 months</CardDescription>
                 </CardHeader>
                 <CardContent>
-                  <div className="space-y-3">
-                    {streaks.length > 0 ? (
-                      streaks.slice(0, 10).map((streak, index) => (
-                        <div key={index} className="flex items-center justify-between p-3 bg-gray-50 rounded-lg hover:bg-gray-100 transition-colors">
-                          <div className="flex items-center gap-4">
-                            <div className="text-2xl font-bold text-gray-600">
-                              #{index + 1}
+                  {streaks.length > 0 ? (
+                    <div className="space-y-4">
+                      {streaks.map((streak, index) => (
+                        <motion.div
+                          key={streak.id}
+                          initial={{ opacity: 0, x: -20 }}
+                          animate={{ opacity: 1, x: 0 }}
+                          transition={{ duration: 0.3, delay: index * 0.1 }}
+                          className="border border-gray-200 rounded-lg p-4 hover:shadow-md transition-shadow"
+                        >
+                          <div className="flex items-center justify-between mb-3">
+                            <div className="flex items-center gap-3">
+                              <div className="flex items-center gap-1">
+                                <span className="text-lg">🔥</span>
+                                <span className="font-bold text-lg text-orange-600">{streak.length} days</span>
+                              </div>
+                              <div className="text-sm text-gray-500">#{index + 1} longest streak</div>
+                            </div>
+                            <div className="text-right">
+                              <div className="text-sm font-medium text-gray-900">
+                                {streak.totalContributions} contributions
+                              </div>
+                              <div className="text-xs text-gray-500">{streak.averagePerDay} avg/day</div>
+                            </div>
+                          </div>
+
+                          <div className="flex items-center justify-between text-sm">
+                            <div>
+                              <span className="text-gray-600">Started:</span>
+                              <span className="ml-2 font-medium">
+                                {new Date(streak.startDate).toLocaleDateString("en-US", {
+                                  month: "short",
+                                  day: "numeric",
+                                  year: "numeric",
+                                })}
+                              </span>
                             </div>
                             <div>
-                              <div className="font-medium">
-                                {streak.length} day{streak.length !== 1 ? 's' : ''}
-                              </div>
-                              <div className="text-sm text-gray-500">
-                                {new Date(streak.start).toLocaleDateString('en-US', { month: 'short', day: 'numeric' })}
-                                {' - '}
-                                {new Date(streak.end).toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' })}
-                              </div>
+                              <span className="text-gray-600">Ended:</span>
+                              <span className="ml-2 font-medium">
+                                {new Date(streak.endDate).toLocaleDateString("en-US", {
+                                  month: "short",
+                                  day: "numeric",
+                                  year: "numeric",
+                                })}
+                              </span>
                             </div>
                           </div>
-                          <div className="text-right">
-                            <div className="font-bold text-lg text-blue-600">
-                              {streak.contributions}
-                            </div>
-                            <div className="text-xs text-gray-500">
-                              contributions
-                            </div>
+
+                          {/* Mini streak visualization */}
+                          <div className="mt-3 flex gap-0.5 overflow-x-auto">
+                            {streak.dates.map((date) => {
+                              const dayData = contributions.find((d) => d.date === date)
+                              return (
+                                <Tooltip delayDuration={0} key={date}>
+                                  <TooltipTrigger asChild>
+                                    <div
+                                      className="w-2 h-6 bg-orange-400 hover:bg-orange-500 cursor-pointer transition-colors rounded-sm"
+                                      style={{
+                                        opacity: dayData ? Math.max(0.3, dayData.count / 10) : 0.3,
+                                      }}
+                                    />
+                                  </TooltipTrigger>
+                                  <TooltipContent>
+                                    <div className="text-xs">
+                                      <p className="font-medium">
+                                        {new Date(date).toLocaleDateString("en-US", {
+                                          month: "short",
+                                          day: "numeric",
+                                        })}
+                                      </p>
+                                      <p>{dayData?.count || 0} contributions</p>
+                                    </div>
+                                  </TooltipContent>
+                                </Tooltip>
+                              )
+                            })}
                           </div>
-                        </div>
-                      ))
-                    ) : (
-                      <div className="text-center py-8 text-gray-500">
-                        No streaks found in the last 3 months
-                      </div>
-                    )}
-                  </div>
+                        </motion.div>
+                      ))}
+                    </div>
+                  ) : (
+                    <div className="text-center py-8">
+                      <Target className="w-12 h-12 text-gray-300 mx-auto mb-4" />
+                      <h3 className="text-lg font-medium text-gray-900 mb-2">No Streaks Found</h3>
+                      <p className="text-gray-500">
+                        No streaks of 3+ consecutive days found in the last 3 months.
+                        <br />
+                        Keep contributing to build your first streak! 🔥
+                      </p>
+                    </div>
+                  )}
                 </CardContent>
               </Card>
+
+              {/* Streak Statistics */}
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                <Card>
+                  <CardHeader>
+                    <CardTitle className="text-lg">Streak Performance</CardTitle>
+                  </CardHeader>
+                  <CardContent>
+                    <div className="space-y-4">
+                      <div className="flex justify-between items-center">
+                        <span className="text-sm text-gray-600">Average streak length</span>
+                        <span className="font-medium">
+                          {streaks.length > 0
+                            ? Math.round((streaks.reduce((sum, s) => sum + s.length, 0) / streaks.length) * 10) / 10
+                            : 0}{" "}
+                          days
+                        </span>
+                      </div>
+                      <div className="flex justify-between items-center">
+                        <span className="text-sm text-gray-600">Total streak days</span>
+                        <span className="font-medium">{streaks.reduce((sum, s) => sum + s.length, 0)} days</span>
+                      </div>
+                      <div className="flex justify-between items-center">
+                        <span className="text-sm text-gray-600">Streak contribution rate</span>
+                        <span className="font-medium">
+                          {contributions.length > 0
+                            ? Math.round((streaks.reduce((sum, s) => sum + s.length, 0) / contributions.length) * 100)
+                            : 0}
+                          %
+                        </span>
+                      </div>
+                      <div className="flex justify-between items-center">
+                        <span className="text-sm text-gray-600">Best streak contributions</span>
+                        <span className="font-medium">
+                          {streaks.length > 0 ? Math.max(...streaks.map((s) => s.totalContributions)) : 0}
+                        </span>
+                      </div>
+                    </div>
+                  </CardContent>
+                </Card>
+
+                <Card>
+                  <CardHeader>
+                    <CardTitle className="text-lg">Streak Insights</CardTitle>
+                  </CardHeader>
+                  <CardContent>
+                    <div className="space-y-4">
+                      {streaks.length > 0 ? (
+                        <>
+                          <div className="p-3 bg-orange-50 rounded-lg">
+                            <div className="flex items-center gap-2 mb-1">
+                              <span className="text-orange-600">🏆</span>
+                              <span className="font-medium text-orange-800">Best Streak</span>
+                            </div>
+                            <p className="text-sm text-orange-700">
+                              Your longest streak was <strong>{streaks[0].length} days</strong> with{" "}
+                              <strong>{streaks[0].totalContributions} contributions</strong>
+                            </p>
+                          </div>
+
+                          {stats && stats.currentStreak > 0 && (
+                            <div className="p-3 bg-blue-50 rounded-lg">
+                              <div className="flex items-center gap-2 mb-1">
+                                <span className="text-blue-600">🔥</span>
+                                <span className="font-medium text-blue-800">Current Streak</span>
+                              </div>
+                              <p className="text-sm text-blue-700">
+                                You're on a <strong>{stats.currentStreak} day streak</strong>! Keep it going!
+                              </p>
+                            </div>
+                          )}
+
+                          <div className="p-3 bg-green-50 rounded-lg">
+                            <div className="flex items-center gap-2 mb-1">
+                              <span className="text-green-600">📈</span>
+                              <span className="font-medium text-green-800">Consistency</span>
+                            </div>
+                            <p className="text-sm text-green-700">
+                              You've maintained <strong>{streaks.length} streaks</strong> in the last 3 months
+                            </p>
+                          </div>
+                        </>
+                      ) : (
+                        <div className="p-3 bg-gray-50 rounded-lg">
+                          <div className="flex items-center gap-2 mb-1">
+                            <span className="text-gray-600">💡</span>
+                            <span className="font-medium text-gray-800">Getting Started</span>
+                          </div>
+                          <p className="text-sm text-gray-700">
+                            Start contributing daily to build your first streak! Even small contributions count.
+                          </p>
+                        </div>
+                      )}
+                    </div>
+                  </CardContent>
+                </Card>
+              </div>
             </motion.div>
           )}
         </AnimatePresence>
