@@ -161,26 +161,6 @@ const GitHubContributions = memo(function GitHubContributions({
     }
   }, [username, showPrivateRepos, fetchGitHubData])
 
-  const getDateRangeText = () => {
-    const today = new Date()
-    const currentMonth = today.getMonth() // 0-11 (August = 7)
-    
-    // Get the months we want to show
-    const months = []
-    
-    // Add the 3 previous full months
-    for (let i = 3; i >= 1; i--) {
-      const monthDate = new Date(today)
-      monthDate.setMonth(currentMonth - i)
-      months.push(monthDate.toLocaleDateString("en-US", { month: "short" }))
-    }
-    
-    // Add current month separately
-    const currentMonthName = today.toLocaleDateString("en-US", { month: "short" })
-    
-    // Format as "May, Jun, Jul + Aug"
-    return `${months.join(", ")} + ${currentMonthName}`
-  }
 
 
   const calculateStats = (contributions: ContributionDay[]): GitHubStats => {
@@ -373,11 +353,20 @@ const GitHubContributions = memo(function GitHubContributions({
           >
             {/* Preview Header */}
             <div className="flex items-center justify-between mb-3 pb-2 border-b" style={{ borderColor: theme?.borderColor || 'rgb(243, 244, 246)' }}>
-              <div className="flex items-center gap-2">
-                <Github className="w-5 h-5" style={{ color: theme?.mutedTextColor || 'rgb(107, 114, 128)' }} />
-                <span className="font-medium text-sm" style={{ color: theme?.textColor || 'rgb(17, 24, 39)' }}>GitHub Activity</span>
+              <div className="flex items-center gap-1.5">
+                <Github className="w-4 h-4" style={{ color: theme?.mutedTextColor || 'rgb(107, 114, 128)' }} />
+                <span className="font-medium text-sm" style={{ color: theme?.textColor || 'rgb(17, 24, 39)' }}>Activity</span>
               </div>
-              <span className="text-xs" style={{ color: theme?.mutedTextColor || 'rgb(107, 114, 128)' }}>{getDateRangeText()}</span>
+              <a 
+                href={`https://github.com/${username}`}
+                target="_blank"
+                rel="noopener noreferrer"
+                className="flex items-center gap-1 text-xs hover:underline transition-all"
+                style={{ color: theme?.accentColor || 'rgb(59, 130, 246)' }}
+                onClick={(e) => e.stopPropagation()}
+              >
+                @{username} →
+              </a>
             </div>
 
             {/* Loading State */}
