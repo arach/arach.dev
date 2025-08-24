@@ -4,6 +4,7 @@ import { useState, useEffect, useRef, memo, useCallback } from "react"
 import { Button } from "@/components/ui/button"
 import { Github, AlertCircle, RefreshCw, TrendingUp, Zap } from "lucide-react"
 import type { ContributionDay, GitHubStats, GitHubContributionsProps } from "@/types/github"
+import { useTheme } from "@/lib/theme-context"
 
 const GitHubContributions = memo(function GitHubContributions({
   username = "arach",
@@ -26,6 +27,7 @@ const GitHubContributions = memo(function GitHubContributions({
   const previewTimeoutRef = useRef<NodeJS.Timeout | null>(null)
   const buttonRef = useRef<HTMLDivElement>(null)
   const previewRef = useRef<HTMLDivElement>(null)
+  const { currentTheme: theme } = useTheme()
 
   const fetchGitHubData = useCallback(async () => {
     // Only run on client side
@@ -355,10 +357,14 @@ const GitHubContributions = memo(function GitHubContributions({
         >
           <div
             ref={previewRef}
-            className="bg-white border border-gray-200 rounded-lg shadow-2xl p-4 w-80 relative"
+            className="rounded-lg shadow-2xl p-4 w-80 relative border"
             style={{
               zIndex: 2147483647,
-              boxShadow: "0 25px 50px -12px rgba(0, 0, 0, 0.25), 0 0 0 1px rgba(0, 0, 0, 0.05)",
+              backgroundColor: theme?.cardBg || theme?.bgColor || '#ffffff',
+              borderColor: theme?.borderColor || 'rgb(229, 231, 235)',
+              boxShadow: theme?.shadowColor 
+                ? `0 25px 50px -12px ${theme.shadowColor}, 0 0 0 1px ${theme.shadowColor}` 
+                : "0 25px 50px -12px rgba(0, 0, 0, 0.25), 0 0 0 1px rgba(0, 0, 0, 0.05)",
               backdropFilter: "blur(8px)",
               WebkitBackdropFilter: "blur(8px)",
             }}
@@ -366,19 +372,19 @@ const GitHubContributions = memo(function GitHubContributions({
             onMouseLeave={handlePreviewMouseLeave}
           >
             {/* Preview Header */}
-            <div className="flex items-center justify-between mb-3 pb-2 border-b border-gray-100">
+            <div className="flex items-center justify-between mb-3 pb-2 border-b" style={{ borderColor: theme?.borderColor || 'rgb(243, 244, 246)' }}>
               <div className="flex items-center gap-2">
-                <Github className="w-5 h-5 text-gray-600" />
-                <span className="font-medium text-sm">GitHub Activity</span>
+                <Github className="w-5 h-5" style={{ color: theme?.mutedTextColor || 'rgb(107, 114, 128)' }} />
+                <span className="font-medium text-sm" style={{ color: theme?.textColor || 'rgb(17, 24, 39)' }}>GitHub Activity</span>
               </div>
-              <span className="text-xs text-gray-500">{getDateRangeText()}</span>
+              <span className="text-xs" style={{ color: theme?.mutedTextColor || 'rgb(107, 114, 128)' }}>{getDateRangeText()}</span>
             </div>
 
             {/* Loading State */}
             {loading && (
               <div className="text-center py-4">
-                <RefreshCw className="w-6 h-6 text-blue-500 mx-auto mb-2 animate-spin" />
-                <p className="text-sm text-gray-600">Loading GitHub data...</p>
+                <RefreshCw className="w-6 h-6 mx-auto mb-2 animate-spin" style={{ color: theme?.accentColor || 'rgb(59, 130, 246)' }} />
+                <p className="text-sm" style={{ color: theme?.mutedTextColor || 'rgb(107, 114, 128)' }}>Loading GitHub data...</p>
               </div>
             )}
 
@@ -399,23 +405,23 @@ const GitHubContributions = memo(function GitHubContributions({
               <div className="animate-in fade-in-50 slide-in-from-bottom-2 duration-500">
                 <div className="grid grid-cols-3 gap-3 mb-3">
                   <div className="text-center">
-                    <div className="text-lg font-bold text-blue-600">
+                    <div className="text-lg font-bold" style={{ color: theme?.accentColor || 'rgb(59, 130, 246)' }}>
                       {stats.threeMonthContributions.toLocaleString()}
                     </div>
-                    <div className="text-xs text-gray-600">Contributions</div>
+                    <div className="text-xs" style={{ color: theme?.mutedTextColor || 'rgb(107, 114, 128)' }}>Contributions</div>
                   </div>
                   <div className="text-center">
                     <div className="flex items-center justify-center gap-1">
                       {stats.currentStreak > 0 && <span className="text-sm">🔥</span>}
-                      <div className="text-lg font-bold text-orange-600">{stats.currentStreak}</div>
+                      <div className="text-lg font-bold" style={{ color: '#f97316' }}>{stats.currentStreak}</div>
                     </div>
-                    <div className="text-xs text-gray-600">Current Streak</div>
+                    <div className="text-xs" style={{ color: theme?.mutedTextColor || 'rgb(107, 114, 128)' }}>Current Streak</div>
                   </div>
                   <div className="text-center">
-                    <div className="text-lg font-bold text-green-600">
+                    <div className="text-lg font-bold" style={{ color: '#10b981' }}>
                       {contributions.filter((d) => d.count > 0).length}
                     </div>
-                    <div className="text-xs text-gray-600">Active Days</div>
+                    <div className="text-xs" style={{ color: theme?.mutedTextColor || 'rgb(107, 114, 128)' }}>Active Days</div>
                   </div>
                 </div>
               </div>
@@ -425,9 +431,9 @@ const GitHubContributions = memo(function GitHubContributions({
             {contributions.length > 0 && !error && !loading && (
               <div className="mb-3 animate-in fade-in-50 slide-in-from-bottom-4 duration-700">
                 <div className="flex items-center justify-between mb-2">
-                  <span className="text-xs font-medium text-gray-700">Recent Activity</span>
+                  <span className="text-xs font-medium" style={{ color: theme?.textColor || 'rgb(55, 65, 81)' }}>Recent Activity</span>
                   <div className="flex items-center gap-1">
-                    <Zap className="w-3 h-3 text-blue-400" />
+                    <Zap className="w-3 h-3" style={{ color: theme?.accentColor || 'rgb(96, 165, 250)' }} />
                   </div>
                 </div>
 
@@ -462,14 +468,24 @@ const GitHubContributions = memo(function GitHubContributions({
 
             {/* Enhanced Call to Action */}
             {!loading && (
-              <div className="mt-3 pt-2 border-t border-gray-100 text-center animate-in fade-in-50 slide-in-from-bottom-8 duration-1000">
+              <div className="mt-3 pt-2 border-t text-center animate-in fade-in-50 slide-in-from-bottom-8 duration-1000" style={{ borderColor: theme?.borderColor || 'rgb(243, 244, 246)' }}>
                 <Button
                   size="sm"
                   onClick={() => {
                     // Navigate to GitHub activity page
                     window.location.href = "/github"
                   }}
-                  className="text-xs bg-blue-600 hover:bg-blue-700 text-white"
+                  className="text-xs text-white"
+                  style={{ 
+                    backgroundColor: theme?.accentColor || 'rgb(37, 99, 235)',
+                    borderColor: theme?.accentColor || 'rgb(37, 99, 235)'
+                  }}
+                  onMouseEnter={(e) => {
+                    e.currentTarget.style.opacity = '0.9';
+                  }}
+                  onMouseLeave={(e) => {
+                    e.currentTarget.style.opacity = '1';
+                  }}
                 >
                   View Full Analytics →
                 </Button>
