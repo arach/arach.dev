@@ -3,6 +3,7 @@
 import React from 'react';
 import { motion } from 'framer-motion';
 import { ExternalLink, Github } from 'lucide-react';
+import { useTheme } from '@/lib/theme-context';
 
 interface Project {
   title: string;
@@ -31,6 +32,47 @@ export default function CompactTypographyCard({
   cardRef,
 }: CompactTypographyCardProps) {
   const projectNumber = String(index + 1).padStart(2, '0');
+  const { currentTheme: theme } = useTheme();
+  
+  // Helper to convert hex to rgba
+  const hexToRgba = (hex: string, alpha: number) => {
+    const r = parseInt(hex.slice(1, 3), 16);
+    const g = parseInt(hex.slice(3, 5), 16);
+    const b = parseInt(hex.slice(5, 7), 16);
+    return `rgba(${r}, ${g}, ${b}, ${alpha})`;
+  };
+  
+  // Generate theme-aware tag colors
+  const getTagColors = () => {
+    if (isKeyboardFocused) {
+      // When focused, use accent color
+      return {
+        bg: theme?.accentColor ? hexToRgba(theme.accentColor, 0.1) : 'rgb(219 234 254)',
+        text: theme?.accentColor || 'rgb(37 99 235)',
+        border: theme?.accentColor ? hexToRgba(theme.accentColor, 0.2) : 'rgb(191 219 254)',
+      };
+    }
+    
+    // Use theme colors with subtle opacity
+    if (theme?.name === 'dark' || theme?.name === 'terminal' || theme?.name === 'cyberpunk') {
+      return {
+        bg: theme?.accentColor ? hexToRgba(theme.accentColor, 0.05) : 'rgba(255, 255, 255, 0.03)',
+        text: theme?.mutedTextColor || 'rgba(255, 255, 255, 0.5)',
+        border: theme?.borderColor || 'rgba(255, 255, 255, 0.1)',
+        hoverBorder: theme?.accentColor ? hexToRgba(theme.accentColor, 0.15) : 'rgba(255, 255, 255, 0.15)',
+      };
+    }
+    
+    // For light themes, use subtle tinted backgrounds
+    return {
+      bg: theme?.cardBg || 'rgb(255, 255, 255)',
+      text: theme?.mutedTextColor || 'rgb(75, 85, 99)',
+      border: theme?.borderColor || 'rgb(229, 231, 235)',
+      hoverBorder: theme?.accentColor ? hexToRgba(theme.accentColor, 0.15) : 'rgb(209, 213, 219)',
+    };
+  };
+  
+  const tagColors = getTagColors();
 
   return (
     <motion.article
@@ -102,11 +144,22 @@ export default function CompactTypographyCard({
           {project.tags.slice(0, 3).map((tag) => (
             <span
               key={tag}
-              className={`text-[10px] uppercase tracking-wide px-1 py-0.5 rounded-sm transition-all duration-300 font-normal ${
-                isKeyboardFocused 
-                  ? 'text-blue-600 bg-blue-50 border border-blue-200' 
-                  : 'text-gray-600 bg-white border border-gray-200 group-hover:border-gray-300'
-              }`}
+              className="text-[10px] uppercase tracking-wide px-1 py-0.5 rounded-sm transition-all duration-300 font-normal border"
+              style={{
+                backgroundColor: tagColors.bg,
+                color: tagColors.text,
+                borderColor: tagColors.border,
+              }}
+              onMouseEnter={(e) => {
+                if (!isKeyboardFocused && tagColors.hoverBorder) {
+                  e.currentTarget.style.borderColor = tagColors.hoverBorder;
+                }
+              }}
+              onMouseLeave={(e) => {
+                if (!isKeyboardFocused) {
+                  e.currentTarget.style.borderColor = tagColors.border;
+                }
+              }}
             >
               {tag}
             </span>
