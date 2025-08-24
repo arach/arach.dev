@@ -47,27 +47,32 @@ export default function TypographyProjectCard({
     if (isKeyboardFocused) {
       // When focused, use accent color
       return {
-        bg: theme?.accentColor ? hexToRgba(theme.accentColor, 0.15) : 'rgb(219 234 254)',
+        bg: theme?.accentColor ? hexToRgba(theme.accentColor, 0.1) : 'rgb(219 234 254)',
         text: theme?.accentColor || 'rgb(37 99 235)',
+        border: theme?.accentColor ? hexToRgba(theme.accentColor, 0.2) : 'rgb(191 219 254)',
       };
     }
     
     // Use theme colors with subtle opacity
     if (theme?.name === 'dark' || theme?.name === 'terminal' || theme?.name === 'cyberpunk') {
       return {
-        bg: theme?.accentColor ? hexToRgba(theme.accentColor, 0.08) : 'rgba(255, 255, 255, 0.05)',
-        text: theme?.mutedTextColor || 'rgba(255, 255, 255, 0.6)',
-        hoverBg: theme?.accentColor ? hexToRgba(theme.accentColor, 0.12) : 'rgba(255, 255, 255, 0.08)',
-        hoverText: theme?.accentColor || 'rgba(255, 255, 255, 0.8)',
+        bg: theme?.accentColor ? hexToRgba(theme.accentColor, 0.05) : 'rgba(255, 255, 255, 0.03)',
+        text: theme?.mutedTextColor || 'rgba(255, 255, 255, 0.5)',
+        border: theme?.borderColor || 'rgba(255, 255, 255, 0.1)',
+        hoverBg: theme?.accentColor ? hexToRgba(theme.accentColor, 0.08) : 'rgba(255, 255, 255, 0.05)',
+        hoverText: theme?.accentColor || 'rgba(255, 255, 255, 0.7)',
+        hoverBorder: theme?.accentColor ? hexToRgba(theme.accentColor, 0.15) : 'rgba(255, 255, 255, 0.15)',
       };
     }
     
-    // For light themes, use accent color with very low opacity
+    // For light themes, use subtle tinted backgrounds
     return {
-      bg: theme?.accentColor ? hexToRgba(theme.accentColor, 0.06) : 'rgb(249 250 251)',
-      text: theme?.mutedTextColor || 'rgb(107 114 128)',
-      hoverBg: theme?.accentColor ? hexToRgba(theme.accentColor, 0.10) : 'rgb(243 244 246)',
-      hoverText: theme?.textColor || 'rgb(75 85 99)',
+      bg: theme?.cardBg || 'rgb(255, 255, 255)',
+      text: theme?.mutedTextColor || 'rgb(75, 85, 99)',
+      border: theme?.borderColor || 'rgb(229, 231, 235)',
+      hoverBg: theme?.accentColor ? hexToRgba(theme.accentColor, 0.05) : 'rgb(249, 250, 251)',
+      hoverText: theme?.textColor || 'rgb(55, 65, 81)',
+      hoverBorder: theme?.accentColor ? hexToRgba(theme.accentColor, 0.15) : 'rgb(209, 213, 219)',
     };
   };
   
@@ -149,21 +154,24 @@ export default function TypographyProjectCard({
           {project.tags.map((tag) => (
             <span
               key={tag}
-              className="text-[10px] sm:text-xs font-mono uppercase tracking-wider px-2 py-0.5 rounded-sm transition-all duration-500"
+              className="text-[10px] sm:text-xs font-mono uppercase tracking-wider px-2 py-0.5 rounded-sm transition-all duration-500 border"
               style={{
-                backgroundColor: isKeyboardFocused ? tagColors.bg : tagColors.bg,
-                color: isKeyboardFocused ? tagColors.text : tagColors.text,
+                backgroundColor: tagColors.bg,
+                color: tagColors.text,
+                borderColor: tagColors.border,
               }}
               onMouseEnter={(e) => {
                 if (!isKeyboardFocused && tagColors.hoverBg) {
                   e.currentTarget.style.backgroundColor = tagColors.hoverBg;
                   e.currentTarget.style.color = tagColors.hoverText || tagColors.text;
+                  e.currentTarget.style.borderColor = tagColors.hoverBorder || tagColors.border;
                 }
               }}
               onMouseLeave={(e) => {
                 if (!isKeyboardFocused) {
                   e.currentTarget.style.backgroundColor = tagColors.bg;
                   e.currentTarget.style.color = tagColors.text;
+                  e.currentTarget.style.borderColor = tagColors.border;
                 }
               }}
             >
