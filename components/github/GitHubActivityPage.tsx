@@ -1,6 +1,6 @@
 "use client"
 
-import { useState, useEffect, useMemo } from "react"
+import { useState, useEffect, useMemo, useCallback } from "react"
 import { motion, AnimatePresence } from "framer-motion"
 import { Button } from "@/components/ui/button"
 import { Card, CardHeader, CardTitle, CardDescription, CardContent } from "@/components/ui/card"
@@ -65,9 +65,9 @@ export default function GitHubActivityPage({ username = "arach" }: { username?: 
 
   useEffect(() => {
     fetchGitHubData()
-  }, [username])
+  }, [username, fetchGitHubData])
 
-  const fetchGitHubData = async () => {
+  const fetchGitHubData = useCallback(async () => {
     try {
       setError(null)
       setLoading(true)
@@ -103,9 +103,9 @@ export default function GitHubActivityPage({ username = "arach" }: { username?: 
       setError(errorMessage)
       setLoading(false)
     }
-  }
+  }, [username, calculateStats])
 
-  const calculateStats = (contributions: ContributionDay[]): GitHubStats => {
+  const calculateStats = useCallback((contributions: ContributionDay[]): GitHubStats => {
     const threeMonthContributions = contributions.reduce((sum, day) => sum + day.count, 0)
     const totalForks = repos.reduce((sum, repo) => sum + repo.forks_count, 0)
 
@@ -143,7 +143,7 @@ export default function GitHubActivityPage({ username = "arach" }: { username?: 
       totalContributions: threeMonthContributions,
       threeMonthContributions,
     }
-  }
+  }, [repos])
 
   const calculateStreaks = (contributions: ContributionDay[]): Streak[] => {
     const sortedContributions = [...contributions].sort(
@@ -331,7 +331,7 @@ export default function GitHubActivityPage({ username = "arach" }: { username?: 
     return days
   }
 
-  const getMonthData = (year: number, month: number) => {
+  const getMonthData = useCallback((year: number, month: number) => {
     const monthContributions = contributions.filter((c) => {
       const date = new Date(c.date)
       return date.getFullYear() === year && date.getMonth() === month
@@ -389,7 +389,7 @@ export default function GitHubActivityPage({ username = "arach" }: { username?: 
       daysElapsed,
       totalDaysInMonth,
     }
-  }
+  }, [contributions])
 
   // Memoized values for calendar
   const calendarDays = useMemo(() => {
@@ -398,7 +398,7 @@ export default function GitHubActivityPage({ username = "arach" }: { username?: 
 
   const monthData = useMemo(() => {
     return getMonthData(selectedCalendarYear, selectedCalendarMonth)
-  }, [selectedCalendarYear, selectedCalendarMonth, contributions])
+  }, [selectedCalendarYear, selectedCalendarMonth, getMonthData])
 
   return (
     <TooltipProvider>

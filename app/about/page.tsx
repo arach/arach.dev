@@ -33,6 +33,7 @@ const TypewriterEffect: React.FC<{ text: string; onComplete?: () => void; isMobi
             }
         }, 1);
         return () => clearInterval(intervalId);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
     }, []); // Empty dependency array - only run once on mount
 
     return (

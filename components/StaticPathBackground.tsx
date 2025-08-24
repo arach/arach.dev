@@ -865,7 +865,7 @@ const StaticPathBackground: React.FC<StaticPathBackgroundProps> = ({
       document.removeEventListener('mousemove', handleMouseMove);
       if (rafId) cancelAnimationFrame(rafId);
     };
-  }, [findNearestHotspot, allPaths, maxActivePaths, hotspots]);
+  }, [findNearestHotspot, allPaths, maxActivePaths, hotspots, generateDynamicPath, windowSize.height, windowSize.width]);
 
   // Create SVG path string from points, optionally starting from source
   const createPathString = useCallback((points: Dot[], startFrom?: Dot) => {

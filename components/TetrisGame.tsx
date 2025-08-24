@@ -94,7 +94,7 @@ export default function TetrisGame() {
             placePiece();
             generateNewPiece();
         }
-    }, [board, currentPiece, position, canMoveTo, placePiece, generateNewPiece]);
+    }, [board, currentPiece, position, placePiece, generateNewPiece]);
 
     const resetGame = useCallback(() => {
         setBoard(Array(BOARD_HEIGHT).fill(null).map(() => Array(BOARD_WIDTH).fill(0)))

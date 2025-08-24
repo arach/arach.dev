@@ -308,7 +308,7 @@ export default function HomePage({ projects }: { projects: Project[] }) {
       setFocusedIndex(0)
       setTimeout(() => scrollToCard(0), 100)
     },
-    [selectedCategory, categories],
+    [selectedCategory, categories, scrollToCard],
   )
 
   const handleKeyDown = useCallback(
@@ -456,7 +456,6 @@ export default function HomePage({ projects }: { projects: Project[] }) {
       navigateLeft,
       navigateCategory,
       showHelp,
-      showStats,
       categories,
       scrollToCard,
       audioEnabled,

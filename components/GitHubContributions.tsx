@@ -1,6 +1,6 @@
 "use client"
 
-import { useState, useEffect, useRef, memo } from "react"
+import { useState, useEffect, useRef, memo, useCallback } from "react"
 import { Button } from "@/components/ui/button"
 import { Github, AlertCircle, RefreshCw, TrendingUp, Zap } from "lucide-react"
 import type { ContributionDay, GitHubStats, GitHubContributionsProps } from "@/types/github"
@@ -47,7 +47,7 @@ const GitHubContributions = memo(function GitHubContributions({
         clearTimeout(previewTimeoutRef.current)
       }
     }
-  }, [username, showPrivateRepos])
+  }, [username, showPrivateRepos, fetchGitHubData])
 
   const getDateRangeText = () => {
     const today = new Date()
@@ -70,7 +70,7 @@ const GitHubContributions = memo(function GitHubContributions({
     return `${months.join(", ")} + ${currentMonthName}`
   }
 
-  const fetchGitHubData = async () => {
+  const fetchGitHubData = useCallback(async () => {
     // Only run on client side
     if (typeof window === 'undefined') {
       console.log('[Component] Skipping fetch - not on client')
@@ -178,7 +178,7 @@ const GitHubContributions = memo(function GitHubContributions({
       setHasData(false)
       setDataSource("error")
     }
-  }
+  }, [username, hasData, isInitialized])
 
 
   const calculateStats = (contributions: ContributionDay[]): GitHubStats => {

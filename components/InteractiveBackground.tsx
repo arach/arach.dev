@@ -129,7 +129,7 @@ const InteractiveBackground: React.FC<InteractiveBackgroundProps> = ({ maxEdges,
             }
         }
         setPaths(newPaths);
-    }, [mousePosition, maxEdges, findFarDots, generatePath, dots.length, isFollowing]);
+    }, [mousePosition, maxEdges, findFarDots, generatePath, dots.length]);
 
     // Create a stable debounced function using useRef to maintain the latest calculatePaths
     const calculatePathsRef = useRef(calculatePaths);
@@ -200,7 +200,7 @@ const InteractiveBackground: React.FC<InteractiveBackgroundProps> = ({ maxEdges,
             if (rafId) cancelAnimationFrame(rafId);
             debouncedCalculatePaths.cancel();
         };
-    }, [isFollowing]);
+    }, [isFollowing, debouncedCalculatePaths]);
     
     // Handle clicks on the background SVG only
     const handleBackgroundClick = useCallback(() => {
@@ -217,7 +217,7 @@ const InteractiveBackground: React.FC<InteractiveBackgroundProps> = ({ maxEdges,
             }
             return newValue;
         });
-    }, []);
+    }, [debouncedCalculatePaths]);
 
     return (
         <div className="fixed inset-0 z-0 pointer-events-none">
