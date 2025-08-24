@@ -416,41 +416,107 @@ const GitHubContributions = memo(function GitHubContributions({
               </div>
             )}
 
-            {/* Mini Contribution Graph */}
+            {/* Current Month Calendar View */}
             {contributions.length > 0 && !error && !loading && (
               <div className="mb-3 animate-in fade-in-50 slide-in-from-bottom-4 duration-700">
                 <div className="flex items-center justify-between mb-2">
-                  <span className="text-xs font-medium" style={{ color: theme?.textColor || 'rgb(55, 65, 81)' }}>Recent Activity</span>
+                  <span className="text-xs font-medium" style={{ color: theme?.textColor || 'rgb(55, 65, 81)' }}>
+                    {new Date().toLocaleDateString('en-US', { month: 'long', year: 'numeric' })}
+                  </span>
                   <div className="flex items-center gap-1">
                     <Zap className="w-3 h-3" style={{ color: theme?.accentColor || 'rgb(96, 165, 250)' }} />
                   </div>
                 </div>
 
-                {/* Simplified contribution graph */}
-                <div className="flex gap-0.5 overflow-hidden">
-                  {contributions.slice(-112).map((day, index) => (
-                    <div
-                      key={day.date}
-                      className="w-2 h-2 rounded-sm cursor-pointer hover:scale-125 transition-transform"
-                      style={{ backgroundColor: getContributionColor(day.level) }}
-                    />
-                  ))}
-                </div>
-
-                {/* Mini legend */}
-                <div className="flex items-center justify-between mt-2 text-xs text-gray-500">
-                  <span>Less</span>
-                  <div className="flex gap-1">
-                    {[0, 1, 2, 3, 4].map((level) => (
-                      <div
-                        key={level}
-                        className="w-2 h-2 rounded-sm"
-                        style={{ backgroundColor: getContributionColor(level) }}
-                      />
-                    ))}
-                  </div>
-                  <span>More</span>
-                </div>
+                {/* Current Month Calendar */}
+                {(() => {
+                  const today = new Date();
+                  const currentMonth = today.getMonth();
+                  const currentYear = today.getFullYear();
+                  const firstDay = new Date(currentYear, currentMonth, 1);
+                  const lastDay = new Date(currentYear, currentMonth + 1, 0);
+                  const daysInMonth = lastDay.getDate();
+                  const startPadding = firstDay.getDay();
+                  
+                  // Get current month contributions
+                  const currentMonthContributions = contributions.filter(c => {
+                    const date = new Date(c.date);
+                    return date.getMonth() === currentMonth && date.getFullYear() === currentYear;
+                  });
+                  
+                  // Create calendar grid
+                  const calendarDays: (ContributionDay | null)[] = [];
+                  for (let i = 0; i < startPadding; i++) {
+                    calendarDays.push(null);
+                  }
+                  
+                  for (let day = 1; day <= daysInMonth; day++) {
+                    const dateStr = `${currentYear}-${String(currentMonth + 1).padStart(2, '0')}-${String(day).padStart(2, '0')}`;
+                    const contribution = currentMonthContributions.find(c => c.date === dateStr);
+                    calendarDays.push(contribution || { date: dateStr, count: 0, level: 0 });
+                  }
+                  
+                  return (
+                    <>
+                      {/* Day labels */}
+                      <div className="grid grid-cols-7 gap-1 mb-1">
+                        {['S', 'M', 'T', 'W', 'T', 'F', 'S'].map((day, i) => (
+                          <div key={i} className="text-[8px] text-center" style={{ color: theme?.mutedTextColor || 'rgb(156, 163, 175)' }}>
+                            {day}
+                          </div>
+                        ))}
+                      </div>
+                      
+                      {/* Calendar grid */}
+                      <div className="grid grid-cols-7 gap-1">
+                        {calendarDays.map((day, index) => (
+                          <div
+                            key={index}
+                            className={day ? "w-full aspect-square rounded-sm cursor-pointer hover:scale-110 transition-transform" : ""}
+                            style={{
+                              backgroundColor: day ? getContributionColor(day.level) : 'transparent',
+                              opacity: day && new Date(day.date) > today ? 0.3 : 1
+                            }}
+                            title={day ? `${day.count} contributions on ${day.date}` : ''}
+                          />
+                        ))}
+                      </div>
+                      
+                      {/* 30-day metrics */}
+                      <div className="mt-3 pt-2 border-t" style={{ borderColor: theme?.borderColor || 'rgb(243, 244, 246)' }}>
+                        <div className="text-[10px] font-medium mb-1" style={{ color: theme?.mutedTextColor || 'rgb(107, 114, 128)' }}>
+                          Last 30 Days
+                        </div>
+                        <div className="grid grid-cols-3 gap-2">
+                          <div>
+                            <div className="text-sm font-semibold" style={{ color: theme?.textColor || 'rgb(17, 24, 39)' }}>
+                              {contributions.slice(-30).reduce((sum, day) => sum + day.count, 0)}
+                            </div>
+                            <div className="text-[9px]" style={{ color: theme?.mutedTextColor || 'rgb(156, 163, 175)' }}>
+                              commits
+                            </div>
+                          </div>
+                          <div>
+                            <div className="text-sm font-semibold" style={{ color: theme?.textColor || 'rgb(17, 24, 39)' }}>
+                              {contributions.slice(-30).filter(d => d.count > 0).length}
+                            </div>
+                            <div className="text-[9px]" style={{ color: theme?.mutedTextColor || 'rgb(156, 163, 175)' }}>
+                              active days
+                            </div>
+                          </div>
+                          <div>
+                            <div className="text-sm font-semibold" style={{ color: theme?.textColor || 'rgb(17, 24, 39)' }}>
+                              {Math.round(contributions.slice(-30).reduce((sum, day) => sum + day.count, 0) / 30 * 10) / 10}
+                            </div>
+                            <div className="text-[9px]" style={{ color: theme?.mutedTextColor || 'rgb(156, 163, 175)' }}>
+                              daily avg
+                            </div>
+                          </div>
+                        </div>
+                      </div>
+                    </>
+                  );
+                })()}
               </div>
             )}
 
