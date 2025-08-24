@@ -38,6 +38,18 @@ export interface GitHubStats {
   threeMonthContributions: number
 }
 
+export interface MonthlyStats {
+  month: string
+  year: number
+  contributions: number
+  activeDays: number
+  averagePerDay: number
+  longestStreak: number
+  weekdayContributions: number
+  weekendContributions: number
+  isCurrentMonth: boolean
+}
+
 export interface GitHubContributionsProps {
   username?: string
   showPrivateRepos?: boolean
