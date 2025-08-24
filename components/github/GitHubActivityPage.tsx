@@ -63,48 +63,6 @@ export default function GitHubActivityPage({ username = "arach" }: { username?: 
   const [selectedCalendarYear, setSelectedCalendarYear] = useState(new Date().getFullYear())
   const [selectedDay, setSelectedDay] = useState<ContributionDay | null>(null)
 
-  useEffect(() => {
-    fetchGitHubData()
-  }, [username, fetchGitHubData])
-
-  const fetchGitHubData = useCallback(async () => {
-    try {
-      setError(null)
-      setLoading(true)
-
-      const [contributionsResponse, reposResponse] = await Promise.all([
-        fetch(`/api/github/contributions?username=${username}`),
-        fetch(`/api/github/repos?username=${username}`),
-      ])
-
-      if (contributionsResponse.ok) {
-        const contributionsData = await contributionsResponse.json()
-        setContributions(contributionsData.contributions || [])
-        setDataSource(contributionsData.source)
-
-        const calculatedStats = calculateStats(contributionsData.contributions || [])
-        setStats(calculatedStats)
-
-        const calculatedStreaks = calculateStreaks(contributionsData.contributions || [])
-        setStreaks(calculatedStreaks)
-
-        const monthlyStatsData = calculateMonthlyStats(contributionsData.contributions)
-        setMonthlyStats(monthlyStatsData)
-      }
-
-      if (reposResponse.ok) {
-        const reposData = await reposResponse.json()
-        setRepos(reposData.repos || [])
-      }
-
-      setLoading(false)
-    } catch (err) {
-      const errorMessage = err instanceof Error ? err.message : "An error occurred while fetching GitHub data"
-      setError(errorMessage)
-      setLoading(false)
-    }
-  }, [username, calculateStats])
-
   const calculateStats = useCallback((contributions: ContributionDay[]): GitHubStats => {
     const threeMonthContributions = contributions.reduce((sum, day) => sum + day.count, 0)
     const totalForks = repos.reduce((sum, repo) => sum + repo.forks_count, 0)
@@ -144,6 +102,48 @@ export default function GitHubActivityPage({ username = "arach" }: { username?: 
       threeMonthContributions,
     }
   }, [repos])
+
+  const fetchGitHubData = useCallback(async () => {
+    try {
+      setError(null)
+      setLoading(true)
+
+      const [contributionsResponse, reposResponse] = await Promise.all([
+        fetch(`/api/github/contributions?username=${username}`),
+        fetch(`/api/github/repos?username=${username}`),
+      ])
+
+      if (contributionsResponse.ok) {
+        const contributionsData = await contributionsResponse.json()
+        setContributions(contributionsData.contributions || [])
+        setDataSource(contributionsData.source)
+
+        const calculatedStats = calculateStats(contributionsData.contributions || [])
+        setStats(calculatedStats)
+
+        const calculatedStreaks = calculateStreaks(contributionsData.contributions || [])
+        setStreaks(calculatedStreaks)
+
+        const monthlyStatsData = calculateMonthlyStats(contributionsData.contributions)
+        setMonthlyStats(monthlyStatsData)
+      }
+
+      if (reposResponse.ok) {
+        const reposData = await reposResponse.json()
+        setRepos(reposData.repos || [])
+      }
+
+      setLoading(false)
+    } catch (err) {
+      const errorMessage = err instanceof Error ? err.message : "An error occurred while fetching GitHub data"
+      setError(errorMessage)
+      setLoading(false)
+    }
+  }, [username, calculateStats])
+
+  useEffect(() => {
+    fetchGitHubData()
+  }, [username, fetchGitHubData])
 
   const calculateStreaks = (contributions: ContributionDay[]): Streak[] => {
     const sortedContributions = [...contributions].sort(

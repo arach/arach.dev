@@ -32,7 +32,7 @@ export default function TypographyProjectCard({
   cardRef,
 }: TypographyProjectCardProps) {
   const projectNumber = String(index + 1).padStart(2, '0');
-  const { theme } = useTheme();
+  const { currentTheme: theme } = useTheme();
   
   // Helper to convert hex to rgba
   const hexToRgba = (hex: string, alpha: number) => {

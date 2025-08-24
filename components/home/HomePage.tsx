@@ -55,7 +55,7 @@ export default function HomePage({ projects }: { projects: Project[] }) {
   const [selectedCategory, setSelectedCategory] = useState<string>("all")
   const cardRefs = useRef<(HTMLDivElement | null)[]>([])
   const containerRef = useRef<HTMLDivElement>(null)
-  const { theme } = useTheme()
+  const { currentTheme: theme } = useTheme()
 
   const { playHoverSound, playClickSound, playButtonHoverSound, playButtonClickSound } = useAudioFeedback({
     enabled: audioEnabled,
