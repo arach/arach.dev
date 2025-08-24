@@ -51,17 +51,23 @@ const GitHubContributions = memo(function GitHubContributions({
 
   const getDateRangeText = () => {
     const today = new Date()
-    const threeMonthsAgo = new Date(today)
-    threeMonthsAgo.setMonth(threeMonthsAgo.getMonth() - 3)
-
-    const formatDate = (date: Date) => {
-      return date.toLocaleDateString("en-US", {
-        month: "short",
-        day: "numeric",
-      })
+    const currentMonth = today.getMonth() // 0-11 (August = 7)
+    
+    // Get the months we want to show
+    const months = []
+    
+    // Add the 3 previous full months
+    for (let i = 3; i >= 1; i--) {
+      const monthDate = new Date(today)
+      monthDate.setMonth(currentMonth - i)
+      months.push(monthDate.toLocaleDateString("en-US", { month: "short" }))
     }
-
-    return `${formatDate(threeMonthsAgo)} - ${formatDate(today)}`
+    
+    // Add current month separately
+    const currentMonthName = today.toLocaleDateString("en-US", { month: "short" })
+    
+    // Format as "May, Jun, Jul + Aug"
+    return `${months.join(", ")} + ${currentMonthName}`
   }
 
   const fetchGitHubData = async () => {
@@ -427,7 +433,7 @@ const GitHubContributions = memo(function GitHubContributions({
 
                 {/* Simplified contribution graph */}
                 <div className="flex gap-0.5 overflow-hidden">
-                  {contributions.slice(-84).map((day, index) => (
+                  {contributions.slice(-112).map((day, index) => (
                     <div
                       key={day.date}
                       className="w-2 h-2 rounded-sm cursor-pointer hover:scale-125 transition-transform"
