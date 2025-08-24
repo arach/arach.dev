@@ -83,6 +83,11 @@ export default function GitHubActivityPage({ username = "arach" }: { username?: 
   const [dataSource, setDataSource] = useState<string>("loading")
   const [selectedView, setSelectedView] = useState<"overview" | "calendar" | "streaks">("overview")
   const [repos, setRepos] = useState<GitHubRepo[]>([])
+  
+  // Add calendar-specific state
+  const [selectedCalendarMonth, setSelectedCalendarMonth] = useState(new Date().getMonth())
+  const [selectedCalendarYear, setSelectedCalendarYear] = useState(new Date().getFullYear())
+  const [selectedDay, setSelectedDay] = useState<ContributionDay | null>(null)
 
   useEffect(() => {
     fetchGitHubData()
@@ -327,6 +332,98 @@ export default function GitHubActivityPage({ username = "arach" }: { username?: 
   }
 
   const sourceInfo = getDataSourceInfo()
+
+  // Helper functions for calendar view
+  const getCalendarDays = (year: number, month: number) => {
+    const firstDay = new Date(year, month, 1)
+    const lastDay = new Date(year, month + 1, 0)
+    const startDate = new Date(firstDay)
+    startDate.setDate(startDate.getDate() - firstDay.getDay()) // Start from Sunday
+
+    const days = []
+    const currentDate = new Date(startDate)
+
+    // Generate 6 weeks (42 days) to ensure full calendar grid
+    for (let i = 0; i < 42; i++) {
+      days.push({
+        day: currentDate.getDate(),
+        dateString: currentDate.toISOString().split("T")[0],
+        isCurrentMonth: currentDate.getMonth() === month,
+      })
+      currentDate.setDate(currentDate.getDate() + 1)
+    }
+
+    return days
+  }
+
+  const getMonthData = (year: number, month: number) => {
+    const monthContributions = contributions.filter((c) => {
+      const date = new Date(c.date)
+      return date.getFullYear() === year && date.getMonth() === month
+    })
+
+    const totalContributions = monthContributions.reduce((sum, c) => sum + c.count, 0)
+    const activeDays = monthContributions.filter((c) => c.count > 0).length
+    const averagePerDay =
+      monthContributions.length > 0 ? Math.round((totalContributions / monthContributions.length) * 10) / 10 : 0
+    const bestDay = monthContributions.length > 0 ? Math.max(...monthContributions.map((c) => c.count)) : 0
+
+    // Calculate longest streak in this month
+    let longestStreak = 0
+    let currentStreak = 0
+    const sortedDays = monthContributions.sort((a, b) => new Date(a.date).getTime() - new Date(b.date).getTime())
+
+    for (const day of sortedDays) {
+      if (day.count > 0) {
+        currentStreak++
+        longestStreak = Math.max(longestStreak, currentStreak)
+      } else {
+        currentStreak = 0
+      }
+    }
+
+    // Weekday vs weekend contributions
+    const weekdayContributions = monthContributions
+      .filter((c) => {
+        const dayOfWeek = new Date(c.date).getDay()
+        return dayOfWeek >= 1 && dayOfWeek <= 5 && c.count > 0
+      })
+      .reduce((sum, c) => sum + c.count, 0)
+
+    const weekendContributions = monthContributions
+      .filter((c) => {
+        const dayOfWeek = new Date(c.date).getDay()
+        return (dayOfWeek === 0 || dayOfWeek === 6) && c.count > 0
+      })
+      .reduce((sum, c) => sum + c.count, 0)
+
+    const today = new Date()
+    const isCurrentMonth = year === today.getFullYear() && month === today.getMonth()
+    const daysElapsed = isCurrentMonth ? today.getDate() : new Date(year, month + 1, 0).getDate()
+    const totalDaysInMonth = new Date(year, month + 1, 0).getDate()
+
+    return {
+      totalContributions,
+      activeDays,
+      averagePerDay,
+      bestDay,
+      longestStreak,
+      weekdayContributions,
+      weekendContributions,
+      isCurrentMonth,
+      daysElapsed,
+      totalDaysInMonth,
+    }
+  }
+
+  // Memoized values for calendar
+  const calendarDays = useMemo(() => {
+    return getCalendarDays(selectedCalendarYear, selectedCalendarMonth)
+  }, [selectedCalendarYear, selectedCalendarMonth])
+
+  const monthData = useMemo(() => {
+    return getMonthData(selectedCalendarYear, selectedCalendarMonth)
+  }, [selectedCalendarYear, selectedCalendarMonth, contributions])
 
   return (
     <TooltipProvider>
@@ -668,151 +765,375 @@ export default function GitHubActivityPage({ username = "arach" }: { username?: 
               exit={{ opacity: 0, y: -20 }}
               className="space-y-6"
             >
-              <Card>
-                <CardHeader>
-                  <CardTitle className="flex items-center gap-2">
-                    <Calendar className="w-5 h-5" />
-                    Full Calendar View
-                  </CardTitle>
-                  <CardDescription>
-                    Detailed contribution calendar for the last 3 months
-                  </CardDescription>
-                </CardHeader>
-                <CardContent>
-                  {/* Reuse the calendar grid logic from overview */}
-                  <div className="space-y-4">
-                    {(() => {
-                      const monthlyContributions = new Map<string, ContributionDay[]>()
-                      const monthOrder: string[] = []
-                      
-                      const today = new Date()
-                      const currentMonth = today.getMonth()
-                      const currentYear = today.getFullYear()
-                      const monthsToInclude = new Set<string>()
-                      
-                      for (let i = 0; i <= 3; i++) {
-                        const targetDate = new Date(currentYear, currentMonth - i, 1)
-                        monthsToInclude.add(`${targetDate.getFullYear()}-${targetDate.getMonth()}`)
-                      }
-                      
-                      contributions.forEach(day => {
-                        const date = new Date(day.date)
-                        const monthKey = `${date.getFullYear()}-${date.getMonth()}`
-                        
-                        if (monthsToInclude.has(monthKey)) {
-                          if (!monthlyContributions.has(monthKey)) {
-                            monthlyContributions.set(monthKey, [])
-                            monthOrder.push(monthKey)
-                          }
-                          monthlyContributions.get(monthKey)!.push(day)
-                        }
-                      })
-
-                      monthOrder.sort((a, b) => {
-                        const [yearA, monthA] = a.split('-').map(Number)
-                        const [yearB, monthB] = b.split('-').map(Number)
-                        const dateA = new Date(yearA, monthA)
-                        const dateB = new Date(yearB, monthB)
-                        return dateA.getTime() - dateB.getTime()
-                      })
-
-                      const monthGrids = monthOrder.map(monthKey => {
-                        const [year, month] = monthKey.split('-').map(Number)
-                        const monthData = monthlyContributions.get(monthKey) || []
-                        const monthName = new Date(year, month).toLocaleDateString('en-US', { month: 'long' })
-                        
-                        const firstDay = new Date(year, month, 1)
-                        const lastDay = new Date(year, month + 1, 0)
-                        const startPadding = firstDay.getDay()
-                        const totalDays = lastDay.getDate()
-                        
-                        const calendarDays: (ContributionDay | null)[] = []
-                        
-                        for (let i = 0; i < startPadding; i++) {
-                          calendarDays.push(null)
-                        }
-                        
-                        for (let day = 1; day <= totalDays; day++) {
-                          const dateStr = `${year}-${String(month + 1).padStart(2, '0')}-${String(day).padStart(2, '0')}`
-                          const contribution = monthData.find(c => c.date === dateStr)
-                          calendarDays.push(contribution || { date: dateStr, count: 0, level: 0 })
-                        }
-                        
-                        return { monthName, year, calendarDays, monthKey }
-                      })
-
-                      return (
-                        <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-                          {monthGrids.map(({ monthName, year, calendarDays, monthKey }) => (
-                            <div key={monthKey} className="bg-gray-50 rounded-lg p-4">
-                              <h4 className="text-sm font-semibold text-gray-700 mb-3">
-                                {monthName} {year}
-                              </h4>
-                              <div className="grid grid-cols-7 gap-1 text-xs text-gray-500 mb-2">
-                                {['S', 'M', 'T', 'W', 'T', 'F', 'S'].map((day, i) => (
-                                  <div key={i} className="w-6 h-6 flex items-center justify-center font-medium">
-                                    {day}
-                                  </div>
-                                ))}
-                              </div>
-                              <div className="grid grid-cols-7 gap-1">
-                                {calendarDays.map((day, index) => (
-                                  <div key={index}>
-                                    {day ? (
-                                      <Tooltip delayDuration={0}>
-                                        <TooltipTrigger asChild>
-                                          <div
-                                            className="w-6 h-6 rounded-sm cursor-pointer hover:scale-110 transition-transform"
-                                            style={{ backgroundColor: getContributionColor(day.level) }}
-                                          />
-                                        </TooltipTrigger>
-                                        <TooltipContent>
-                                          <div>
-                                            <p className="font-medium">
-                                              {day.count === 0
-                                                ? "No contributions"
-                                                : `${day.count} contribution${day.count === 1 ? "" : "s"}`}
-                                            </p>
-                                            <p className="opacity-75">
-                                              {new Date(day.date).toLocaleDateString("en-US", {
-                                                weekday: "long",
-                                                month: "long",
-                                                day: "numeric",
-                                                year: "numeric"
-                                              })}
-                                            </p>
-                                          </div>
-                                        </TooltipContent>
-                                      </Tooltip>
-                                    ) : (
-                                      <div className="w-6 h-6" />
-                                    )}
-                                  </div>
-                                ))}
-                              </div>
-                            </div>
+              {/* Calendar Controls and Stats */}
+              <div className="grid grid-cols-1 lg:grid-cols-4 gap-6">
+                {/* Calendar Navigation */}
+                <Card className="lg:col-span-3">
+                  <CardHeader className="pb-3">
+                    <div className="flex items-center justify-between">
+                      <CardTitle className="flex items-center gap-2">
+                        <Calendar className="w-5 h-5" />
+                        Contribution Calendar
+                      </CardTitle>
+                      <div className="flex items-center gap-2">
+                        <Button
+                          variant="outline"
+                          size="sm"
+                          onClick={() => {
+                            const today = new Date()
+                            setSelectedCalendarMonth(today.getMonth())
+                            setSelectedCalendarYear(today.getFullYear())
+                          }}
+                        >
+                          Today
+                        </Button>
+                      </div>
+                    </div>
+                    <CardDescription>Interactive monthly view of your GitHub contributions</CardDescription>
+                  </CardHeader>
+                  <CardContent>
+                    {/* Month/Year Selector */}
+                    <div className="flex items-center justify-between mb-6">
+                      <div className="flex items-center gap-4">
+                        <Button
+                          variant="outline"
+                          size="sm"
+                          onClick={() => {
+                            if (selectedCalendarMonth === 0) {
+                              setSelectedCalendarMonth(11)
+                              setSelectedCalendarYear(selectedCalendarYear - 1)
+                            } else {
+                              setSelectedCalendarMonth(selectedCalendarMonth - 1)
+                            }
+                          }}
+                        >
+                          ←
+                        </Button>
+                        <h3 className="text-xl font-semibold min-w-[200px] text-center">
+                          {new Date(selectedCalendarYear, selectedCalendarMonth).toLocaleDateString("en-US", {
+                            month: "long",
+                            year: "numeric",
+                          })}
+                        </h3>
+                        <Button
+                          variant="outline"
+                          size="sm"
+                          onClick={() => {
+                            if (selectedCalendarMonth === 11) {
+                              setSelectedCalendarMonth(0)
+                              setSelectedCalendarYear(selectedCalendarYear + 1)
+                            } else {
+                              setSelectedCalendarMonth(selectedCalendarMonth + 1)
+                            }
+                          }}
+                        >
+                          →
+                        </Button>
+                      </div>
+                      <div className="flex items-center gap-2 text-xs text-gray-500">
+                        <span>Less</span>
+                        <div className="flex gap-1">
+                          {[0, 1, 2, 3, 4].map((level) => (
+                            <div
+                              key={level}
+                              className="w-5 h-5 rounded-sm"
+                              style={{ backgroundColor: getContributionColor(level) }}
+                            />
                           ))}
                         </div>
-                      )
-                    })()}
-                    
-                    {/* Legend */}
-                    <div className="flex items-center justify-center gap-2 text-xs text-gray-500 mt-4">
-                      <span>Less</span>
-                      <div className="flex gap-1">
-                        {[0, 1, 2, 3, 4].map((level) => (
-                          <div
-                            key={level}
-                            className="w-4 h-4 rounded-sm"
-                            style={{ backgroundColor: getContributionColor(level) }}
-                          />
+                        <span>More</span>
+                      </div>
+                    </div>
+
+                    {/* Calendar Grid */}
+                    <div className="space-y-2">
+                      {/* Day headers */}
+                      <div className="grid grid-cols-7 gap-2 mb-2">
+                        {["Sun", "Mon", "Tue", "Wed", "Thu", "Fri", "Sat"].map((day) => (
+                          <div key={day} className="text-center text-xs font-medium text-gray-500 py-2">
+                            {day}
+                          </div>
                         ))}
                       </div>
-                      <span>More</span>
+
+                      {/* Calendar days */}
+                      <div className="grid grid-cols-7 gap-2">
+                        {calendarDays.map((day, index) => {
+                          const dayData = contributions.find((c) => c.date === day.dateString)
+                          const isToday = day.dateString === new Date().toISOString().split("T")[0]
+                          const isCurrentMonth = day.isCurrentMonth
+                          const isInStreak = streaks.some((streak) => streak.dates.includes(day.dateString))
+
+                          return (
+                            <Tooltip delayDuration={0} key={index}>
+                              <TooltipTrigger asChild>
+                                <div
+                                  className={`
+                                    relative aspect-square rounded-lg cursor-pointer transition-all duration-200 hover:scale-110 hover:shadow-md
+                                    ${isCurrentMonth ? "" : "opacity-30"}
+                                    ${isToday ? "ring-2 ring-blue-500 ring-offset-1" : ""}
+                                  `}
+                                  style={{
+                                    backgroundColor: dayData
+                                      ? getContributionColor(dayData.level)
+                                      : isCurrentMonth
+                                        ? "#f3f4f6"
+                                        : "#f9fafb",
+                                  }}
+                                  onClick={() => dayData && setSelectedDay(dayData)}
+                                >
+                                  {/* Day number */}
+                                  <div
+                                    className={`
+                                      absolute inset-0 flex items-center justify-center text-xs font-medium
+                                      ${
+                                        dayData && dayData.level > 2
+                                          ? "text-white"
+                                          : isCurrentMonth
+                                            ? "text-gray-900"
+                                            : "text-gray-400"
+                                      }
+                                    `}
+                                  >
+                                    {day.day}
+                                  </div>
+
+                                  {/* Streak indicator */}
+                                  {isInStreak && <div className="absolute -top-1 -right-1 text-xs">🔥</div>}
+
+                                  {/* Today indicator */}
+                                  {isToday && (
+                                    <div className="absolute -bottom-1 left-1/2 transform -translate-x-1/2 w-1 h-1 bg-blue-500 rounded-full" />
+                                  )}
+                                </div>
+                              </TooltipTrigger>
+                              <TooltipContent>
+                                <div className="text-xs">
+                                  <p className="font-medium">
+                                    {new Date(day.dateString).toLocaleDateString("en-US", {
+                                      weekday: "long",
+                                      month: "long",
+                                      day: "numeric",
+                                      year: "numeric",
+                                    })}
+                                  </p>
+                                  <p>
+                                    {dayData?.count === 0 || !dayData
+                                      ? "No contributions"
+                                      : `${dayData.count} contribution${dayData.count === 1 ? "" : "s"}`}
+                                  </p>
+                                  {isInStreak && <p className="text-orange-400">Part of streak</p>}
+                                  {isToday && <p className="text-blue-400">Today</p>}
+                                </div>
+                              </TooltipContent>
+                            </Tooltip>
+                          )
+                        })}
+                      </div>
                     </div>
-                  </div>
-                </CardContent>
-              </Card>
+                  </CardContent>
+                </Card>
+
+                {/* Monthly Stats Sidebar */}
+                <Card>
+                  <CardHeader className="pb-3">
+                    <CardTitle className="text-lg">Monthly Stats</CardTitle>
+                    <CardDescription>
+                      {new Date(selectedCalendarYear, selectedCalendarMonth).toLocaleDateString("en-US", {
+                        month: "long",
+                        year: "numeric",
+                      })}
+                    </CardDescription>
+                  </CardHeader>
+                  <CardContent>
+                    <div className="space-y-4">
+                      <div className="text-center p-4 bg-blue-50 rounded-lg">
+                        <div className="text-2xl font-bold text-blue-600">{monthData.totalContributions}</div>
+                        <div className="text-sm text-blue-700">Total Contributions</div>
+                      </div>
+
+                      <div className="space-y-3">
+                        <div className="flex justify-between items-center">
+                          <span className="text-sm text-gray-600">Active days</span>
+                          <span className="font-medium">{monthData.activeDays}</span>
+                        </div>
+                        <div className="flex justify-between items-center">
+                          <span className="text-sm text-gray-600">Average per day</span>
+                          <span className="font-medium">{monthData.averagePerDay}</span>
+                        </div>
+                        <div className="flex justify-between items-center">
+                          <span className="text-sm text-gray-600">Best day</span>
+                          <span className="font-medium">{monthData.bestDay}</span>
+                        </div>
+                        <div className="flex justify-between items-center">
+                          <span className="text-sm text-gray-600">Longest streak</span>
+                          <span className="font-medium">{monthData.longestStreak} days</span>
+                        </div>
+                      </div>
+
+                      <div className="pt-3 border-t">
+                        <div className="text-sm text-gray-600 mb-2">Activity distribution</div>
+                        <div className="space-y-2">
+                          <div className="flex justify-between text-xs">
+                            <span>Weekdays</span>
+                            <span>{monthData.weekdayContributions}</span>
+                          </div>
+                          <div className="flex justify-between text-xs">
+                            <span>Weekends</span>
+                            <span>{monthData.weekendContributions}</span>
+                          </div>
+                        </div>
+                      </div>
+
+                      {monthData.isCurrentMonth && (
+                        <div className="pt-3 border-t">
+                          <div className="text-xs text-gray-500 text-center">
+                            {monthData.daysElapsed} of {monthData.totalDaysInMonth} days elapsed
+                          </div>
+                          <div className="w-full bg-gray-200 rounded-full h-2 mt-2">
+                            <div
+                              className="bg-blue-500 h-2 rounded-full transition-all duration-300"
+                              style={{
+                                width: `${(monthData.daysElapsed / monthData.totalDaysInMonth) * 100}%`,
+                              }}
+                            />
+                          </div>
+                        </div>
+                      )}
+                    </div>
+                  </CardContent>
+                </Card>
+              </div>
+
+              {/* Selected Day Details */}
+              <AnimatePresence>
+                {selectedDay && (
+                  <motion.div
+                    initial={{ opacity: 0, y: 20 }}
+                    animate={{ opacity: 1, y: 0 }}
+                    exit={{ opacity: 0, y: -20 }}
+                  >
+                    <Card>
+                      <CardHeader className="pb-3">
+                        <div className="flex items-center justify-between">
+                          <CardTitle className="flex items-center gap-2">
+                            <Activity className="w-5 h-5" />
+                            Day Details
+                          </CardTitle>
+                          <Button variant="ghost" size="sm" onClick={() => setSelectedDay(null)}>
+                            ×
+                          </Button>
+                        </div>
+                      </CardHeader>
+                      <CardContent>
+                        <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+                          <div className="space-y-4">
+                            <div>
+                              <h3 className="font-medium text-lg">
+                                {new Date(selectedDay.date).toLocaleDateString("en-US", {
+                                  weekday: "long",
+                                  month: "long",
+                                  day: "numeric",
+                                  year: "numeric",
+                                })}
+                              </h3>
+                              <p className="text-sm text-gray-600">
+                                {selectedDay.count === 0
+                                  ? "No contributions"
+                                  : `${selectedDay.count} contribution${selectedDay.count === 1 ? "" : "s"}`}
+                              </p>
+                            </div>
+
+                            <div className="space-y-2">
+                              <div className="flex items-center gap-2">
+                                <div
+                                  className="w-4 h-4 rounded-sm"
+                                  style={{ backgroundColor: getContributionColor(selectedDay.level) }}
+                                />
+                                <span className="text-sm">
+                                  Activity level: {["None", "Low", "Medium", "High", "Very High"][selectedDay.level]}
+                                </span>
+                              </div>
+
+                              {streaks.some((streak) => streak.dates.includes(selectedDay.date)) && (
+                                <div className="flex items-center gap-2">
+                                  <span className="text-sm">🔥</span>
+                                  <span className="text-sm text-orange-600">Part of a contribution streak</span>
+                                </div>
+                              )}
+
+                              <div className="text-xs text-gray-500">
+                                Day {new Date(selectedDay.date).getDate()} of{" "}
+                                {new Date(selectedDay.date).toLocaleDateString("en-US", { month: "long" })}
+                              </div>
+                            </div>
+                          </div>
+
+                          <div className="space-y-4">
+                            <div>
+                              <h4 className="font-medium mb-2">Context</h4>
+                              <div className="space-y-1 text-sm text-gray-600">
+                                <p>
+                                  Day of week:{" "}
+                                  {new Date(selectedDay.date).toLocaleDateString("en-US", { weekday: "long" })}
+                                </p>
+                                <p>Week of year: {Math.ceil(new Date(selectedDay.date).getDate() / 7)}</p>
+                                {(() => {
+                                  const dayIndex = contributions.findIndex((c) => c.date === selectedDay.date)
+                                  const prevDay = dayIndex > 0 ? contributions[dayIndex - 1] : null
+                                  const nextDay =
+                                    dayIndex < contributions.length - 1 ? contributions[dayIndex + 1] : null
+                                  return (
+                                    <>
+                                      {prevDay && <p>Previous day: {prevDay.count} contributions</p>}
+                                      {nextDay && <p>Next day: {nextDay.count} contributions</p>}
+                                    </>
+                                  )
+                                })()}
+                              </div>
+                            </div>
+                          </div>
+
+                          <div className="space-y-4">
+                            <div>
+                              <h4 className="font-medium mb-2">Quick Actions</h4>
+                              <div className="space-y-2">
+                                <Button
+                                  variant="outline"
+                                  size="sm"
+                                  className="w-full justify-start bg-transparent"
+                                  onClick={() => {
+                                    const date = new Date(selectedDay.date)
+                                    setSelectedCalendarMonth(date.getMonth())
+                                    setSelectedCalendarYear(date.getFullYear())
+                                  }}
+                                >
+                                  <Calendar className="w-4 h-4 mr-2" />
+                                  View Month
+                                </Button>
+                                <Button
+                                  variant="outline"
+                                  size="sm"
+                                  className="w-full justify-start bg-transparent"
+                                  onClick={() => {
+                                    window.open(
+                                      `https://github.com/${username}?tab=overview&from=${selectedDay.date}&to=${selectedDay.date}`,
+                                      "_blank",
+                                    )
+                                  }}
+                                >
+                                  <ExternalLink className="w-4 h-4 mr-2" />
+                                  View on GitHub
+                                </Button>
+                              </div>
+                            </div>
+                          </div>
+                        </div>
+                      </CardContent>
+                    </Card>
+                  </motion.div>
+                )}
+              </AnimatePresence>
             </motion.div>
           )}
 
