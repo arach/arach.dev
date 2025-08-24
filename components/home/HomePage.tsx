@@ -841,25 +841,25 @@ export default function HomePage({ projects }: { projects: Project[] }) {
                 className="text-[10px] uppercase tracking-wide px-2 py-1 rounded-sm transition-all duration-500 backdrop-blur-md border"
                 style={{
                   backgroundColor: selectedCategory === "all" 
-                    ? (theme.accentColor ? hexToRgba(theme.accentColor, 0.1) : 'rgba(59, 130, 246, 0.1)') 
-                    : (theme.accentColor ? hexToRgba(theme.accentColor, 0.03) : 'rgba(255, 255, 255, 0.02)'),
+                    ? (theme?.accentColor ? hexToRgba(theme.accentColor, 0.1) : 'rgba(59, 130, 246, 0.1)') 
+                    : (theme?.accentColor ? hexToRgba(theme.accentColor, 0.03) : 'rgba(255, 255, 255, 0.02)'),
                   borderColor: selectedCategory === "all"
-                    ? (theme.accentColor ? hexToRgba(theme.accentColor, 0.2) : 'rgba(59, 130, 246, 0.2)')
+                    ? (theme?.accentColor ? hexToRgba(theme.accentColor, 0.2) : 'rgba(59, 130, 246, 0.2)')
                     : 'rgba(107, 114, 128, 0.05)',
                   color: selectedCategory === "all" 
-                    ? (theme.accentColor || 'rgb(59, 130, 246)') 
-                    : (theme.mutedTextColor || 'rgb(156, 163, 175)'),
+                    ? (theme?.accentColor || 'rgb(59, 130, 246)') 
+                    : (theme?.mutedTextColor || 'rgb(156, 163, 175)'),
                   fontWeight: 400
                 }}
                 onMouseEnter={(e) => {
                   if (selectedCategory !== "all") {
-                    e.currentTarget.style.backgroundColor = theme.accentColor ? hexToRgba(theme.accentColor, 0.05) : 'rgba(255, 255, 255, 0.04)';
+                    e.currentTarget.style.backgroundColor = theme?.accentColor ? hexToRgba(theme.accentColor, 0.05) : 'rgba(255, 255, 255, 0.04)';
                     e.currentTarget.style.borderColor = 'rgba(107, 114, 128, 0.1)';
                   }
                 }}
                 onMouseLeave={(e) => {
                   if (selectedCategory !== "all") {
-                    e.currentTarget.style.backgroundColor = theme.accentColor ? hexToRgba(theme.accentColor, 0.03) : 'rgba(255, 255, 255, 0.02)';
+                    e.currentTarget.style.backgroundColor = theme?.accentColor ? hexToRgba(theme.accentColor, 0.03) : 'rgba(255, 255, 255, 0.02)';
                     e.currentTarget.style.borderColor = 'rgba(107, 114, 128, 0.05)';
                   }
                 }}
@@ -877,25 +877,25 @@ export default function HomePage({ projects }: { projects: Project[] }) {
                   className="text-[10px] uppercase tracking-wide px-2 py-1 rounded-sm transition-all duration-500 backdrop-blur-md border"
                   style={{
                     backgroundColor: selectedCategory === category.name 
-                      ? (theme.accentColor ? hexToRgba(theme.accentColor, 0.1) : 'rgba(59, 130, 246, 0.1)') 
-                      : (theme.accentColor ? hexToRgba(theme.accentColor, 0.03) : 'rgba(255, 255, 255, 0.02)'),
+                      ? (theme?.accentColor ? hexToRgba(theme.accentColor, 0.1) : 'rgba(59, 130, 246, 0.1)') 
+                      : (theme?.accentColor ? hexToRgba(theme.accentColor, 0.03) : 'rgba(255, 255, 255, 0.02)'),
                     borderColor: selectedCategory === category.name
-                      ? (theme.accentColor ? hexToRgba(theme.accentColor, 0.2) : 'rgba(59, 130, 246, 0.2)')
+                      ? (theme?.accentColor ? hexToRgba(theme.accentColor, 0.2) : 'rgba(59, 130, 246, 0.2)')
                       : 'rgba(107, 114, 128, 0.05)',
                     color: selectedCategory === category.name 
-                      ? (theme.accentColor || 'rgb(59, 130, 246)') 
-                      : (theme.mutedTextColor || 'rgb(156, 163, 175)'),
+                      ? (theme?.accentColor || 'rgb(59, 130, 246)') 
+                      : (theme?.mutedTextColor || 'rgb(156, 163, 175)'),
                     fontWeight: 400
                   }}
                   onMouseEnter={(e) => {
                     if (selectedCategory !== category.name) {
-                      e.currentTarget.style.backgroundColor = theme.accentColor ? hexToRgba(theme.accentColor, 0.05) : 'rgba(255, 255, 255, 0.04)';
+                      e.currentTarget.style.backgroundColor = theme?.accentColor ? hexToRgba(theme.accentColor, 0.05) : 'rgba(255, 255, 255, 0.04)';
                       e.currentTarget.style.borderColor = 'rgba(107, 114, 128, 0.1)';
                     }
                   }}
                   onMouseLeave={(e) => {
                     if (selectedCategory !== category.name) {
-                      e.currentTarget.style.backgroundColor = theme.accentColor ? hexToRgba(theme.accentColor, 0.03) : 'rgba(255, 255, 255, 0.02)';
+                      e.currentTarget.style.backgroundColor = theme?.accentColor ? hexToRgba(theme.accentColor, 0.03) : 'rgba(255, 255, 255, 0.02)';
                       e.currentTarget.style.borderColor = 'rgba(107, 114, 128, 0.05)';
                     }
                   }}

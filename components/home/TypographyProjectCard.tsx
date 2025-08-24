@@ -47,27 +47,27 @@ export default function TypographyProjectCard({
     if (isKeyboardFocused) {
       // When focused, use accent color
       return {
-        bg: theme.accentColor ? hexToRgba(theme.accentColor, 0.15) : 'rgb(219 234 254)',
-        text: theme.accentColor || 'rgb(37 99 235)',
+        bg: theme?.accentColor ? hexToRgba(theme.accentColor, 0.15) : 'rgb(219 234 254)',
+        text: theme?.accentColor || 'rgb(37 99 235)',
       };
     }
     
     // Use theme colors with subtle opacity
-    if (theme.name === 'dark' || theme.name === 'terminal' || theme.name === 'cyberpunk') {
+    if (theme?.name === 'dark' || theme?.name === 'terminal' || theme?.name === 'cyberpunk') {
       return {
-        bg: theme.accentColor ? hexToRgba(theme.accentColor, 0.08) : 'rgba(255, 255, 255, 0.05)',
-        text: theme.mutedTextColor || 'rgba(255, 255, 255, 0.6)',
-        hoverBg: theme.accentColor ? hexToRgba(theme.accentColor, 0.12) : 'rgba(255, 255, 255, 0.08)',
-        hoverText: theme.accentColor || 'rgba(255, 255, 255, 0.8)',
+        bg: theme?.accentColor ? hexToRgba(theme.accentColor, 0.08) : 'rgba(255, 255, 255, 0.05)',
+        text: theme?.mutedTextColor || 'rgba(255, 255, 255, 0.6)',
+        hoverBg: theme?.accentColor ? hexToRgba(theme.accentColor, 0.12) : 'rgba(255, 255, 255, 0.08)',
+        hoverText: theme?.accentColor || 'rgba(255, 255, 255, 0.8)',
       };
     }
     
     // For light themes, use accent color with very low opacity
     return {
-      bg: theme.accentColor ? hexToRgba(theme.accentColor, 0.06) : 'rgb(249 250 251)',
-      text: theme.mutedTextColor || 'rgb(107 114 128)',
-      hoverBg: theme.accentColor ? hexToRgba(theme.accentColor, 0.10) : 'rgb(243 244 246)',
-      hoverText: theme.textColor || 'rgb(75 85 99)',
+      bg: theme?.accentColor ? hexToRgba(theme.accentColor, 0.06) : 'rgb(249 250 251)',
+      text: theme?.mutedTextColor || 'rgb(107 114 128)',
+      hoverBg: theme?.accentColor ? hexToRgba(theme.accentColor, 0.10) : 'rgb(243 244 246)',
+      hoverText: theme?.textColor || 'rgb(75 85 99)',
     };
   };
   
