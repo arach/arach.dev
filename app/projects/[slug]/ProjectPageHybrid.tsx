@@ -32,7 +32,7 @@ export default function ProjectPageHybrid({ project }: { project: Project }) {
         '--theme-card-bg': theme?.cardBg || 'rgb(249, 250, 251)',
         '--theme-accent': theme?.accentColor || 'rgb(59, 130, 246)',
         '--theme-header-font': theme?.headerFont || 'inherit',
-        '--theme-body-font': theme?.bodyFont || 'inherit',
+        '--theme-body-font': 'inherit',
       } as React.CSSProperties}
     >
       <ProjectPageServer project={project} />

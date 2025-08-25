@@ -40,16 +40,20 @@ export default function ProjectPageClient({ project, projectNumber }: ProjectPag
       <ThemedDottedGrid />
       
       <div className="container mx-auto px-4 py-6 min-h-[90vh] relative z-10">
-        {/* Large project number in left margin */}
-        <span 
-          className="fixed left-8 top-32 text-[180px] font-mono font-light opacity-[0.02] select-none pointer-events-none hidden xl:block"
-          style={{
-            color: theme?.textColor || 'rgb(17, 24, 39)',
-            fontFamily: theme?.headerFont || 'inherit',
-          }}
-        >
-          {projectNumber}
-        </span>
+        {/* Large project number in left margin - closer to content */}
+        <div className="hidden xl:block">
+          <span 
+            className="fixed text-[180px] font-mono font-light opacity-[0.02] select-none pointer-events-none"
+            style={{
+              right: 'calc(50% + 24rem)',
+              top: '8rem',
+              color: theme?.textColor || 'rgb(17, 24, 39)',
+              fontFamily: theme?.headerFont || 'inherit',
+            }}
+          >
+            {projectNumber}
+          </span>
+        </div>
         
         <motion.main 
           initial={{ opacity: 0 }}
@@ -64,7 +68,7 @@ export default function ProjectPageClient({ project, projectNumber }: ProjectPag
               className="inline-flex items-center gap-1.5 text-xs mb-8 opacity-60 hover:opacity-100 transition-opacity"
               style={{
                 color: theme?.mutedTextColor || 'rgb(107, 114, 128)',
-                fontFamily: theme?.bodyFont || 'inherit',
+                fontFamily: 'inherit',
               }}
             >
               <ArrowLeft className="w-3 h-3" />
@@ -86,7 +90,7 @@ export default function ProjectPageClient({ project, projectNumber }: ProjectPag
                 className="text-sm opacity-70"
                 style={{
                   color: theme?.mutedTextColor || 'rgb(107, 114, 128)',
-                  fontFamily: theme?.bodyFont || 'inherit',
+                  fontFamily: 'inherit',
                 }}
               >
                 {project.description}
@@ -121,7 +125,7 @@ export default function ProjectPageClient({ project, projectNumber }: ProjectPag
                   className="inline-flex items-center gap-1.5 text-[11px] opacity-60 hover:opacity-100 transition-opacity"
                   style={{
                     color: theme?.mutedTextColor || 'rgb(107, 114, 128)',
-                    fontFamily: theme?.bodyFont || 'inherit',
+                    fontFamily: 'inherit',
                   }}
                 >
                   <Github className="w-3 h-3" />
@@ -137,7 +141,7 @@ export default function ProjectPageClient({ project, projectNumber }: ProjectPag
                   className="inline-flex items-center gap-1.5 text-[11px] opacity-60 hover:opacity-100 transition-opacity"
                   style={{
                     color: theme?.mutedTextColor || 'rgb(107, 114, 128)',
-                    fontFamily: theme?.bodyFont || 'inherit',
+                    fontFamily: 'inherit',
                   }}
                 >
                   <Globe className="w-3 h-3" />
@@ -152,7 +156,7 @@ export default function ProjectPageClient({ project, projectNumber }: ProjectPag
                 className="text-sm leading-relaxed opacity-90"
                 style={{
                   color: theme?.textColor || 'rgb(55, 65, 81)',
-                  fontFamily: theme?.bodyFont || 'inherit',
+                  fontFamily: 'inherit',
                   lineHeight: '1.75',
                 }}
               >
@@ -189,7 +193,7 @@ export default function ProjectPageClient({ project, projectNumber }: ProjectPag
                         className="text-xs leading-relaxed"
                         style={{
                           color: theme?.textColor || 'rgb(55, 65, 81)',
-                          fontFamily: theme?.bodyFont || 'inherit',
+                          fontFamily: 'inherit',
                         }}
                       >
                         {feature}
@@ -221,7 +225,7 @@ export default function ProjectPageClient({ project, projectNumber }: ProjectPag
                         backgroundColor: hexToRgba(theme?.accentColor || project.color, 0.08),
                         color: theme?.accentColor || project.color,
                         border: `1px solid ${hexToRgba(theme?.accentColor || project.color, 0.2)}`,
-                        fontFamily: theme?.bodyFont || 'inherit',
+                        fontFamily: 'inherit',
                       }}
                     >
                       {tech}
@@ -241,7 +245,7 @@ export default function ProjectPageClient({ project, projectNumber }: ProjectPag
                       className="text-[10px] opacity-40"
                       style={{
                         color: theme?.mutedTextColor || 'rgb(107, 114, 128)',
-                        fontFamily: theme?.bodyFont || 'inherit',
+                        fontFamily: 'inherit',
                       }}
                     >
                       #{tag}
