@@ -7,6 +7,7 @@ import Header from "@/components/Header";
 import { ThemeProvider } from "@/lib/theme-context";
 import Script from "next/script";
 import FontLoader from "@/components/FontLoader";
+import { SpeedInsights } from "@vercel/speed-insights/next";
 import fs from 'fs';
 import path from 'path';
 
@@ -71,6 +72,7 @@ export default function RootLayout({
           </main>
           <Footer />
           <FontLoader />
+          <SpeedInsights />
         </ThemeProvider>
       </body>
     </html>
