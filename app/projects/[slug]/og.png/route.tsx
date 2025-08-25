@@ -48,6 +48,7 @@ export async function GET(
         {/* Large project number in background */}
         <div
           style={{
+            display: 'flex',
             position: 'absolute',
             left: '60px',
             top: '50%',
@@ -59,7 +60,7 @@ export async function GET(
             lineHeight: 1,
           }}
         >
-          {projectNumber}
+          <span>{projectNumber}</span>
         </div>
 
         {/* Main content */}
@@ -77,6 +78,7 @@ export async function GET(
           {/* Project title */}
           <div
             style={{
+              display: 'flex',
               fontSize: '72px',
               fontWeight: 'bold',
               color: theme.textColor,
@@ -85,34 +87,35 @@ export async function GET(
               lineHeight: 1,
             }}
           >
-            {project.title}
+            <span>{project.title}</span>
           </div>
 
           {/* Project subtitle */}
           <div
             style={{
+              display: 'flex',
               fontSize: '28px',
               color: theme.mutedColor,
               fontFamily: 'monospace',
               lineHeight: 1.3,
             }}
           >
-            {project.description}
+            <span>{project.description}</span>
           </div>
 
           {/* Long description preview */}
           <div
             style={{
+              display: 'flex',
               fontSize: '20px',
               color: theme.mutedColor,
               fontFamily: 'monospace',
               lineHeight: 1.5,
               marginTop: '20px',
               opacity: 0.8,
-              display: 'flex',
             }}
           >
-            {project.longDescription.slice(0, 200)}...
+            <span>{project.longDescription.slice(0, 200)}...</span>
           </div>
 
           {/* Footer with branding */}
