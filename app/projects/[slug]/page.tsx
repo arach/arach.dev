@@ -19,6 +19,10 @@ export async function generateMetadata({ params }: { params: Promise<{ slug: str
     };
   }
 
+  // Get project index for the project number
+  const projectIndex = projects.findIndex(p => p.slug === resolvedParams.slug);
+  const projectNumber = String(projectIndex + 1).padStart(2, '0');
+
   return {
     title: `${project.title} - arach.dev`,
     description: project.longDescription,
@@ -27,7 +31,7 @@ export async function generateMetadata({ params }: { params: Promise<{ slug: str
       description: project.description,
       images: [
         {
-          url: `/api/og?title=${encodeURIComponent(project.title)}&subtitle=${encodeURIComponent(project.description)}&path=/projects/${resolvedParams.slug}`,
+          url: `/api/og?title=${encodeURIComponent(project.title)}&subtitle=${encodeURIComponent(project.description)}&path=/projects/${resolvedParams.slug}&projectNumber=${projectNumber}&longDescription=${encodeURIComponent(project.longDescription.slice(0, 200))}`,
           width: 1200,
           height: 630,
         },

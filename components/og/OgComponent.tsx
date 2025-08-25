@@ -6,6 +6,8 @@ type OgComponentProps = {
     path: string;
     mode?: 'dark' | 'light';
     format?: 'standard' | 'square';
+    projectNumber?: string;
+    longDescription?: string;
     metadata?: {
         tags?: string[];
         stats?: { label: string; value: string | number }[];
@@ -14,19 +16,25 @@ type OgComponentProps = {
     };
 };
 
-export function OgComponent({ title, subtitle, path, mode = 'dark', format = 'standard', metadata }: OgComponentProps) {
+export function OgComponent({ 
+    title, 
+    subtitle, 
+    path, 
+    mode = 'dark', 
+    format = 'standard', 
+    projectNumber,
+    longDescription,
+    metadata 
+}: OgComponentProps) {
     const isDark = mode === 'dark';
     const isSquare = format === 'square';
+    const isProjectPage = path.startsWith('/projects/') && projectNumber;
     
     // Determine the base URL for images
-    // In production, use the production URL
-    // In development, use localhost with the appropriate port
     const getImageUrl = (imageName: string) => {
         if (process.env.NODE_ENV === 'production' || process.env.VERCEL_URL) {
             return `https://arach.dev/assets/${imageName}`;
         }
-        // Default to port 3000 for Next.js dev server
-        // You can override this with PORT env variable
         const port = process.env.PORT || '3000';
         return `http://localhost:${port}/assets/${imageName}`;
     };
@@ -44,8 +52,140 @@ export function OgComponent({ title, subtitle, path, mode = 'dark', format = 'st
         accentColor: isDark ? '#60a5fa' : '#3b82f6',
         textColor: isDark ? '#e5e5e5' : '#111827',
         mutedColor: isDark ? 'rgba(255, 255, 255, 0.6)' : 'rgba(0, 0, 0, 0.6)',
+        lightTextColor: isDark ? 'rgba(255, 255, 255, 0.08)' : 'rgba(0, 0, 0, 0.08)',
     };
     
+    // Project page design
+    if (isProjectPage) {
+        return (
+            <div
+              style={{
+                height: '100%',
+                width: '100%',
+                display: 'flex',
+                flexDirection: 'column',
+                alignItems: 'center',
+                justifyContent: 'center',
+                backgroundColor: theme.bg,
+                backgroundImage: theme.bgGradient,
+                fontFamily: 'monospace',
+                position: 'relative',
+                padding: '60px',
+              }}
+            >
+              {/* Large project number in background */}
+              <div
+                style={{
+                  position: 'absolute',
+                  left: '60px',
+                  top: '50%',
+                  transform: 'translateY(-50%)',
+                  fontSize: '280px',
+                  fontWeight: '200',
+                  color: theme.lightTextColor,
+                  fontFamily: 'monospace',
+                  lineHeight: 1,
+                }}
+              >
+                {projectNumber}
+              </div>
+
+              {/* Main content */}
+              <div
+                style={{
+                  display: 'flex',
+                  flexDirection: 'column',
+                  width: '100%',
+                  maxWidth: '900px',
+                  position: 'relative',
+                  zIndex: 1,
+                  gap: '24px',
+                }}
+              >
+                {/* Project title */}
+                <div
+                  style={{
+                    fontSize: '72px',
+                    fontWeight: 'bold',
+                    color: theme.textColor,
+                    fontFamily: 'monospace',
+                    letterSpacing: '-1px',
+                    lineHeight: 1,
+                  }}
+                >
+                  {title}
+                </div>
+
+                {/* Project subtitle */}
+                <div
+                  style={{
+                    fontSize: '28px',
+                    color: theme.mutedColor,
+                    fontFamily: 'monospace',
+                    lineHeight: 1.3,
+                  }}
+                >
+                  {subtitle}
+                </div>
+
+                {/* Long description preview */}
+                {longDescription && (
+                  <div
+                    style={{
+                      fontSize: '20px',
+                      color: theme.mutedColor,
+                      fontFamily: 'monospace',
+                      lineHeight: 1.5,
+                      marginTop: '20px',
+                      opacity: 0.8,
+                      display: '-webkit-box',
+                      WebkitLineClamp: 3,
+                      WebkitBoxOrient: 'vertical',
+                      overflow: 'hidden',
+                      textOverflow: 'ellipsis',
+                    }}
+                  >
+                    {longDescription}
+                  </div>
+                )}
+
+                {/* Footer with branding */}
+                <div
+                  style={{
+                    display: 'flex',
+                    alignItems: 'center',
+                    justifyContent: 'space-between',
+                    marginTop: 'auto',
+                    paddingTop: '40px',
+                  }}
+                >
+                  <div
+                    style={{
+                      fontSize: '18px',
+                      color: theme.mutedColor,
+                      fontFamily: 'monospace',
+                      opacity: 0.6,
+                    }}
+                  >
+                    arach.dev
+                  </div>
+                  <div
+                    style={{
+                      fontSize: '14px',
+                      color: theme.mutedColor,
+                      fontFamily: 'monospace',
+                      opacity: 0.4,
+                    }}
+                  >
+                    {path}
+                  </div>
+                </div>
+              </div>
+            </div>
+        );
+    }
+    
+    // Default design for non-project pages
     return (
         <div
           style={{

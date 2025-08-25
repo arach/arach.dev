@@ -14,6 +14,8 @@ export async function GET(request: NextRequest) {
     const path = searchParams.get('path') || '/';
     const mode = (searchParams.get('mode') as 'dark' | 'light') || 'dark';
     const format = searchParams.get('format') || 'standard'; // 'standard' (1200x630) or 'square' (1200x1200)
+    const projectNumber = searchParams.get('projectNumber') || '';
+    const longDescription = searchParams.get('longDescription') || '';
     
     const isSquare = format === 'square';
     const dimensions = {
@@ -29,6 +31,8 @@ export async function GET(request: NextRequest) {
                 path={path}
                 mode={mode}
                 format={format as 'standard' | 'square'}
+                projectNumber={projectNumber}
+                longDescription={longDescription}
             />
         ),
         dimensions
