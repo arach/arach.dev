@@ -19,13 +19,27 @@ export async function GET(
   const projectIndex = projects.findIndex(p => p.slug === resolvedParams.slug);
   const projectNumber = String(projectIndex + 1).padStart(2, '0');
 
-  // Theme colors matching default theme
+  // Determine the base URL for images
+  const getImageUrl = (imageName: string) => {
+    if (process.env.NODE_ENV === 'production' || process.env.VERCEL_URL) {
+      return `https://arach.dev/assets/${imageName}`;
+    }
+    const port = process.env.PORT || '3000';
+    return `http://localhost:${port}/assets/${imageName}`;
+  };
+
+  // Theme colors matching default dark theme
   const theme = {
     bg: '#0a0a0a',
     bgGradient: 'linear-gradient(135deg, #0a0a0a 0%, #171717 100%)',
+    terminalBg: 'rgba(17, 17, 17, 0.95)',
+    terminalHeader: 'rgba(30, 30, 30, 0.95)',
+    borderColor: 'rgba(255, 255, 255, 0.1)',
+    pathColor: 'rgba(255, 255, 255, 0.5)',
     textColor: '#e5e5e5',
     mutedColor: 'rgba(255, 255, 255, 0.6)',
-    lightTextColor: 'rgba(255, 255, 255, 0.08)',
+    lightTextColor: 'rgba(255, 255, 255, 0.06)',
+    accentColor: '#60a5fa',
   };
 
   return new ImageResponse(
@@ -42,113 +56,207 @@ export async function GET(
           backgroundImage: theme.bgGradient,
           fontFamily: 'monospace',
           position: 'relative',
-          padding: '60px',
         }}
       >
-        {/* Large project number in background */}
-        <div
-          style={{
-            display: 'flex',
-            position: 'absolute',
-            left: '60px',
-            top: '50%',
-            transform: 'translateY(-50%)',
-            fontSize: '280px',
-            fontWeight: '200',
-            color: theme.lightTextColor,
-            fontFamily: 'monospace',
-            lineHeight: 1,
-          }}
-        >
-          <span>{projectNumber}</span>
-        </div>
-
-        {/* Main content */}
+        {/* Terminal window */}
         <div
           style={{
             display: 'flex',
             flexDirection: 'column',
-            width: '100%',
-            maxWidth: '900px',
-            position: 'relative',
-            zIndex: 1,
-            gap: '24px',
+            width: '90%',
+            height: '85%',
+            maxWidth: '1000px',
+            backgroundColor: theme.terminalBg,
+            borderRadius: '12px',
+            border: `1px solid ${theme.borderColor}`,
+            overflow: 'hidden',
           }}
         >
-          {/* Project title */}
-          <div
-            style={{
-              display: 'flex',
-              fontSize: '72px',
-              fontWeight: 'bold',
-              color: theme.textColor,
-              fontFamily: 'monospace',
-              letterSpacing: '-1px',
-              lineHeight: 1,
-            }}
-          >
-            <span>{project.title}</span>
-          </div>
-
-          {/* Project subtitle */}
-          <div
-            style={{
-              display: 'flex',
-              fontSize: '28px',
-              color: theme.mutedColor,
-              fontFamily: 'monospace',
-              lineHeight: 1.3,
-            }}
-          >
-            <span>{project.description}</span>
-          </div>
-
-          {/* Long description preview */}
-          <div
-            style={{
-              display: 'flex',
-              fontSize: '20px',
-              color: theme.mutedColor,
-              fontFamily: 'monospace',
-              lineHeight: 1.5,
-              marginTop: '20px',
-              opacity: 0.8,
-            }}
-          >
-            <span>{project.longDescription.slice(0, 200)}...</span>
-          </div>
-
-          {/* Footer with branding */}
+          {/* Terminal header */}
           <div
             style={{
               display: 'flex',
               alignItems: 'center',
               justifyContent: 'space-between',
-              marginTop: 'auto',
-              paddingTop: '40px',
+              padding: '10px 10px',
+              backgroundColor: theme.terminalHeader,
+              borderBottom: `1px solid ${theme.borderColor}`,
             }}
           >
-            <div
-              style={{
-                display: 'flex',
-                fontSize: '18px',
-                color: theme.mutedColor,
-                fontFamily: 'monospace',
-                opacity: 0.6,
-              }}
-            >
-              <span>arach.dev</span>
+            {/* Traffic lights */}
+            <div style={{ display: 'flex', gap: '8px' }}>
+              <div
+                style={{
+                  width: '10px',
+                  height: '10px',
+                  borderRadius: '50%',
+                  backgroundColor: '#ff5f56',
+                }}
+              />
+              <div
+                style={{
+                  width: '10px',
+                  height: '10px',
+                  borderRadius: '50%',
+                  backgroundColor: '#ffbd2e',
+                }}
+              />
+              <div
+                style={{
+                  width: '10px',
+                  height: '10px',
+                  borderRadius: '50%',
+                  backgroundColor: '#27c93f',
+                }}
+              />
             </div>
+            {/* Path */}
             <div
               style={{
                 display: 'flex',
-                fontSize: '14px',
-                color: theme.mutedColor,
+                fontSize: '12px',
+                color: theme.pathColor,
                 fontFamily: 'monospace',
-                opacity: 0.4,
               }}
             >
-              <span>/projects/{resolvedParams.slug}</span>
+              <span>{`~/dev/arach.dev/projects/${resolvedParams.slug}`}</span>
+            </div>
+          </div>
+          
+          {/* Terminal content */}
+          <div
+            style={{
+              display: 'flex',
+              flexDirection: 'column',
+              padding: '30px 40px',
+              flex: 1,
+              justifyContent: 'flex-start',
+              alignItems: 'center',
+              gap: '20px',
+              position: 'relative',
+            }}
+          >
+            {/* ASCII Art Image */}
+            <img
+              src={getImageUrl('arach-ascii.png')}
+              alt="ARACH.DEV ASCII Art"
+              width={580}
+              height={148}
+              style={{
+                width: '580px',
+                height: '148px',
+                objectFit: 'contain',
+                marginBottom: '10px',
+              }}
+            />
+
+            {/* Project content with large number */}
+            <div
+              style={{
+                display: 'flex',
+                width: '100%',
+                position: 'relative',
+                alignItems: 'flex-start',
+                gap: '40px',
+              }}
+            >
+              {/* Large project number - left side */}
+              <div
+                style={{
+                  display: 'flex',
+                  fontSize: '180px',
+                  fontWeight: '200',
+                  color: theme.lightTextColor,
+                  fontFamily: 'monospace',
+                  lineHeight: 1,
+                  marginTop: '-20px',
+                  flexShrink: 0,
+                }}
+              >
+                <span>{projectNumber}</span>
+              </div>
+
+              {/* Project details - right side with no overlap */}
+              <div
+                style={{
+                  display: 'flex',
+                  flexDirection: 'column',
+                  flex: 1,
+                  gap: '16px',
+                  paddingTop: '10px',
+                }}
+              >
+                {/* Project title */}
+                <div
+                  style={{
+                    display: 'flex',
+                    fontSize: '48px',
+                    fontWeight: 'bold',
+                    color: theme.textColor,
+                    fontFamily: 'monospace',
+                    letterSpacing: '-0.5px',
+                    lineHeight: 1,
+                  }}
+                >
+                  <span>{project.title}</span>
+                </div>
+
+                {/* Project subtitle */}
+                <div
+                  style={{
+                    display: 'flex',
+                    fontSize: '20px',
+                    color: theme.accentColor,
+                    fontFamily: 'monospace',
+                    lineHeight: 1.3,
+                  }}
+                >
+                  <span>{project.description}</span>
+                </div>
+
+                {/* Long description preview */}
+                <div
+                  style={{
+                    display: 'flex',
+                    fontSize: '16px',
+                    color: theme.mutedColor,
+                    fontFamily: 'monospace',
+                    lineHeight: 1.5,
+                    marginTop: '8px',
+                    opacity: 0.8,
+                  }}
+                >
+                  <span>{project.longDescription.slice(0, 150)}...</span>
+                </div>
+
+                {/* Tech tags */}
+                <div
+                  style={{
+                    display: 'flex',
+                    gap: '8px',
+                    marginTop: '8px',
+                    flexWrap: 'wrap',
+                  }}
+                >
+                  {project.tech.slice(0, 4).map((tech) => (
+                    <div
+                      key={tech}
+                      style={{
+                        display: 'flex',
+                        padding: '4px 12px',
+                        backgroundColor: 'rgba(96, 165, 250, 0.1)',
+                        color: theme.accentColor,
+                        borderRadius: '16px',
+                        fontSize: '12px',
+                        fontFamily: 'monospace',
+                        border: `1px solid rgba(96, 165, 250, 0.2)`,
+                      }}
+                    >
+                      <span>{tech}</span>
+                    </div>
+                  ))}
+                </div>
+              </div>
             </div>
           </div>
         </div>
