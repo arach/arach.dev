@@ -31,11 +31,18 @@ export async function generateMetadata({ params }: { params: Promise<{ slug: str
       description: project.description,
       images: [
         {
-          url: `/api/og?title=${encodeURIComponent(project.title)}&subtitle=${encodeURIComponent(project.description)}&path=/projects/${resolvedParams.slug}&projectNumber=${projectNumber}&longDescription=${encodeURIComponent(project.longDescription.slice(0, 200))}`,
+          url: `/projects/${resolvedParams.slug}/og.png`,
           width: 1200,
           height: 630,
+          alt: project.title,
         },
       ],
+    },
+    twitter: {
+      card: 'summary_large_image',
+      title: project.title,
+      description: project.description,
+      images: [`/projects/${resolvedParams.slug}/og.png`],
     },
   };
 }
