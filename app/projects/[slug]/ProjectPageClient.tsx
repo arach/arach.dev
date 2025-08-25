@@ -43,7 +43,7 @@ export default function ProjectPageClient({ project, projectNumber }: ProjectPag
         {/* Large project number in left margin - closer to content */}
         <div className="hidden xl:block">
           <span 
-            className="fixed text-[180px] font-mono font-light opacity-[0.02] select-none pointer-events-none"
+            className="fixed text-[180px] font-mono font-light opacity-[0.08] select-none pointer-events-none"
             style={{
               right: 'calc(50% + 24rem)',
               top: '8rem',
