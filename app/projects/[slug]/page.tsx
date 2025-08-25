@@ -44,5 +44,9 @@ export default async function ProjectPage({ params }: { params: Promise<{ slug: 
     notFound();
   }
 
-  return <ProjectPageClient project={project} />;
+  // Get project index for the project number
+  const projectIndex = projects.findIndex(p => p.slug === resolvedParams.slug);
+  const projectNumber = String(projectIndex + 1).padStart(2, '0');
+
+  return <ProjectPageClient project={project} projectNumber={projectNumber} />;
 }
