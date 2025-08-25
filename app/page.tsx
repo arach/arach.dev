@@ -4,7 +4,6 @@ import { useState, useEffect } from "react";
 import HomePage from "@/components/home/HomePage";
 import ThemedDottedGrid from "@/components/ThemedDottedGrid";
 import { DebugToolbar } from "@/components/debug/DebugToolbar";
-import ThemePicker from "@/components/ThemePicker";
 
 function HomeContent() {
   const [mounted, setMounted] = useState(false);
@@ -61,9 +60,6 @@ function HomeContent() {
           Cmd+D for debug
         </div>
       )}
-      
-      {/* Theme Picker - Always visible */}
-      {mounted && <ThemePicker />}
     </>
   );
 }
