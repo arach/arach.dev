@@ -47,26 +47,23 @@ export default function ProjectPageServer({ project }: { project: Project }) {
         <div className="max-w-4xl mx-auto">
           {/* Project Header */}
           <div className="mb-8">
-            <div className="flex items-start gap-4 mb-6">
-              <span className="text-4xl md:text-5xl">{project.icon}</span>
-              <div className="flex-1">
-                <h1 
-                  className="text-2xl md:text-3xl font-bold mb-2"
-                  style={{
-                    color: defaultTheme.headingColor,
-                  }}
-                >
-                  {project.title}
-                </h1>
-                <p 
-                  className="text-base md:text-lg"
-                  style={{
-                    color: defaultTheme.mutedTextColor,
-                  }}
-                >
-                  {project.description}
-                </p>
-              </div>
+            <div className="mb-6">
+              <h1 
+                className="text-2xl md:text-3xl font-bold mb-2"
+                style={{
+                  color: defaultTheme.headingColor,
+                }}
+              >
+                {project.title}
+              </h1>
+              <p 
+                className="text-base md:text-lg"
+                style={{
+                  color: defaultTheme.mutedTextColor,
+                }}
+              >
+                {project.description}
+              </p>
             </div>
 
             {/* Status Badge */}
@@ -86,9 +83,9 @@ export default function ProjectPageServer({ project }: { project: Project }) {
                     : defaultTheme.mutedTextColor,
                 }}
               >
-                {project.status === 'active' ? '🟢 Active Development' : 
-                 project.status === 'maintained' ? '🟡 Maintained' : 
-                 '⚪ Archived'}
+                {project.status === 'active' ? 'Active Development' : 
+                 project.status === 'maintained' ? 'Maintained' : 
+                 'Archived'}
               </span>
             </div>
 
