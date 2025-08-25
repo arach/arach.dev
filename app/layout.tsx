@@ -27,6 +27,29 @@ const ibmPlexMono = IBM_Plex_Mono({
 export const metadata: Metadata = {
   title: "arach.dev",
   description: "my dev projects and notes",
+  metadataBase: new URL('https://arach.dev'),
+  openGraph: {
+    title: 'arach.dev',
+    description: 'my dev projects and notes',
+    url: 'https://arach.dev',
+    siteName: 'arach.dev',
+    images: [
+      {
+        url: '/api/og',
+        width: 1200,
+        height: 630,
+        alt: 'arach.dev - my dev projects and notes',
+      },
+    ],
+    locale: 'en_US',
+    type: 'website',
+  },
+  twitter: {
+    card: 'summary_large_image',
+    title: 'arach.dev',
+    description: 'my dev projects and notes',
+    images: ['/api/og'],
+  },
 };
 
 export default function RootLayout({

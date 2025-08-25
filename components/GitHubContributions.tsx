@@ -567,13 +567,13 @@ const GitHubContributions = memo(function GitHubContributions({
                         </div>
                         <div className="grid grid-cols-3 gap-2">
                           <div>
-                            <div className="text-sm font-semibold" style={{ 
+                            <div className="text-lg font-semibold" style={{ 
                               color: theme?.textColor || 'rgb(17, 24, 39)',
                               fontFamily: theme?.headerFont || 'inherit'
                             }}>
                               {contributions.slice(-30).reduce((sum, day) => sum + day.count, 0)}
                             </div>
-                            <div className="text-[9px]" style={{ 
+                            <div className="text-[10px]" style={{ 
                               color: theme?.mutedTextColor || 'rgb(156, 163, 175)',
                               fontFamily: theme?.headerFont || 'inherit'
                             }}>
@@ -581,13 +581,13 @@ const GitHubContributions = memo(function GitHubContributions({
                             </div>
                           </div>
                           <div>
-                            <div className="text-sm font-semibold" style={{ 
+                            <div className="text-lg font-semibold" style={{ 
                               color: theme?.textColor || 'rgb(17, 24, 39)',
                               fontFamily: theme?.headerFont || 'inherit'
                             }}>
                               {contributions.slice(-30).filter(d => d.count > 0).length}
                             </div>
-                            <div className="text-[9px]" style={{ 
+                            <div className="text-[10px]" style={{ 
                               color: theme?.mutedTextColor || 'rgb(156, 163, 175)',
                               fontFamily: theme?.headerFont || 'inherit'
                             }}>
@@ -595,13 +595,13 @@ const GitHubContributions = memo(function GitHubContributions({
                             </div>
                           </div>
                           <div>
-                            <div className="text-sm font-semibold" style={{ 
+                            <div className="text-lg font-semibold" style={{ 
                               color: theme?.textColor || 'rgb(17, 24, 39)',
                               fontFamily: theme?.headerFont || 'inherit'
                             }}>
                               {Math.round(contributions.slice(-30).reduce((sum, day) => sum + day.count, 0) / 30 * 10) / 10}
                             </div>
-                            <div className="text-[9px]" style={{ 
+                            <div className="text-[10px]" style={{ 
                               color: theme?.mutedTextColor || 'rgb(156, 163, 175)',
                               fontFamily: theme?.headerFont || 'inherit'
                             }}>
