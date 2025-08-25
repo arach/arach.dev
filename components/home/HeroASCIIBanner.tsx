@@ -2,8 +2,8 @@
 
 import React from 'react';
 
-// Optimized Hero component for fastest LCP
-export default function HeroLCP() {
+// ASCII art banner component optimized for fast initial render
+export default function HeroASCIIBanner() {
   return (
     <>
       {/* Inline critical CSS for immediate render */}
