@@ -1016,7 +1016,9 @@ export default function HomePage({ projects }: { projects: Project[] }) {
                   }}
                   onClick={() => {
                     handleCardClick()
-                    window.open(project.link, "_blank")
+                    // Extract slug from project title (simplified - you may want to add slug to project data)
+                    const slug = project.title.toLowerCase().replace(/\s+/g, '-')
+                    window.location.href = `/projects/${slug}`
                   }}
                   cardRef={(el) => {
                     if (el) cardRefs.current[index] = el;

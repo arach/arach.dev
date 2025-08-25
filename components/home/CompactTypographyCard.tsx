@@ -2,7 +2,7 @@
 
 import React from 'react';
 import { motion } from 'framer-motion';
-import { ExternalLink, Github } from 'lucide-react';
+import { ArrowRight, Github } from 'lucide-react';
 import { useTheme } from '@/lib/theme-context';
 
 interface Project {
@@ -177,9 +177,7 @@ export default function CompactTypographyCard({
           : 'opacity-40 group-hover:opacity-100'}
       `}>
         <a
-          href={project.link}
-          target="_blank"
-          rel="noopener noreferrer"
+          href={`/projects/${project.title.toLowerCase().replace(/\s+/g, '-')}`}
           className={`
             inline-flex items-center justify-center
             w-6 h-6 rounded-full
@@ -188,9 +186,10 @@ export default function CompactTypographyCard({
               ? 'text-blue-600 bg-blue-100' 
               : 'text-gray-400 hover:text-gray-600 hover:bg-gray-100'}
           `}
+          aria-label="View project details"
           onClick={(e) => e.stopPropagation()}
         >
-          <ExternalLink className="w-3 h-3" />
+          <ArrowRight className="w-3 h-3" />
         </a>
         <a
           href={project.github}

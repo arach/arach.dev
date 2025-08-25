@@ -6,9 +6,15 @@ type OgComponentProps = {
     path: string;
     mode?: 'dark' | 'light';
     format?: 'standard' | 'square';
+    metadata?: {
+        tags?: string[];
+        stats?: { label: string; value: string | number }[];
+        date?: string;
+        author?: string;
+    };
 };
 
-export function OgComponent({ title, subtitle, path, mode = 'dark', format = 'standard' }: OgComponentProps) {
+export function OgComponent({ title, subtitle, path, mode = 'dark', format = 'standard', metadata }: OgComponentProps) {
     const isDark = mode === 'dark';
     const isSquare = format === 'square';
     
@@ -172,17 +178,106 @@ export function OgComponent({ title, subtitle, path, mode = 'dark', format = 'st
                 </div>
               )}
 
-              {/* Subtitle - simpler */}
+              {/* Subtitle */}
               <div
                 style={{
                   fontSize: '20px',
                   color: theme.mutedColor,
                   fontFamily: 'monospace',
                   letterSpacing: '1px',
+                  textAlign: 'center',
+                  maxWidth: '600px',
                 }}
               >
                 {subtitle}
               </div>
+
+              {/* Metadata Section */}
+              {metadata && (
+                <div
+                  style={{
+                    display: 'flex',
+                    flexDirection: 'column',
+                    gap: '15px',
+                    alignItems: 'center',
+                    marginTop: '10px',
+                  }}
+                >
+                  {/* Tags */}
+                  {metadata.tags && metadata.tags.length > 0 && (
+                    <div
+                      style={{
+                        display: 'flex',
+                        gap: '8px',
+                        flexWrap: 'wrap',
+                        justifyContent: 'center',
+                      }}
+                    >
+                      {metadata.tags.slice(0, 4).map((tag, i) => (
+                        <span
+                          key={i}
+                          style={{
+                            padding: '4px 12px',
+                            backgroundColor: isDark ? 'rgba(96, 165, 250, 0.1)' : 'rgba(59, 130, 246, 0.1)',
+                            color: theme.accentColor,
+                            borderRadius: '16px',
+                            fontSize: '14px',
+                            fontFamily: 'monospace',
+                            border: `1px solid ${isDark ? 'rgba(96, 165, 250, 0.2)' : 'rgba(59, 130, 246, 0.2)'}`,
+                          }}
+                        >
+                          {tag}
+                        </span>
+                      ))}
+                    </div>
+                  )}
+
+                  {/* Stats */}
+                  {metadata.stats && metadata.stats.length > 0 && (
+                    <div
+                      style={{
+                        display: 'flex',
+                        gap: '30px',
+                        alignItems: 'center',
+                      }}
+                    >
+                      {metadata.stats.slice(0, 3).map((stat, i) => (
+                        <div
+                          key={i}
+                          style={{
+                            display: 'flex',
+                            flexDirection: 'column',
+                            alignItems: 'center',
+                            gap: '4px',
+                          }}
+                        >
+                          <span
+                            style={{
+                              fontSize: '24px',
+                              fontWeight: 'bold',
+                              color: theme.accentColor,
+                              fontFamily: 'monospace',
+                            }}
+                          >
+                            {stat.value}
+                          </span>
+                          <span
+                            style={{
+                              fontSize: '12px',
+                              color: theme.mutedColor,
+                              fontFamily: 'monospace',
+                              textTransform: 'uppercase',
+                              letterSpacing: '1px',
+                            }}
+                          >
+                            {stat.label}
+                          </span>
+                        </div>
+                      ))}
+                    </div>
+                  )}
+                </div>
+              )}
             </div>
           </div>
         </div>
