@@ -11,6 +11,8 @@ export default async function OgPreviewPage({ searchParams }: OgPreviewPageProps
     const path = (params?.path as string) || '/';
     const mode = (params?.mode as 'dark' | 'light') || 'dark';
     const format = (params?.format as 'standard' | 'square') || 'standard';
+    const projectNumber = (params?.projectNumber as string) || '';
+    const longDescription = (params?.longDescription as string) || '';
 
     return (
         <div style={{ 
@@ -25,6 +27,8 @@ export default async function OgPreviewPage({ searchParams }: OgPreviewPageProps
                 path={path}
                 mode={mode}
                 format={format}
+                projectNumber={projectNumber}
+                longDescription={longDescription}
             />
         </div>
     );
