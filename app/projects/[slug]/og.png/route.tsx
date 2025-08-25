@@ -130,23 +130,25 @@ export async function GET(
           >
             <div
               style={{
+                display: 'flex',
                 fontSize: '18px',
                 color: theme.mutedColor,
                 fontFamily: 'monospace',
                 opacity: 0.6,
               }}
             >
-              arach.dev
+              <span>arach.dev</span>
             </div>
             <div
               style={{
+                display: 'flex',
                 fontSize: '14px',
                 color: theme.mutedColor,
                 fontFamily: 'monospace',
                 opacity: 0.4,
               }}
             >
-              /projects/{resolvedParams.slug}
+              <span>/projects/{resolvedParams.slug}</span>
             </div>
           </div>
         </div>
