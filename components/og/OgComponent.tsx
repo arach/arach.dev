@@ -12,6 +12,19 @@ export function OgComponent({ title, subtitle, path, mode = 'dark', format = 'st
     const isDark = mode === 'dark';
     const isSquare = format === 'square';
     
+    // Determine the base URL for images
+    // In production, use the production URL
+    // In development, use localhost with the appropriate port
+    const getImageUrl = (imageName: string) => {
+        if (process.env.NODE_ENV === 'production' || process.env.VERCEL_URL) {
+            return `https://arach.dev/assets/${imageName}`;
+        }
+        // Default to port 3000 for Next.js dev server
+        // You can override this with PORT env variable
+        const port = process.env.PORT || '3000';
+        return `http://localhost:${port}/assets/${imageName}`;
+    };
+    
     // Theme colors based on midnight/light themes
     const theme = {
         bg: isDark ? '#0a0a0a' : '#fafafa',
@@ -121,7 +134,7 @@ export function OgComponent({ title, subtitle, path, mode = 'dark', format = 'st
             >
               {/* ASCII Art Image */}
               <img
-                src={isDark ? "http://localhost:3002/assets/arach-ascii.png" : "http://localhost:3002/assets/arach-ascii-light.png"}
+                src={getImageUrl(isDark ? 'arach-ascii.png' : 'arach-ascii-light.png')}
                 alt="ARACH.DEV ASCII Art"
                 width={580}
                 height={148}
@@ -156,59 +169,19 @@ export function OgComponent({ title, subtitle, path, mode = 'dark', format = 'st
                   >
                     {title}
                   </div>
-                  <div
-                    style={{
-                      display: 'flex',
-                      alignItems: 'center',
-                      gap: '15px',
-                      fontSize: '14px',
-                      color: theme.accentColor,
-                      opacity: 0.7,
-                    }}
-                  >
-                    <span>{'═══'}</span>
-                    <span>{'◆'}</span>
-                    <span>{'═══'}</span>
-                  </div>
                 </div>
               )}
 
-              {/* Decorative line with subtitle */}
+              {/* Subtitle - simpler */}
               <div
                 style={{
-                  display: 'flex',
-                  alignItems: 'center',
-                  gap: '20px',
-                  color: theme.accentColor,
-                  opacity: 0.5,
                   fontSize: '20px',
-                  fontFamily: 'monospace',
-                }}
-              >
-                <span>{'//='}</span>
-                <span>{'['}</span>
-                <span style={{ color: theme.accentColor, fontSize: '24px' }}>{'==='}</span>
-                <span>{'['}</span>
-                <span style={{ color: theme.textColor, fontSize: '18px', letterSpacing: '2px' }}>{subtitle}</span>
-                <span>{']'}</span>
-                <span style={{ color: theme.accentColor, fontSize: '24px' }}>{'==='}</span>
-                <span>{']'}</span>
-                <span>{'=//'}</span>
-              </div>
-
-              {/* Simple status line */}
-              <div
-                style={{
-                  display: 'flex',
-                  gap: '30px',
-                  fontSize: '16px',
                   color: theme.mutedColor,
                   fontFamily: 'monospace',
+                  letterSpacing: '1px',
                 }}
               >
-                <span>{'<'} Full Stack {'>'}</span>
-                <span>{'{'} TypeScript {'}'}</span>
-                <span>{'['} React {']'}</span>
+                {subtitle}
               </div>
             </div>
           </div>
