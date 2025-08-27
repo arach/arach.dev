@@ -282,11 +282,11 @@ export function OgComponent({
               <img
                 src={getImageUrl(isDark ? 'arach-ascii.png' : 'arach-ascii-light.png')}
                 alt="ARACH.DEV ASCII Art"
-                width={580}
-                height={148}
+                width={600}
+                height={150}
                 style={{
-                  width: isSquare ? '500px' : '580px',
-                  height: isSquare ? '127px' : '148px',
+                  width: isSquare ? '460px' : '600px',
+                  height: isSquare ? '103px' : '150px',
                   objectFit: 'contain',
                 }}
               />

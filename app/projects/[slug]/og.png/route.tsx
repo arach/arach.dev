@@ -30,10 +30,10 @@ export async function GET(
 
   // Theme colors matching default dark theme
   const theme = {
-    bg: '#0a0a0a',
-    bgGradient: 'linear-gradient(135deg, #0a0a0a 0%, #171717 100%)',
-    terminalBg: 'rgba(17, 17, 17, 0.95)',
-    terminalHeader: 'rgba(30, 30, 30, 0.95)',
+    bg: '#000000',
+    bgGradient: 'linear-gradient(135deg, #000000 0%, #0f0f0f 100%)',
+    terminalBg: 'rgba(10, 10, 10, 0.95)',
+    terminalHeader: 'rgba(20, 20, 20, 0.95)',
     borderColor: 'rgba(255, 255, 255, 0.1)',
     pathColor: 'rgba(255, 255, 255, 0.5)',
     textColor: '#e5e5e5',
@@ -140,11 +140,11 @@ export async function GET(
             <img
               src={getImageUrl('arach-ascii.png')}
               alt="ARACH.DEV ASCII Art"
-              width={580}
-              height={148}
+              width={600}
+              height={150}
               style={{
-                width: '580px',
-                height: '148px',
+                width: '600px',
+                height: '150px',
                 objectFit: 'contain',
                 marginBottom: '10px',
               }}
@@ -169,7 +169,7 @@ export async function GET(
                   color: theme.lightTextColor,
                   fontFamily: 'monospace',
                   lineHeight: 1,
-                  marginTop: '-20px',
+                  marginTop: '-30px',
                   flexShrink: 0,
                 }}
               >
@@ -183,7 +183,7 @@ export async function GET(
                   flexDirection: 'column',
                   flex: 1,
                   gap: '16px',
-                  paddingTop: '10px',
+                  paddingTop: '0px',
                 }}
               >
                 {/* Project title */}

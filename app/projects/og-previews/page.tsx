@@ -1,3 +1,5 @@
+'use client';
+
 import { projects } from '@/lib/projects';
 import Link from 'next/link';
 

@@ -1,3 +1,5 @@
+import Link from 'next/link';
+
 export default function OgShowcasePage() {
   return (
     <div style={{ 
@@ -103,14 +105,14 @@ export default function OgShowcasePage() {
             </a>
           </li>
           <li>
-            <a href="/projects/og-previews" style={{ color: '#3b82f6', textDecoration: 'underline' }}>
+            <Link href="/projects/og-previews" style={{ color: '#3b82f6', textDecoration: 'underline' }}>
               All Project OG Images →
-            </a>
+            </Link>
           </li>
           <li>
-            <a href="/projects/scout/og-preview" style={{ color: '#3b82f6', textDecoration: 'underline' }}>
+            <Link href="/projects/scout/og-preview" style={{ color: '#3b82f6', textDecoration: 'underline' }}>
               Individual Project Preview (Scout) →
-            </a>
+            </Link>
           </li>
         </ul>
       </section>
