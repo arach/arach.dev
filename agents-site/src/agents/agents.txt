@@ -1,0 +1,15 @@
+# Agent Registry Map
+# Format: agent-id | category | projects | model
+
+frontend-engineer-arnold | Engineering | Scout,Blink,Scout-Typography | Default
+backend-engineer-david | Engineering | Scout,Blink,Scout-Typography | Default
+frontend-engineer | Engineering | AgentList.io | Sonnet
+codebase-architecture-reviewer | Architecture | Scout,Blink,Scout-Typography | Opus
+tauri-rust-architect | Architecture | Blink | Opus
+code-reviewer | Architecture | DevBar | Default
+product-designer-jimmy | Design | Scout,Blink,Scout-Typography | Default
+developer-ux-reviewer | Design | Speakeasy | Opus
+dev-server-manager | Infrastructure | 2048ish | Default
+doc-generator | Documentation | DevBar | Default
+test-generator | Testing | DevBar | Default
+repository-contribution-agent | Repository | Factory/Onlook | Default
