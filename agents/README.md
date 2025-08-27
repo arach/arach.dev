@@ -15,7 +15,7 @@ A comprehensive collection of specialized AI agents for development automation, 
 ## Structure
 
 ```
-agents-site/
+agents/
 ├── agents/            # Individual agent markdown pages
 ├── src/
 │   ├── agents/        # Agent source specifications
