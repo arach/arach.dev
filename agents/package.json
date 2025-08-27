@@ -2,6 +2,7 @@
   "name": "@arach/agents",
   "version": "1.0.0",
   "private": true,
+  "type": "module",
   "description": "Agent registry for development automation",
   "scripts": {
     "dev": "vite",
