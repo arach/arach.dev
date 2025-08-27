@@ -101,24 +101,36 @@ function showAuthPrompt() {
   overlay.className = 'protected-overlay';
   overlay.innerHTML = `
     <div class="auth-form">
-      <h2>Authentication Required</h2>
+      <h2>🔒 Agent Registry</h2>
       <p style="color: var(--text-secondary); margin-bottom: 1rem;">
-        This content is protected. Please enter the access code.
+        Enter access code to view agent specifications
       </p>
-      <input type="password" id="auth-password" placeholder="Enter access code" />
-      <button onclick="authenticate()">Access</button>
+      <input type="password" id="auth-password" placeholder="Access code" autofocus />
+      <button id="auth-button" onclick="authenticate()">Access</button>
+      <p style="color: var(--text-tertiary); margin-top: 1rem; font-size: 0.875rem;">
+        Protected content • arach.dev
+      </p>
     </div>
   `;
   document.body.appendChild(overlay);
   
+  // Allow Enter key to submit
+  document.getElementById('auth-password').addEventListener('keypress', (e) => {
+    if (e.key === 'Enter') {
+      authenticate();
+    }
+  });
+  
   window.authenticate = () => {
     const password = document.getElementById('auth-password').value;
-    // Simple check - replace with proper auth later
-    if (password === 'agents2024') {
+    // Access code - change this to your preferred code
+    if (password === 'arach' || password === 'agents2024') {
       localStorage.setItem('agents_auth', 'authenticated');
       location.reload();
     } else {
-      alert('Invalid access code');
+      document.getElementById('auth-password').style.borderColor = '#ef4444';
+      document.getElementById('auth-password').value = '';
+      document.getElementById('auth-password').placeholder = 'Invalid code, try again';
     }
   };
 }
