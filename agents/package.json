@@ -7,7 +7,7 @@
   "scripts": {
     "dev": "vite",
     "build": "vite build && pnpm postbuild",
-    "postbuild": "cp -r agents dist/ && cp -r src/agents dist/src/ && cp CNAME dist/",
+    "postbuild": "cp -r agents dist/ && cp -r src/agents dist/src/ && cp CNAME dist/ && cp -r public/* dist/",
     "preview": "vite preview",
     "deploy": "pnpm build && gh-pages -d dist",
     "generate": "node scripts/generate-agents.js"

@@ -5,12 +5,12 @@ const isAuthenticated = () => {
   return localStorage.getItem('agents_auth') === 'authenticated';
 };
 
-// Load agent data
+// Load agent data from static JSON
 async function loadAgents() {
   try {
-    const response = await fetch('/api/agents');
-    const agents = await response.json();
-    return agents;
+    const response = await fetch('/agents-data.json');
+    const data = await response.json();
+    return data.agents || [];
   } catch (error) {
     console.error('Failed to load agents:', error);
     return [];
@@ -35,23 +35,31 @@ function createAgentCard(agent) {
   const card = document.createElement('div');
   card.className = 'agent-card';
   
-  // Parse markdown to extract key info
-  const lines = agent.content.split('\n');
-  const title = agent.id.replace(/-/g, ' ');
+  const typeColors = {
+    'Engineering': '#60a5fa',
+    'Design & UX': '#a78bfa',
+    'Architecture & Review': '#34d399',
+    'Infrastructure & DevOps': '#fbbf24'
+  };
   
   card.innerHTML = `
-    <h3>${title}</h3>
-    <div class="type">Engineering Agent</div>
-    <div class="description">Click to view full specification</div>
-    <a href="/agent/${agent.id}" style="color: var(--accent); text-decoration: none;">
-      View Details →
+    <div class="agent-type" style="color: ${typeColors[agent.type] || '#999'}">
+      ${agent.type} • ${agent.model}
+    </div>
+    <h3>${agent.name}</h3>
+    <p class="description">${agent.description}</p>
+    <div class="capabilities">
+      ${agent.capabilities.slice(0, 3).map(cap => 
+        `<span class="capability-tag">${cap}</span>`
+      ).join('')}
+    </div>
+    <div class="projects">
+      Projects: ${agent.projects.join(', ')}
+    </div>
+    <a href="/agents/${agent.id}" class="view-details">
+      View Full Specification →
     </a>
   `;
-  
-  card.style.cursor = 'pointer';
-  card.onclick = () => {
-    window.location.href = `/agent/${agent.id}`;
-  };
   
   return card;
 }

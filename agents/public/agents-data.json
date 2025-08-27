@@ -1,0 +1,109 @@
+{
+  "agents": [
+    {
+      "id": "frontend-engineer",
+      "name": "Frontend Engineer",
+      "type": "Engineering",
+      "model": "Default",
+      "description": "Expert frontend engineering analysis, refactoring, and optimization of React/TypeScript applications",
+      "projects": ["Scout", "Blink", "Scout-Typography"],
+      "capabilities": [
+        "Component architecture review",
+        "Performance optimization", 
+        "Type safety enhancement",
+        "Technical debt analysis",
+        "Modern React patterns"
+      ]
+    },
+    {
+      "id": "backend-engineer",
+      "name": "Backend Engineer",
+      "type": "Engineering",
+      "model": "Default",
+      "description": "Rust systems programming, Tauri v2 desktop applications, audio processing, AI/ML integration",
+      "projects": ["Scout", "Blink", "Scout-Typography"],
+      "capabilities": [
+        "Rust code optimization",
+        "Tauri IPC architecture",
+        "Audio processing with whisper.cpp",
+        "Database optimization",
+        "Swift-Rust bridging"
+      ]
+    },
+    {
+      "id": "product-designer",
+      "name": "Product Designer",
+      "type": "Design & UX",
+      "model": "Default",
+      "description": "Full-stack design partner for requirements, solutions, and accessibility critiques",
+      "projects": ["Scout", "Blink", "Scout-Typography"],
+      "capabilities": [
+        "User flow optimization",
+        "Accessibility audits",
+        "Design system creation",
+        "Visual polish recommendations",
+        "Design-code alignment"
+      ]
+    },
+    {
+      "id": "codebase-architecture-reviewer",
+      "name": "Codebase Architecture Reviewer",
+      "type": "Architecture & Review",
+      "model": "Opus",
+      "description": "Comprehensive architectural reviews of React/TypeScript and Rust/Tauri codebases",
+      "projects": ["Scout", "Blink", "Scout-Typography"],
+      "capabilities": [
+        "Structural organization analysis",
+        "Naming conventions review",
+        "Pattern assessment",
+        "Performance bottleneck identification",
+        "Best practices validation"
+      ]
+    },
+    {
+      "id": "tauri-rust-architect",
+      "name": "Tauri Rust Architect",
+      "type": "Architecture & Review",
+      "model": "Opus",
+      "description": "Expert guidance on Tauri v2 applications and production architecture",
+      "projects": ["Blink"],
+      "capabilities": [
+        "Multi-window architecture",
+        "Production lifecycle management",
+        "Cross-platform strategies",
+        "Native integration patterns",
+        "Security implementation"
+      ]
+    },
+    {
+      "id": "developer-ux-reviewer",
+      "name": "Developer UX Reviewer",
+      "type": "Design & UX",
+      "model": "Opus",
+      "description": "Fresh-eyes UX evaluation of developer tools and documentation",
+      "projects": ["Speakeasy"],
+      "capabilities": [
+        "First impressions analysis",
+        "Documentation assessment",
+        "Developer journey mapping",
+        "API usability evaluation",
+        "Getting started review"
+      ]
+    },
+    {
+      "id": "dev-server-manager",
+      "name": "Dev Server Manager",
+      "type": "Infrastructure & DevOps",
+      "model": "Default",
+      "description": "Development infrastructure expert for server management and troubleshooting",
+      "projects": ["2048ish"],
+      "capabilities": [
+        "Server detection & startup",
+        "Real-time log monitoring",
+        "Error classification",
+        "Automated issue resolution",
+        "Multi-server orchestration"
+      ]
+    }
+  ]
+}
