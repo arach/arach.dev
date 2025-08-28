@@ -1,8 +1,8 @@
 import { marked } from 'marked';
 
-// Simple auth check (you can enhance this later)
+// Auth removed - open access
 const isAuthenticated = () => {
-  return localStorage.getItem('agents_auth') === 'authenticated';
+  return true;
 };
 
 // Load agent data from static JSON
@@ -36,10 +36,10 @@ function createAgentCard(agent) {
   card.className = 'agent-card';
   
   const typeColors = {
-    'Engineering': '#60a5fa',
-    'Design & UX': '#a78bfa',
-    'Architecture & Review': '#34d399',
-    'Infrastructure & DevOps': '#fbbf24'
+    'Engineering': '#a0a0a0',
+    'Design & UX': '#a0a0a0',
+    'Architecture & Review': '#a0a0a0',
+    'Infrastructure & DevOps': '#a0a0a0'
   };
   
   card.innerHTML = `
@@ -67,12 +67,6 @@ function createAgentCard(agent) {
 // Initialize app
 async function init() {
   const content = document.getElementById('content');
-  
-  // Check if auth is required
-  if (!isAuthenticated() && window.location.pathname !== '/') {
-    showAuthPrompt();
-    return;
-  }
   
   // Load and display agents
   const agents = await loadAgents();

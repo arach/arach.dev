@@ -37,9 +37,7 @@ header {
 header h1 {
   font-size: 3rem;
   margin-bottom: 0.5rem;
-  background: linear-gradient(135deg, var(--accent), #00aaff);
-  -webkit-background-clip: text;
-  -webkit-text-fill-color: transparent;
+  color: var(--text-primary);
 }
 
 header p {
@@ -84,33 +82,13 @@ main {
 .agent-card {
   background: var(--bg-secondary);
   border: 1px solid var(--border);
-  border-radius: 12px;
+  border-radius: 4px;
   padding: 1.5rem;
-  transition: all 0.3s ease;
-  position: relative;
-  overflow: hidden;
-}
-
-.agent-card::before {
-  content: '';
-  position: absolute;
-  top: 0;
-  left: 0;
-  right: 0;
-  height: 3px;
-  background: linear-gradient(90deg, var(--accent), #00aaff);
-  transform: scaleX(0);
-  transition: transform 0.3s ease;
-}
-
-.agent-card:hover::before {
-  transform: scaleX(1);
+  transition: border-color 0.2s ease;
 }
 
 .agent-card:hover {
-  transform: translateY(-4px);
-  border-color: var(--accent);
-  box-shadow: 0 10px 30px rgba(0, 255, 136, 0.1);
+  border-color: var(--text-secondary);
 }
 
 .agent-card .agent-type {
@@ -142,12 +120,12 @@ main {
 }
 
 .capability-tag {
-  background: rgba(0, 255, 136, 0.1);
-  color: var(--accent);
-  padding: 0.25rem 0.75rem;
-  border-radius: 20px;
+  background: transparent;
+  color: var(--text-secondary);
+  padding: 0.25rem 0.5rem;
+  border-radius: 2px;
   font-size: 0.75rem;
-  border: 1px solid rgba(0, 255, 136, 0.2);
+  border: 1px solid var(--border);
 }
 
 .agent-card .projects {
@@ -157,17 +135,17 @@ main {
 }
 
 .agent-card .view-details {
-  color: var(--accent);
+  color: var(--text-primary);
   text-decoration: none;
   font-size: 0.9rem;
-  font-weight: 500;
+  font-weight: 400;
   display: inline-flex;
   align-items: center;
   transition: color 0.2s;
 }
 
 .agent-card .view-details:hover {
-  color: #00aaff;
+  color: var(--text-secondary);
 }
 
 .agent-card .type {
