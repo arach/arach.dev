@@ -3,6 +3,7 @@
 import React, { useState, useEffect, createContext, useContext } from 'react'
 import { getAllThemes, type ThemeName, cx } from '@/styles'
 import type { Theme } from '@/styles'
+import styles from './styleguide.module.css'
 
 interface StyleSpec {
   name: string
@@ -84,7 +85,9 @@ export default function StyleGuidePage() {
 
     return (
       <div
-        className={`hover:bg-gray-900/30 -mx-2 px-2 py-2 rounded transition-colors cursor-pointer ${className}`}
+        className={`${styles['style-element']} ${className}`}
+        role="listitem"
+        tabIndex={0}
         onMouseEnter={() => setHoveredSpec(spec)}
         onMouseLeave={() => setHoveredSpec(null)}
         onMouseUp={(e) => {
@@ -94,6 +97,12 @@ export default function StyleGuidePage() {
             return
           }
           handleClick(spec)
+        }}
+        onKeyUp={(e) => {
+          if (e.key === 'Enter' || e.key === ' ') {
+            e.preventDefault()
+            handleClick(spec)
+          }
         }}
       >
         {children}
@@ -139,16 +148,18 @@ export default function StyleGuidePage() {
   }
 
   return (
-    <div className="min-h-screen bg-black text-gray-100 p-8 relative">
+    <main className={styles['styleguide-main']}>
       {/* Grid background effect */}
-      <div className="fixed inset-0 bg-[linear-gradient(rgba(255,255,255,.02)_1px,transparent_1px),linear-gradient(90deg,rgba(255,255,255,.02)_1px,transparent_1px)] bg-[size:50px_50px] pointer-events-none" />
+      <div className={styles['grid-background']} aria-hidden="true" />
       
       {/* Theme Selector - Top left */}
-      <div className="fixed top-8 left-8 z-50">
+      <aside className={styles['theme-selector']}>
+        <label htmlFor="theme-selector-dropdown" className="sr-only">Select theme</label>
         <select
+          id="theme-selector-dropdown"
           value={selectedTheme}
           onChange={(e) => setSelectedTheme(e.target.value as ThemeName)}
-          className={ts.components.input.default + ' w-48'}
+          className={cx(ts.components.input.default, styles['theme-selector-input'])}
         >
           {Object.entries(themes).map(([key, theme]) => (
             <option key={key} value={key}>
@@ -156,30 +167,31 @@ export default function StyleGuidePage() {
             </option>
           ))}
         </select>
-      </div>
+      </aside>
       
       {/* Fixed Pinned Specs Carousel - Top right */}
-      <div className={cx(
-        "fixed top-8 right-8 z-50 xl:right-[max(2rem,calc((100vw-1536px)/2))] transition-all duration-300",
-        pinnedSpecs.length > 0 ? 'opacity-100' : 'opacity-0 pointer-events-none'
-      )}>
-        <div className={cx('bg-gray-950/90 backdrop-blur-md border border-gray-800', 'p-3 w-[290px] relative overflow-hidden rounded-lg shadow-2xl')}>
+      <aside 
+        className={cx(styles['pinned-carousel'], pinnedSpecs.length === 0 && styles['hidden'])}
+        aria-live="polite"
+        aria-label="Pinned styles carousel"
+      >
+        <section className={styles['inspector-card-small']}>
           {/* Subtle scanline effect on inspector */}
-          <div className="absolute inset-0 bg-gradient-to-b from-transparent via-amber-500/5 to-transparent animate-scan pointer-events-none" />
-          <div className="flex items-center justify-between mb-3 relative z-10">
+          <div className={styles['scanline-effect']} aria-hidden="true" />
+          <header className="flex items-center justify-between mb-3 relative z-10">
             <h4 className={ts.typography.uiSectionHeader + ' text-amber-500'}>Pinned Styles</h4>
             <div className="flex items-center gap-2">
               <span className="text-[10px] text-gray-500">{currentPinnedIndex + 1}/{pinnedSpecs.length}</span>
             </div>
-          </div>
+          </header>
           
           {/* Carousel Container */}
-          <div className="relative">
+          <nav className={styles['carousel-nav']} aria-label="Carousel navigation">
             {/* Previous Button */}
             {pinnedSpecs.length > 1 && currentPinnedIndex > 0 && (
               <button
                 onClick={() => setCurrentPinnedIndex(currentPinnedIndex - 1)}
-                className="absolute -left-3 top-1/2 -translate-y-1/2 z-10 w-6 h-6 rounded bg-gray-800 hover:bg-gray-700 text-gray-400 hover:text-gray-200 flex items-center justify-center text-xs transition-all"
+                className={cx(styles['carousel-button'], styles['prev'])}
                 aria-label="Previous"
               >
                 ‹
@@ -190,31 +202,31 @@ export default function StyleGuidePage() {
             {pinnedSpecs.length > 1 && currentPinnedIndex < pinnedSpecs.length - 1 && (
               <button
                 onClick={() => setCurrentPinnedIndex(currentPinnedIndex + 1)}
-                className="absolute -right-3 top-1/2 -translate-y-1/2 z-10 w-6 h-6 rounded bg-gray-800 hover:bg-gray-700 text-gray-400 hover:text-gray-200 flex items-center justify-center text-xs transition-all"
+                className={cx(styles['carousel-button'], styles['next'])}
                 aria-label="Next"
               >
                 ›
               </button>
             )}
             
-            <div className="overflow-hidden" style={{ padding: '1px 3px' }}>
+            <div className={styles['carousel-container']}>
               <div 
-                className="flex transition-transform duration-300"
+                className={styles['carousel-track']}
                 style={{ transform: `translateX(-${currentPinnedIndex * 100}%)` }}
               >
                 {pinnedSpecs.map((spec, index) => (
                   <div 
                     key={spec.name}
-                    className="flex-shrink-0 w-full px-0.5"
+                    className={styles['carousel-item']}
                   >
-                    <div className="border border-amber-500/30 rounded p-2 relative">
-                      <div className="flex items-center justify-between mb-2">
-                        <span className="text-xs text-amber-400 font-medium flex items-center gap-2">
-                          <span className="inline-block w-2 h-2 rounded-full bg-amber-500"></span>
+                    <div className={styles['pinned-card']}>
+                      <div className={styles['pinned-header']}>
+                        <span className={styles['pinned-title']}>
+                          <span className={styles['pinned-indicator']}></span>
                           <span>{spec.name}</span>
                         </span>
                         <button 
-                          className="text-sm text-gray-500 hover:text-red-400 hover:bg-red-500/10 rounded px-1 transition-all"
+                          className={styles['pinned-close']}
                           onClick={(e) => {
                             e.stopPropagation()
                             setPinnedSpecs(pinnedSpecs.filter((_, i) => i !== index))
@@ -228,28 +240,28 @@ export default function StyleGuidePage() {
                           ×
                         </button>
                       </div>
-                      <div className="text-[9px] text-gray-500 uppercase mb-1">{spec.type}</div>
-                      <div className="space-y-1 text-[10px]">
+                      <div className={styles['pinned-type']}>{spec.type}</div>
+                      <div className={styles['pinned-details']}>
                         {spec.extras && (
-                          <div className="flex justify-between">
-                            <span className="text-gray-600">element</span>
-                            <span className="text-amber-500 text-[10px]">{spec.extras}</span>
+                          <div className={styles['pinned-detail-row']}>
+                            <span className={styles['pinned-detail-label']}>element</span>
+                            <span className={styles['pinned-detail-value']}>{spec.extras}</span>
                           </div>
                         )}
                         {spec.details && Object.entries(spec.details).slice(0, 4).map(([key, value]) => {
                             if (key === 'classes') {
                               return (
-                                <div key={key} className="flex gap-1 items-start">
-                                  <span className="text-[9px] text-gray-600 uppercase flex-shrink-0 pt-0.5">CLASSES:</span>
-                                  <div className="text-[9px] text-gray-500 font-mono bg-gray-900/50 px-1 py-0.5 rounded border border-gray-800/50 text-right leading-relaxed flex-1">
+                                <div key={key} className={styles['pinned-classes']}>
+                                  <span className={styles['pinned-classes-label']}>CLASSES:</span>
+                                  <div className={styles['pinned-classes-value']}>
                                     {value.slice(0, 100)}{value.length > 100 ? '...' : ''}
                                   </div>
                                 </div>
                               )
                             }
                             return (
-                              <div key={key} className="flex justify-between text-[10px]">
-                                <span className="text-gray-600">{key}</span>
+                              <div key={key} className={cx(styles['pinned-detail-row'], 'text-[10px]')}>
+                                <span className={styles['pinned-detail-label']}>{key}</span>
                                 <span className="text-gray-400 truncate ml-2" style={{ maxWidth: '150px' }}>{value}</span>
                               </div>
                             )
@@ -263,99 +275,104 @@ export default function StyleGuidePage() {
             
             {/* Carousel Indicators */}
             {pinnedSpecs.length > 1 && (
-              <div className="flex justify-center gap-1 mt-2">
+              <nav className={styles['carousel-indicators']} role="tablist">
                 {pinnedSpecs.map((_, index) => (
                   <button
                     key={index}
                     onClick={() => setCurrentPinnedIndex(index)}
                     className={cx(
-                      "w-1 h-1 rounded-full transition-all",
-                      index === currentPinnedIndex ? 'w-3 bg-amber-500' : 'bg-gray-600 hover:bg-gray-500'
+                      styles['carousel-dot'],
+                      index === currentPinnedIndex ? styles['active'] : styles['inactive']
                     )}
+                    role="tab"
+                    aria-selected={index === currentPinnedIndex}
+                    aria-label={`Go to pinned style ${index + 1}`}
                   />
                 ))}
-              </div>
+              </nav>
             )}
-          </div>
-        </div>
-      </div>
+          </nav>
+        </section>
+      </aside>
 
       {/* Fixed Active Preview - Middle right */}
-      <div className="fixed top-[40%] right-8 transform -translate-y-1/2 z-50 xl:right-[max(2rem,calc((100vw-1536px)/2))]">
-        <div className={cx(
-          'bg-gray-950/90 backdrop-blur-md border border-gray-800',
-          'p-4 w-[280px] transition-all duration-300 relative overflow-hidden rounded-lg shadow-2xl',
+      <aside className={styles['preview-panel']} aria-label="Active style preview">
+        <article className={cx(
+          styles['inspector-card'],
+          'w-[280px] transition-all duration-300',
           hoveredSpec ? 'opacity-100 translate-x-0' : 'opacity-0 translate-x-4 pointer-events-none'
         )}>
           {/* Subtle scanline effect on inspector */}
-          <div className="absolute inset-0 bg-gradient-to-b from-transparent via-sky-500/5 to-transparent animate-scan pointer-events-none" />
-          <h4 className={cx(ts.typography.uiSectionHeader, 'mb-3 relative z-10')}>Active Preview</h4>
+          <div className={styles['scanline-effect-blue']} aria-hidden="true" />
+          <header>
+            <h4 className={cx(ts.typography.uiSectionHeader, 'mb-3 relative z-10')}>Active Preview</h4>
+          </header>
           {hoveredSpec && (
-            <div className="space-y-2 relative z-10">
-              <div className="flex items-center justify-between mb-2">
-                <p className="text-xs text-sky-400 font-medium">{hoveredSpec.name}</p>
-                <span className="text-[9px] text-gray-500 uppercase">{hoveredSpec.type}</span>
-              </div>
-              <div className="space-y-1">
+            <div className={styles['preview-content']}>
+              <header className={styles['preview-header']}>
+                <p className={styles['preview-title']}>{hoveredSpec.name}</p>
+                <span className={styles['preview-type']}>{hoveredSpec.type}</span>
+              </header>
+              <dl className={styles['preview-details']}>
                   {hoveredSpec.extras && (
-                    <div className="flex justify-between">
-                      <span className="text-[10px] text-gray-500 uppercase">element</span>
-                      <span className="text-[11px] text-amber-500">{hoveredSpec.extras}</span>
+                    <div className={styles['preview-detail-row']}>
+                      <dt className={styles['preview-detail-label']}>element</dt>
+                      <dd className={styles['preview-detail-value']}>{hoveredSpec.extras}</dd>
                     </div>
                   )}
                   {hoveredSpec.details && Object.entries(hoveredSpec.details).map(([key, value]) => {
                   if (key === 'classes') {
                     return (
-                      <div key={key} className="flex gap-2 items-start">
-                        <span className="text-[10px] text-gray-500 uppercase flex-shrink-0 pt-1.5">CLASSES:</span>
-                        <div className="text-[10px] text-gray-400 font-mono bg-gray-900/60 p-1.5 rounded border border-gray-800/60 text-right leading-relaxed flex-1">
+                      <div key={key} className={styles['preview-classes']}>
+                        <dt className={styles['preview-classes-label']}>CLASSES:</dt>
+                        <dd className={styles['preview-classes-value']}>
                           {value}
-                        </div>
+                        </dd>
                       </div>
                     )
                   }
                   return (
-                    <div key={key} className="flex justify-between">
-                      <span className="text-[10px] text-gray-500 uppercase">{key}</span>
-                      <span className="text-[11px] text-sky-400">{value}</span>
+                    <div key={key} className={styles['preview-detail-row']}>
+                      <dt className={styles['preview-detail-label']}>{key}</dt>
+                      <dd className={styles['preview-detail-value']}>{value}</dd>
                     </div>
                   )
                   })}
-                </div>
-              <div className="pt-2 border-t border-gray-800">
-                <span className="text-[10px] text-gray-600">Click to pin</span>
-              </div>
+                </dl>
+              <footer className={styles['preview-footer']}>
+                <span className={styles['preview-hint']}>Click to pin</span>
+              </footer>
             </div>
           )}
-        </div>
-      </div>
+        </article>
+      </aside>
       
-      <div className="relative max-w-4xl mx-auto space-y-12 pt-16">
+      <div className={styles['content-wrapper']}>
         {/* Header with scanline effect */}
-        <div className="relative overflow-hidden">
-          <div className="absolute inset-0 bg-gradient-to-b from-transparent via-sky-500/5 to-transparent animate-scan pointer-events-none" />
-          <div className="border border-gray-800 p-6 bg-gray-950/80 backdrop-blur-sm">
-            <h1 className="font-sans text-3xl font-light tracking-tight text-gray-100 mb-2">
-              {ts.name.toUpperCase()} // STYLE GUIDE
+        <header className={styles['page-header']}>
+          <div className={styles['scanline-effect-blue']} aria-hidden="true" />
+          <div className={styles['header-card']}>
+            <h1 className={styles['header-title']}>
+              {ts.name.toUpperCase()} {/* STYLE GUIDE */}
             </h1>
             <p className={ts.typography.bodyMono}>{ts.description}</p>
-            <div className="flex items-center gap-2 mt-4">
-              <span className={ts.components.status.online} />
+            <div className={styles['status-indicator']}>
+              <span className={ts.components.status.online} aria-hidden="true" />
               <span className={ts.typography.bodySmallMono}>SYSTEM OPERATIONAL</span>
             </div>
           </div>
-        </div>
+        </header>
 
         {/* Typography */}
         <StyleSection category="typography">
-          <section className="space-y-6">
+          <section id="typography-section" className={styles['section-container']}>
             <h2 className={ts.typography.sectionTitle}>TYPOGRAPHY SYSTEM</h2>
             
-            <div className={ts.components.card.default + ' p-6'}>
+            <article className={cx(ts.components.card.default, styles['section-card'])}>
               {/* Headers Section */}
-              <div className="border-b border-gray-900 pb-6 mb-6">
-                <h3 className={ts.typography.subsectionTitle + ' mb-4'}>HEADERS</h3>
-                <div className="space-y-4">
+              <section id="typography-headers" className={styles['subsection']}>
+                <h3 className={cx(ts.typography.subsectionTitle, styles['subsection-title'])}>HEADERS</h3>
+                <div className={styles['typography-list']} role="list">
                   <StyleElement 
                     styleValue={ts.typography.h1}
                     displayName="Primary Header"
@@ -384,12 +401,12 @@ export default function StyleGuidePage() {
                     <h4 className={ts.typography.h4}>Component Header</h4>
                   </StyleElement>
                 </div>
-              </div>
+              </section>
               
               {/* Titles & Labels Section */}
-              <div className="border-b border-gray-900 pb-6 mb-6">
-                <h3 className={ts.typography.subsectionTitle + ' mb-4'}>TITLES & LABELS</h3>
-                <div className="space-y-3">
+              <section id="typography-titles-labels" className={styles['subsection']}>
+                <h3 className={cx(ts.typography.subsectionTitle, styles['subsection-title'])}>TITLES & LABELS</h3>
+                <div className={styles['typography-list-compact']} role="list">
                   <StyleElement
                     styleValue={ts.typography.sectionTitle}
                     displayName="SECTION TITLE"
@@ -418,12 +435,12 @@ export default function StyleGuidePage() {
                     <label className={ts.typography.labelRequired}>REQUIRED FIELD</label>
                   </StyleElement>
                 </div>
-              </div>
+              </section>
               
               {/* Body Text Section */}
-              <div>
-                <h3 className={ts.typography.subsectionTitle + ' mb-4'}>BODY TEXT</h3>
-                <div className="space-y-3">
+              <section id="typography-body-text">
+                <h3 className={cx(ts.typography.subsectionTitle, styles['subsection-title'])}>BODY TEXT</h3>
+                <div className={styles['typography-list-compact']} role="list">
                   <StyleElement
                     styleValue={ts.typography.body}
                     displayName="Standard body text"
@@ -461,21 +478,21 @@ export default function StyleGuidePage() {
                     </div>
                   </StyleElement>
                 </div>
-              </div>
-            </div>
+              </section>
+            </article>
           </section>
         </StyleSection>
 
         {/* Color Palette */}
         <StyleSection category="color">
-          <section className="space-y-6">
+          <section id="color-palette" className={styles['section-container']}>
             <h2 className={ts.typography.sectionTitle}>COLOR PROTOCOL</h2>
             
-            <div className="grid grid-cols-2 gap-6">
+            <div className={styles['color-grid']}>
               {/* Grayscale */}
-              <div className={ts.components.card.default + ' p-6'}>
+              <article id="color-grayscale" className={cx(ts.components.card.default, styles['section-card'])}>
                 <h3 className={ts.typography.subsectionTitle}>GRAYSCALE FOUNDATION</h3>
-                <div className="grid grid-cols-5 gap-1 mt-4">
+                <div className={styles['grayscale-grid']} role="list">
                   {Object.entries(ts.colors.gray).slice(0, 5).map(([key, value]) => (
                     <StyleElement
                       key={key}
@@ -484,33 +501,33 @@ export default function StyleGuidePage() {
                       className="h-16"
                     >
                       <div 
-                        className="h-full border border-gray-800 flex items-center justify-center"
+                        className={styles['color-swatch']}
                         style={{ backgroundColor: value }}
                       >
-                        <span className="text-[10px] text-gray-500">{key}</span>
+                        <span className={styles['color-swatch-label']}>{key}</span>
                       </div>
                     </StyleElement>
                   ))}
                 </div>
-              </div>
+              </article>
               
               {/* Accent Colors */}
-              <div className={ts.components.card.default + ' p-6'}>
+              <article id="color-accent" className={cx(ts.components.card.default, styles['section-card'])}>
                 <h3 className={ts.typography.subsectionTitle}>CRITICAL STATE INDICATORS</h3>
-                <div className="space-y-2 mt-4">
+                <div className={styles['accent-list']} role="list">
                   <StyleElement
                     styleValue={ts.colors.accent.primary}
                     displayName="Primary Action"
                   >
-                    <div className="flex items-center gap-3">
+                    <div className={styles['accent-item']}>
                       <div 
-                        className="w-12 h-8 border rounded-sm"
+                        className={styles['accent-preview']}
                         style={{ 
                           backgroundColor: ts.colors.accent.primary + '33',
                           borderColor: ts.colors.accent.primary + '80'
                         }}
                       />
-                      <span className="text-xs" style={{ color: ts.colors.accent.primary }}>PRIMARY ACTION</span>
+                      <span className={styles['accent-label']} style={{ color: ts.colors.accent.primary }}>PRIMARY ACTION</span>
                     </div>
                   </StyleElement>
                   
@@ -518,15 +535,15 @@ export default function StyleGuidePage() {
                     styleValue={ts.colors.accent.success}
                     displayName="Success State"
                   >
-                    <div className="flex items-center gap-3">
+                    <div className={styles['accent-item']}>
                       <div 
-                        className="w-12 h-8 border rounded-sm"
+                        className={styles['accent-preview']}
                         style={{ 
                           backgroundColor: ts.colors.accent.success + '33',
                           borderColor: ts.colors.accent.success + '80'
                         }}
                       />
-                      <span className="text-xs" style={{ color: ts.colors.accent.success }}>SUCCESS STATE</span>
+                      <span className={styles['accent-label']} style={{ color: ts.colors.accent.success }}>SUCCESS STATE</span>
                     </div>
                   </StyleElement>
                   
@@ -534,15 +551,15 @@ export default function StyleGuidePage() {
                     styleValue={ts.colors.accent.warning}
                     displayName="Warning State"
                   >
-                    <div className="flex items-center gap-3">
+                    <div className={styles['accent-item']}>
                       <div 
-                        className="w-12 h-8 border rounded-sm"
+                        className={styles['accent-preview']}
                         style={{ 
                           backgroundColor: ts.colors.accent.warning + '33',
                           borderColor: ts.colors.accent.warning + '80'
                         }}
                       />
-                      <span className="text-xs" style={{ color: ts.colors.accent.warning }}>WARNING STATE</span>
+                      <span className={styles['accent-label']} style={{ color: ts.colors.accent.warning }}>WARNING STATE</span>
                     </div>
                   </StyleElement>
                   
@@ -550,31 +567,31 @@ export default function StyleGuidePage() {
                     styleValue={ts.colors.accent.error}
                     displayName="Error State"
                   >
-                    <div className="flex items-center gap-3">
+                    <div className={styles['accent-item']}>
                       <div 
-                        className="w-12 h-8 border rounded-sm"
+                        className={styles['accent-preview']}
                         style={{ 
                           backgroundColor: ts.colors.accent.error + '33',
                           borderColor: ts.colors.accent.error + '80'
                         }}
                       />
-                      <span className="text-xs" style={{ color: ts.colors.accent.error }}>ERROR STATE</span>
+                      <span className={styles['accent-label']} style={{ color: ts.colors.accent.error }}>ERROR STATE</span>
                     </div>
                   </StyleElement>
                 </div>
-              </div>
+              </article>
             </div>
           </section>
         </StyleSection>
 
         {/* Components */}
-        <section className="space-y-6">
+        <section id="component-library" className={styles['section-container']}>
           <h2 className={ts.typography.sectionTitle}>COMPONENT LIBRARY</h2>
           
-          <div className="grid md:grid-cols-2 gap-6">
+          <div className={styles['component-grid']}>
             {/* Inputs */}
             <StyleSection category="input">
-              <div className={ts.components.card.default + ' p-6 space-y-4'}>
+              <article id="component-inputs" className={cx(ts.components.card.default, styles['section-card-spacing'])}>
                 <h3 className={ts.typography.subsectionTitle}>INPUT FIELDS</h3>
               
               <StyleElement
@@ -582,8 +599,8 @@ export default function StyleGuidePage() {
                 displayName="Default Input"
               >
                 <div>
-                  <label className={ts.typography.label}>DEFAULT INPUT</label>
-                  <input className={ts.components.input.default} placeholder="Enter command..." />
+                  <label htmlFor="input-default" className={ts.typography.label}>DEFAULT INPUT</label>
+                  <input id="input-default" className={ts.components.input.default} placeholder="Enter command..." />
                 </div>
               </StyleElement>
               
@@ -592,8 +609,8 @@ export default function StyleGuidePage() {
                 displayName="Active Input"
               >
                 <div>
-                  <label className={ts.typography.label}>ACTIVE INPUT</label>
-                  <input className={ts.components.input.active} placeholder="Active state..." />
+                  <label htmlFor="input-active" className={ts.typography.label}>ACTIVE INPUT</label>
+                  <input id="input-active" className={ts.components.input.active} placeholder="Active state..." />
                 </div>
               </StyleElement>
               
@@ -602,8 +619,8 @@ export default function StyleGuidePage() {
                 displayName="Error Input"
               >
                 <div>
-                  <label className={ts.typography.label}>ERROR INPUT</label>
-                  <input className={ts.components.input.error} placeholder="Error state..." />
+                  <label htmlFor="input-error" className={ts.typography.label}>ERROR INPUT</label>
+                  <input id="input-error" className={ts.components.input.error} placeholder="Error state..." aria-invalid="true" />
                 </div>
               </StyleElement>
               
@@ -612,20 +629,20 @@ export default function StyleGuidePage() {
                 displayName="Minimal Input"
               >
                 <div>
-                  <label className={ts.typography.label}>MINIMAL INPUT</label>
-                  <input className={ts.components.input.minimal} placeholder="Minimal style..." />
+                  <label htmlFor="input-minimal" className={ts.typography.label}>MINIMAL INPUT</label>
+                  <input id="input-minimal" className={ts.components.input.minimal} placeholder="Minimal style..." />
                 </div>
                 </StyleElement>
-              </div>
+              </article>
             </StyleSection>
             
             {/* Buttons */}
             <StyleSection category="button">
-              <div className={ts.components.card.default + ' p-6 space-y-6'}>
+              <article id="component-buttons" className={cx(ts.components.card.default, styles['section-card-spacing-large'])}>
                 <h3 className={ts.typography.subsectionTitle}>ACTION BUTTONS</h3>
               
               <div className="space-y-3">
-                <div className="grid grid-cols-2 gap-4">
+                <div className={styles['button-grid']}>
                   <StyleElement
                     styleValue={ts.components.button.primary}
                     displayName="Primary Button"
@@ -681,52 +698,52 @@ export default function StyleGuidePage() {
                   </StyleElement>
                 </div>
                 
-                <div className="pt-4 border-t border-gray-900">
-                  <p className={ts.typography.label + ' mb-3'}>DISABLED STATE</p>
-                  <button className={ts.components.button.primary} disabled>
+                <div className={styles['button-section-divider']}>
+                  <p className={cx(ts.typography.label, styles['button-disabled-label'])}>DISABLED STATE</p>
+                  <button className={ts.components.button.primary} disabled aria-disabled="true">
                     DISABLED
                   </button>
                 </div>
               </div>
-            </div>
+            </article>
           </StyleSection>
         </div>
       </section>
 
         {/* Cards */}
         <StyleSection category="card">
-          <section className="space-y-6">
+          <section id="container-types" className={styles['section-container']}>
             <h2 className={ts.typography.sectionTitle}>CONTAINER TYPES</h2>
             
-            <div className="grid md:grid-cols-3 gap-4">
+            <div className={styles['component-grid-triple']}>
               <StyleElement
                 styleValue={ts.components.card.default}
                 displayName="Default Card"
               >
-                <div className={cx(ts.components.card.default, 'p-4')}>
+                <article className={cx(ts.components.card.default, 'p-4')}>
                   <h3 className={ts.typography.subsectionTitle}>DEFAULT CARD</h3>
                   <p className={ts.typography.bodySmallMono}>Standard container with border</p>
-                </div>
+                </article>
               </StyleElement>
               
               <StyleElement
                 styleValue={ts.components.card.elevated}
                 displayName="Elevated Card"
               >
-                <div className={cx(ts.components.card.elevated, 'p-4')}>
+                <article className={cx(ts.components.card.elevated, 'p-4')}>
                   <h3 className={ts.typography.subsectionTitle}>ELEVATED CARD</h3>
                   <p className={ts.typography.bodySmallMono}>Enhanced depth with shadow</p>
-                </div>
+                </article>
               </StyleElement>
               
               <StyleElement
                 styleValue={ts.components.card.glass}
                 displayName="Glass Card"
               >
-                <div className={cx(ts.components.card.glass, 'p-4')}>
+                <article className={cx(ts.components.card.glass, 'p-4')}>
                   <h3 className={ts.typography.subsectionTitle}>GLASS CARD</h3>
                   <p className={ts.typography.bodySmallMono}>Transparent with backdrop blur</p>
-                </div>
+                </article>
               </StyleElement>
             </div>
           </section>
@@ -734,11 +751,11 @@ export default function StyleGuidePage() {
 
         {/* Badges */}
         <StyleSection category="badge">
-          <section className="space-y-6">
+          <section id="status-badges" className={styles['section-container']}>
             <h2 className={ts.typography.sectionTitle}>STATUS BADGES</h2>
             
-            <div className={cx(ts.components.card.default, 'p-6')}>
-              <div className="flex flex-wrap gap-3">
+            <article className={cx(ts.components.card.default, styles['section-card'])}>
+              <div className={styles['badge-list']}>
                 <StyleElement
                   styleValue={`${ts.components.badge.default} ${ts.components.badge.neutral}`}
                   displayName="Neutral Badge"
@@ -774,32 +791,32 @@ export default function StyleGuidePage() {
                   <span className={cx(ts.components.badge.default, ts.components.badge.error)}>ERROR</span>
                 </StyleElement>
               </div>
-            </div>
+            </article>
           </section>
         </StyleSection>
 
         {/* Data Table */}
         <StyleSection category="status">
-          <section className="space-y-6">
+          <section id="data-table" className={styles['section-container']}>
             <h2 className={ts.typography.sectionTitle}>DATA VISUALIZATION</h2>
             
-            <div className={cx(ts.components.card.default)}>
-              <table className="w-full">
+            <article className={ts.components.card.default}>
+              <table className={styles['data-table']}>
                 <thead>
                   <tr className={ts.components.table.header}>
-                    <th className="text-left px-3 py-2">ID</th>
-                    <th className="text-left px-3 py-2">SIGNAL</th>
-                    <th className="text-left px-3 py-2">FREQUENCY</th>
-                    <th className="text-left px-3 py-2">STATUS</th>
-                    <th className="text-left px-3 py-2">ACTION</th>
+                    <th className="text-left px-3 py-2" scope="col">ID</th>
+                    <th className="text-left px-3 py-2" scope="col">SIGNAL</th>
+                    <th className="text-left px-3 py-2" scope="col">FREQUENCY</th>
+                    <th className="text-left px-3 py-2" scope="col">STATUS</th>
+                    <th className="text-left px-3 py-2" scope="col">ACTION</th>
                   </tr>
                 </thead>
                 <tbody>
-                  <tr className={cx(ts.components.table.row, 'group hover:bg-gray-900/40 transition-all')}>
-                    <td className={cx(ts.components.table.cell)}>001</td>
-                    <td className={cx(ts.components.table.cell)}>ALPHA</td>
-                    <td className={cx(ts.components.table.cell)}>440Hz</td>
-                    <td className={cx(ts.components.table.cell)}>
+                  <tr className={cx(ts.components.table.row, styles['table-row-hover'])}>
+                    <td className={ts.components.table.cell}>001</td>
+                    <td className={ts.components.table.cell}>ALPHA</td>
+                    <td className={ts.components.table.cell}>440Hz</td>
+                    <td className={ts.components.table.cell}>
                       <StyleElement
                         styleValue={ts.components.status.online}
                         displayName="Online Status"
@@ -810,15 +827,15 @@ export default function StyleGuidePage() {
                         </div>
                       </StyleElement>
                     </td>
-                    <td className={cx(ts.components.table.cell)}>
+                    <td className={ts.components.table.cell}>
                       <button className="text-sky-500 hover:text-sky-400 text-xs">MODIFY</button>
                     </td>
                   </tr>
-                  <tr className={cx(ts.components.table.row, 'group hover:bg-gray-900/40 transition-all')}>
-                    <td className={cx(ts.components.table.cell)}>002</td>
-                    <td className={cx(ts.components.table.cell)}>BETA</td>
-                    <td className={cx(ts.components.table.cell)}>880Hz</td>
-                    <td className={cx(ts.components.table.cell)}>
+                  <tr className={cx(ts.components.table.row, styles['table-row-hover'])}>
+                    <td className={ts.components.table.cell}>002</td>
+                    <td className={ts.components.table.cell}>BETA</td>
+                    <td className={ts.components.table.cell}>880Hz</td>
+                    <td className={ts.components.table.cell}>
                       <StyleElement
                         styleValue={ts.components.status.warning}
                         displayName="Warning Status"
@@ -829,15 +846,15 @@ export default function StyleGuidePage() {
                         </div>
                       </StyleElement>
                     </td>
-                    <td className={cx(ts.components.table.cell)}>
+                    <td className={ts.components.table.cell}>
                       <button className="text-sky-500 hover:text-sky-400 text-xs">MODIFY</button>
                     </td>
                   </tr>
-                  <tr className={cx(ts.components.table.row, 'group hover:bg-gray-900/40 transition-all')}>
-                    <td className={cx(ts.components.table.cell)}>003</td>
-                    <td className={cx(ts.components.table.cell)}>GAMMA</td>
-                    <td className={cx(ts.components.table.cell)}>220Hz</td>
-                    <td className={cx(ts.components.table.cell)}>
+                  <tr className={cx(ts.components.table.row, styles['table-row-hover'])}>
+                    <td className={ts.components.table.cell}>003</td>
+                    <td className={ts.components.table.cell}>GAMMA</td>
+                    <td className={ts.components.table.cell}>220Hz</td>
+                    <td className={ts.components.table.cell}>
                       <StyleElement
                         styleValue={ts.components.status.offline}
                         displayName="Offline Status"
@@ -848,27 +865,27 @@ export default function StyleGuidePage() {
                         </div>
                       </StyleElement>
                     </td>
-                    <td className={cx(ts.components.table.cell)}>
+                    <td className={ts.components.table.cell}>
                       <button className="text-sky-500 hover:text-sky-400 text-xs">MODIFY</button>
                     </td>
                   </tr>
                 </tbody>
               </table>
-            </div>
+            </article>
           </section>
         </StyleSection>
 
         {/* Special Effects */}
         {ts.effects && (ts.effects.glowPrimary || ts.effects.scanline || ts.effects.grid) && (
           <StyleSection category="effect">
-            <section className="space-y-6">
+            <section id="special-effects" className={styles['section-container']}>
               <h2 className={ts.typography.sectionTitle}>SPECIAL EFFECTS</h2>
               
-              <div className={cx(ts.components.card.default, 'p-6')}>
+              <article className={cx(ts.components.card.default, styles['section-card'])}>
                 {ts.effects.glowPrimary && (
-                  <>
-                    <h3 className={ts.typography.subsectionTitle + ' mb-4'}>GLOW EFFECTS</h3>
-                    <div className="grid md:grid-cols-4 gap-4 mb-6">
+                  <section id="effect-glow">
+                    <h3 className={cx(ts.typography.subsectionTitle, styles['subsection-title'])}>GLOW EFFECTS</h3>
+                    <div className={styles['effects-grid']}>
                       <StyleElement
                         styleValue={ts.effects.glowPrimary}
                         displayName="Primary Glow"
@@ -905,12 +922,12 @@ export default function StyleGuidePage() {
                         </button>
                       </StyleElement>
                     </div>
-                  </>
+                  </section>
                 )}
                 
                 {ts.effects.scanline && (
-                  <div className="mb-6">
-                    <h3 className={ts.typography.subsectionTitle + ' mb-4'}>SCANLINE EFFECT</h3>
+                  <section id="effect-scanline" className="mb-6">
+                    <h3 className={cx(ts.typography.subsectionTitle, styles['subsection-title'])}>SCANLINE EFFECT</h3>
                     <StyleElement
                       styleValue={ts.effects.scanline}
                       displayName="Scanline Animation"
@@ -918,17 +935,17 @@ export default function StyleGuidePage() {
                       <div className={cx(
                         ts.components.card.elevated,
                         ts.effects.scanline,
-                        'p-4 h-32'
+                        styles['effect-card']
                       )}>
                         <p className={ts.typography.body}>Terminal scanline animation</p>
                       </div>
                     </StyleElement>
-                  </div>
+                  </section>
                 )}
                 
                 {ts.effects.grid && (
-                  <div>
-                    <h3 className={ts.typography.subsectionTitle + ' mb-4'}>GRID BACKGROUND</h3>
+                  <section id="effect-grid">
+                    <h3 className={cx(ts.typography.subsectionTitle, styles['subsection-title'])}>GRID BACKGROUND</h3>
                     <StyleElement
                       styleValue={ts.effects.grid}
                       displayName="Grid Pattern"
@@ -936,25 +953,27 @@ export default function StyleGuidePage() {
                       <div className={cx(
                         ts.components.card.elevated,
                         ts.effects.grid,
-                        'p-4 h-32'
+                        styles['effect-card']
                       )}>
                         <p className={ts.typography.body}>Grid pattern background</p>
                       </div>
                     </StyleElement>
-                  </div>
+                  </section>
                 )}
-              </div>
+              </article>
             </section>
           </StyleSection>
         )}
 
         {/* Footer */}
-        <div className="border-t border-gray-800 pt-6 pb-12">
+        <footer className={styles['page-footer']}>
           <p className={ts.typography.bodySmallMono}>
-            {ts.name.toUpperCase()} THEME // VERSION 1.0.0 // {new Date().getFullYear()}
+            <time dateTime={new Date().getFullYear().toString()}>
+              {ts.name.toUpperCase()} THEME // VERSION 1.0.0 // {new Date().getFullYear()}
+            </time>
           </p>
-        </div>
+        </footer>
       </div>
-    </div>
+    </main>
   )
 }
