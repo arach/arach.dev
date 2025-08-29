@@ -168,14 +168,22 @@ export default function StyleGuidePage() {
   const [showPinnedPanel, setShowPinnedPanel] = useState(false)
   const [showLeftSidebar, setShowLeftSidebar] = useState(true)
   const [showRightSidebar, setShowRightSidebar] = useState(true)
-  const [uiAnimations, setUiAnimations] = useState(() => {
-    // Load preference from localStorage
-    if (typeof window !== 'undefined') {
-      const saved = localStorage.getItem('ui-animations')
-      return saved !== null ? saved === 'true' : true
+  const [uiAnimations, setUiAnimations] = useState(true)
+  const [darkMode, setDarkMode] = useState(true)
+  const [isHydrated, setIsHydrated] = useState(false)
+
+  // Handle hydration and localStorage loading
+  useEffect(() => {
+    setIsHydrated(true)
+    const savedAnimations = localStorage.getItem('ui-animations')
+    const savedDarkMode = localStorage.getItem('dark-mode')
+    if (savedAnimations !== null) {
+      setUiAnimations(savedAnimations === 'true')
     }
-    return true
-  })
+    if (savedDarkMode !== null) {
+      setDarkMode(savedDarkMode === 'true')
+    }
+  }, [])
 
   // Sync with URL params
   useEffect(() => {
@@ -208,12 +216,26 @@ export default function StyleGuidePage() {
     document.body.className = currentThemeClass
   }, [currentThemeClass])
 
-  // Save UI animations preference
+  // Save UI animations preference (only after hydration)
   useEffect(() => {
-    localStorage.setItem('ui-animations', String(uiAnimations))
-    // Apply data attribute to control CSS
-    document.documentElement.setAttribute('data-ui-animations', String(uiAnimations))
-  }, [uiAnimations])
+    if (isHydrated) {
+      localStorage.setItem('ui-animations', String(uiAnimations))
+      // Apply data attribute to control CSS
+      document.documentElement.setAttribute('data-ui-animations', String(uiAnimations))
+    }
+  }, [uiAnimations, isHydrated])
+
+  // Handle dark mode
+  useEffect(() => {
+    if (isHydrated) {
+      localStorage.setItem('dark-mode', String(darkMode))
+      if (darkMode) {
+        document.documentElement.classList.add('dark')
+      } else {
+        document.documentElement.classList.remove('dark')
+      }
+    }
+  }, [darkMode, isHydrated])
 
   // Handle scroll detection for header sizing
   useEffect(() => {
@@ -373,6 +395,32 @@ export default function StyleGuidePage() {
             
             {/* Actions */}
             <div className="flex items-center gap-4">
+              {/* Dark Mode Toggle */}
+              <button
+                onClick={() => setDarkMode(!darkMode)}
+                className="btn-ghost btn-sm flex items-center gap-2"
+                title={darkMode ? 'Switch to Light Mode' : 'Switch to Dark Mode'}
+              >
+                <svg
+                  width="16"
+                  height="16"
+                  viewBox="0 0 24 24"
+                  fill="none"
+                  stroke="currentColor"
+                  strokeWidth="2"
+                >
+                  {darkMode ? (
+                    <path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"/>
+                  ) : (
+                    <>
+                      <circle cx="12" cy="12" r="5"/>
+                      <path d="M12 1v2M12 21v2M4.22 4.22l1.42 1.42M18.36 18.36l1.42 1.42M1 12h2M21 12h2M4.22 19.78l1.42-1.42M18.36 5.64l1.42-1.42"/>
+                    </>
+                  )}
+                </svg>
+                <span className="text-xs">{darkMode ? 'Dark' : 'Light'}</span>
+              </button>
+
               {/* UI Animations Toggle */}
               <button
                 onClick={() => setUiAnimations(!uiAnimations)}
@@ -1381,7 +1429,7 @@ function TablesSection() {
   }
 
   return (
-    <section className="space-y-6">
+    <section className="space-y-6 max-w-4xl">
       <div className="glass-panel overflow-hidden">
         <div className="p-6 pb-0">
           <h3 className="text-lg font-semibold text-foreground mb-4">Server Status Table</h3>

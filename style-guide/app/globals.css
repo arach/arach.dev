@@ -162,7 +162,7 @@
   }
   
   .badge-error {
-    @apply badge bg-red-500/15 text-red-400 border-red-500/30 hover:bg-red-500/20;
+    @apply badge bg-red-500/20 text-red-400 border-red-500/30 hover:bg-red-500/25;
   }
   
   .badge-failed,
