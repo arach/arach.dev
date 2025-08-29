@@ -3,7 +3,7 @@
 import React from 'react';
 
 // ASCII art banner component optimized for fast initial render
-export default function HeroASCIIBanner() {
+export function HeroASCIIBanner() {
   return (
     <>
       {/* Inline critical CSS for immediate render */}

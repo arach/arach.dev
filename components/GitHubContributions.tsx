@@ -464,4 +464,4 @@ const GitHubContributions = memo(function GitHubContributions({
   )
 })
 
-export default GitHubContributions
+export { GitHubContributions }

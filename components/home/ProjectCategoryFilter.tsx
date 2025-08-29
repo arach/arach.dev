@@ -2,7 +2,7 @@
 
 import { motion } from 'framer-motion'
 import { useTheme } from '@/lib/theme-context'
-import GitHubContributions from '@/components/GitHubContributions'
+import { GitHubContributions } from './'
 
 interface Project {
   title: string

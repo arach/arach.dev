@@ -1,9 +1,8 @@
 'use client'
 
-import { Button } from '@/components/ui/button'
-import { Tooltip, TooltipContent, TooltipTrigger } from '@/components/ui/tooltip'
+import { Button, Tooltip, TooltipContent, TooltipTrigger } from '@/components/ui'
 import { Volume2, VolumeX, HelpCircle, BarChart3 } from 'lucide-react'
-import GitHubContributions from '@/components/GitHubContributions'
+import { GitHubContributions } from './'
 
 interface HeaderActionsProps {
   audioEnabled: boolean

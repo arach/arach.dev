@@ -2,17 +2,21 @@
 
 import type React from "react"
 import { useState, useMemo } from "react"
+
 import { motion, AnimatePresence } from "framer-motion"
+
 import { fadeInUp } from "@/lib/utils"
-import { TooltipProvider } from "@/components/ui/tooltip"
-import HeroASCIIBanner from "./HeroASCIIBanner"
-import CompactTypographyCard from "./CompactTypographyCard"
-import { useKeyboardNavigation } from "./KeyboardNavigation"
-import { ProjectStatsModal } from "./ProjectStatsModal"
-import { HeaderActions } from "./HeaderActions"
-import { HelpModal } from "./HelpModal"
-import { ProjectCategoryFilter } from "./ProjectCategoryFilter"
-import GitHubContributions from "@/components/GitHubContributions"
+import { TooltipProvider } from "@/components/ui"
+import {
+  HeroASCIIBanner,
+  CompactTypographyCard,
+  useKeyboardNavigation,
+  ProjectStatsModal,
+  HeaderActions,
+  HelpModal,
+  ProjectCategoryFilter,
+  GitHubContributions,
+} from "./"
 
 interface Project {
   title: string
@@ -45,7 +49,7 @@ interface ProjectStats {
   languages: TechStat[]
 }
 
-export default function HomePage({ projects }: { projects: Project[] }) {
+export function HomePage({ projects }: { projects: Project[] }) {
   const [audioEnabled, setAudioEnabled] = useState(true)
   const [showHelp, setShowHelp] = useState(false)
   const [showStats, setShowStats] = useState(false)
@@ -314,7 +318,6 @@ export default function HomePage({ projects }: { projects: Project[] }) {
                   }}
                   onClick={() => {
                     playClickSound()
-                    // Extract slug from project title (simplified - you may want to add slug to project data)
                     const slug = project.title.toLowerCase().replace(/\s+/g, '-')
                     window.location.href = `/projects/${slug}`
                   }}

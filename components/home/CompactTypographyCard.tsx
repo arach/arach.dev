@@ -23,7 +23,7 @@ interface CompactTypographyCardProps {
   cardRef: (el: HTMLDivElement | null) => void;
 }
 
-export default function CompactTypographyCard({
+export function CompactTypographyCard({
   project,
   index,
   isKeyboardFocused,
