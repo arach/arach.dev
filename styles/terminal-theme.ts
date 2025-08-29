@@ -85,45 +85,45 @@ export const terminalTheme = {
     display2: 'text-2xl font-bold text-gray-100 tracking-tight leading-tight',
     
     // Headers - Clean hierarchy with strong contrast
-    h1: 'text-xl font-bold text-gray-100 tracking-tight uppercase',
-    h2: 'text-lg font-semibold text-gray-150 tracking-tight',
-    h3: 'text-base font-semibold text-gray-200',
-    h4: 'text-sm font-semibold text-gray-250 uppercase tracking-wider',
-    h5: 'text-xs font-semibold text-gray-300 uppercase tracking-wide',
-    h6: 'text-[11px] font-medium text-gray-350 uppercase tracking-wider',
+    h1: 'text-xl font-bold text-white tracking-tight uppercase',
+    h2: 'text-lg font-semibold text-white tracking-tight',
+    h3: 'text-base font-semibold text-gray-50',
+    h4: 'text-sm font-semibold text-gray-100 uppercase tracking-wider',
+    h5: 'text-xs font-semibold text-gray-200 uppercase tracking-wide',
+    h6: 'text-[11px] font-medium text-gray-200 uppercase tracking-wider',
     
     // Section headers - Technical precision
-    sectionTitle: 'font-mono text-[11px] font-bold uppercase tracking-[0.15em] text-gray-400 border-b border-gray-800 pb-1',
-    subsectionTitle: 'font-mono text-[10px] font-semibold uppercase tracking-[0.12em] text-gray-500',
+    sectionTitle: 'font-mono text-[11px] font-bold uppercase tracking-[0.15em] text-white',
+    subsectionTitle: 'font-mono text-xs font-bold uppercase tracking-[0.2em] text-cyan-400 border-l-2 border-cyan-500 pl-3',
     
     // UI headers - Interface typography
-    uiTitle: 'text-sm font-semibold text-gray-150 tracking-tight',
-    uiSubtitle: 'text-xs text-gray-400 tracking-wide',
-    uiSectionHeader: 'text-[10px] font-bold text-gray-450 uppercase tracking-[0.15em]',
-    uiLabel: 'text-[11px] font-semibold text-gray-300 tracking-wide',
+    uiTitle: 'text-sm font-semibold text-white tracking-tight',
+    uiSubtitle: 'text-xs text-gray-50 tracking-wide',
+    uiSectionHeader: 'text-[10px] font-bold text-white uppercase tracking-[0.15em]',
+    uiLabel: 'text-[11px] font-semibold text-white tracking-wide',
     
     // Body text - Optimal readability
-    body: 'text-sm text-gray-200 leading-relaxed tracking-normal',
-    bodyLarge: 'text-base text-gray-150 leading-relaxed',
-    bodyMono: 'font-mono text-xs text-gray-250 leading-relaxed tracking-tight',
-    bodySmall: 'text-xs text-gray-350 leading-normal',
-    bodySmallMono: 'font-mono text-[10px] text-gray-400 tracking-tight',
-    bodyMicro: 'text-[10px] text-gray-450 leading-tight',
+    body: 'text-sm text-white leading-relaxed tracking-normal',
+    bodyLarge: 'text-base text-white leading-relaxed',
+    bodyMono: 'font-mono text-xs text-gray-50 leading-relaxed tracking-tight',
+    bodySmall: 'text-xs text-gray-100 leading-normal',
+    bodySmallMono: 'font-mono text-[10px] text-gray-200 tracking-tight',
+    bodyMicro: 'text-[10px] text-gray-200 leading-tight',
     
     // Data visualization text
-    dataLabel: 'font-mono text-[10px] font-semibold text-gray-400 uppercase tracking-wider',
-    dataValue: 'font-mono text-sm font-medium text-gray-100 tracking-tight',
-    dataUnit: 'font-mono text-[10px] text-gray-500 tracking-wide',
+    dataLabel: 'font-mono text-[10px] font-semibold text-gray-100 uppercase tracking-wider',
+    dataValue: 'font-mono text-sm font-medium text-white tracking-tight',
+    dataUnit: 'font-mono text-[10px] text-gray-200 tracking-wide',
     
     // Labels - Form and UI labels
-    label: 'text-xs font-semibold text-gray-250 tracking-wide',
-    labelRequired: 'text-xs font-semibold text-gray-250 tracking-wide after:content-["*"] after:ml-0.5 after:text-red-400',
-    labelOptional: 'text-xs font-medium text-gray-400 tracking-wide',
+    label: 'text-xs font-semibold text-white tracking-wide',
+    labelRequired: 'text-xs font-semibold text-white tracking-wide after:content-["*"] after:ml-0.5 after:text-red-400',
+    labelOptional: 'text-xs font-medium text-gray-100 tracking-wide',
     
     // Code/Technical
     code: 'font-mono text-xs text-cyan-400 bg-gray-900/80 px-1.5 py-0.5 rounded border border-gray-800',
-    codeBlock: 'font-mono text-xs text-gray-200 bg-gray-950 border border-gray-800 rounded-md p-4 leading-relaxed',
-    codeInline: 'font-mono text-[11px] text-emerald-400 bg-gray-925 px-1 py-0.5 rounded',
+    codeBlock: 'font-mono text-xs text-white bg-gray-950 border border-gray-800 rounded-md p-4 leading-relaxed',
+    codeInline: 'font-mono text-[11px] text-emerald-400 bg-gray-900 px-1 py-0.5 rounded',
     
     // Status text
     statusActive: 'text-[10px] font-bold text-emerald-400 uppercase tracking-wider',
@@ -135,35 +135,35 @@ export const terminalTheme = {
   components: {
     // Inputs - Tactical input fields with high contrast
     input: {
-      default: 'w-full bg-gray-925 border border-gray-750 text-gray-100 px-3 py-2 text-sm rounded-sm focus:border-cyan-500 focus:outline-none focus:ring-1 focus:ring-cyan-500/20 placeholder:text-gray-600 transition-all duration-200',
+      default: 'w-full bg-gray-900 border border-gray-800 text-gray-100 px-3 py-2 text-sm rounded-sm focus:border-cyan-500 focus:outline-none focus:ring-1 focus:ring-cyan-500/20 placeholder:text-gray-600 transition-all duration-200',
       
-      active: 'w-full bg-gray-900 border border-cyan-500 text-gray-50 px-3 py-2 text-sm rounded-sm focus:border-cyan-400 focus:outline-none focus:ring-2 focus:ring-cyan-500/30 placeholder:text-gray-550 transition-all duration-200 shadow-[0_0_0_1px_rgba(0,180,216,0.1)]',
+      active: 'w-full bg-gray-900 border border-cyan-500 text-gray-50 px-3 py-2 text-sm rounded-sm focus:border-cyan-400 focus:outline-none focus:ring-2 focus:ring-cyan-500/30 placeholder:text-gray-500 transition-all duration-200 shadow-[0_0_0_1px_rgba(0,180,216,0.1)]',
       
-      error: 'w-full bg-gray-925 border border-red-500 text-gray-100 px-3 py-2 text-sm rounded-sm focus:border-red-400 focus:outline-none focus:ring-2 focus:ring-red-500/30 placeholder:text-gray-600 transition-all duration-200 shadow-[0_0_0_1px_rgba(255,68,68,0.1)]',
+      error: 'w-full bg-gray-900 border border-red-500 text-gray-100 px-3 py-2 text-sm rounded-sm focus:border-red-400 focus:outline-none focus:ring-2 focus:ring-red-500/30 placeholder:text-gray-600 transition-all duration-200 shadow-[0_0_0_1px_rgba(255,68,68,0.1)]',
       
-      success: 'w-full bg-gray-925 border border-emerald-500 text-gray-100 px-3 py-2 text-sm rounded-sm focus:border-emerald-400 focus:outline-none focus:ring-2 focus:ring-emerald-500/30 placeholder:text-gray-600 transition-all duration-200 shadow-[0_0_0_1px_rgba(0,245,160,0.1)]',
+      success: 'w-full bg-gray-900 border border-emerald-500 text-gray-100 px-3 py-2 text-sm rounded-sm focus:border-emerald-400 focus:outline-none focus:ring-2 focus:ring-emerald-500/30 placeholder:text-gray-600 transition-all duration-200 shadow-[0_0_0_1px_rgba(0,245,160,0.1)]',
       
-      minimal: 'w-full bg-transparent border-0 border-b border-gray-750 px-0 py-2 text-sm text-gray-100 focus:border-cyan-500 focus:outline-none placeholder:text-gray-600 transition-colors duration-200 rounded-none',
+      minimal: 'w-full bg-transparent border-0 border-b border-gray-800 px-0 py-2 text-sm text-gray-100 focus:border-cyan-500 focus:outline-none placeholder:text-gray-600 transition-colors duration-200 rounded-none',
       
-      tactical: 'w-full bg-gray-950 border-2 border-gray-800 text-gray-50 px-4 py-2.5 text-sm font-medium rounded focus:border-cyan-500 focus:outline-none focus:ring-1 focus:ring-cyan-500/20 placeholder:text-gray-550 transition-all duration-200',
+      tactical: 'w-full bg-gray-950 border-2 border-gray-800 text-gray-50 px-4 py-2.5 text-sm font-medium rounded focus:border-cyan-500 focus:outline-none focus:ring-1 focus:ring-cyan-500/20 placeholder:text-gray-500 transition-all duration-200',
     },
     
     // Textareas
     textarea: {
-      default: 'w-full min-h-[100px] bg-gray-925 border border-gray-750 text-gray-100 px-3 py-2.5 text-sm rounded-sm focus:border-cyan-500 focus:outline-none focus:ring-1 focus:ring-cyan-500/20 placeholder:text-gray-600 resize-none transition-all duration-200 leading-relaxed',
+      default: 'w-full min-h-[100px] bg-gray-900 border border-gray-800 text-gray-100 px-3 py-2.5 text-sm rounded-sm focus:border-cyan-500 focus:outline-none focus:ring-1 focus:ring-cyan-500/20 placeholder:text-gray-600 resize-none transition-all duration-200 leading-relaxed',
       
-      code: 'w-full min-h-[150px] bg-gray-950 border border-gray-800 font-mono text-xs text-gray-100 px-4 py-3 rounded focus:border-cyan-500 focus:outline-none focus:ring-1 focus:ring-cyan-500/20 placeholder:text-gray-650 resize-none transition-all duration-200 leading-relaxed',
+      code: 'w-full min-h-[150px] bg-gray-950 border border-gray-800 font-mono text-xs text-gray-100 px-4 py-3 rounded focus:border-cyan-500 focus:outline-none focus:ring-1 focus:ring-cyan-500/20 placeholder:text-gray-600 resize-none transition-all duration-200 leading-relaxed',
       
-      tactical: 'w-full min-h-[120px] bg-gray-950 border-2 border-gray-800 text-gray-50 px-4 py-3 text-sm font-medium rounded focus:border-cyan-500 focus:outline-none focus:ring-1 focus:ring-cyan-500/20 placeholder:text-gray-550 resize-y transition-all duration-200',
+      tactical: 'w-full min-h-[120px] bg-gray-950 border-2 border-gray-800 text-gray-50 px-4 py-3 text-sm font-medium rounded focus:border-cyan-500 focus:outline-none focus:ring-1 focus:ring-cyan-500/20 placeholder:text-gray-500 resize-y transition-all duration-200',
     },
     
     // Buttons - Sophisticated button system with tactical styling
     button: {
       primary: 'inline-flex items-center justify-center rounded-sm bg-gradient-to-r from-cyan-600 to-cyan-500 px-4 py-2 text-xs font-bold uppercase tracking-wider text-white hover:from-cyan-500 hover:to-cyan-400 focus:outline-none focus:ring-2 focus:ring-cyan-500 focus:ring-offset-2 focus:ring-offset-gray-950 active:from-cyan-700 active:to-cyan-600 disabled:pointer-events-none disabled:opacity-40 transition-all duration-200 shadow-md hover:shadow-lg',
       
-      secondary: 'inline-flex items-center justify-center rounded-sm border-2 border-gray-700 bg-gray-850 px-4 py-2 text-xs font-bold uppercase tracking-wider text-gray-200 hover:bg-gray-800 hover:border-gray-600 hover:text-gray-100 focus:outline-none focus:ring-2 focus:ring-gray-600 focus:ring-offset-2 focus:ring-offset-gray-950 active:bg-gray-900 disabled:pointer-events-none disabled:opacity-40 transition-all duration-200',
+      secondary: 'inline-flex items-center justify-center rounded-sm border-2 border-gray-800 bg-gray-800 px-4 py-2 text-xs font-bold uppercase tracking-wider text-gray-200 hover:bg-gray-800 hover:border-gray-600 hover:text-gray-100 focus:outline-none focus:ring-2 focus:ring-gray-600 focus:ring-offset-2 focus:ring-offset-gray-950 active:bg-gray-900 disabled:pointer-events-none disabled:opacity-40 transition-all duration-200',
       
-      ghost: 'inline-flex items-center justify-center rounded-sm px-4 py-2 text-xs font-semibold uppercase tracking-wider text-gray-400 hover:bg-gray-850 hover:text-gray-100 focus:outline-none focus:ring-2 focus:ring-gray-700 focus:ring-offset-2 focus:ring-offset-gray-950 active:bg-gray-900 disabled:pointer-events-none disabled:opacity-40 transition-all duration-200',
+      ghost: 'inline-flex items-center justify-center rounded-sm px-4 py-2 text-xs font-semibold uppercase tracking-wider text-gray-400 hover:bg-gray-800 hover:text-gray-100 focus:outline-none focus:ring-2 focus:ring-gray-700 focus:ring-offset-2 focus:ring-offset-gray-950 active:bg-gray-900 disabled:pointer-events-none disabled:opacity-40 transition-all duration-200',
       
       danger: 'inline-flex items-center justify-center rounded-sm border border-red-600/50 bg-red-950/30 px-4 py-2 text-xs font-bold uppercase tracking-wider text-red-400 hover:bg-red-950/50 hover:border-red-500 hover:text-red-300 focus:outline-none focus:ring-2 focus:ring-red-500 focus:ring-offset-2 focus:ring-offset-gray-950 active:bg-red-950/70 disabled:pointer-events-none disabled:opacity-40 transition-all duration-200',
       
@@ -171,28 +171,28 @@ export const terminalTheme = {
       
       warning: 'inline-flex items-center justify-center rounded-sm border border-amber-600/50 bg-amber-950/30 px-4 py-2 text-xs font-bold uppercase tracking-wider text-amber-400 hover:bg-amber-950/50 hover:border-amber-500 hover:text-amber-300 focus:outline-none focus:ring-2 focus:ring-amber-500 focus:ring-offset-2 focus:ring-offset-gray-950 active:bg-amber-950/70 disabled:pointer-events-none disabled:opacity-40 transition-all duration-200',
       
-      tactical: 'inline-flex items-center justify-center rounded-sm bg-gray-850 border-l-4 border-cyan-500 px-5 py-2.5 text-xs font-bold uppercase tracking-[0.15em] text-gray-100 hover:bg-gray-800 hover:border-l-cyan-400 focus:outline-none focus:ring-2 focus:ring-cyan-500/30 focus:ring-offset-2 focus:ring-offset-gray-950 active:bg-gray-900 disabled:pointer-events-none disabled:opacity-40 transition-all duration-200',
+      tactical: 'inline-flex items-center justify-center rounded-sm bg-gray-800 border-l-4 border-cyan-500 px-5 py-2.5 text-xs font-bold uppercase tracking-[0.15em] text-gray-100 hover:bg-gray-800 hover:border-l-cyan-400 focus:outline-none focus:ring-2 focus:ring-cyan-500/30 focus:ring-offset-2 focus:ring-offset-gray-950 active:bg-gray-900 disabled:pointer-events-none disabled:opacity-40 transition-all duration-200',
       
-      icon: 'inline-flex items-center justify-center rounded-sm border border-gray-750 bg-gray-850 p-2 text-gray-400 hover:bg-gray-800 hover:border-gray-650 hover:text-gray-200 focus:outline-none focus:ring-2 focus:ring-gray-700 focus:ring-offset-2 focus:ring-offset-gray-950 active:bg-gray-900 disabled:pointer-events-none disabled:opacity-40 transition-all duration-200',
+      icon: 'inline-flex items-center justify-center rounded-sm border border-gray-800 bg-gray-800 p-2 text-gray-400 hover:bg-gray-800 hover:border-gray-825 hover:text-gray-200 focus:outline-none focus:ring-2 focus:ring-gray-700 focus:ring-offset-2 focus:ring-offset-gray-950 active:bg-gray-900 disabled:pointer-events-none disabled:opacity-40 transition-all duration-200',
       
-      iconSmall: 'inline-flex items-center justify-center rounded-sm border border-gray-800 bg-gray-900 p-1 text-gray-500 hover:bg-gray-850 hover:border-gray-700 hover:text-gray-300 focus:outline-none focus:ring-1 focus:ring-gray-700 focus:ring-offset-1 focus:ring-offset-gray-950 active:bg-gray-925 disabled:pointer-events-none disabled:opacity-40 transition-all duration-200',
+      iconSmall: 'inline-flex items-center justify-center rounded-sm border border-gray-800 bg-gray-900 p-1 text-gray-500 hover:bg-gray-800 hover:border-gray-800 hover:text-gray-300 focus:outline-none focus:ring-1 focus:ring-gray-700 focus:ring-offset-1 focus:ring-offset-gray-950 active:bg-gray-900 disabled:pointer-events-none disabled:opacity-40 transition-all duration-200',
     },
     
     // Cards - Intelligence-grade containers
     card: {
-      default: 'bg-gray-900 border border-gray-750 rounded-sm shadow-xl shadow-black/30',
+      default: 'bg-gray-900 border border-gray-800 rounded-sm shadow-xl shadow-black/30',
       
-      elevated: 'bg-gradient-to-b from-gray-850 to-gray-900 border border-gray-700 rounded-sm shadow-2xl shadow-black/40',
+      elevated: 'bg-gradient-to-b from-gray-850 to-gray-900 border border-gray-800 rounded-sm shadow-2xl shadow-black/40',
       
-      glass: 'bg-gray-900/60 border border-gray-700/50 rounded-sm backdrop-blur-md shadow-xl',
+      glass: 'bg-gray-900/60 border border-gray-800/50 rounded-sm backdrop-blur-md shadow-xl',
       
       active: 'bg-gradient-to-b from-gray-850 to-gray-900 border border-cyan-500/30 rounded-sm shadow-xl shadow-cyan-500/5',
       
-      tactical: 'bg-gray-925 border-2 border-gray-800 border-l-4 border-l-cyan-500 rounded-sm shadow-xl shadow-black/30',
+      tactical: 'bg-gray-900 border-2 border-gray-800 border-l-4 border-l-cyan-500 rounded-sm shadow-xl shadow-black/30',
       
-      alert: 'bg-gray-925 border-2 border-red-900/50 border-l-4 border-l-red-500 rounded-sm shadow-xl shadow-red-950/20',
+      alert: 'bg-gray-900 border-2 border-red-900/50 border-l-4 border-l-red-500 rounded-sm shadow-xl shadow-red-950/20',
       
-      success: 'bg-gray-925 border-2 border-emerald-900/50 border-l-4 border-l-emerald-500 rounded-sm shadow-xl shadow-emerald-950/20',
+      success: 'bg-gray-900 border-2 border-emerald-900/50 border-l-4 border-l-emerald-500 rounded-sm shadow-xl shadow-emerald-950/20',
       
       data: 'bg-gray-950 border border-gray-800 rounded-sm shadow-lg font-mono',
     },
@@ -201,7 +201,7 @@ export const terminalTheme = {
     badge: {
       default: 'inline-flex items-center px-2.5 py-1 rounded-sm font-mono text-[10px] font-bold uppercase tracking-[0.15em] border shadow-sm',
       
-      neutral: 'bg-gray-850 text-gray-300 border-gray-700',
+      neutral: 'bg-gray-800 text-gray-300 border-gray-800',
       primary: 'bg-cyan-950/40 text-cyan-400 border-cyan-800/50 shadow-cyan-500/10',
       success: 'bg-emerald-950/40 text-emerald-400 border-emerald-800/50 shadow-emerald-500/10',
       warning: 'bg-amber-950/40 text-amber-400 border-amber-800/50 shadow-amber-500/10',
@@ -222,17 +222,17 @@ export const terminalTheme = {
       container: 'overflow-hidden rounded-sm border border-gray-800 bg-gray-950',
       wrapper: 'overflow-x-auto',
       
-      header: 'px-4 py-2.5 text-left align-middle font-mono text-[10px] font-bold uppercase tracking-[0.15em] text-gray-450 bg-gray-900 border-b-2 border-gray-800',
-      headerSortable: 'px-4 py-2.5 text-left align-middle font-mono text-[10px] font-bold uppercase tracking-[0.15em] text-gray-450 bg-gray-900 border-b-2 border-gray-800 hover:bg-gray-875 hover:text-gray-350 cursor-pointer transition-colors',
+      header: 'px-4 py-2.5 text-left align-middle font-mono text-[10px] font-bold uppercase tracking-[0.15em] text-gray-400 bg-gray-900 border-b-2 border-gray-800',
+      headerSortable: 'px-4 py-2.5 text-left align-middle font-mono text-[10px] font-bold uppercase tracking-[0.15em] text-gray-400 bg-gray-900 border-b-2 border-gray-800 hover:bg-gray-800 hover:text-gray-300 cursor-pointer transition-colors',
       
-      row: 'border-b border-gray-850 transition-all hover:bg-gray-925 data-[state=selected]:bg-gray-875',
-      rowAlternate: 'odd:bg-gray-950 even:bg-gray-925 border-b border-gray-850 transition-all hover:bg-gray-900',
+      row: 'border-b border-gray-800 transition-all hover:bg-gray-900 data-[state=selected]:bg-gray-875',
+      rowAlternate: 'odd:bg-gray-950 even:bg-gray-900 border-b border-gray-800 transition-all hover:bg-gray-900',
       
       cell: 'px-4 py-2.5 align-middle font-mono text-xs text-gray-300',
       cellNumeric: 'px-4 py-2.5 align-middle font-mono text-xs text-gray-100 text-right tabular-nums',
       cellHighlight: 'px-4 py-2.5 align-middle font-mono text-xs text-cyan-400 font-semibold',
       
-      footer: 'px-4 py-2 text-left align-middle font-mono text-[10px] uppercase tracking-wide text-gray-500 bg-gray-925 border-t border-gray-800',
+      footer: 'px-4 py-2 text-left align-middle font-mono text-[10px] uppercase tracking-wide text-gray-500 bg-gray-900 border-t border-gray-800',
     },
     
     // Status indicators - Military-grade status lights (backward compatible)
@@ -276,12 +276,12 @@ export const terminalTheme = {
       bar: 'h-1 bg-gradient-to-r from-cyan-600 to-cyan-400 transition-all duration-300',
       barDanger: 'h-1 bg-gradient-to-r from-red-600 to-red-400 transition-all duration-300',
       barSuccess: 'h-1 bg-gradient-to-r from-emerald-600 to-emerald-400 transition-all duration-300',
-      label: 'font-mono text-[10px] text-gray-450 uppercase tracking-wider',
+      label: 'font-mono text-[10px] text-gray-400 uppercase tracking-wider',
     },
     
     // Tooltips
     tooltip: {
-      container: 'bg-gray-850 border border-gray-700 rounded-sm px-2 py-1 shadow-xl',
+      container: 'bg-gray-800 border border-gray-800 rounded-sm px-2 py-1 shadow-xl',
       text: 'font-mono text-[10px] text-gray-200',
       arrow: 'fill-gray-850 stroke-gray-700',
     },
@@ -289,18 +289,18 @@ export const terminalTheme = {
     // Modals/Dialogs
     modal: {
       overlay: 'bg-black/80 backdrop-blur-sm',
-      container: 'bg-gray-900 border-2 border-gray-750 rounded-sm shadow-2xl',
+      container: 'bg-gray-900 border-2 border-gray-800 rounded-sm shadow-2xl',
       header: 'border-b-2 border-gray-800 px-6 py-4',
       title: 'text-base font-bold uppercase tracking-wide text-gray-100',
       content: 'px-6 py-4',
-      footer: 'border-t-2 border-gray-800 px-6 py-4 bg-gray-925',
+      footer: 'border-t-2 border-gray-800 px-6 py-4 bg-gray-900',
     },
     
     // Dropdowns
     dropdown: {
-      trigger: 'inline-flex items-center justify-between rounded-sm border border-gray-750 bg-gray-900 px-3 py-2 text-sm text-gray-200 hover:bg-gray-850 hover:border-gray-650 focus:outline-none focus:ring-2 focus:ring-cyan-500/30 transition-all duration-200',
-      menu: 'bg-gray-900 border border-gray-750 rounded-sm shadow-2xl shadow-black/50 overflow-hidden',
-      item: 'px-3 py-2 text-sm text-gray-300 hover:bg-gray-850 hover:text-gray-100 cursor-pointer transition-colors',
+      trigger: 'inline-flex items-center justify-between rounded-sm border border-gray-800 bg-gray-900 px-3 py-2 text-sm text-gray-200 hover:bg-gray-800 hover:border-gray-825 focus:outline-none focus:ring-2 focus:ring-cyan-500/30 transition-all duration-200',
+      menu: 'bg-gray-900 border border-gray-800 rounded-sm shadow-2xl shadow-black/50 overflow-hidden',
+      item: 'px-3 py-2 text-sm text-gray-300 hover:bg-gray-800 hover:text-gray-100 cursor-pointer transition-colors',
       itemActive: 'px-3 py-2 text-sm text-cyan-400 bg-gray-875 cursor-pointer',
       separator: 'h-px bg-gray-800 my-1',
     },
@@ -328,7 +328,7 @@ export const terminalTheme = {
     chip: {
       default: 'inline-flex items-center gap-1 px-2.5 py-1 rounded-full text-[10px] font-semibold uppercase tracking-wide',
       removable: 'inline-flex items-center gap-1 px-2.5 py-1 rounded-full text-[10px] font-semibold uppercase tracking-wide pr-1',
-      neutral: 'bg-gray-850 text-gray-300 border border-gray-750',
+      neutral: 'bg-gray-800 text-gray-300 border border-gray-800',
       primary: 'bg-cyan-950/30 text-cyan-400 border border-cyan-800/50',
       success: 'bg-emerald-950/30 text-emerald-400 border border-emerald-800/50',
       warning: 'bg-amber-950/30 text-amber-400 border border-amber-800/50',
@@ -343,14 +343,14 @@ export const terminalTheme = {
     containerGrid: 'bg-gray-950 text-gray-100 min-h-screen antialiased bg-[linear-gradient(rgba(255,255,255,0.015)_1px,transparent_1px),linear-gradient(90deg,rgba(255,255,255,0.015)_1px,transparent_1px)] bg-[size:32px_32px]',
     
     // Panels
-    panel: 'rounded-sm border border-gray-800 bg-gray-925 p-4',
-    panelHeader: 'border-b-2 border-gray-800 px-4 py-3 bg-gray-900',
+    panel: 'rounded-sm bg-gray-900 p-4',
+    panelHeader: 'border-b border-gray-875 px-4 py-3 bg-gray-900',
     panelBody: 'p-4',
-    panelFooter: 'border-t-2 border-gray-800 px-4 py-3 bg-gray-900',
+    panelFooter: 'border-t border-gray-875 px-4 py-3 bg-gray-900',
     
     // Sidebars
-    sidebar: 'bg-gray-925 border-r-2 border-gray-800 min-h-screen',
-    sidebarHeader: 'border-b-2 border-gray-800 px-4 py-3',
+    sidebar: 'bg-gray-900 border-r border-gray-875 min-h-screen',
+    sidebarHeader: 'border-b border-gray-875 px-4 py-3',
     sidebarNav: 'py-2',
     sidebarItem: 'px-4 py-2 text-sm text-gray-400 hover:bg-gray-875 hover:text-gray-100 transition-colors',
     sidebarItemActive: 'px-4 py-2 text-sm text-cyan-400 bg-gray-875 border-l-2 border-cyan-500 font-semibold',
@@ -361,16 +361,16 @@ export const terminalTheme = {
     sectionGrid: 'grid gap-4',
     
     // Dividers
-    divider: 'border-t border-gray-800 my-6',
-    dividerThick: 'border-t-2 border-gray-800 my-8',
-    dividerDashed: 'border-t border-dashed border-gray-800 my-6',
+    divider: 'border-t border-gray-900 my-6',
+    dividerThick: 'border-t border-gray-875 my-8',
+    dividerDashed: 'border-t border-dashed border-gray-900 my-6',
     
     // Headers
-    header: 'bg-gray-925 border-b-2 border-gray-800',
-    headerSticky: 'bg-gray-925/95 border-b-2 border-gray-800 backdrop-blur-sm sticky top-0 z-40',
+    header: 'bg-gray-900 border-b border-gray-875',
+    headerSticky: 'bg-gray-900/95 border-b border-gray-875 backdrop-blur-sm sticky top-0 z-40',
     
     // Footers
-    footer: 'bg-gray-925 border-t-2 border-gray-800',
+    footer: 'bg-gray-900 border-t border-gray-875',
     
     // Content areas
     main: 'flex-1',

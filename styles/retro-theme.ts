@@ -3,7 +3,7 @@ import type { Theme } from './terminal-theme'
 import { createTheme, registerTheme } from './theme-registry'
 
 export const retroTheme: Theme = createTheme({
-  name: 'Retro',
+  name: 'Terminal',
   description: '80s CRT monitor aesthetic with amber and green phosphor glow',
   
   colors: {

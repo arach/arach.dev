@@ -4,7 +4,7 @@
 import type { Theme } from './terminal-theme'
 
 export const cyberpunkTheme: Theme = {
-  name: 'Cyberpunk',
+  name: 'Terminal',
   description: 'Neon-soaked future aesthetic with high contrast and vibrant accents',
   
   colors: {
@@ -151,6 +151,24 @@ export const cyberpunkTheme: Theme = {
     scanline: 'relative after:absolute after:inset-0 after:bg-gradient-to-b after:from-transparent after:via-cyan-400/10 after:to-transparent after:animate-scan',
     
     grid: 'bg-[linear-gradient(rgba(0,255,255,.1)_1px,transparent_1px),linear-gradient(90deg,rgba(255,0,255,.1)_1px,transparent_1px)] bg-[size:30px_30px]',
+  },
+  
+  // Animations
+  animations: {
+    fadeIn: 'animate-[fadeIn_0.3s_ease-in]',
+    slideIn: 'animate-[slideIn_0.3s_ease-out]',
+    pulse: 'animate-pulse',
+    ping: 'animate-ping',
+    spin: 'animate-spin',
+    bounce: 'animate-bounce',
+  },
+  
+  // Utilities
+  utilities: {
+    selection: 'selection:bg-cyan-500/30 selection:text-cyan-100',
+    scrollbar: 'scrollbar-thin scrollbar-track-gray-900 scrollbar-thumb-gray-700 hover:scrollbar-thumb-gray-600',
+    focus: 'focus:outline-none focus:ring-2 focus:ring-cyan-500/50 focus:border-cyan-500',
+    disabled: 'disabled:opacity-50 disabled:cursor-not-allowed',
   }
 } as const
 

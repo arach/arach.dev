@@ -1,3 +1,145 @@
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
+
+@layer base {
+  :root {
+    --background: 222.2 84% 4.9%;
+    --foreground: 210 40% 98%;
+    --card: 222.2 84% 4.9%;
+    --card-foreground: 210 40% 98%;
+    --popover: 222.2 84% 4.9%;
+    --popover-foreground: 210 40% 98%;
+    --primary: 200 96% 43%;
+    --primary-foreground: 210 40% 98%;
+    --secondary: 217.2 32.6% 17.5%;
+    --secondary-foreground: 210 40% 98%;
+    --muted: 217.2 32.6% 17.5%;
+    --muted-foreground: 215 20.2% 65.1%;
+    --accent: 217.2 32.6% 17.5%;
+    --accent-foreground: 210 40% 98%;
+    --destructive: 0 62.8% 30.6%;
+    --destructive-foreground: 210 40% 98%;
+    --success: 142 76% 36%;
+    --success-foreground: 210 40% 98%;
+    --warning: 45 93% 47%;
+    --warning-foreground: 222.2 84% 4.9%;
+    --border: 217.2 32.6% 17.5%;
+    --input: 217.2 32.6% 17.5%;
+    --ring: 200 96% 43%;
+    --radius: 0.375rem;
+  }
+  
+  /* Terminal Theme */
+  .theme-terminal {
+    --background: 220 13% 5%;
+    --foreground: 0 0% 100%;
+    --card: 217 33% 7%;
+    --card-foreground: 0 0% 100%;
+    --popover: 217 33% 7%;
+    --popover-foreground: 0 0% 100%;
+    --primary: 200 96% 43%;
+    --primary-foreground: 0 0% 100%;
+    --secondary: 217 32% 15%;
+    --secondary-foreground: 210 40% 90%;
+    --muted: 217 32% 15%;
+    --muted-foreground: 215 20% 65%;
+    --accent: 200 96% 43%;
+    --accent-foreground: 0 0% 100%;
+    --destructive: 0 75% 55%;
+    --destructive-foreground: 0 0% 100%;
+    --success: 142 76% 55%;
+    --success-foreground: 0 0% 100%;
+    --warning: 45 93% 60%;
+    --warning-foreground: 220 13% 5%;
+    --border: 217 32% 15%;
+    --input: 217 32% 15%;
+    --ring: 200 96% 43%;
+  }
+  
+  /* Cyberpunk Theme */
+  .theme-cyberpunk {
+    --background: 260 30% 5%;
+    --foreground: 200 50% 95%;
+    --card: 260 30% 8%;
+    --card-foreground: 200 50% 95%;
+    --popover: 260 30% 8%;
+    --popover-foreground: 200 50% 95%;
+    --primary: 316 73% 69%;
+    --primary-foreground: 0 0% 100%;
+    --secondary: 260 30% 15%;
+    --secondary-foreground: 200 50% 80%;
+    --muted: 260 30% 15%;
+    --muted-foreground: 200 20% 65%;
+    --accent: 45 93% 58%;
+    --accent-foreground: 260 30% 5%;
+    --destructive: 0 75% 60%;
+    --destructive-foreground: 0 0% 100%;
+    --success: 120 73% 60%;
+    --success-foreground: 0 0% 100%;
+    --warning: 45 93% 58%;
+    --warning-foreground: 260 30% 5%;
+    --border: 260 30% 15%;
+    --input: 260 30% 15%;
+    --ring: 316 73% 69%;
+  }
+  
+  /* Minimal Theme */
+  .theme-minimal {
+    --background: 0 0% 100%;
+    --foreground: 222.2 84% 4.9%;
+    --card: 0 0% 100%;
+    --card-foreground: 222.2 84% 4.9%;
+    --popover: 0 0% 100%;
+    --popover-foreground: 222.2 84% 4.9%;
+    --primary: 221.2 83.2% 53.3%;
+    --primary-foreground: 210 40% 98%;
+    --secondary: 210 40% 96.1%;
+    --secondary-foreground: 222.2 47.4% 11.2%;
+    --muted: 210 40% 96.1%;
+    --muted-foreground: 215.4 16.3% 46.9%;
+    --accent: 210 40% 96.1%;
+    --accent-foreground: 222.2 47.4% 11.2%;
+    --destructive: 0 84.2% 60.2%;
+    --destructive-foreground: 210 40% 98%;
+    --success: 142 76% 36%;
+    --success-foreground: 210 40% 98%;
+    --warning: 45 93% 47%;
+    --warning-foreground: 222.2 84% 4.9%;
+    --border: 214.3 31.8% 91.4%;
+    --input: 214.3 31.8% 91.4%;
+    --ring: 221.2 83.2% 53.3%;
+  }
+  
+  /* Retro Theme */
+  .theme-retro {
+    --background: 45 29% 8%;
+    --foreground: 45 78% 85%;
+    --card: 45 29% 12%;
+    --card-foreground: 45 78% 85%;
+    --popover: 45 29% 12%;
+    --popover-foreground: 45 78% 85%;
+    --primary: 45 93% 58%;
+    --primary-foreground: 45 29% 8%;
+    --secondary: 45 29% 20%;
+    --secondary-foreground: 45 78% 75%;
+    --muted: 45 29% 20%;
+    --muted-foreground: 45 40% 55%;
+    --accent: 120 100% 50%;
+    --accent-foreground: 45 29% 8%;
+    --destructive: 340 75% 55%;
+    --destructive-foreground: 0 0% 100%;
+    --success: 120 100% 50%;
+    --success-foreground: 45 29% 8%;
+    --warning: 45 93% 58%;
+    --warning-foreground: 45 29% 8%;
+    --border: 45 29% 20%;
+    --input: 45 29% 20%;
+    --ring: 45 93% 58%;
+  }
+  
+  body {
+    background-color: hsl(var(--background));
+    color: hsl(var(--foreground));
+  }
+}

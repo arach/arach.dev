@@ -4,7 +4,7 @@
 import type { Theme } from './terminal-theme'
 
 export const minimalTheme: Theme = {
-  name: 'Minimal',
+  name: 'Terminal',
   description: 'Clean and modern with almost invisible UI elements',
   
   colors: {
@@ -151,6 +151,24 @@ export const minimalTheme: Theme = {
     scanline: '',
     
     grid: '',
+  },
+  
+  // Animations
+  animations: {
+    fadeIn: 'animate-[fadeIn_0.3s_ease-in]',
+    slideIn: 'animate-[slideIn_0.3s_ease-out]',
+    pulse: 'animate-pulse',
+    ping: 'animate-ping',
+    spin: 'animate-spin',
+    bounce: 'animate-bounce',
+  },
+  
+  // Utilities
+  utilities: {
+    selection: 'selection:bg-blue-100 selection:text-blue-900',
+    scrollbar: 'scrollbar-thin scrollbar-track-gray-100 scrollbar-thumb-gray-400 hover:scrollbar-thumb-gray-500',
+    focus: 'focus:outline-none focus:ring-2 focus:ring-blue-500/20 focus:border-blue-500',
+    disabled: 'disabled:opacity-50 disabled:cursor-not-allowed',
   }
 } as const
 
