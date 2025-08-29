@@ -376,8 +376,8 @@
 
 @layer base {
   :root {
-    /* Font families */
-    --font-sans: var(--font-manrope), system-ui, -apple-system, sans-serif;
+    /* Style Guide UI Fonts (for the interface itself) */
+    --font-sans: var(--font-geist), system-ui, -apple-system, sans-serif;
     --font-mono: var(--font-jetbrains-mono), 'Fira Code', 'JetBrains Mono', monospace;
     
     /* Base design tokens */
@@ -409,6 +409,10 @@
   
   /* Terminal Theme */
   .theme-terminal {
+    /* Terminal Typography - Heavy monospace usage */
+    --theme-font-sans: var(--font-jetbrains-mono), 'SF Mono', monospace;
+    --theme-font-mono: var(--font-jetbrains-mono), 'Fira Code', monospace;
+    
     --background: 220 13% 5%;
     --foreground: 0 0% 100%;
     --card: 217 33% 7%;

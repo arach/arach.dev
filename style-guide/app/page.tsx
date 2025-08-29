@@ -771,6 +771,85 @@ export default function StyleGuidePage() {
 
 // Typography Section Component
 function TypographySection() {
+  // Style Guide UI Fonts (always Geist)
+  const styleGuideFont = {
+    name: 'Geist',
+    type: 'Sans-serif',
+    usage: 'Style Guide Interface',
+    description: 'Clean, modern font for the style guide UI itself',
+    classes: 'font-sans',
+    samples: [
+      { text: 'Style Guide Interface Text (This Header)', size: 'text-lg', weight: 'font-semibold' },
+      { text: 'Navigation, controls, and UI elements use this font', size: 'text-base', weight: 'font-normal' },
+      { text: 'SMALL CAPS AND LABELS', size: 'text-sm', weight: 'font-medium' }
+    ]
+  }
+
+  // Current Theme Fonts (dynamic based on active theme)
+  const getCurrentThemeFonts = () => {
+    switch(activeTheme) {
+      case 'terminal':
+        return [
+          {
+            name: 'JetBrains Mono',
+            type: 'Monospace (Primary)',
+            usage: 'Terminal theme uses monospace everywhere',
+            description: 'Heavy monospace usage for that technical terminal feel',
+            classes: 'font-mono',
+            isThemeFont: true,
+            samples: [
+              { text: 'Terminal Theme Typography', size: 'text-2xl', weight: 'font-bold' },
+              { text: '$ ls -la /usr/bin/fonts/', size: 'text-lg', weight: 'font-normal' },
+              { text: 'Even headings use monospace in terminal theme', size: 'text-base', weight: 'font-medium' },
+              { text: '// Technical content feels right at home', size: 'text-sm', weight: 'font-normal' }
+            ]
+          }
+        ]
+      case 'cyberpunk':
+        return [
+          {
+            name: 'Manrope',
+            type: 'Sans-serif',
+            usage: 'Cyberpunk theme primary font',
+            description: 'Futuristic clean sans-serif for cyberpunk aesthetic',
+            classes: 'font-sans',
+            isThemeFont: true,
+            samples: [
+              { text: 'CYBER FUTURE TYPOGRAPHY', size: 'text-2xl', weight: 'font-bold' },
+              { text: 'Neural interface connected', size: 'text-lg', weight: 'font-normal' },
+              { text: 'Data streams and digital worlds', size: 'text-base', weight: 'font-medium' }
+            ]
+          },
+          {
+            name: 'JetBrains Mono',
+            type: 'Monospace',
+            usage: 'Code and data',
+            description: 'For code blocks and technical readouts',
+            classes: 'font-mono',
+            isThemeFont: true,
+            samples: [
+              { text: 'hackTheMatrix() { return true; }', size: 'text-base', weight: 'font-normal' }
+            ]
+          }
+        ]
+      default:
+        return [
+          {
+            name: 'Manrope',
+            type: 'Sans-serif',
+            usage: 'Theme primary font',
+            description: 'Clean, readable font for this theme',
+            classes: 'font-sans',
+            isThemeFont: true,
+            samples: [
+              { text: 'Theme Typography Sample', size: 'text-2xl', weight: 'font-bold' },
+              { text: 'This represents how fonts look in the selected theme', size: 'text-base', weight: 'font-normal' }
+            ]
+          }
+        ]
+    }
+  }
+
   const typographyElements = [
     {
       element: 'h1',
@@ -871,6 +950,41 @@ function TypographySection() {
 
   return (
     <section className="space-y-6">
+      {/* Font Showcase */}
+      <div className="space-y-6">
+        <h3 className="text-lg font-semibold text-foreground">Typography Foundation</h3>
+        <div className="grid md:grid-cols-2 gap-6">
+          {fontShowcase.map((font) => (
+            <div 
+              key={font.name}
+              className="glass-panel p-6"
+              data-style-element="typography"
+              data-element-name={`${font.name} Font`}
+              data-description={font.description}
+              data-classes={font.classes}
+              data-variant={font.type.toLowerCase()}
+              data-usage={`<div className="${font.classes}">Sample text</div>`}
+            >
+              <div className="mb-4">
+                <h4 className="text-base font-semibold text-foreground flex items-center gap-2">
+                  {font.name}
+                  <span className="badge-primary">{font.type}</span>
+                </h4>
+                <p className="text-sm text-muted-foreground mt-1">{font.description}</p>
+                <p className="text-xs text-muted-foreground mt-1">Used for: {font.usage}</p>
+              </div>
+              <div className={`space-y-3 ${font.classes}`}>
+                {font.samples.map((sample, index) => (
+                  <div key={index} className={`${sample.size} ${sample.weight} text-foreground`}>
+                    {sample.text}
+                  </div>
+                ))}
+              </div>
+            </div>
+          ))}
+        </div>
+      </div>
+
       <div className="grid gap-4">
         <div className="p-6 glass-panel">
           <h3 className="text-lg font-semibold text-foreground mb-4">Headings</h3>
@@ -1429,7 +1543,7 @@ function TablesSection() {
   }
 
   return (
-    <section className="space-y-6 max-w-4xl">
+    <section className="space-y-6 max-w-6xl">
       <div className="glass-panel overflow-hidden">
         <div className="p-6 pb-0">
           <h3 className="text-lg font-semibold text-foreground mb-4">Server Status Table</h3>

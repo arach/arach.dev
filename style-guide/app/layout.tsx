@@ -1,7 +1,16 @@
 import type { Metadata } from 'next'
 import './globals.css'
 import { JetBrains_Mono, Manrope } from 'next/font/google'
+import { Geist } from 'next/font/google'
 
+// Style Guide UI Font
+const geist = Geist({ 
+  subsets: ['latin'],
+  variable: '--font-geist',
+  display: 'swap',
+})
+
+// Theme Demonstration Fonts
 const manrope = Manrope({ 
   subsets: ['latin'],
   variable: '--font-manrope',
@@ -25,7 +34,7 @@ export default function RootLayout({
   children: React.ReactNode
 }) {
   return (
-    <html lang="en" className={`${manrope.variable} ${jetbrainsMono.variable}`}>
+    <html lang="en" className={`${geist.variable} ${manrope.variable} ${jetbrainsMono.variable}`}>
       <body className="font-sans antialiased">
         {children}
       </body>
