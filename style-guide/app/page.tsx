@@ -329,6 +329,7 @@ export default function StyleGuidePage() {
     { id: 'inputs', label: 'Form Elements' },
     { id: 'cards', label: 'Cards' },
     { id: 'badges', label: 'Badges' },
+    { id: 'tables', label: 'Data Tables' },
   ]
 
   return (
@@ -487,6 +488,11 @@ export default function StyleGuidePage() {
                     <h3 className="text-2xl font-bold text-foreground mb-6 pb-2 border-b border-border">Badges</h3>
                     <BadgesSection />
                   </section>
+                  
+                  <section id="tables-section">
+                    <h3 className="text-2xl font-bold text-foreground mb-6 pb-2 border-b border-border">Data Tables</h3>
+                    <TablesSection />
+                  </section>
                 </>
               ) : (
                 <>
@@ -496,6 +502,7 @@ export default function StyleGuidePage() {
                   {activeSection === 'inputs' && <InputsSection />}
                   {activeSection === 'cards' && <CardsSection />}
                   {activeSection === 'badges' && <BadgesSection />}
+                  {activeSection === 'tables' && <TablesSection />}
                 </>
               )}
             </div>
@@ -727,6 +734,52 @@ function TypographySection() {
     }
   ]
 
+  // Peal-inspired typography variants
+  const pealTypographyVariants = [
+    {
+      name: 'Component Header Large (Peal Copy)',
+      classes: 'text-base font-medium text-foreground',
+      description: 'Large component header for cards and modals',
+      usage: '<h3 className="text-base font-medium text-foreground">Component Header</h3>'
+    },
+    {
+      name: 'Component Header Medium (Peal Copy)',
+      classes: 'text-sm font-medium text-muted-foreground',
+      description: 'Medium component header for nested sections',
+      usage: '<h4 className="text-sm font-medium text-muted-foreground">Component Header</h4>'
+    },
+    {
+      name: 'Component Header Small (Peal Copy)',
+      classes: 'text-xs font-medium text-muted-foreground uppercase tracking-wider',
+      description: 'Small uppercase header for labels and categories',
+      usage: '<span className="text-xs font-medium text-muted-foreground uppercase tracking-wider">SMALL HEADER</span>'
+    },
+    {
+      name: 'Body Large (Peal Copy)',
+      classes: 'text-base text-foreground',
+      description: 'Large body text for important content',
+      usage: '<p className="text-base text-foreground">Large body text</p>'
+    },
+    {
+      name: 'Body Small (Peal Copy)',
+      classes: 'text-xs text-muted-foreground',
+      description: 'Small body text for less important information',
+      usage: '<p className="text-xs text-muted-foreground">Small body text</p>'
+    },
+    {
+      name: 'Muted Text (Peal Copy)',
+      classes: 'text-sm text-muted-foreground/70',
+      description: 'Muted text for secondary information',
+      usage: '<p className="text-sm text-muted-foreground/70">Muted text</p>'
+    },
+    {
+      name: 'Mono Small (Peal Copy)',
+      classes: 'font-mono text-xs text-muted-foreground',
+      description: 'Small monospace text for code comments',
+      usage: '<code className="font-mono text-xs text-muted-foreground">// comment</code>'
+    }
+  ]
+
   return (
     <section className="space-y-6">
       <div className="grid gap-4">
@@ -802,6 +855,29 @@ function TypographySection() {
                 </code>
               )
             })}
+          </div>
+        </div>
+
+        <div className="p-6 glass-panel">
+          <h3 className="text-lg font-semibold text-foreground mb-4">Peal Typography Variants</h3>
+          <div className="space-y-3">
+            {pealTypographyVariants.map((variant) => (
+              <div
+                key={variant.name}
+                className={variant.classes}
+                data-style-element="typography"
+                data-element-name={variant.name}
+                data-description={variant.description}
+                data-classes={variant.classes}
+                data-variant="peal"
+                data-usage={variant.usage}
+                title={`${variant.name} - Click to inspect`}
+              >
+                {variant.name.includes('Header') ? variant.name.split(' (')[0] : 
+                 variant.name.includes('Mono') ? '// Code comment example' :
+                 'Sample text content for this variant'}
+              </div>
+            ))}
           </div>
         </div>
       </div>
@@ -917,6 +993,18 @@ function ButtonsSection() {
       variant: 'success',
       classes: 'btn-success btn-md',
       description: 'Success state button for positive actions with consistent theming'
+    },
+    {
+      name: 'Outline (Peal Copy)',
+      variant: 'outline',
+      classes: 'btn-outline btn-md',
+      description: 'Outline button with transparent background and border'
+    },
+    {
+      name: 'Warning',
+      variant: 'warning',
+      classes: 'btn-warning btn-md',
+      description: 'Warning state button for attention-requiring actions'
     }
   ]
 
@@ -946,26 +1034,155 @@ function ButtonsSection() {
   )
 }
 
-// Form Elements Section Component (Simplified)
+// Form Elements Section Component (Enhanced with Peal variants)
 function InputsSection() {
+  const inputVariants = [
+    {
+      name: 'Default Input',
+      variant: 'default',
+      inputClass: 'input-default',
+      labelClass: 'label-default',
+      description: 'Standard glass morphism input with backdrop blur',
+      placeholder: 'Enter text...'
+    },
+    {
+      name: 'Monospace Input (Peal Copy)',
+      variant: 'mono',
+      inputClass: 'input-mono',
+      labelClass: 'label-default',
+      description: 'Monospace input for code or technical content',
+      placeholder: 'Code input...'
+    },
+    {
+      name: 'Dark Input (Peal Copy)',
+      variant: 'dark',
+      inputClass: 'input-dark',
+      labelClass: 'label-default',
+      description: 'Dark themed input with reduced opacity',
+      placeholder: 'Dark themed input...'
+    },
+    {
+      name: 'Transparent Input (Peal Copy)',
+      variant: 'transparent',
+      inputClass: 'input-transparent',
+      labelClass: 'label-default',
+      description: 'Minimal input with bottom border only',
+      placeholder: 'Minimal input...'
+    }
+  ]
+
+  const labelVariants = [
+    {
+      name: 'Default Label',
+      classes: 'label-default',
+      text: 'Standard Label',
+      description: 'Standard form label'
+    },
+    {
+      name: 'Required Label (Peal Copy)',
+      classes: 'label-required',
+      text: 'Required Field',
+      description: 'Label with required indicator'
+    },
+    {
+      name: 'Small Label (Peal Copy)',
+      classes: 'label-small',
+      text: 'SMALL UPPERCASE LABEL',
+      description: 'Small uppercase label for compact forms'
+    }
+  ]
+
   return (
     <section className="space-y-6">
-      <div className="p-6 glass-panel">
-        <h3 className="text-lg font-semibold text-foreground mb-4">Form Elements</h3>
-        <div className="space-y-4 max-w-md">
-          <div>
-            <label className="text-sm font-medium text-foreground block mb-2">Default Input</label>
-            <input 
-              type="text" 
-              placeholder="Enter text..." 
-              className="w-full bg-input border border-border rounded-md px-3 py-2 text-foreground placeholder:text-muted-foreground focus:outline-none focus:ring-2 focus:ring-ring"
-              data-style-element="input"
-              data-element-name="Text Input"
-              data-description="Standard text input field with focus states"
-              data-classes="w-full bg-input border border-border rounded-md px-3 py-2 text-foreground placeholder:text-muted-foreground focus:outline-none focus:ring-2 focus:ring-ring"
-              data-variant="text"
-              data-usage="<input type='text' className='w-full bg-input border border-border rounded-md px-3 py-2 text-foreground placeholder:text-muted-foreground focus:outline-none focus:ring-2 focus:ring-ring' />"
-            />
+      <div className="grid gap-6">
+        <div className="p-6 glass-panel">
+          <h3 className="text-lg font-semibold text-foreground mb-4">Input Fields</h3>
+          <div className="grid md:grid-cols-2 gap-4">
+            {inputVariants.map((input) => (
+              <div key={input.variant}>
+                <label className={input.labelClass}>{input.name}</label>
+                <input 
+                  type="text" 
+                  placeholder={input.placeholder}
+                  className={input.inputClass}
+                  data-style-element="input"
+                  data-element-name={input.name}
+                  data-description={input.description}
+                  data-classes={input.inputClass}
+                  data-label-classes={input.labelClass}
+                  data-variant={input.variant}
+                  data-usage={`<input type='text' className='${input.inputClass}' placeholder='${input.placeholder}' />`}
+                />
+              </div>
+            ))}
+          </div>
+        </div>
+
+        <div className="p-6 glass-panel">
+          <h3 className="text-lg font-semibold text-foreground mb-4">Textareas</h3>
+          <div className="grid md:grid-cols-2 gap-4">
+            <div>
+              <label className="label-default">Default Textarea</label>
+              <textarea 
+                className="textarea-default"
+                rows={3}
+                placeholder="Enter description..."
+                data-style-element="input"
+                data-element-name="Default Textarea"
+                data-description="Standard textarea with glass morphism styling"
+                data-classes="textarea-default"
+                data-variant="textarea"
+                data-usage="<textarea className='textarea-default' rows={3} />"
+              />
+            </div>
+            <div>
+              <label className="label-default">Monospace Textarea (Peal Copy)</label>
+              <textarea 
+                className="textarea-mono"
+                rows={3}
+                placeholder="// Enter code..."
+                data-style-element="input"
+                data-element-name="Monospace Textarea"
+                data-description="Code textarea with monospace font"
+                data-classes="textarea-mono"
+                data-variant="textarea-mono"
+                data-usage="<textarea className='textarea-mono' rows={3} />"
+              />
+            </div>
+            <div>
+              <label className="label-default">Dark Textarea (Peal Copy)</label>
+              <textarea 
+                className="textarea-dark"
+                rows={3}
+                placeholder="Dark themed textarea..."
+                data-style-element="input"
+                data-element-name="Dark Textarea"
+                data-description="Dark variant textarea"
+                data-classes="textarea-dark"
+                data-variant="textarea-dark"
+                data-usage="<textarea className='textarea-dark' rows={3} />"
+              />
+            </div>
+          </div>
+        </div>
+
+        <div className="p-6 glass-panel">
+          <h3 className="text-lg font-semibold text-foreground mb-4">Label Variants</h3>
+          <div className="space-y-3">
+            {labelVariants.map((label) => (
+              <label 
+                key={label.name}
+                className={label.classes}
+                data-style-element="typography"
+                data-element-name={label.name}
+                data-description={label.description}
+                data-classes={label.classes}
+                data-variant="label"
+                data-usage={`<label className='${label.classes}'>${label.text}</label>`}
+              >
+                {label.text}
+              </label>
+            ))}
           </div>
         </div>
       </div>
@@ -1063,10 +1280,10 @@ function BadgesSection() {
       description: 'Warning state badge for attention-requiring items'
     },
     {
-      name: 'Destructive',
-      variant: 'destructive',
-      classes: 'badge-destructive',
-      description: 'Destructive badge for error states and critical information'
+      name: 'Error',
+      variant: 'error',
+      classes: 'badge-error',
+      description: 'Error badge for error states and failed operations'
     },
     {
       name: 'Outline',
@@ -1096,6 +1313,195 @@ function BadgesSection() {
               {badge.name}
             </span>
           ))}
+        </div>
+      </div>
+    </section>
+  )
+}
+
+// Data Tables Section Component
+function TablesSection() {
+  const tableData = [
+    { id: 1, name: 'api-server-01', status: 'online', cpu: '45%', memory: '2.1 GB', uptime: '15 days', lastCheck: '2 min ago' },
+    { id: 2, name: 'db-primary', status: 'online', cpu: '78%', memory: '8.3 GB', uptime: '45 days', lastCheck: '1 min ago' },
+    { id: 3, name: 'cache-redis', status: 'processing', cpu: '23%', memory: '512 MB', uptime: '7 days', lastCheck: '5 min ago' },
+    { id: 4, name: 'worker-node-02', status: 'error', cpu: '92%', memory: '3.8 GB', uptime: '2 hours', lastCheck: '30 sec ago' },
+    { id: 5, name: 'cdn-edge-west', status: 'offline', cpu: '0%', memory: '0 MB', uptime: '-', lastCheck: '10 min ago' },
+  ]
+
+  const getStatusBadgeClass = (status: string) => {
+    switch(status) {
+      case 'online': return 'badge-online'
+      case 'offline': return 'badge-offline'
+      case 'processing': return 'badge-processing'
+      case 'error': return 'badge-error'
+      default: return 'badge-default'
+    }
+  }
+
+  return (
+    <section className="space-y-6">
+      <div className="glass-panel overflow-hidden">
+        <div className="p-6 pb-0">
+          <h3 className="text-lg font-semibold text-foreground mb-4">Server Status Table</h3>
+        </div>
+        
+        <div className="overflow-x-auto">
+          <table className="w-full">
+            <thead className="border-b border-border bg-muted/30">
+              <tr>
+                <th className="px-6 py-3 text-left text-xs font-medium text-muted-foreground uppercase tracking-wider">
+                  <input type="checkbox" className="rounded border-border bg-input" />
+                </th>
+                <th className="px-6 py-3 text-left text-xs font-medium text-muted-foreground uppercase tracking-wider cursor-pointer hover:text-foreground transition-colors">
+                  Server Name ↓
+                </th>
+                <th className="px-6 py-3 text-left text-xs font-medium text-muted-foreground uppercase tracking-wider">
+                  Status
+                </th>
+                <th className="px-6 py-3 text-left text-xs font-medium text-muted-foreground uppercase tracking-wider cursor-pointer hover:text-foreground transition-colors">
+                  CPU Usage
+                </th>
+                <th className="px-6 py-3 text-left text-xs font-medium text-muted-foreground uppercase tracking-wider cursor-pointer hover:text-foreground transition-colors">
+                  Memory
+                </th>
+                <th className="px-6 py-3 text-left text-xs font-medium text-muted-foreground uppercase tracking-wider">
+                  Uptime
+                </th>
+                <th className="px-6 py-3 text-left text-xs font-medium text-muted-foreground uppercase tracking-wider">
+                  Last Check
+                </th>
+                <th className="px-6 py-3 text-right text-xs font-medium text-muted-foreground uppercase tracking-wider">
+                  Actions
+                </th>
+              </tr>
+            </thead>
+            <tbody className="divide-y divide-border">
+              {tableData.map((row) => (
+                <tr key={row.id} className="hover:bg-muted/20 transition-colors">
+                  <td className="px-6 py-4 whitespace-nowrap">
+                    <input type="checkbox" className="rounded border-border bg-input" />
+                  </td>
+                  <td className="px-6 py-4 whitespace-nowrap">
+                    <div className="text-sm font-medium text-foreground font-mono">{row.name}</div>
+                  </td>
+                  <td className="px-6 py-4 whitespace-nowrap">
+                    <span className={getStatusBadgeClass(row.status)}>
+                      {row.status}
+                    </span>
+                  </td>
+                  <td className="px-6 py-4 whitespace-nowrap text-sm text-foreground">
+                    {row.cpu}
+                  </td>
+                  <td className="px-6 py-4 whitespace-nowrap text-sm text-foreground">
+                    {row.memory}
+                  </td>
+                  <td className="px-6 py-4 whitespace-nowrap text-sm text-muted-foreground">
+                    {row.uptime}
+                  </td>
+                  <td className="px-6 py-4 whitespace-nowrap text-sm text-muted-foreground">
+                    {row.lastCheck}
+                  </td>
+                  <td className="px-6 py-4 whitespace-nowrap text-right text-sm font-medium">
+                    <button className="text-primary hover:text-primary/80 mr-3 transition-colors">Edit</button>
+                    <button className="text-muted-foreground hover:text-foreground mr-3 transition-colors">View</button>
+                    <button className="text-destructive hover:text-destructive/80 transition-colors">Delete</button>
+                  </td>
+                </tr>
+              ))}
+            </tbody>
+          </table>
+        </div>
+        
+        {/* Pagination */}
+        <div className="px-6 py-4 border-t border-border flex items-center justify-between bg-muted/10">
+          <div className="flex items-center gap-2">
+            <span className="text-sm text-muted-foreground">Showing 1-5 of 24 results</span>
+          </div>
+          <div className="flex items-center gap-2">
+            <button className="btn-ghost btn-sm" disabled>Previous</button>
+            <button className="btn-primary btn-sm">1</button>
+            <button className="btn-ghost btn-sm">2</button>
+            <button className="btn-ghost btn-sm">3</button>
+            <button className="btn-ghost btn-sm">...</button>
+            <button className="btn-ghost btn-sm">5</button>
+            <button className="btn-ghost btn-sm">Next</button>
+          </div>
+        </div>
+      </div>
+
+      {/* Compact Table Example */}
+      <div className="glass-panel overflow-hidden">
+        <div className="p-6 pb-0">
+          <h3 className="text-lg font-semibold text-foreground mb-4">Compact Data Table</h3>
+        </div>
+        
+        <div className="overflow-x-auto">
+          <table className="w-full">
+            <thead className="bg-muted/30">
+              <tr>
+                <th className="px-4 py-2 text-left text-xs font-medium text-muted-foreground uppercase">Task</th>
+                <th className="px-4 py-2 text-left text-xs font-medium text-muted-foreground uppercase">Priority</th>
+                <th className="px-4 py-2 text-left text-xs font-medium text-muted-foreground uppercase">Status</th>
+                <th className="px-4 py-2 text-left text-xs font-medium text-muted-foreground uppercase">Due Date</th>
+              </tr>
+            </thead>
+            <tbody className="text-sm">
+              <tr className="border-b border-border hover:bg-muted/10">
+                <td className="px-4 py-2">Database migration</td>
+                <td className="px-4 py-2"><span className="badge-error">High</span></td>
+                <td className="px-4 py-2"><span className="badge-processing">In Progress</span></td>
+                <td className="px-4 py-2 text-muted-foreground">Dec 15, 2024</td>
+              </tr>
+              <tr className="border-b border-border hover:bg-muted/10">
+                <td className="px-4 py-2">API documentation</td>
+                <td className="px-4 py-2"><span className="badge-warning">Medium</span></td>
+                <td className="px-4 py-2"><span className="badge-default">Pending</span></td>
+                <td className="px-4 py-2 text-muted-foreground">Dec 20, 2024</td>
+              </tr>
+              <tr className="border-b border-border hover:bg-muted/10">
+                <td className="px-4 py-2">Security audit</td>
+                <td className="px-4 py-2"><span className="badge-success">Low</span></td>
+                <td className="px-4 py-2"><span className="badge-success">Complete</span></td>
+                <td className="px-4 py-2 text-muted-foreground">Dec 10, 2024</td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+
+      {/* Table with Mixed Content */}
+      <div className="p-6 glass-panel">
+        <h3 className="text-lg font-semibold text-foreground mb-4">Table Elements Showcase</h3>
+        <p className="text-sm text-muted-foreground mb-4">
+          Comprehensive table demonstrating inline badges, actions, selection, sorting, and pagination controls.
+        </p>
+        
+        <div className="space-y-4">
+          <div className="flex items-center gap-3">
+            <h4 className="text-sm font-medium text-foreground">Inline Status Badges:</h4>
+            <span className="badge-online">Online</span>
+            <span className="badge-offline">Offline</span>
+            <span className="badge-processing">Processing</span>
+            <span className="badge-error">Error</span>
+            <span className="badge-warning">Warning</span>
+            <span className="badge-success">Success</span>
+          </div>
+          
+          <div className="flex items-center gap-3">
+            <h4 className="text-sm font-medium text-foreground">Inline Actions:</h4>
+            <button className="text-primary hover:text-primary/80 text-sm transition-colors">Edit</button>
+            <button className="text-muted-foreground hover:text-foreground text-sm transition-colors">View</button>
+            <button className="text-destructive hover:text-destructive/80 text-sm transition-colors">Delete</button>
+          </div>
+          
+          <div className="flex items-center gap-3">
+            <h4 className="text-sm font-medium text-foreground">Table Controls:</h4>
+            <input type="checkbox" className="rounded border-border bg-input" />
+            <span className="text-xs text-muted-foreground">Select All</span>
+            <button className="text-xs text-muted-foreground hover:text-foreground transition-colors">↑↓ Sort</button>
+            <button className="text-xs text-muted-foreground hover:text-foreground transition-colors">Filter</button>
+          </div>
         </div>
       </div>
     </section>

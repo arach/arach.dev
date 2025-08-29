@@ -159,7 +159,7 @@
   }
   
   .badge-error {
-    @apply badge bg-red-500/10 text-red-400 border-red-500/30 hover:bg-red-500/15;
+    @apply badge bg-red-500/15 text-red-400 border-red-500/30 hover:bg-red-500/20;
   }
   
   .badge-failed,
@@ -194,6 +194,20 @@
   
   .badge-outline {
     @apply badge bg-white/5 text-foreground border-white/20 hover:bg-white/10 hover:border-white/30 hover:shadow-lg;
+  }
+
+  /* Label System - Inspired by Peal */
+  .label-default {
+    @apply text-sm font-medium text-foreground block mb-2;
+  }
+  
+  .label-required {
+    @apply text-sm font-medium text-foreground block mb-2;
+    @apply after:content-["*"] after:ml-0.5 after:text-destructive;
+  }
+  
+  .label-small {
+    @apply text-xs font-medium text-muted-foreground uppercase tracking-wider block mb-2;
   }
 
   /* Enhanced Input System - Glass + Peal Best Practices */
@@ -316,6 +330,44 @@
   
   .card-dark {
     @apply backdrop-blur-sm bg-gray-900/80 border border-gray-800/50 shadow-lg shadow-black/25;
+  }
+
+  /* Table System */
+  .table {
+    @apply w-full;
+  }
+
+  .table thead {
+    @apply border-b border-border bg-muted/30;
+  }
+
+  .table th {
+    @apply px-6 py-3 text-left text-xs font-medium text-muted-foreground uppercase tracking-wider;
+  }
+
+  .table tbody {
+    @apply divide-y divide-border;
+  }
+
+  .table td {
+    @apply px-6 py-4 whitespace-nowrap text-sm;
+  }
+
+  .table tr {
+    @apply hover:bg-muted/20 transition-colors;
+  }
+
+  /* Table variants */
+  .table-compact th {
+    @apply px-4 py-2;
+  }
+
+  .table-compact td {
+    @apply px-4 py-2;
+  }
+
+  .table-striped tbody tr:nth-child(even) {
+    @apply bg-muted/10;
   }
 }
 
