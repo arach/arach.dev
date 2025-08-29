@@ -780,7 +780,7 @@ export default function HomePage({ projects }: { projects: Project[] }) {
                   <span className="text-xs text-gray-500">({projects.length})</span>
                 </div>
                 <div className="flex items-center gap-1">
-                  <div className="block sm:hidden">
+                  <div className="mr-2">
                     <GitHubContributions username="arach" />
                   </div>
                   <Tooltip>

@@ -21,6 +21,7 @@ import {
 import Link from "next/link"
 import CurrentMonthInsights from "./CurrentMonthInsights"
 import type { ContributionDay, GitHubStats, MonthlyStats } from "@/types/github"
+import { useGitHub } from "@/lib/github-context"
 
 // Keep only the interfaces not in types/github.ts
 interface GitHubRepo {
@@ -48,13 +49,9 @@ interface Streak {
 }
 
 export default function GitHubActivityPage({ username = "arach" }: { username?: string }) {
-  const [contributions, setContributions] = useState<ContributionDay[]>([])
-  const [stats, setStats] = useState<GitHubStats | null>(null)
+  const { contributions, stats, loading, error, dataSource, refetch } = useGitHub()
   const [monthlyStats, setMonthlyStats] = useState<MonthlyStats[]>([])
   const [streaks, setStreaks] = useState<Streak[]>([])
-  const [loading, setLoading] = useState(false)
-  const [error, setError] = useState<string | null>(null)
-  const [dataSource, setDataSource] = useState<string>("loading")
   const [selectedView, setSelectedView] = useState<"overview" | "calendar" | "streaks">("overview")
   const [repos, setRepos] = useState<GitHubRepo[]>([])
   
@@ -103,47 +100,16 @@ export default function GitHubActivityPage({ username = "arach" }: { username?: 
     }
   }, [repos])
 
-  const fetchGitHubData = useCallback(async () => {
-    try {
-      setError(null)
-      setLoading(true)
-
-      const [contributionsResponse, reposResponse] = await Promise.all([
-        fetch(`/api/github/contributions?username=${username}`),
-        fetch(`/api/github/repos?username=${username}`),
-      ])
-
-      if (contributionsResponse.ok) {
-        const contributionsData = await contributionsResponse.json()
-        setContributions(contributionsData.contributions || [])
-        setDataSource(contributionsData.source)
-
-        const calculatedStats = calculateStats(contributionsData.contributions || [])
-        setStats(calculatedStats)
-
-        const calculatedStreaks = calculateStreaks(contributionsData.contributions || [])
-        setStreaks(calculatedStreaks)
-
-        const monthlyStatsData = calculateMonthlyStats(contributionsData.contributions)
-        setMonthlyStats(monthlyStatsData)
-      }
-
-      if (reposResponse.ok) {
-        const reposData = await reposResponse.json()
-        setRepos(reposData.repos || [])
-      }
-
-      setLoading(false)
-    } catch (err) {
-      const errorMessage = err instanceof Error ? err.message : "An error occurred while fetching GitHub data"
-      setError(errorMessage)
-      setLoading(false)
-    }
-  }, [username, calculateStats])
-
+  // Use shared GitHub data from context
   useEffect(() => {
-    fetchGitHubData()
-  }, [username, fetchGitHubData])
+    if (contributions.length > 0) {
+      const calculatedStreaks = calculateStreaks(contributions)
+      setStreaks(calculatedStreaks)
+      
+      const monthlyStatsData = calculateMonthlyStats(contributions)
+      setMonthlyStats(monthlyStatsData)
+    }
+  }, [contributions])
 
   const calculateStreaks = (contributions: ContributionDay[]): Streak[] => {
     const sortedContributions = [...contributions].sort(
@@ -459,7 +425,7 @@ export default function GitHubActivityPage({ username = "arach" }: { username?: 
             >
               <AlertCircle className="w-12 h-12 text-red-500 mx-auto mb-4" />
               <p className="text-red-600 mb-4">Failed to load GitHub data</p>
-              <Button onClick={fetchGitHubData} variant="outline">
+                              <Button onClick={refetch} variant="outline">
                 Retry
               </Button>
             </motion.div>

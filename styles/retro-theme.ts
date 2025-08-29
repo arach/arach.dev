@@ -1,9 +1,6 @@
 // Retro Theme - 80s inspired with warm CRT glow
-import type { Theme } from './terminal-theme'
-import { createTheme, registerTheme } from './theme-registry'
-
-export const retroTheme: Theme = createTheme({
-  name: 'Terminal',
+export const retroTheme = {
+  name: 'Retro',
   description: '80s CRT monitor aesthetic with amber and green phosphor glow',
   
   colors: {
@@ -77,5 +74,4 @@ export const retroTheme: Theme = createTheme({
     scanline: 'relative after:absolute after:inset-0 after:bg-gradient-to-b after:from-transparent after:via-amber-500/20 after:to-transparent after:animate-scan after:pointer-events-none',
     grid: 'bg-[linear-gradient(rgba(255,176,0,.05)_1px,transparent_1px),linear-gradient(90deg,rgba(255,176,0,.05)_1px,transparent_1px)] bg-[size:40px_40px]',
   }
-})
-
+}

@@ -1,213 +1,28 @@
 "use client"
 
-import { useState, useEffect, useRef, memo, useCallback } from "react"
+import { useState, useRef, memo } from "react"
 import { Button } from "@/components/ui/button"
 import { Github, AlertCircle, RefreshCw, TrendingUp, Zap } from "lucide-react"
-import type { ContributionDay, GitHubStats, GitHubContributionsProps } from "@/types/github"
+import type { GitHubContributionsProps, ContributionDay } from "@/types/github"
 import { useTheme } from "@/lib/theme-context"
+import { useGitHub } from "@/lib/github-context"
 
 const GitHubContributions = memo(function GitHubContributions({
   username = "arach",
   showPrivateRepos = false,
 }: GitHubContributionsProps) {
-  const [contributions, setContributions] = useState<ContributionDay[]>([])
-  const [stats, setStats] = useState<GitHubStats | null>(null)
-  const [loading, setLoading] = useState(false) // Start with loading false to not block render
-  const [error, setError] = useState<string | null>(null)
-  const [dataSource, setDataSource] = useState<string>("loading")
-  const [hasData, setHasData] = useState(false) // Track if we have any data
-  const [isInitialized, setIsInitialized] = useState(false) // Track if we've attempted to load
-  const [cacheInfo, setCacheInfo] = useState<{
-    status: "loading" | "cache-hit" | "cache-miss" | "error"
-    age?: number
-    source?: string
-    timestamp?: string
-  }>({ status: "loading" })
+  const { contributions, stats, loading, error, dataSource, refetch, isInitialized } = useGitHub()
   const [showPreview, setShowPreview] = useState(false)
   const previewTimeoutRef = useRef<NodeJS.Timeout | null>(null)
   const buttonRef = useRef<HTMLDivElement>(null)
   const previewRef = useRef<HTMLDivElement>(null)
   const { currentTheme: theme } = useTheme()
 
-  const fetchGitHubData = useCallback(async () => {
-    // Only run on client side
-    if (typeof window === 'undefined') {
-      console.log('[Component] Skipping fetch - not on client')
-      return
-    }
-    
-    // Don't block initial render
-    if (!isInitialized) {
-      setIsInitialized(true)
-    }
-
-    const startTime = Date.now()
-
-    try {
-      console.log(`[Component] 🚀 Starting fetch for ${username} at ${new Date().toISOString()}`)
-      setCacheInfo({ status: "loading" })
-      setError(null)
-      // Only show loading if we don't have data yet
-      if (!hasData) {
-        setLoading(true)
-      }
-
-      console.log(`[Component] Fetching from: /api/github/contributions?username=${username}`)
-      const contributionsResponse = await fetch(`/api/github/contributions?username=${username}`, {
-        method: "GET",
-        headers: {
-          Accept: "application/json",
-          "Content-Type": "application/json",
-        },
-      })
-      console.log(`[Component] Response status: ${contributionsResponse.status}`)
-
-      if (contributionsResponse.ok) {
-        const contributionsData = await contributionsResponse.json()
-        const fetchTime = Date.now() - startTime
-
-        // Enhanced cache status tracking
-        if (contributionsData.cached || contributionsData.source === "cache-stale") {
-          console.log(`[Component] 💾 CACHE HIT for ${username} (${fetchTime}ms)`, {
-            source: contributionsData.source,
-            age: contributionsData._cache?.age || contributionsData.cacheAge,
-            hitCount: contributionsData._cache?.hitCount,
-            message: contributionsData.message,
-          })
-
-          setCacheInfo({
-            status: "cache-hit",
-            age: contributionsData._cache?.age || contributionsData.cacheAge,
-            source: contributionsData.source,
-            timestamp: new Date().toISOString(),
-          })
-        } else {
-          console.log(`[Component] 🌐 CACHE MISS for ${username} (${fetchTime}ms)`, {
-            source: contributionsData.source,
-            message: contributionsData.message,
-          })
-
-          setCacheInfo({
-            status: "cache-miss",
-            source: contributionsData.source,
-            timestamp: new Date().toISOString(),
-          })
-        }
-
-        setContributions(contributionsData.contributions || [])
-        setDataSource(contributionsData.source)
-
-        // Calculate stats from contributions only (no need for user/repo data)
-        const calculatedStats = calculateStats(contributionsData.contributions || [])
-        setStats(calculatedStats)
-        setHasData(true)
-        setLoading(false)
-        return
-      }
-
-      // If response is not ok, handle error
-      setLoading(false)
-      setCacheInfo({ status: "error" })
-
-      if (contributionsResponse.status === 404) {
-        console.warn(`[Component] 404 - API endpoint not found. This may be a routing issue.`)
-        // Don't throw for 404s during development
-        return
-      }
-
-      let errorMessage = `API returned ${contributionsResponse.status}: ${contributionsResponse.statusText}`
-      console.error(`[Component] API response not ok:`, {
-        status: contributionsResponse.status,
-        statusText: contributionsResponse.statusText,
-        url: `/api/github/contributions?username=${username}`
-      })
-
-      throw new Error(errorMessage)
-    } catch (err) {
-      setCacheInfo({ status: "error" })
-      console.error("[Component] Error in fetchGitHubData:", err)
-
-      const errorMessage = err instanceof Error ? err.message : "An error occurred while fetching GitHub data"
-      setError(errorMessage)
-      setLoading(false)
-
-      // Don't show anything if we can't get data
-      setContributions([])
-      setStats(null)
-      setHasData(false)
-      setDataSource("error")
-    }
-  }, [username, hasData, isInitialized])
-
-  useEffect(() => {
-    // Prevent duplicate fetches with a flag
-    let isMounted = true;
-    const fetchController = new AbortController();
-    
-    // Non-blocking load - fetch in background after initial paint
-    const timeoutId = setTimeout(() => {
-      if (isMounted) {
-        fetchGitHubData()
-      }
-    }, 500) // Increased delay to prioritize initial content
-    
-    return () => {
-      isMounted = false;
-      clearTimeout(timeoutId);
-      fetchController.abort();
-      if (previewTimeoutRef.current) {
-        clearTimeout(previewTimeoutRef.current)
-      }
-    }
-  }, [username, showPrivateRepos, fetchGitHubData])
+  // Remove the old fetch logic - now handled by context
 
 
 
-  const calculateStats = (contributions: ContributionDay[]): GitHubStats => {
-    const threeMonthContributions = contributions.reduce((sum, day) => sum + day.count, 0)
-    const totalForks = 0 // We're not fetching repo data anymore
-
-    // Calculate streaks for the 3-month period
-    let currentStreak = 0
-    let longestStreak = 0
-    let tempStreak = 0
-    let longestTempStreak = 0
-
-    // Sort contributions by date (oldest first)
-    const sortedContributions = [...contributions].sort(
-      (a, b) => new Date(a.date).getTime() - new Date(b.date).getTime(),
-    )
-
-    // Calculate current streak (from most recent day backwards)
-    const reversedContributions = [...sortedContributions].reverse()
-    for (const day of reversedContributions) {
-      if (day.count > 0) {
-        currentStreak++
-      } else {
-        break
-      }
-    }
-
-    // Calculate longest streak in the 3-month period
-    for (const day of sortedContributions) {
-      if (day.count > 0) {
-        tempStreak++
-        longestTempStreak = Math.max(longestTempStreak, tempStreak)
-      } else {
-        tempStreak = 0
-      }
-    }
-    longestStreak = longestTempStreak
-
-    return {
-      totalCommits: threeMonthContributions,
-      totalForks,
-      currentStreak,
-      longestStreak,
-      totalContributions: threeMonthContributions,
-      threeMonthContributions,
-    }
-  }
+  // Stats calculation now handled by context
 
   const getContributionColor = (level: number) => {
     // Using an orange gradient to match the main activity page
@@ -296,7 +111,7 @@ const GitHubContributions = memo(function GitHubContributions({
   const sourceInfo = getDataSourceInfo()
 
   // Only show button when we have data
-  if (!hasData && !loading) {
+  if (!contributions.length && !loading) {
     return null // Graceful degradation - don't show anything if no data
   }
 
@@ -386,7 +201,7 @@ const GitHubContributions = memo(function GitHubContributions({
               <div className="text-center py-4">
                 <AlertCircle className="w-8 h-8 text-red-500 mx-auto mb-2" />
                 <p className="text-red-600 text-sm mb-2">Failed to load GitHub data</p>
-                <Button onClick={fetchGitHubData} variant="outline" size="sm">
+                <Button onClick={refetch} variant="outline" size="sm">
                   <RefreshCw className="w-3 h-3 mr-2" />
                   Retry
                 </Button>

@@ -1,10 +1,8 @@
 // Minimal theme - Clean, modern, almost invisible
 // Focus on content with subtle boundaries
 
-import type { Theme } from './terminal-theme'
-
-export const minimalTheme: Theme = {
-  name: 'Terminal',
+export const minimalTheme = {
+  name: 'Minimal',
   description: 'Clean and modern with almost invisible UI elements',
   
   colors: {

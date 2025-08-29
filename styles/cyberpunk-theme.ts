@@ -1,10 +1,8 @@
 // Cyberpunk theme - Neon-soaked future aesthetic
 // High contrast with vibrant accent colors and tech-noir vibes
 
-import type { Theme } from './terminal-theme'
-
-export const cyberpunkTheme: Theme = {
-  name: 'Terminal',
+export const cyberpunkTheme = {
+  name: 'Cyberpunk',
   description: 'Neon-soaked future aesthetic with high contrast and vibrant accents',
   
   colors: {

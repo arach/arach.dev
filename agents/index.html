@@ -9,23 +9,57 @@
 </head>
 <body>
   <div id="app">
-    <header>
-      <h1>Agent Registry</h1>
-      <p>Specialized AI agents for development automation</p>
-    </header>
-    
-    <nav id="nav-menu">
-      <a href="/">Overview</a>
-      <a href="/agents.html">All Agents</a>
-      <a href="/api/agents">API</a>
-    </nav>
+    <div class="terminal-window">
+      <div class="terminal-header">
+        <div class="terminal-dots">
+          <div class="terminal-dot red"></div>
+          <div class="terminal-dot yellow"></div>
+          <div class="terminal-dot green"></div>
+        </div>
+        <div class="terminal-title">agents.arach.dev</div>
+      </div>
+      
+      <header>
+        <div class="header-content">
+          <span class="terminal-prompt">arach@agents:~$</span>
+          <span class="command">cat registry.txt</span>
+        </div>
+        <div class="ascii-art">
+╔═══════════════════════════════════════════════════════╗
+│  █████╗  ██████╗ ███████╗███╗   ██╗████████╗███████╗  │
+│ ██╔══██╗██╔════╝ ██╔════╝████╗  ██║╚══██╔══╝██╔════╝  │
+│ ███████║██║  ███╗█████╗  ██╔██╗ ██║   ██║   ███████╗  │
+│ ██╔══██║██║   ██║██╔══╝  ██║╚██╗██║   ██║   ╚════██║  │
+│ ██║  ██║╚██████╔╝███████╗██║ ╚████║   ██║   ███████║  │
+│ ╚═╝  ╚═╝ ╚═════╝ ╚══════╝╚═╝  ╚═══╝   ╚═╝   ╚══════╝  │
+╚═══════════════════════════════════════════════════════╝</div>
+        <h1>AGENT REGISTRY</h1>
+        <p>Specialized AI agents for development automation</p>
+        <p>Status: <span style="color: var(--terminal-green);">ONLINE</span> • Agents: Loading... • Updated: 2024</p>
+      </header>
+      
+      <nav id="nav-menu">
+        <div class="nav-content">
+          <span class="nav-prompt">arach@agents:~$</span>
+          <a href="/">overview</a>
+          <a href="/agents.html">list-all</a>
+          <a href="/api/agents">api-docs</a>
+        </div>
+      </nav>
 
-    <main id="content">
-      <!-- Content will be loaded dynamically -->
-    </main>
+      <main id="content">
+        <div class="terminal-content">
+          <!-- Content will be loaded dynamically -->
+        </div>
+      </main>
+    </div>
 
     <footer>
-      <p>&copy; 2024 Arach.dev - <a href="https://arach.dev">Main Site</a></p>
+      <div class="footer-content">
+        <span class="footer-prompt">arach@agents:~$</span>
+        <span>&copy; 2024 Arach.dev • <a href="https://arach.dev">Main Site</a> • <a href="https://github.com/arach">GitHub</a></span>
+        <span class="cursor">_</span>
+      </div>
     </footer>
   </div>
   
