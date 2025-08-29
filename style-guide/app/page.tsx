@@ -111,17 +111,22 @@ function useElementEnhancer(onElementSelect?: (element: any) => void) {
 
         // Add visual enhancements
         htmlElement.style.cursor = 'pointer'
-        htmlElement.classList.add('group', 'relative', 'transition-all', 'duration-300')
+        htmlElement.classList.add('group', 'relative')
         
-        // Add hover effects
+        // Add hover effects (only if UI animations are enabled)
         const hoverEnhancement = () => {
-          htmlElement.style.transform = 'scale(1.02)'
-          htmlElement.style.boxShadow = '0 8px 25px -8px rgba(0,0,0,0.2)'
+          const animationsEnabled = document.documentElement.getAttribute('data-ui-animations') === 'true'
+          if (animationsEnabled) {
+            htmlElement.style.transform = 'scale(1.02)'
+            htmlElement.style.boxShadow = '0 8px 25px -8px rgba(0,0,0,0.2)'
+            htmlElement.style.transition = 'all 300ms'
+          }
         }
         
         const hoverReset = () => {
           htmlElement.style.transform = 'scale(1)'
           htmlElement.style.boxShadow = 'none'
+          htmlElement.style.transition = ''
         }
 
         // Attach event listeners
@@ -163,6 +168,14 @@ export default function StyleGuidePage() {
   const [showPinnedPanel, setShowPinnedPanel] = useState(false)
   const [showLeftSidebar, setShowLeftSidebar] = useState(true)
   const [showRightSidebar, setShowRightSidebar] = useState(true)
+  const [uiAnimations, setUiAnimations] = useState(() => {
+    // Load preference from localStorage
+    if (typeof window !== 'undefined') {
+      const saved = localStorage.getItem('ui-animations')
+      return saved !== null ? saved === 'true' : true
+    }
+    return true
+  })
 
   // Sync with URL params
   useEffect(() => {
@@ -194,6 +207,13 @@ export default function StyleGuidePage() {
   useEffect(() => {
     document.body.className = currentThemeClass
   }, [currentThemeClass])
+
+  // Save UI animations preference
+  useEffect(() => {
+    localStorage.setItem('ui-animations', String(uiAnimations))
+    // Apply data attribute to control CSS
+    document.documentElement.setAttribute('data-ui-animations', String(uiAnimations))
+  }, [uiAnimations])
 
   // Handle scroll detection for header sizing
   useEffect(() => {
@@ -335,17 +355,17 @@ export default function StyleGuidePage() {
   return (
     <main className="min-h-screen bg-background text-foreground">
       {/* Header */}
-      <header className={`border-b border-border bg-card/80 backdrop-blur-md sticky top-0 z-30 transition-all duration-300 ${
+      <header className={`border-b border-border bg-card/80 backdrop-blur-md sticky top-0 z-30 ${
         isScrolled ? 'py-2 shadow-sm' : 'py-4'
-      }`}>
+      } ${uiAnimations ? 'transition-all duration-300' : ''}`}>
         <div className="max-w-7xl mx-auto px-6">
           <div className="flex items-center justify-between">
-            <div className={`transition-all duration-300 ${isScrolled ? 'scale-90' : ''}`}>
-              <h1 className={`font-bold text-foreground transition-all duration-300 ${
+            <div className={`${uiAnimations ? 'transition-all duration-300' : ''} ${isScrolled ? 'scale-90' : ''}`}>
+              <h1 className={`font-bold text-foreground ${
                 isScrolled ? 'text-lg' : 'text-2xl'
-              }`}>Style Guide</h1>
+              } ${uiAnimations ? 'transition-all duration-300' : ''}`}>Style Guide</h1>
               {!isScrolled && (
-                <p className="text-sm text-muted-foreground mt-1 transition-opacity duration-300">
+                <p className={`text-sm text-muted-foreground mt-1 ${uiAnimations ? 'transition-opacity duration-300' : ''}`}>
                   Interactive design system showcase
                 </p>
               )}
@@ -353,6 +373,27 @@ export default function StyleGuidePage() {
             
             {/* Actions */}
             <div className="flex items-center gap-4">
+              {/* UI Animations Toggle */}
+              <button
+                onClick={() => setUiAnimations(!uiAnimations)}
+                className={`btn-ghost btn-sm flex items-center gap-2`}
+                title={uiAnimations ? 'Disable UI Chrome animations' : 'Enable UI Chrome animations'}
+              >
+                <svg
+                  width="16"
+                  height="16"
+                  viewBox="0 0 24 24"
+                  fill="none"
+                  stroke="currentColor"
+                  strokeWidth="2"
+                  className={uiAnimations ? '' : 'opacity-50'}
+                >
+                  <path d="M12 2L2 7v10c0 5.55 3.84 10.74 9 12 5.16-1.26 9-6.45 9-12V7l-10-5z"/>
+                  {uiAnimations && <path d="M9 12l2 2 4-4" strokeLinecap="round" strokeLinejoin="round"/>}
+                </svg>
+                <span className="text-xs">{uiAnimations ? 'UI FX On' : 'UI FX Off'}</span>
+              </button>
+
               {/* Pinned Styles Button */}
               <button
                 onClick={() => setShowPinnedPanel(!showPinnedPanel)}
@@ -392,7 +433,7 @@ export default function StyleGuidePage() {
 
       <div className="max-w-full mx-auto flex">
         {/* Sidebar Navigation */}
-        <nav className={`${showLeftSidebar ? 'w-64' : 'w-12'} h-[calc(100vh-theme(spacing.16))] border-r border-white/10 bg-card/20 backdrop-blur-md sticky top-16 overflow-hidden transition-all duration-200 shadow-xl shadow-black/10`}>
+        <nav className={`${showLeftSidebar ? 'w-64' : 'w-12'} h-[calc(100vh-theme(spacing.16))] border-r border-white/10 bg-card/20 backdrop-blur-md sticky top-16 overflow-hidden shadow-xl shadow-black/10 ${uiAnimations ? 'transition-all duration-200' : ''}`}>
           {showLeftSidebar ? (
             <div className="p-6">
               <div className="flex items-center justify-between mb-4">
@@ -521,7 +562,7 @@ export default function StyleGuidePage() {
                   {showPinnedPanel && pinnedStyles.length > 0 && (
                     <button
                       onClick={clearAllPinned}
-                      className="text-xs text-destructive hover:text-destructive/80 transition-colors px-2 py-1 rounded hover:bg-destructive/10"
+                      className={`text-xs text-destructive hover:text-destructive/80 px-2 py-1 rounded hover:bg-destructive/10 ${uiAnimations ? 'transition-colors' : ''}`}
                     >
                       Clear All
                     </button>

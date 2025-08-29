@@ -3,6 +3,9 @@
 @tailwind utilities;
 
 @layer components {
+  /* UI Chrome Animation Control
+     Component design transitions (buttons, inputs, etc.) are always enabled
+     UI chrome transitions (navigation, panels, etc.) are controlled by data-ui-animations attribute */
   /* Premium Button System - Enhanced Depth & Micro-interactions */
   .btn {
     @apply relative inline-flex items-center justify-center whitespace-nowrap font-mono text-xs uppercase tracking-wider;
