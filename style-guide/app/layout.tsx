@@ -1,5 +1,18 @@
 import type { Metadata } from 'next'
 import './globals.css'
+import { JetBrains_Mono, Manrope } from 'next/font/google'
+
+const manrope = Manrope({ 
+  subsets: ['latin'],
+  variable: '--font-manrope',
+  display: 'swap',
+})
+
+const jetbrainsMono = JetBrains_Mono({ 
+  subsets: ['latin'],
+  variable: '--font-jetbrains-mono',
+  display: 'swap',
+})
 
 export const metadata: Metadata = {
   title: 'Style Guide',
@@ -12,8 +25,8 @@ export default function RootLayout({
   children: React.ReactNode
 }) {
   return (
-    <html lang="en">
-      <body className="bg-gray-950 text-white antialiased">
+    <html lang="en" className={`${manrope.variable} ${jetbrainsMono.variable}`}>
+      <body className="font-sans antialiased">
         {children}
       </body>
     </html>

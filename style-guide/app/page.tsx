@@ -1,6 +1,7 @@
 'use client'
 
-import { useState, useEffect } from 'react'
+import React, { useState, useEffect, useRef } from 'react'
+import { useSearchParams, useRouter } from 'next/navigation'
 
 const themes = {
   terminal: 'theme-terminal',
@@ -11,21 +12,207 @@ const themes = {
 
 type ThemeName = keyof typeof themes
 
+// Centralized element enhancement system
+function useElementEnhancer(onElementSelect?: (element: any) => void) {
+  const containerRef = useRef<HTMLDivElement>(null)
+
+  useEffect(() => {
+    if (!containerRef.current || !onElementSelect) return
+
+    const container = containerRef.current
+    
+    // Element selectors and their metadata extractors
+    const elementTargets = [
+      {
+        selector: '[data-style-element="typography"]',
+        extractor: (el: HTMLElement) => ({
+          name: el.getAttribute('data-element-name') || 'Typography Element',
+          description: el.getAttribute('data-description') || 'Typography element',
+          classes: el.getAttribute('data-classes') || el.className,
+          type: 'typography',
+          variant: el.getAttribute('data-variant') || 'default',
+          usage: el.getAttribute('data-usage') || `<${el.tagName.toLowerCase()} className="${el.className}">${el.textContent}</${el.tagName.toLowerCase()}>`
+        })
+      },
+      {
+        selector: '[data-style-element="color"]',
+        extractor: (el: HTMLElement) => ({
+          name: el.getAttribute('data-element-name') || 'Color Element',
+          description: el.getAttribute('data-description') || 'Color swatch',
+          classes: el.getAttribute('data-classes') || el.className,
+          cssVar: el.getAttribute('data-css-var') || '',
+          type: 'color',
+          variant: el.getAttribute('data-variant') || 'default',
+          usage: el.getAttribute('data-usage') || `<div className="${el.getAttribute('data-classes')}">Content</div>`
+        })
+      },
+      {
+        selector: '[data-style-element="button"]',
+        extractor: (el: HTMLElement) => ({
+          name: el.getAttribute('data-element-name') || 'Button Element',
+          description: el.getAttribute('data-description') || 'Button component',
+          classes: el.getAttribute('data-classes') || el.className,
+          type: 'button',
+          variant: el.getAttribute('data-variant') || 'default',
+          usage: el.getAttribute('data-usage') || `<button className="${el.getAttribute('data-classes')}">${el.textContent}</button>`
+        })
+      },
+      {
+        selector: '[data-style-element="input"]',
+        extractor: (el: HTMLElement) => ({
+          name: el.getAttribute('data-element-name') || 'Input Element',
+          description: el.getAttribute('data-description') || 'Form input',
+          classes: el.getAttribute('data-classes') || '',
+          labelClasses: el.getAttribute('data-label-classes') || '',
+          type: 'input',
+          variant: el.getAttribute('data-variant') || 'default',
+          usage: el.getAttribute('data-usage') || `<input className="${el.getAttribute('data-classes')}" />`
+        })
+      },
+      {
+        selector: '[data-style-element="card"]',
+        extractor: (el: HTMLElement) => ({
+          name: el.getAttribute('data-element-name') || 'Card Element',
+          description: el.getAttribute('data-description') || 'Card component',
+          classes: el.getAttribute('data-classes') || el.className,
+          type: 'card',
+          variant: el.getAttribute('data-variant') || 'default',
+          usage: el.getAttribute('data-usage') || `<div className="${el.getAttribute('data-classes')}">Card content</div>`
+        })
+      },
+      {
+        selector: '[data-style-element="badge"]',
+        extractor: (el: HTMLElement) => ({
+          name: el.getAttribute('data-element-name') || 'Badge Element',
+          description: el.getAttribute('data-description') || 'Badge component',
+          classes: el.getAttribute('data-classes') || el.className,
+          type: 'badge',
+          variant: el.getAttribute('data-variant') || 'default',
+          usage: el.getAttribute('data-usage') || `<span className="${el.getAttribute('data-classes')}">${el.textContent}</span>`
+        })
+      }
+    ]
+
+    // Attach handlers to all target elements
+    const attachedHandlers: { element: Element; handler: (e: Event) => void }[] = []
+
+    elementTargets.forEach(({ selector, extractor }) => {
+      const elements = container.querySelectorAll(selector)
+      
+      elements.forEach((element) => {
+        const htmlElement = element as HTMLElement
+        
+        // Create click handler
+        const clickHandler = (event: Event) => {
+          event.stopPropagation()
+          const elementData = extractor(htmlElement)
+          onElementSelect(elementData)
+        }
+
+        // Add visual enhancements
+        htmlElement.style.cursor = 'pointer'
+        htmlElement.classList.add('group', 'relative', 'transition-all', 'duration-300')
+        
+        // Add hover effects
+        const hoverEnhancement = () => {
+          htmlElement.style.transform = 'scale(1.02)'
+          htmlElement.style.boxShadow = '0 8px 25px -8px rgba(0,0,0,0.2)'
+        }
+        
+        const hoverReset = () => {
+          htmlElement.style.transform = 'scale(1)'
+          htmlElement.style.boxShadow = 'none'
+        }
+
+        // Attach event listeners
+        htmlElement.addEventListener('click', clickHandler)
+        htmlElement.addEventListener('mouseenter', hoverEnhancement)
+        htmlElement.addEventListener('mouseleave', hoverReset)
+        
+        // Store for cleanup
+        attachedHandlers.push({ element: htmlElement, handler: clickHandler })
+      })
+    })
+
+    // Cleanup function
+    return () => {
+      attachedHandlers.forEach(({ element, handler }) => {
+        element.removeEventListener('click', handler)
+        const htmlElement = element as HTMLElement
+        htmlElement.removeEventListener('mouseenter', () => {})
+        htmlElement.removeEventListener('mouseleave', () => {})
+        htmlElement.style.cursor = ''
+        htmlElement.style.transform = ''
+        htmlElement.style.boxShadow = ''
+      })
+    }
+  }, [onElementSelect])
+
+  return containerRef
+}
+
 export default function StyleGuidePage() {
+  const searchParams = useSearchParams()
+  const router = useRouter()
+  
   const [activeTheme, setActiveTheme] = useState<ThemeName>('terminal')
   const [activeSection, setActiveSection] = useState('typography')
   const [selectedElement, setSelectedElement] = useState<any>(null)
+  const [isScrolled, setIsScrolled] = useState(false)
+  const [pinnedStyles, setPinnedStyles] = useState<any[]>([])
+  const [showPinnedPanel, setShowPinnedPanel] = useState(false)
+  const [showLeftSidebar, setShowLeftSidebar] = useState(true)
+  const [showRightSidebar, setShowRightSidebar] = useState(true)
+
+  // Sync with URL params
+  useEffect(() => {
+    const section = searchParams.get('section')
+    const theme = searchParams.get('theme') as ThemeName
+    
+    if (section) setActiveSection(section)
+    if (theme && themes[theme]) setActiveTheme(theme)
+  }, [searchParams])
+
+  // Update URL when section/theme changes
+  const updateURL = (section?: string, theme?: ThemeName) => {
+    const params = new URLSearchParams(searchParams.toString())
+    if (section) params.set('section', section)
+    if (theme) params.set('theme', theme)
+    router.push(`?${params.toString()}`)
+  }
   
   const currentThemeClass = themes[activeTheme]
+
+  // Use the centralized element enhancer
+  const containerRef = useElementEnhancer((element) => {
+    setSelectedElement(element)
+    setShowPinnedPanel(false)
+    setShowRightSidebar(true) // Auto-expand preview on element click
+  })
 
   // Apply theme to document body
   useEffect(() => {
     document.body.className = currentThemeClass
   }, [currentThemeClass])
 
+  // Handle scroll detection for header sizing
+  useEffect(() => {
+    const handleScroll = () => {
+      setIsScrolled(window.scrollY > 20)
+    }
+
+    window.addEventListener('scroll', handleScroll)
+    return () => window.removeEventListener('scroll', handleScroll)
+  }, [])
+
   // Smart element inspection system
   const handleElementClick = (event: React.MouseEvent) => {
     const target = event.target as HTMLElement
+    
+    // Skip if clicking on typography elements (they handle their own clicks)
+    if (target.getAttribute('title')?.includes('Click to inspect')) {
+      return
+    }
     
     // Skip if clicking on text or non-interactive elements
     if (target.tagName === 'P' || target.tagName === 'H1' || target.tagName === 'H2' || target.tagName === 'H3' || target.tagName === 'SPAN') {
@@ -38,6 +225,8 @@ export default function StyleGuidePage() {
     const elementData = inspectElement(target)
     if (elementData) {
       setSelectedElement(elementData)
+      setShowPinnedPanel(false)
+      setShowRightSidebar(true) // Auto-expand preview on element click
     }
   }
 
@@ -110,6 +299,28 @@ export default function StyleGuidePage() {
     return descriptions[variant] || 'Button component'
   }
 
+  // Pin/unpin functionality
+  const pinStyle = (element: any) => {
+    const elementWithId = { ...element, id: `${element.type}-${Date.now()}` }
+    setPinnedStyles(prev => [...prev, elementWithId])
+  }
+
+  const unpinStyle = (id: string) => {
+    setPinnedStyles(prev => prev.filter(item => item.id !== id))
+  }
+
+  const isStylePinned = (element: any) => {
+    return pinnedStyles.some(pinned => 
+      pinned.type === element?.type && 
+      pinned.variant === element?.variant &&
+      pinned.classes === element?.classes
+    )
+  }
+
+  const clearAllPinned = () => {
+    setPinnedStyles([])
+  }
+
   const sections = [
     { id: 'all', label: 'All' },
     { id: 'typography', label: 'Typography' },
@@ -123,28 +334,56 @@ export default function StyleGuidePage() {
   return (
     <main className="min-h-screen bg-background text-foreground">
       {/* Header */}
-      <header className="border-b border-border bg-card/50 backdrop-blur-sm sticky top-0 z-10">
-        <div className="max-w-7xl mx-auto px-6 py-4">
+      <header className={`border-b border-border bg-card/80 backdrop-blur-md sticky top-0 z-30 transition-all duration-300 ${
+        isScrolled ? 'py-2 shadow-sm' : 'py-4'
+      }`}>
+        <div className="max-w-7xl mx-auto px-6">
           <div className="flex items-center justify-between">
-            <div>
-              <h1 className="text-2xl font-bold text-foreground">Style Guide</h1>
-              <p className="text-sm text-muted-foreground mt-1">Interactive design system showcase</p>
+            <div className={`transition-all duration-300 ${isScrolled ? 'scale-90' : ''}`}>
+              <h1 className={`font-bold text-foreground transition-all duration-300 ${
+                isScrolled ? 'text-lg' : 'text-2xl'
+              }`}>Style Guide</h1>
+              {!isScrolled && (
+                <p className="text-sm text-muted-foreground mt-1 transition-opacity duration-300">
+                  Interactive design system showcase
+                </p>
+              )}
             </div>
             
-            {/* Theme Selector */}
-            <div className="flex items-center gap-3">
-              <label className="text-sm font-medium text-muted-foreground">Theme:</label>
-              <select 
-                value={activeTheme}
-                onChange={(e) => setActiveTheme(e.target.value as ThemeName)}
-                className="bg-input border border-border rounded-md px-3 py-1 text-foreground text-sm focus:outline-none focus:ring-2 focus:ring-ring"
+            {/* Actions */}
+            <div className="flex items-center gap-4">
+              {/* Pinned Styles Button */}
+              <button
+                onClick={() => setShowPinnedPanel(!showPinnedPanel)}
+                className={`relative ${
+                  showPinnedPanel || pinnedStyles.length > 0
+                    ? 'btn-primary btn-sm' 
+                    : 'btn-secondary btn-sm'
+                }`}
               >
-                {Object.keys(themes).map((theme) => (
-                  <option key={theme} value={theme}>
-                    {theme.charAt(0).toUpperCase() + theme.slice(1)}
-                  </option>
-                ))}
-              </select>
+                Pinned
+                {pinnedStyles.length > 0 && (
+                  <span className="absolute -top-1 -right-1 bg-destructive text-destructive-foreground text-xs rounded-full w-5 h-5 flex items-center justify-center">
+                    {pinnedStyles.length}
+                  </span>
+                )}
+              </button>
+
+              {/* Theme Selector */}
+              <div className="flex items-center gap-3">
+                <label className="text-sm font-medium text-muted-foreground">Theme:</label>
+                <select 
+                  value={activeTheme}
+                  onChange={(e) => setActiveTheme(e.target.value as ThemeName)}
+                  className="bg-input border border-border rounded-md px-3 py-1 text-foreground text-sm focus:outline-none focus:ring-2 focus:ring-ring"
+                >
+                  {Object.keys(themes).map((theme) => (
+                    <option key={theme} value={theme}>
+                      {theme.charAt(0).toUpperCase() + theme.slice(1)}
+                    </option>
+                  ))}
+                </select>
+              </div>
             </div>
           </div>
         </div>
@@ -152,33 +391,61 @@ export default function StyleGuidePage() {
 
       <div className="max-w-full mx-auto flex">
         {/* Sidebar Navigation */}
-        <nav className="w-64 min-h-screen border-r border-border bg-card/30">
-          <div className="p-6">
-            <h2 className="text-sm font-semibold text-muted-foreground uppercase tracking-wider mb-4">Sections</h2>
-            <ul className="space-y-2">
-              {sections.map((section) => (
-                <li key={section.id}>
-                  <button
-                    onClick={() => {
-                      setActiveSection(section.id)
-                      setSelectedElement(null)
-                    }}
-                    className={`w-full text-left px-3 py-2 rounded-md text-sm transition-colors ${
-                      activeSection === section.id
-                        ? 'bg-primary/10 text-primary border-l-2 border-primary'
-                        : 'text-muted-foreground hover:text-foreground hover:bg-accent/50'
-                    }`}
-                  >
-                    {section.label}
-                  </button>
-                </li>
-              ))}
-            </ul>
-          </div>
+        <nav className={`${showLeftSidebar ? 'w-64' : 'w-12'} h-[calc(100vh-theme(spacing.16))] border-r border-white/10 bg-card/20 backdrop-blur-md sticky top-16 overflow-hidden transition-all duration-200 shadow-xl shadow-black/10`}>
+          {showLeftSidebar ? (
+            <div className="p-6">
+              <div className="flex items-center justify-between mb-4">
+                <h2 className="text-sm font-semibold text-muted-foreground uppercase tracking-wider">Sections</h2>
+                <button
+                  onClick={() => setShowLeftSidebar(false)}
+                  className="p-1 rounded text-muted-foreground hover:text-foreground hover:bg-accent transition-colors"
+                  title="Collapse sidebar"
+                >
+                  <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+                    <path d="m15 18-6-6 6-6"/>
+                  </svg>
+                </button>
+              </div>
+              <ul className="space-y-2">
+                {sections.map((section) => (
+                  <li key={section.id}>
+                    <button
+                      onClick={() => {
+                        setActiveSection(section.id)
+                        updateURL(section.id)
+                        setSelectedElement(null)
+                      }}
+                      className={`w-full text-left px-3 py-2 rounded-md text-sm transition-colors ${
+                        activeSection === section.id
+                          ? 'bg-primary/10 text-primary border-l-2 border-primary'
+                          : 'text-muted-foreground hover:text-foreground hover:bg-accent/50'
+                      }`}
+                    >
+                      {section.label}
+                    </button>
+                  </li>
+                ))}
+              </ul>
+            </div>
+          ) : (
+            <div className="flex flex-col h-full">
+              <div className="p-3 flex justify-center">
+                <button
+                  onClick={() => setShowLeftSidebar(true)}
+                  className="p-2 rounded text-muted-foreground hover:text-foreground hover:bg-accent transition-colors"
+                  title="Expand navigation sidebar"
+                >
+                  <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+                    <path d="m9 18 6-6-6-6"/>
+                  </svg>
+                </button>
+              </div>
+            </div>
+          )}
         </nav>
 
         {/* Main Content */}
-        <main className={`flex-1 p-8 ${selectedElement ? 'max-w-3xl' : ''}`} onClick={handleElementClick}>
+        <main ref={containerRef} className="flex-1 p-8 transition-all duration-200" onClick={handleElementClick}>
           <div className="max-w-4xl">
             <header className="mb-8">
               <h2 className="text-3xl font-bold text-foreground capitalize">{activeSection}</h2>
@@ -235,72 +502,171 @@ export default function StyleGuidePage() {
           </div>
         </main>
 
-        {/* Right Panel - Style Details */}
-        {selectedElement && (
-          <aside className="w-80 min-h-screen border-l border-border bg-card/30">
-            <div className="p-6">
-              <div className="flex items-center justify-between mb-4">
-                <h2 className="text-sm font-semibold text-muted-foreground uppercase tracking-wider">Style Details</h2>
-                <button
-                  onClick={() => setSelectedElement(null)}
-                  className="text-muted-foreground hover:text-foreground transition-colors"
-                >
-                  ✕
-                </button>
+        {/* Right Panel - Style Details or Pinned Styles */}
+        {(selectedElement || showPinnedPanel) && showRightSidebar && (
+          <aside className="w-96 h-[calc(100vh-4rem)] border-l border-white/10 bg-card/80 backdrop-blur-md sticky top-16 overflow-y-auto transition-all duration-200 shadow-xl shadow-black/20">
+            <div className="p-6 h-full overflow-y-auto">
+              <div className="flex items-center justify-between mb-4 sticky top-0 bg-card/95 backdrop-blur-sm pb-4 border-b border-border">
+                <h2 className="text-sm font-semibold text-muted-foreground uppercase tracking-wider">
+                  {showPinnedPanel ? 'Pinned Styles' : 'Style Details'}
+                </h2>
+                <div className="flex items-center gap-2">
+                  {showPinnedPanel && pinnedStyles.length > 0 && (
+                    <button
+                      onClick={clearAllPinned}
+                      className="text-xs text-destructive hover:text-destructive/80 transition-colors px-2 py-1 rounded hover:bg-destructive/10"
+                    >
+                      Clear All
+                    </button>
+                  )}
+                  <button
+                    onClick={() => setShowRightSidebar(false)}
+                    className="p-1 rounded text-muted-foreground hover:text-foreground hover:bg-accent transition-colors"
+                    title="Collapse sidebar"
+                  >
+                    <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+                      <path d="m9 18 6-6-6-6"/>
+                    </svg>
+                  </button>
+                </div>
               </div>
               
-              <div className="space-y-6">
-                {/* Element Info */}
-                <div>
-                  <h3 className="text-foreground font-medium mb-2">{selectedElement.name}</h3>
-                  <p className="text-sm text-muted-foreground mb-4">{selectedElement.description}</p>
-                </div>
-
-                {/* CSS Classes */}
-                {selectedElement.classes && (
-                  <div>
-                    <h4 className="text-sm font-medium text-muted-foreground mb-2">CSS Classes</h4>
-                    <div className="bg-muted rounded-md p-3 font-mono text-xs text-foreground overflow-x-auto">
-                      <code>{selectedElement.classes}</code>
+              {showPinnedPanel ? (
+                /* Pinned Styles Collection */
+                <div className="space-y-4">
+                  {pinnedStyles.length === 0 ? (
+                    <div className="text-center py-8">
+                      <div className="text-4xl mb-4">📋</div>
+                      <p className="text-muted-foreground text-sm">No styles pinned yet</p>
+                      <p className="text-muted-foreground text-xs mt-2">Click on components to inspect and pin them</p>
                     </div>
-                    <button
-                      onClick={() => navigator.clipboard.writeText(selectedElement.classes)}
-                      className="mt-2 text-xs text-primary hover:text-primary/80 transition-colors"
-                    >
-                      Copy classes
-                    </button>
-                  </div>
-                )}
+                  ) : (
+                    pinnedStyles.map((pinnedStyle) => (
+                      <div key={pinnedStyle.id} className="border border-border rounded-lg p-4 bg-muted/30">
+                        <div className="flex items-start justify-between mb-3">
+                          <div>
+                            <h4 className="text-foreground font-medium text-sm">{pinnedStyle.name}</h4>
+                            <p className="text-xs text-muted-foreground mt-1">{pinnedStyle.description}</p>
+                          </div>
+                          <button
+                            onClick={() => unpinStyle(pinnedStyle.id)}
+                            className="text-muted-foreground hover:text-destructive transition-colors p-1 hover:bg-destructive/10 rounded"
+                          >
+                            ✕
+                          </button>
+                        </div>
+                        
+                        {pinnedStyle.classes && (
+                          <div className="mb-3">
+                            <div className="bg-background rounded p-2 font-mono text-xs text-foreground overflow-x-auto">
+                              <code>{pinnedStyle.classes}</code>
+                            </div>
+                            <button
+                              onClick={() => navigator.clipboard.writeText(pinnedStyle.classes)}
+                              className="mt-1 text-xs text-primary hover:text-primary/80 transition-colors"
+                            >
+                              Copy
+                            </button>
+                          </div>
+                        )}
 
-                {/* Color Info */}
-                {selectedElement.color && (
+                        {pinnedStyle.usage && (
+                          <details className="group">
+                            <summary className="text-xs text-muted-foreground cursor-pointer hover:text-foreground transition-colors">
+                              View Usage
+                            </summary>
+                            <div className="mt-2 glass-card p-3 font-mono text-xs text-foreground">
+                              <pre className="whitespace-pre-wrap break-all leading-relaxed">{pinnedStyle.usage}</pre>
+                            </div>
+                          </details>
+                        )}
+                      </div>
+                    ))
+                  )}
+                </div>
+              ) : selectedElement && (
+                /* Selected Element Details */
+                <div className="space-y-6">
+                  {/* Element Info */}
                   <div>
-                    <h4 className="text-sm font-medium text-muted-foreground mb-2">Color</h4>
-                    <div className="flex items-center gap-3">
-                      <div 
-                        className="w-8 h-8 rounded-md border border-border"
-                        style={{ backgroundColor: selectedElement.color }}
-                      />
-                      <div>
-                        <div className="text-sm text-foreground font-mono">{selectedElement.color}</div>
-                        <div className="text-xs text-muted-foreground">{selectedElement.colorName}</div>
+                    <div className="flex items-start justify-between mb-2">
+                      <h3 className="text-foreground font-medium">{selectedElement.name}</h3>
+                      <button
+                        onClick={() => pinStyle(selectedElement)}
+                        disabled={isStylePinned(selectedElement)}
+                        className={`text-xs px-2 py-1 rounded transition-colors ${
+                          isStylePinned(selectedElement)
+                            ? 'text-muted-foreground bg-muted cursor-not-allowed'
+                            : 'text-primary bg-primary/10 hover:bg-primary/20'
+                        }`}
+                      >
+                        {isStylePinned(selectedElement) ? 'Pinned' : 'Pin'}
+                      </button>
+                    </div>
+                    <p className="text-sm text-muted-foreground mb-4">{selectedElement.description}</p>
+                  </div>
+
+                  {/* CSS Classes */}
+                  {selectedElement.classes && (
+                    <div>
+                      <h4 className="text-sm font-medium text-muted-foreground mb-2">CSS Classes</h4>
+                      <div className="bg-muted rounded-md p-3 font-mono text-xs text-foreground overflow-x-auto">
+                        <code>{selectedElement.classes}</code>
+                      </div>
+                      <button
+                        onClick={() => navigator.clipboard.writeText(selectedElement.classes)}
+                        className="mt-2 text-xs text-primary hover:text-primary/80 transition-colors"
+                      >
+                        Copy classes
+                      </button>
+                    </div>
+                  )}
+
+                  {/* Color Info */}
+                  {selectedElement.color && (
+                    <div>
+                      <h4 className="text-sm font-medium text-muted-foreground mb-2">Color</h4>
+                      <div className="flex items-center gap-3">
+                        <div 
+                          className="w-8 h-8 rounded-md border border-border"
+                          style={{ backgroundColor: selectedElement.color }}
+                        />
+                        <div>
+                          <div className="text-sm text-foreground font-mono">{selectedElement.color}</div>
+                          <div className="text-xs text-muted-foreground">{selectedElement.colorName}</div>
+                        </div>
                       </div>
                     </div>
-                  </div>
-                )}
+                  )}
 
-                {/* Usage Examples */}
-                {selectedElement.usage && (
-                  <div>
-                    <h4 className="text-sm font-medium text-muted-foreground mb-2">Usage</h4>
-                    <div className="bg-muted rounded-md p-3 font-mono text-xs text-muted-foreground">
-                      <pre>{selectedElement.usage}</pre>
+                  {/* Usage Examples */}
+                  {selectedElement.usage && (
+                    <div>
+                      <h4 className="text-sm font-medium text-muted-foreground mb-2">Usage</h4>
+                      <div className="glass-card p-3 font-mono text-xs text-foreground">
+                        <pre className="whitespace-pre-wrap break-all leading-relaxed">{selectedElement.usage}</pre>
+                      </div>
                     </div>
-                  </div>
-                )}
-              </div>
+                  )}
+                </div>
+              )}
             </div>
           </aside>
+        )}
+
+        {/* Right Sidebar Expand Button */}
+        {(selectedElement || showPinnedPanel) && !showRightSidebar && (
+          <div className="sticky top-16 h-[calc(100vh-4rem)] flex items-start pt-6">
+            <button
+              onClick={() => setShowRightSidebar(true)}
+              className="p-2 border-l border-border bg-card/95 text-muted-foreground hover:text-foreground hover:bg-card transition-all duration-200 rounded-l-md"
+              title="Expand details sidebar"
+            >
+              <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+                <path d="m15 18-6-6 6-6"/>
+              </svg>
+            </button>
+          </div>
         )}
       </div>
     </main>
@@ -309,29 +675,133 @@ export default function StyleGuidePage() {
 
 // Typography Section Component
 function TypographySection() {
+  const typographyElements = [
+    {
+      element: 'h1',
+      name: 'Heading 1',
+      classes: 'text-4xl font-bold text-foreground',
+      description: 'Primary page heading - largest and boldest text',
+      usage: '<h1 className="text-4xl font-bold text-foreground">Heading 1</h1>'
+    },
+    {
+      element: 'h2', 
+      name: 'Heading 2',
+      classes: 'text-3xl font-semibold text-foreground',
+      description: 'Section heading - secondary level hierarchy',
+      usage: '<h2 className="text-3xl font-semibold text-foreground">Heading 2</h2>'
+    },
+    {
+      element: 'h3',
+      name: 'Heading 3', 
+      classes: 'text-2xl font-medium text-foreground',
+      description: 'Subsection heading - tertiary level hierarchy',
+      usage: '<h3 className="text-2xl font-medium text-foreground">Heading 3</h3>'
+    },
+    {
+      element: 'h4',
+      name: 'Heading 4',
+      classes: 'text-xl font-medium text-foreground', 
+      description: 'Minor heading - fourth level hierarchy',
+      usage: '<h4 className="text-xl font-medium text-foreground">Heading 4</h4>'
+    },
+    {
+      element: 'p',
+      name: 'Body Text',
+      classes: 'text-base text-foreground leading-relaxed',
+      description: 'Standard paragraph text with optimal readability',
+      usage: '<p className="text-base text-foreground leading-relaxed">Body text</p>'
+    },
+    {
+      element: 'small',
+      name: 'Small Text', 
+      classes: 'text-sm text-muted-foreground leading-relaxed',
+      description: 'Secondary text for captions and metadata',
+      usage: '<p className="text-sm text-muted-foreground leading-relaxed">Small text</p>'
+    },
+    {
+      element: 'code',
+      name: 'Inline Code',
+      classes: 'text-sm font-mono bg-muted px-2 py-1 rounded text-foreground',
+      description: 'Inline code snippets with monospace font',
+      usage: '<code className="text-sm font-mono bg-muted px-2 py-1 rounded text-foreground">code</code>'
+    }
+  ]
+
   return (
     <section className="space-y-6">
       <div className="grid gap-4">
-        <div className="p-6 bg-card/50 rounded-lg border border-border">
+        <div className="p-6 glass-panel">
           <h3 className="text-lg font-semibold text-foreground mb-4">Headings</h3>
           <div className="space-y-3">
-            <h1 className="text-4xl font-bold text-foreground">Heading 1</h1>
-            <h2 className="text-3xl font-semibold text-foreground">Heading 2</h2>
-            <h3 className="text-2xl font-medium text-foreground">Heading 3</h3>
-            <h4 className="text-xl font-medium text-foreground">Heading 4</h4>
+            {typographyElements.slice(0, 4).map((typo) => {
+              const Element = typo.element as keyof React.JSX.IntrinsicElements
+              return (
+                <Element 
+                  key={typo.element}
+                  className={typo.classes}
+                  data-style-element="typography"
+                  data-element-name={typo.name}
+                  data-description={typo.description}
+                  data-classes={typo.classes}
+                  data-variant={typo.element}
+                  data-usage={typo.usage}
+                  title={`${typo.name} - Click to inspect`}
+                >
+                  {typo.name}
+                </Element>
+              )
+            })}
           </div>
         </div>
 
-        <div className="p-6 bg-card/50 rounded-lg border border-border">
+        <div className="p-6 glass-panel">
           <h3 className="text-lg font-semibold text-foreground mb-4">Body Text</h3>
           <div className="space-y-3">
-            <p className="text-base text-foreground leading-relaxed">
-              This is body text. It should be readable and have good contrast against the background.
-            </p>
-            <p className="text-sm text-muted-foreground leading-relaxed">
-              This is small body text for secondary information.
-            </p>
-            <code className="text-sm font-mono bg-muted px-2 py-1 rounded text-foreground">console.log('Hello, world!')</code>
+            {typographyElements.slice(4).map((typo) => {
+              return typo.element === 'p' ? (
+                <p 
+                  key={typo.element}
+                  className={typo.classes}
+                  data-style-element="typography"
+                  data-element-name={typo.name}
+                  data-description={typo.description}
+                  data-classes={typo.classes}
+                  data-variant={typo.element}
+                  data-usage={typo.usage}
+                  title={`${typo.name} - Click to inspect`}
+                >
+                  This is body text. It should be readable and have good contrast against the background.
+                </p>
+              ) : typo.element === 'small' ? (
+                <p 
+                  key={typo.element}
+                  className={typo.classes}
+                  data-style-element="typography"
+                  data-element-name={typo.name}
+                  data-description={typo.description}
+                  data-classes={typo.classes}
+                  data-variant={typo.element}
+                  data-usage={typo.usage}
+                  title={`${typo.name} - Click to inspect`}
+                >
+                  This is small body text for secondary information.
+                </p>
+              ) : (
+                <code 
+                  key={typo.element}
+                  className={typo.classes}
+                  data-style-element="typography"
+                  data-element-name={typo.name}
+                  data-description={typo.description}
+                  data-classes={typo.classes}
+                  data-variant={typo.element}
+                  data-usage={typo.usage}
+                  title={`${typo.name} - Click to inspect`}
+                >
+                  console.log('Hello, world!')
+                </code>
+              )
+            })}
           </div>
         </div>
       </div>
@@ -350,16 +820,30 @@ function ColorsSection() {
     { name: 'Destructive', var: 'destructive', desc: 'Error/danger state color' },
   ]
 
+  const surfaceColors = [
+    { name: 'Background', var: 'background', desc: 'Main background color' },
+    { name: 'Card', var: 'card', desc: 'Card background color' },
+    { name: 'Muted', var: 'muted', desc: 'Muted background color' },
+    { name: 'Accent', var: 'accent', desc: 'Accent background color' },
+  ]
+
   return (
     <section className="space-y-6">
       <div className="grid gap-6">
-        <div>
+        <div className="p-6 glass-panel">
           <h3 className="text-lg font-semibold text-foreground mb-4">Theme Colors</h3>
           <div className="grid grid-cols-2 md:grid-cols-3 gap-4">
             {colorVariables.map((color) => (
-              <div key={color.var} className="group relative">
+              <div key={color.var}>
                 <div 
-                  className={`w-full h-16 rounded-lg cursor-pointer hover:ring-2 hover:ring-ring transition-all bg-${color.var} border border-border`}
+                  className={`w-full h-16 bg-${color.var} border border-border rounded-lg`}
+                  data-style-element="color"
+                  data-element-name={`${color.name} Color`}
+                  data-description={color.desc}
+                  data-classes={`bg-${color.var}`}
+                  data-css-var={`--${color.var}`}
+                  data-variant={color.var}
+                  data-usage={`<div className="bg-${color.var}">Content</div>`}
                   title={`${color.name}: var(--${color.var})`}
                 />
                 <div className="mt-2">
@@ -372,37 +856,28 @@ function ColorsSection() {
           </div>
         </div>
 
-        <div>
+        <div className="p-6 glass-panel">
           <h3 className="text-lg font-semibold text-foreground mb-4">Surface Colors</h3>
           <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
-            <div className="group relative">
-              <div className="w-full h-16 rounded-lg cursor-pointer hover:ring-2 hover:ring-ring transition-all bg-background border border-border" />
-              <div className="mt-2">
-                <div className="font-medium text-foreground text-sm">Background</div>
-                <div className="font-mono text-xs text-muted-foreground">--background</div>
+            {surfaceColors.map((surface) => (
+              <div key={surface.var}>
+                <div 
+                  className={`w-full h-16 bg-${surface.var} border border-border rounded-lg`}
+                  data-style-element="color"
+                  data-element-name={`${surface.name} Color`}
+                  data-description={surface.desc}
+                  data-classes={`bg-${surface.var}`}
+                  data-css-var={`--${surface.var}`}
+                  data-variant={surface.var}
+                  data-usage={`<div className="bg-${surface.var}">Content</div>`}
+                  title={`${surface.name}: var(--${surface.var})`}
+                />
+                <div className="mt-2">
+                  <div className="font-medium text-foreground text-sm">{surface.name}</div>
+                  <div className="font-mono text-xs text-muted-foreground">--{surface.var}</div>
+                </div>
               </div>
-            </div>
-            <div className="group relative">
-              <div className="w-full h-16 rounded-lg cursor-pointer hover:ring-2 hover:ring-ring transition-all bg-card border border-border" />
-              <div className="mt-2">
-                <div className="font-medium text-foreground text-sm">Card</div>
-                <div className="font-mono text-xs text-muted-foreground">--card</div>
-              </div>
-            </div>
-            <div className="group relative">
-              <div className="w-full h-16 rounded-lg cursor-pointer hover:ring-2 hover:ring-ring transition-all bg-muted border border-border" />
-              <div className="mt-2">
-                <div className="font-medium text-foreground text-sm">Muted</div>
-                <div className="font-mono text-xs text-muted-foreground">--muted</div>
-              </div>
-            </div>
-            <div className="group relative">
-              <div className="w-full h-16 rounded-lg cursor-pointer hover:ring-2 hover:ring-ring transition-all bg-accent border border-border" />
-              <div className="mt-2">
-                <div className="font-medium text-foreground text-sm">Accent</div>
-                <div className="font-mono text-xs text-muted-foreground">--accent</div>
-              </div>
-            </div>
+            ))}
           </div>
         </div>
       </div>
@@ -412,27 +887,70 @@ function ColorsSection() {
 
 // Buttons Section Component
 function ButtonsSection() {
+  const buttonVariants = [
+    {
+      name: 'Primary',
+      variant: 'primary',
+      classes: 'btn-primary btn-md',
+      description: 'Main call-to-action button with primary brand color and subtle border'
+    },
+    {
+      name: 'Secondary',
+      variant: 'secondary', 
+      classes: 'btn-secondary btn-md',
+      description: 'Secondary action button with refined styling and border'
+    },
+    {
+      name: 'Ghost',
+      variant: 'ghost',
+      classes: 'btn-ghost btn-md',
+      description: 'Subtle button with hover states and minimal visual weight'
+    },
+    {
+      name: 'Destructive',
+      variant: 'destructive',
+      classes: 'btn-destructive btn-md',
+      description: 'Destructive action button for critical operations with enhanced styling'
+    },
+    {
+      name: 'Success',
+      variant: 'success',
+      classes: 'btn-success btn-md',
+      description: 'Success state button for positive actions with consistent theming'
+    }
+  ]
+
   return (
     <section className="space-y-6">
-      <div className="p-6 bg-card/50 rounded-lg border border-border">
+      <div className="p-6 glass-panel">
         <h3 className="text-lg font-semibold text-foreground mb-4">Button Variants</h3>
         <div className="flex flex-wrap gap-4">
-          <button className="bg-primary text-primary-foreground px-4 py-2 rounded-md font-medium hover:bg-primary/90 transition-colors">Primary</button>
-          <button className="bg-secondary text-secondary-foreground px-4 py-2 rounded-md font-medium hover:bg-secondary/80 transition-colors">Secondary</button>
-          <button className="bg-transparent border border-border text-foreground px-4 py-2 rounded-md font-medium hover:bg-accent hover:text-accent-foreground transition-colors">Ghost</button>
-          <button className="bg-destructive text-destructive-foreground px-4 py-2 rounded-md font-medium hover:bg-destructive/90 transition-colors">Danger</button>
-          <button className="bg-success text-success-foreground px-4 py-2 rounded-md font-medium hover:bg-success/90 transition-colors">Success</button>
+          {buttonVariants.map((btn) => (
+            <button 
+              key={btn.variant}
+              className={btn.classes}
+              data-style-element="button"
+              data-element-name={`${btn.name} Button`}
+              data-description={btn.description}
+              data-classes={btn.classes}
+              data-variant={btn.variant}
+              data-usage={`<button className="${btn.classes}">${btn.name}</button>`}
+              title={`${btn.name} Button - Click to inspect`}
+            >
+              {btn.name}
+            </button>
+          ))}
         </div>
       </div>
     </section>
   )
 }
 
-// Form Elements Section Component
+// Form Elements Section Component (Simplified)
 function InputsSection() {
   return (
     <section className="space-y-6">
-      <div className="p-6 bg-card/50 rounded-lg border border-border">
+      <div className="p-6 glass-panel">
         <h3 className="text-lg font-semibold text-foreground mb-4">Form Elements</h3>
         <div className="space-y-4 max-w-md">
           <div>
@@ -441,31 +959,13 @@ function InputsSection() {
               type="text" 
               placeholder="Enter text..." 
               className="w-full bg-input border border-border rounded-md px-3 py-2 text-foreground placeholder:text-muted-foreground focus:outline-none focus:ring-2 focus:ring-ring"
+              data-style-element="input"
+              data-element-name="Text Input"
+              data-description="Standard text input field with focus states"
+              data-classes="w-full bg-input border border-border rounded-md px-3 py-2 text-foreground placeholder:text-muted-foreground focus:outline-none focus:ring-2 focus:ring-ring"
+              data-variant="text"
+              data-usage="<input type='text' className='w-full bg-input border border-border rounded-md px-3 py-2 text-foreground placeholder:text-muted-foreground focus:outline-none focus:ring-2 focus:ring-ring' />"
             />
-          </div>
-          <div>
-            <label className="text-sm font-medium text-foreground block mb-2">Select</label>
-            <select className="w-full bg-input border border-border rounded-md px-3 py-2 text-foreground focus:outline-none focus:ring-2 focus:ring-ring">
-              <option>Option 1</option>
-              <option>Option 2</option>
-              <option>Option 3</option>
-            </select>
-          </div>
-          <div>
-            <label className="text-sm font-medium text-foreground block mb-2">Textarea</label>
-            <textarea 
-              placeholder="Enter your message..."
-              className="w-full bg-input border border-border rounded-md px-3 py-2 text-foreground placeholder:text-muted-foreground focus:outline-none focus:ring-2 focus:ring-ring resize-none"
-              rows={3}
-            />
-          </div>
-          <div className="flex items-center space-x-2">
-            <input type="checkbox" id="checkbox" className="rounded border-border text-primary focus:ring-ring" />
-            <label htmlFor="checkbox" className="text-sm font-medium text-foreground">Checkbox</label>
-          </div>
-          <div className="flex items-center space-x-2">
-            <input type="radio" id="radio" name="radio" className="border-border text-primary focus:ring-ring" />
-            <label htmlFor="radio" className="text-sm font-medium text-foreground">Radio Button</label>
           </div>
         </div>
       </div>
@@ -473,50 +973,63 @@ function InputsSection() {
   )
 }
 
-// Cards Section Component
+// Cards Section Component (Simplified)
 function CardsSection() {
+  const cardVariants = [
+    {
+      name: 'Default Card',
+      variant: 'default',
+      classes: 'card p-6',
+      description: 'Standard glass morphism card with subtle backdrop blur and border'
+    },
+    {
+      name: 'Elevated Card',
+      variant: 'elevated', 
+      classes: 'card-elevated p-6',
+      description: 'Enhanced shadow for important content that needs emphasis'
+    },
+    {
+      name: 'Dark Card',
+      variant: 'dark',
+      classes: 'card-dark p-6', 
+      description: 'Darker variant for special use cases or dark themed sections'
+    },
+    {
+      name: 'Glass Panel',
+      variant: 'panel',
+      classes: 'glass-panel p-8',
+      description: 'Larger panel with stronger blur effect for major sections'
+    }
+  ]
+
   return (
     <section className="space-y-6">
       <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-        <div className="p-6 bg-card rounded-lg border border-border">
-          <h4 className="text-lg font-semibold text-foreground mb-2">Default Card</h4>
-          <p className="text-muted-foreground mb-4">
-            This is a default card component with standard styling.
-          </p>
-          <button className="bg-primary text-primary-foreground px-3 py-1.5 rounded text-sm hover:bg-primary/90 transition-colors">
-            Action
-          </button>
-        </div>
-        
-        <div className="p-6 bg-card rounded-lg border border-border shadow-lg">
-          <h4 className="text-lg font-semibold text-foreground mb-2">Elevated Card</h4>
-          <p className="text-muted-foreground mb-4">
-            This card has elevation with a shadow effect for visual hierarchy.
-          </p>
-          <button className="bg-secondary text-secondary-foreground px-3 py-1.5 rounded text-sm hover:bg-secondary/80 transition-colors">
-            Learn More
-          </button>
-        </div>
-        
-        <div className="p-6 bg-muted rounded-lg border border-border">
-          <h4 className="text-lg font-semibold text-foreground mb-2">Muted Card</h4>
-          <p className="text-muted-foreground mb-4">
-            This card uses muted background for subtle differentiation.
-          </p>
-          <button className="bg-accent text-accent-foreground px-3 py-1.5 rounded text-sm hover:bg-accent/80 transition-colors">
-            Details
-          </button>
-        </div>
-        
-        <div className="p-6 bg-gradient-to-br from-primary/10 to-primary/5 rounded-lg border border-primary/20">
-          <h4 className="text-lg font-semibold text-foreground mb-2">Gradient Card</h4>
-          <p className="text-muted-foreground mb-4">
-            This card features a subtle gradient background for visual interest.
-          </p>
-          <button className="bg-primary text-primary-foreground px-3 py-1.5 rounded text-sm hover:bg-primary/90 transition-colors">
-            Explore
-          </button>
-        </div>
+        {cardVariants.map((card) => (
+          <div
+            key={card.variant}
+            className={card.classes}
+            data-style-element="card"
+            data-element-name={card.name}
+            data-description={card.description}
+            data-classes={card.classes}
+            data-variant={card.variant}
+            data-usage={`<div className='${card.classes}'>Card content</div>`}
+          >
+            <div className="card-header">
+              <h4 className="card-title">{card.name}</h4>
+              <p className="card-description">{card.description}</p>
+            </div>
+            <div className="card-content">
+              <p className="text-card-foreground">
+                This demonstrates the {card.name.toLowerCase()} styling with proper spacing and typography.
+              </p>
+            </div>
+            <div className="card-footer">
+              <span className="badge-info">#{card.variant}</span>
+            </div>
+          </div>
+        ))}
       </div>
     </section>
   )
@@ -524,44 +1037,65 @@ function CardsSection() {
 
 // Badges Section Component
 function BadgesSection() {
+  const badgeVariants = [
+    {
+      name: 'Default',
+      variant: 'default',
+      classes: 'badge-default',
+      description: 'Standard badge with secondary styling and subtle appearance'
+    },
+    {
+      name: 'Primary',
+      variant: 'primary',
+      classes: 'badge-primary',
+      description: 'Primary colored badge for important information and key tags'
+    },
+    {
+      name: 'Success',
+      variant: 'success',
+      classes: 'badge-success',
+      description: 'Success state badge for positive status indicators'
+    },
+    {
+      name: 'Warning',
+      variant: 'warning', 
+      classes: 'badge-warning',
+      description: 'Warning state badge for attention-requiring items'
+    },
+    {
+      name: 'Destructive',
+      variant: 'destructive',
+      classes: 'badge-destructive',
+      description: 'Destructive badge for error states and critical information'
+    },
+    {
+      name: 'Outline',
+      variant: 'outline',
+      classes: 'badge-outline',
+      description: 'Outlined badge variant with border and minimal fill'
+    }
+  ]
+
   return (
     <section className="space-y-6">
-      <div className="p-6 bg-card/50 rounded-lg border border-border">
+      <div className="p-6 glass-panel">
         <h3 className="text-lg font-semibold text-foreground mb-4">Badge Variants</h3>
         <div className="flex flex-wrap gap-3">
-          <span className="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-secondary text-secondary-foreground">
-            Default
-          </span>
-          <span className="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-primary text-primary-foreground">
-            Primary
-          </span>
-          <span className="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-success text-success-foreground">
-            Success
-          </span>
-          <span className="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-warning text-warning-foreground">
-            Warning
-          </span>
-          <span className="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-destructive text-destructive-foreground">
-            Error
-          </span>
-          <span className="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-muted text-muted-foreground border border-border">
-            Outline
-          </span>
-        </div>
-      </div>
-      
-      <div className="p-6 bg-card/50 rounded-lg border border-border">
-        <h3 className="text-lg font-semibold text-foreground mb-4">Badge Sizes</h3>
-        <div className="flex items-center gap-3">
-          <span className="inline-flex items-center px-2 py-0.5 rounded text-xs font-medium bg-primary text-primary-foreground">
-            Small
-          </span>
-          <span className="inline-flex items-center px-2.5 py-0.5 rounded-md text-sm font-medium bg-primary text-primary-foreground">
-            Default
-          </span>
-          <span className="inline-flex items-center px-3 py-1 rounded-md text-base font-medium bg-primary text-primary-foreground">
-            Large
-          </span>
+          {badgeVariants.map((badge) => (
+            <span 
+              key={badge.variant}
+              className={badge.classes}
+              data-style-element="badge"
+              data-element-name={`${badge.name} Badge`}
+              data-description={badge.description}
+              data-classes={badge.classes}
+              data-variant={badge.variant}
+              data-usage={`<span className='${badge.classes}'>${badge.name}</span>`}
+              title={`${badge.name} Badge - Click to inspect`}
+            >
+              {badge.name}
+            </span>
+          ))}
         </div>
       </div>
     </section>
