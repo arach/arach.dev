@@ -9,14 +9,90 @@ import Script from "next/script";
 import FontLoader from "@/components/FontLoader";
 import { SpeedInsights } from "@vercel/speed-insights/next";
 import ThemePicker from "@/components/ThemePicker";
-import fs from 'fs';
-import path from 'path';
+// Critical CSS will be loaded inline
+const criticalCSS = `/* Critical CSS - Inline this for immediate render */
 
-// Read critical CSS at build time
-const criticalCSS = fs.readFileSync(
-  path.join(process.cwd(), 'app', 'critical.css'),
-  'utf8'
-);
+/* Theme variables defaults - MUST be defined first */
+:root {
+  --theme-bg-color: #ffffff;
+  --theme-text-color: #111827;
+  --theme-ascii-color: #000000;
+  --theme-border-color: #e5e7eb;
+  --theme-muted-text: #6b7280;
+  --theme-header-bg: rgba(0, 0, 0, 1);
+  --theme-header-text: #ffffff;
+}
+
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+html {
+  height: 100%;
+}
+
+body {
+  font-family: ui-monospace, SFMono-Regular, "SF Mono", Monaco, Consolas, "Liberation Mono", "Courier New", monospace;
+  background: var(--theme-bg-color);
+  color: var(--theme-text-color);
+  display: flex;
+  flex-direction: column;
+  min-height: 100vh;
+  margin: 0;
+}
+
+/* Critical layout styles */
+.max-w-4xl {
+  max-width: 56rem;
+}
+
+.mx-auto {
+  margin-left: auto;
+  margin-right: auto;
+}
+
+.px-4 {
+  padding-left: 1rem;
+  padding-right: 1rem;
+}
+
+.py-4 {
+  padding-top: 1rem;
+  padding-bottom: 1rem;
+}
+
+/* Hero ASCII immediate render */
+.hero-ascii {
+  font-size: 4px;
+  font-family: Monaco, Consolas, "Courier New", monospace;
+  margin: 0 0 0.5rem 0;
+  line-height: 1;
+  white-space: pre;
+  overflow: hidden;
+  text-align: center;
+  opacity: 1;
+  color: var(--theme-ascii-color, #000);
+}
+
+@media (min-width: 640px) {
+  .hero-ascii { 
+    font-size: 8px;
+    text-align: left;
+  }
+}
+
+/* Prevent layout shift */
+main {
+  flex-grow: 1;
+  padding-top: 0;
+}
+
+header {
+  background: var(--theme-header-bg);
+  color: var(--theme-header-text);
+}`;
 
 const ibmPlexMono = IBM_Plex_Mono({ 
   subsets: ["latin"], 

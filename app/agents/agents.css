@@ -1,0 +1,61 @@
+/* Scoped styles for /agents only - won't affect main app */
+.agents-registry {
+  background: var(--theme-bg-color);
+  color: var(--theme-text-color);
+  min-height: calc(100vh - 140px); /* Account for header/footer */
+}
+
+.agents-registry .agent-card {
+  background: var(--theme-card-bg);
+  border: 1px solid var(--theme-border-color);
+  transition: all 0.2s ease;
+}
+
+.agents-registry .agent-card:hover {
+  border-color: var(--theme-accent-color);
+  transform: translateY(-2px);
+  box-shadow: 0 4px 12px var(--theme-shadow-color);
+}
+
+.agents-registry .agent-type {
+  color: var(--theme-muted-text);
+}
+
+.agents-registry .agent-name {
+  color: var(--theme-heading-color);
+}
+
+.agents-registry .agent-name:hover {
+  color: var(--theme-accent-color);
+}
+
+.agents-registry .agent-description {
+  color: var(--theme-text-color);
+}
+
+.agents-registry .capability-tag {
+  background: var(--theme-bg-color);
+  border: 1px solid var(--theme-border-color);
+  color: var(--theme-muted-text);
+}
+
+.agents-registry .view-details {
+  color: var(--theme-accent-color);
+}
+
+.agents-registry .nav-link {
+  color: var(--theme-muted-text);
+}
+
+.agents-registry .nav-link:hover {
+  color: var(--theme-text-color);
+}
+
+.agents-registry .section-heading {
+  color: var(--theme-heading-color);
+}
+
+.agents-registry .overview-card {
+  background: var(--theme-card-bg);
+  border: 1px solid var(--theme-border-color);
+}

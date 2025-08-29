@@ -116,8 +116,19 @@ function updateAgentCount(count) {
 async function init() {
   const content = document.getElementById('content');
   const terminalContent = content.querySelector('.terminal-content');
+  const path = window.location.pathname;
   
-  // Load and display agents
+  // Check if this is an individual agent page
+  if (path.startsWith('/agents/')) {
+    const agentId = path.split('/agents/')[1];
+    if (agentId) {
+      const agentData = await loadAgentDetails(agentId);
+      renderAgentDetail(agentData);
+      return;
+    }
+  }
+  
+  // Load and display agents for other pages
   const agents = await loadAgents();
   updateAgentCount(agents.length);
   
