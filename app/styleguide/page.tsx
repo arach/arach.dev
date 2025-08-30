@@ -1273,51 +1273,103 @@ function TypographySection({ activeTheme }: { activeTheme: string }) {
     }
   ]
 
-  // Peal-inspired typography variants
-  const pealTypographyVariants = [
-    {
-      name: 'Component Header Large (Peal Copy)',
-      classes: 'text-base font-medium text-foreground',
-      description: 'Large component header for cards and modals',
-      usage: '<h3 className="text-base font-medium text-foreground">Component Header</h3>'
-    },
-    {
-      name: 'Component Header Medium (Peal Copy)',
-      classes: 'text-sm font-medium text-muted-foreground',
-      description: 'Medium component header for nested sections',
-      usage: '<h4 className="text-sm font-medium text-muted-foreground">Component Header</h4>'
-    },
-    {
-      name: 'Component Header Small (Peal Copy)',
-      classes: 'text-xs font-medium text-muted-foreground uppercase tracking-wider',
-      description: 'Small uppercase header for labels and categories',
-      usage: '<span className="text-xs font-medium text-muted-foreground uppercase tracking-wider">SMALL HEADER</span>'
-    },
-    {
-      name: 'Body Large (Peal Copy)',
-      classes: 'text-base text-foreground',
-      description: 'Large body text for important content',
-      usage: '<p className="text-base text-foreground">Large body text</p>'
-    },
-    {
-      name: 'Body Small (Peal Copy)',
-      classes: 'text-xs text-muted-foreground',
-      description: 'Small body text for less important information',
-      usage: '<p className="text-xs text-muted-foreground">Small body text</p>'
-    },
-    {
-      name: 'Muted Text (Peal Copy)',
-      classes: 'text-sm text-muted-foreground/70',
-      description: 'Muted text for secondary information',
-      usage: '<p className="text-sm text-muted-foreground/70">Muted text</p>'
-    },
-    {
-      name: 'Mono Small (Peal Copy)',
-      classes: 'font-mono text-xs text-muted-foreground',
-      description: 'Small monospace text for code comments',
-      usage: '<code className="font-mono text-xs text-muted-foreground">// comment</code>'
+  // Dynamic typography variants from theme
+  const getTypographyVariants = (): Array<{
+    name: string
+    description: string
+    classes: string
+    usage: string
+  }> => {
+    if (!theme?.typography) return []
+    
+    const variants: Array<{
+      name: string
+      description: string
+      classes: string
+      usage: string
+    }> = []
+    
+    // Check if typography is structured (with scale, leading, tracking) or flat (Terminal theme style)
+    const typographyKeys = Object.keys(theme.typography)
+    const isStructured = typographyKeys.some(key => ['scale', 'fonts', 'leading', 'tracking'].includes(key))
+    
+    if (isStructured) {
+      // Handle structured typography (Directory theme style)
+      const typography = theme.typography as any
+      
+      // Add scale variants if available
+      if (typography.scale) {
+        Object.entries(typography.scale).forEach(([key, value]) => {
+          const sizeClass = key === 'base' ? 'text-base' : `text-${key}`
+          variants.push({
+            name: `Size ${key.toUpperCase()}`,
+            description: `Font size: ${value}`,
+            classes: sizeClass,
+            usage: `<span className="${sizeClass}">Text at ${value}</span>`
+          })
+        })
+      }
+      
+      // Add leading variants if available
+      if (typography.leading) {
+        Object.entries(typography.leading).forEach(([key, value]) => {
+          variants.push({
+            name: `Leading ${key.charAt(0).toUpperCase() + key.slice(1)}`,
+            description: `Line height: ${value}`,
+            classes: `leading-${key}`,
+            usage: `<p className="leading-${key}">Line height ${value}</p>`
+          })
+        })
+      }
+      
+      // Add tracking variants if available
+      if (typography.tracking) {
+        Object.entries(typography.tracking).forEach(([key, value]) => {
+          variants.push({
+            name: `Tracking ${key.charAt(0).toUpperCase() + key.slice(1)}`,
+            description: `Letter spacing: ${value}`,
+            classes: `tracking-${key}`,
+            usage: `<span className="tracking-${key}">Letter spacing ${value}</span>`
+          })
+        })
+      }
+    } else {
+      // Handle flat typography (Terminal theme style - class strings)
+      Object.entries(theme.typography).forEach(([key, value]) => {
+        if (typeof value === 'string') {
+          // Format the name nicely
+          const formattedName = key
+            .replace(/([A-Z])/g, ' $1')
+            .replace(/^./, str => str.toUpperCase())
+            .trim()
+          
+          variants.push({
+            name: formattedName,
+            description: `Theme typography: ${key}`,
+            classes: value,
+            usage: `<div className="${value}">${formattedName} example text</div>`
+          })
+        }
+      })
     }
-  ]
+    
+    // Add standard weight variants (always available)
+    if (variants.length === 0 || !isStructured) {
+      const weights = ['thin', 'light', 'normal', 'medium', 'semibold', 'bold', 'extrabold']
+      weights.forEach(weight => {
+        variants.push({
+          name: `Weight ${weight.charAt(0).toUpperCase() + weight.slice(1)}`,
+          description: `Font weight: ${weight}`,
+          classes: `font-${weight}`,
+          usage: `<span className="font-${weight}">Font weight ${weight}</span>`
+        })
+      })
+    }
+    
+    return variants
+  }
+  
+  const typographyVariants = getTypographyVariants()
 
   return (
     <section className="space-y-6">
@@ -1441,9 +1493,9 @@ function TypographySection({ activeTheme }: { activeTheme: string }) {
         </div>
 
         <div className="p-6 glass-panel">
-          <h3 className="text-lg font-semibold text-foreground mb-4">Peal Typography Variants</h3>
+          <h3 className="text-lg font-semibold text-foreground mb-4">{theme?.name || 'Theme'} Typography Variants</h3>
           <div className="space-y-3">
-            {pealTypographyVariants.map((variant) => (
+            {typographyVariants.map((variant) => (
               <div
                 key={variant.name}
                 className={variant.classes}
@@ -1451,7 +1503,7 @@ function TypographySection({ activeTheme }: { activeTheme: string }) {
                 data-element-name={variant.name}
                 data-description={variant.description}
                 data-classes={variant.classes}
-                data-variant="peal"
+                data-variant={activeTheme}
                 data-usage={variant.usage}
                 title={`${variant.name} - Click to inspect`}
               >
@@ -1577,7 +1629,7 @@ function ButtonsSection({ theme }: { theme?: Theme | null }) {
       description: 'Success state button for positive actions with consistent theming'
     },
     {
-      name: 'Outline (Peal Copy)',
+      name: 'Outline',
       variant: 'outline',
       classes: 'btn-outline btn-md',
       description: 'Outline button with transparent background and border'
@@ -1628,7 +1680,7 @@ function InputsSection({ theme }: { theme?: Theme | null }) {
       placeholder: 'Enter text...'
     },
     {
-      name: 'Monospace Input (Peal Copy)',
+      name: 'Monospace Input',
       variant: 'mono',
       inputClass: 'input-mono',
       labelClass: 'label-default',
@@ -1636,7 +1688,7 @@ function InputsSection({ theme }: { theme?: Theme | null }) {
       placeholder: 'Code input...'
     },
     {
-      name: 'Dark Input (Peal Copy)',
+      name: 'Dark Input',
       variant: 'dark',
       inputClass: 'input-dark',
       labelClass: 'label-default',
@@ -1644,7 +1696,7 @@ function InputsSection({ theme }: { theme?: Theme | null }) {
       placeholder: 'Dark themed input...'
     },
     {
-      name: 'Transparent Input (Peal Copy)',
+      name: 'Transparent Input',
       variant: 'transparent',
       inputClass: 'input-transparent',
       labelClass: 'label-default',
@@ -1661,13 +1713,13 @@ function InputsSection({ theme }: { theme?: Theme | null }) {
       description: 'Standard form label'
     },
     {
-      name: 'Required Label (Peal Copy)',
+      name: 'Required Label',
       classes: 'label-required',
       text: 'Required Field',
       description: 'Label with required indicator'
     },
     {
-      name: 'Small Label (Peal Copy)',
+      name: 'Small Label',
       classes: 'label-small',
       text: 'SMALL UPPERCASE LABEL',
       description: 'Small uppercase label for compact forms'
@@ -1718,7 +1770,7 @@ function InputsSection({ theme }: { theme?: Theme | null }) {
               />
             </div>
             <div>
-              <label className="label-default">Monospace Textarea (Peal Copy)</label>
+              <label className="label-default">Monospace Textarea</label>
               <textarea 
                 className="textarea-mono"
                 rows={3}
@@ -1732,7 +1784,7 @@ function InputsSection({ theme }: { theme?: Theme | null }) {
               />
             </div>
             <div>
-              <label className="label-default">Dark Textarea (Peal Copy)</label>
+              <label className="label-default">Dark Textarea</label>
               <textarea 
                 className="textarea-dark"
                 rows={3}
