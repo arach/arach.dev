@@ -244,6 +244,7 @@ export function TypographySection({ theme }: TypographySectionProps) {
     if (!theme.typography) return []
     
     const variants: TypographyElement[] = []
+    const usedKeys = new Set<string>()
     
     // Add all typography entries as variants
     Object.entries(theme.typography).forEach(([key, value]) => {
@@ -253,12 +254,21 @@ export function TypographySection({ theme }: TypographySectionProps) {
           .replace(/^./, str => str.toUpperCase())
           .trim()
         
+        // Ensure unique key
+        let uniqueKey = key
+        let counter = 1
+        while (usedKeys.has(uniqueKey)) {
+          uniqueKey = `${key}-${counter}`
+          counter++
+        }
+        usedKeys.add(uniqueKey)
+        
         variants.push({
           name: formattedName,
           description: `Theme typography: ${key}`,
           classes: value,
           usage: `<div className="${value}">${formattedName} example text</div>`,
-          key: key // Store original key for uniqueness
+          key: uniqueKey // Store unique key for React
         })
       }
     })
