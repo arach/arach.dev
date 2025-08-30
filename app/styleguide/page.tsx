@@ -3,7 +3,7 @@
 import React, { useState, useEffect, useRef } from 'react'
 import { useSearchParams, useRouter } from 'next/navigation'
 import { getThemeIds, getTheme } from '@/styles/theme-registry'
-import '@/styles/init-themes' // Initialize the theme registry
+import '@/styles/init-themes'
 import type { Theme } from '@/styles/terminal-theme'
 
 // Get available themes from the registry
@@ -233,6 +233,126 @@ function getSectionVariantCount(section: string): number {
   return counts[section] || 0
 }
 
+// Unified Tactical Header Component with Sticky Status Bar
+interface TacticalHeaderProps {
+  activeSection: string
+  activeTheme: string
+  status?: 'active' | 'inactive' | 'loading'
+  statusColor?: string
+  accentColor?: string
+  revision?: string
+  stickyOffset?: string
+  showMetrics?: boolean
+}
+
+function TacticalHeader({ 
+  activeSection, 
+  activeTheme,
+  status = 'active',
+  statusColor = 'success',
+  accentColor = 'var(--theme-accent-color)',
+  revision = '2.0.1',
+  stickyOffset = '50px',
+  showMetrics = true
+}: TacticalHeaderProps) {
+  const statusColorClass = status === 'active' ? `bg-${statusColor}` : 
+                           status === 'loading' ? 'bg-warning' : 'bg-muted'
+  
+  return (
+    <>
+      {/* Sticky Status Bar */}
+      <div className={`sticky top-[${stickyOffset}] z-30 bg-muted/20 border-b border-border/30 backdrop-blur-md`} role="status" aria-label="System status">
+        <div className="flex items-center">
+          <div className="w-1 mr-4" style={{ height: '20px', backgroundColor: accentColor }} aria-hidden="true"></div>
+          <div className="flex items-center gap-3 mr-6">
+            {/* Status indicators */}
+            <div className="flex items-center gap-1" role="status" aria-label={`${status} status`}>
+              <div className={`w-2 h-2 rounded-full ${statusColorClass} ${status === 'active' ? 'animate-pulse' : ''}`} aria-hidden="true" />
+              <span className={`text-[10px] font-mono text-${statusColor} uppercase`}>{status.toUpperCase()}</span>
+            </div>
+            <div className="h-3 w-px bg-border/50" aria-hidden="true" />
+            <span className="text-[10px] font-mono text-muted-foreground uppercase tracking-wider">
+              SECTION: {activeSection.toUpperCase()}
+            </span>
+          </div>
+          <div className="flex items-center gap-2 ml-auto mr-6" role="status" aria-label="System information">
+            <span className="text-[10px] font-mono text-muted-foreground">
+              THEME: {activeTheme.toUpperCase()}
+            </span>
+            <div className="h-3 w-px bg-border/50" aria-hidden="true" />
+            <span className="text-[10px] font-mono text-muted-foreground">
+              REV: {revision}
+            </span>
+          </div>
+        </div>
+      </div>
+      
+      {/* Tactical Section Header */}
+      <header className="z-20 relative bg-background/95 backdrop-blur-md" role="banner" aria-label="Section header">
+        {/* Background scan line effect */}
+        <div className="absolute inset-0 bg-gradient-to-r from-primary/5 via-transparent to-transparent" aria-hidden="true" />
+        
+        {/* Main header container with tactical frame */}
+        <div className="relative bg-card/30 backdrop-blur-sm overflow-hidden section-header-tactical mr-6" role="region" aria-label="Tactical header frame">
+          
+          {/* Main content area with left accent */}
+          <div className="flex" role="region" aria-label="Header content">
+            {/* Tactical accent bar */}
+            <div className="w-1 bg-gradient-to-b from-primary via-primary/50 to-transparent" aria-hidden="true" />
+            
+            {/* Content */}
+            <div className="flex-1 px-6 py-4" role="main">
+              {/* Section identifier */}
+              <nav className="flex items-center gap-2 mb-2" aria-label="Breadcrumb navigation">
+                <div className="px-2 py-0.5 bg-primary/10 border border-primary/30 rounded-sm">
+                  <span className="text-[10px] font-mono text-primary uppercase tracking-wider">
+                    {getSectionId(activeSection)}
+                  </span>
+                </div>
+                <div className="flex items-center gap-1 text-[10px] font-mono text-muted-foreground">
+                  <span>/</span>
+                  <span>STYLEGUIDE</span>
+                  <span>/</span>
+                  <span>COMPONENTS</span>
+                </div>
+              </nav>
+              
+              {/* Section title */}
+              <h1 className="text-xl font-bold text-foreground uppercase tracking-tight mb-1">
+                {getSectionTitle(activeSection)}
+              </h1>
+              
+              {/* Section description */}
+              <p className="text-xs text-muted-foreground font-mono">
+                {getSectionDescription(activeSection)}
+              </p>
+            </div>
+            
+            {/* Right side metrics */}
+            {showMetrics && (
+              <aside className="px-4 py-4 border-l border-border/30 bg-muted/5" role="complementary" aria-label="Section metrics">
+                <div className="space-y-2">
+                  <div>
+                    <div className="text-[10px] font-mono text-muted-foreground uppercase">Components</div>
+                    <div className="text-sm font-mono text-foreground">{getSectionComponentCount(activeSection)}</div>
+                  </div>
+                  <div>
+                    <div className="text-[10px] font-mono text-muted-foreground uppercase">Variants</div>
+                    <div className="text-sm font-mono text-foreground">{getSectionVariantCount(activeSection)}</div>
+                  </div>
+                </div>
+              </aside>
+            )}
+          </div>
+          
+          {/* Bottom telemetry bar */}
+          <div className="h-px bg-gradient-to-r from-transparent via-primary/30 to-transparent" aria-hidden="true" />
+        </div>
+      </header>
+    </>
+  )
+}
+
 // Section Header Component - Integrated tactical display
 interface SectionHeaderProps {
   title: string
@@ -251,15 +371,15 @@ function SectionHeader({ title, id, status, componentCount, variantCount }: Sect
       {/* Main header container */}
       <div className="relative border border-border/40 bg-card/20 backdrop-blur-sm rounded-sm overflow-hidden section-header-tactical">
         {/* Top telemetry bar */}
-        <div className="h-px bg-gradient-to-r from-transparent via-primary/20 to-transparent telemetry-bar" />
+        <div className="h-px telemetry-bar" />
         
         {/* Header content */}
         <div className="flex items-center">
           {/* Left accent */}
-          <div className="w-0.5 self-stretch bg-gradient-to-b from-primary/80 via-primary/40 to-transparent" />
+          <div className="w-0.5 self-stretch" />
           
           {/* Main content */}
-          <div className="flex-1 px-4 py-2">
+          <div className="flex-1 px-6 py-2">
             <div className="flex items-center justify-between">
               <div className="flex items-center gap-3">
                 {/* Section ID badge */}
@@ -273,18 +393,6 @@ function SectionHeader({ title, id, status, componentCount, variantCount }: Sect
                 <h3 className="text-base font-bold text-foreground uppercase tracking-tight">
                   {title}
                 </h3>
-                
-                {/* Status indicator */}
-                <div className="flex items-center gap-1.5">
-                  <div className={`w-1.5 h-1.5 rounded-full status-indicator ${
-                    status === 'active' ? 'bg-success' :
-                    status === 'loading' ? 'bg-warning' :
-                    'bg-muted'
-                  }`} />
-                  <span className="text-[9px] font-mono text-muted-foreground uppercase">
-                    {status}
-                  </span>
-                </div>
               </div>
               
               {/* Right side metrics */}
@@ -702,90 +810,17 @@ export default function StyleGuidePage() {
         </nav>
 
         {/* Main Content - with containerRef for element enhancement */}
-        <div ref={containerRef} className="flex-1" onClick={handleElementClick}>
-          {/* Tactical Section Header - Full Width Command Center Display */}
-            <header className="z-20 mb-8 relative bg-background/95 backdrop-blur-md">
-              {/* Background scan line effect */}
-              <div className="absolute inset-0 bg-gradient-to-r from-primary/5 via-transparent to-transparent" />
-              
-              {/* Main header container with tactical frame */}
-              <div className="relative border border-border/50 bg-card/30 backdrop-blur-sm rounded-sm overflow-hidden section-header-tactical">
-                {/* Top status bar */}
-                <div className="flex items-center justify-between px-4 py-1 bg-muted/20 border-b border-border/30">
-                  <div className="flex items-center gap-3">
-                    {/* Status indicators */}
-                    <div className="flex items-center gap-1">
-                      <div className="w-2 h-2 rounded-full bg-success animate-pulse" />
-                      <span className="text-[10px] font-mono text-success uppercase">ACTIVE</span>
-                    </div>
-                    <div className="h-3 w-px bg-border/50" />
-                    <span className="text-[10px] font-mono text-muted-foreground uppercase tracking-wider">
-                      SECTION: {activeSection.toUpperCase()}
-                    </span>
-                  </div>
-                  <div className="flex items-center gap-2">
-                    <span className="text-[10px] font-mono text-muted-foreground">
-                      THEME: {activeTheme.toUpperCase()}
-                    </span>
-                    <div className="h-3 w-px bg-border/50" />
-                    <span className="text-[10px] font-mono text-muted-foreground">
-                      REV: 2.0.1
-                    </span>
-                  </div>
-                </div>
-                
-                {/* Main content area with left accent */}
-                <div className="flex">
-                  {/* Tactical accent bar */}
-                  <div className="w-1 bg-gradient-to-b from-primary via-primary/50 to-transparent" />
-                  
-                  {/* Content */}
-                  <div className="flex-1 px-6 py-4">
-                    {/* Section identifier */}
-                    <div className="flex items-center gap-2 mb-2">
-                      <div className="px-2 py-0.5 bg-primary/10 border border-primary/30 rounded-sm">
-                        <span className="text-[10px] font-mono text-primary uppercase tracking-wider">
-                          {getSectionId(activeSection)}
-                        </span>
-                      </div>
-                      <div className="flex items-center gap-1 text-[10px] font-mono text-muted-foreground">
-                        <span>/</span>
-                        <span>STYLEGUIDE</span>
-                        <span>/</span>
-                        <span>COMPONENTS</span>
-                      </div>
-                    </div>
-                    
-                    {/* Section title */}
-                    <h2 className="text-xl font-bold text-foreground uppercase tracking-tight mb-1">
-                      {getSectionTitle(activeSection)}
-                    </h2>
-                    
-                    {/* Section description */}
-                    <p className="text-xs text-muted-foreground font-mono">
-                      {getSectionDescription(activeSection)}
-                    </p>
-                  </div>
-                  
-                  {/* Right side metrics */}
-                  <div className="px-4 py-4 border-l border-border/30 bg-muted/5">
-                    <div className="space-y-2">
-                      <div>
-                        <div className="text-[10px] font-mono text-muted-foreground uppercase">Components</div>
-                        <div className="text-sm font-mono text-foreground">{getSectionComponentCount(activeSection)}</div>
-                      </div>
-                      <div>
-                        <div className="text-[10px] font-mono text-muted-foreground uppercase">Variants</div>
-                        <div className="text-sm font-mono text-foreground">{getSectionVariantCount(activeSection)}</div>
-                      </div>
-                    </div>
-                  </div>
-                </div>
-                
-                {/* Bottom telemetry bar */}
-                <div className="h-px bg-gradient-to-r from-transparent via-primary/30 to-transparent" />
-              </div>
-            </header>
+        <main ref={containerRef} className="flex-1 relative" onClick={handleElementClick} role="main" aria-label="Style guide content">
+          {/* Tactical Header with Sticky Status Bar */}
+          <TacticalHeader 
+            activeSection={activeSection}
+            activeTheme={activeTheme}
+            status="active"
+            statusColor="success"
+            revision="2.0.1"
+            stickyOffset="50px"
+            showMetrics={true}
+          />
 
             {/* Content based on active section */}
             <div className="space-y-12">
@@ -880,7 +915,7 @@ export default function StyleGuidePage() {
                 </>
               )}
             </div>
-        </div>
+        </main>
 
         {/* Right Panel - Style Details or Pinned Styles */}
         {(selectedElement || showPinnedPanel) && showRightSidebar && (

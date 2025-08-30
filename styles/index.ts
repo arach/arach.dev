@@ -13,7 +13,6 @@ export {
   getThemeIds,
   hasTheme,
   registerThemes,
-  loadTheme,
   useTheme,
   createTheme
 } from './theme-registry'
