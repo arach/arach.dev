@@ -37,7 +37,7 @@
  * - Use subsectionTitle styling for categorized content with cyan accent borders
  * 
  * Example Header Patterns:
- * ```tsx
+ * ```
  * // Command-style main header
  * <h1 className={theme.typography.h1}>SYSTEM OVERVIEW</h1>
  * 
@@ -56,7 +56,7 @@
  * - Use data cards for metrics and KPI displays
  * 
  * Card Hierarchy:
- * ```tsx
+ * ```
  * // Standard content card
  * <div className={theme.components.card.default}>
  * 
@@ -78,7 +78,7 @@
  * - Icon-only actions use compact icon button variants
  * 
  * Button Hierarchy:
- * ```tsx
+ * ```
  * // Primary command action
  * <button className={theme.components.button.tactical}>EXECUTE OPERATION</button>
  * 
@@ -100,7 +100,7 @@
  * - Use alert system with left-border accents for system messages
  * 
  * Status Patterns:
- * ```tsx
+ * ```
  * // System health indicator
  * <div className={theme.components.status.dot.online} />
  * 
@@ -122,7 +122,7 @@
  * - Use compact badges and chips for categorical tagging
  * 
  * Table Implementation:
- * ```tsx
+ * ```
  * <div className={theme.components.table.container}>
  *   <table>
  *     <thead>
