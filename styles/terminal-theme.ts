@@ -1,14 +1,11 @@
-// Military-grade terminal theme inspired by Anduril Lattice OS and Palantir Gotham
-// Precision-focused design with tactical aesthetics and intelligence-grade UI patterns
-
 /**
- * Military-grade terminal theme inspired by defense contractor interfaces.
+ * Terminal theme with precision-focused design and sophisticated UI patterns.
  * See styles/terminal-theme-guide.md for comprehensive usage documentation.
  */
 
 export const terminalTheme = {
   name: 'Terminal',
-  description: 'Military-grade terminal interface with tactical precision and sophisticated data visualization',
+  description: 'Terminal interface with precision and sophisticated data visualization',
   
   // Color Palette - Sophisticated grayscale with strategic accent deployment
   colors: {

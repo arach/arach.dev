@@ -1,165 +1,129 @@
-// Theme Registry - Easy theme loading and management
-import type { Theme } from './terminal-theme'
+/**
+ * Theme registry - manages theme loading and access
+ * Uses the new generic Theme interface
+ */
+
+import type { Theme, ThemeRegistry } from '@/types/theme'
+import { adaptTerminalTheme, validateTheme } from '@/lib/theme-adapter'
 import { terminalTheme } from './terminal-theme'
 
-// Registry to store all themes
-const themeRegistry = new Map<string, Theme>()
-
-// Register a theme
-export function registerTheme(id: string, theme: Theme) {
-  themeRegistry.set(id, theme)
-  return theme
+// Registry of all available themes
+const themeRegistry: ThemeRegistry = {
+  terminal: adaptTerminalTheme(terminalTheme)
 }
 
 // Get a theme by ID
-export function getTheme(id: string): Theme | undefined {
-  return themeRegistry.get(id)
-}
-
-
-// Get theme IDs
-export function getThemeIds(): string[] {
-  return Array.from(themeRegistry.keys())
-}
-
-// Check if theme exists
-export function hasTheme(id: string): boolean {
-  return themeRegistry.has(id)
-}
-
-// Batch register themes
-export function registerThemes(themes: Record<string, Theme>) {
-  Object.entries(themes).forEach(([id, theme]) => {
-    registerTheme(id, theme)
-  })
-}
-
-// Theme loader for dynamic imports (disabled to avoid webpack warnings)
-// Use registerTheme() to manually register themes instead
-/*
-export async function loadTheme(path: string): Promise<Theme | null> {
-  try {
-    const module = await import(path)
-    return module.default || module.theme || null
-  } catch (error) {
-    console.error(`Failed to load theme from ${path}:`, error)
+export function getTheme(themeId: string): Theme | null {
+  const theme = themeRegistry[themeId]
+  if (!theme) {
+    console.warn(`Theme "${themeId}" not found`)
     return null
   }
-}
-*/
-
-// Get all registered themes
-export function getAllThemes(): Record<string, Theme> {
-  const themes: Record<string, Theme> = {}
-  themeRegistry.forEach((theme, id) => {
-    themes[id] = theme
-  })
-  return themes
-}
-
-// Export a hook for React components
-export function useTheme(themeId: string): Theme | undefined {
-  return getTheme(themeId)
-}
-
-// Theme creator helper - ensures all required fields
-export function createTheme(partial: Partial<Theme> & { name: string; description: string }): Theme {
-  // Merge the partial theme with the base terminal theme
-  return {
-    ...terminalTheme,
-    ...partial,
-    name: partial.name,
-    description: partial.description,
-  } as Theme
-}
-
-// Font loading utilities
-export function getFontsFromTheme(theme: Theme): Array<{ name: string; family: string; provider?: string; import?: string }> {
-  const fonts: Array<{ name: string; family: string; provider?: string; import?: string }> = []
   
-  if (theme.fonts) {
-    Object.values(theme.fonts).forEach((font) => {
-      if (typeof font === 'object' && font.name && font.family) {
-        fonts.push({
-          name: font.name,
-          family: font.family,
-          provider: font.provider,
-          import: font.import
-        })
-      }
-    })
+  // Validate the theme
+  const validation = validateTheme(theme)
+  if (!validation.isValid) {
+    console.error(`Theme "${themeId}" is invalid:`, validation.errors)
+    return null
   }
   
-  return fonts
+  return theme
 }
 
-export function getFontsByProvider(theme: Theme, provider: string): Array<{ name: string; family: string; import?: string }> {
-  const fonts = getFontsFromTheme(theme)
-  return fonts.filter(font => font.provider === provider)
+// Get all available theme IDs
+export function getThemeIds(): string[] {
+  return Object.keys(themeRegistry)
 }
 
-export function getAllFonts(): Array<{ name: string; family: string; provider?: string; import?: string; theme: string }> {
-  const allFonts: Array<{ name: string; family: string; provider?: string; import?: string; theme: string }> = []
+// Get all available themes
+export function getAllThemes(): Theme[] {
+  return Object.values(themeRegistry).filter(theme => {
+    const validation = validateTheme(theme)
+    return validation.isValid
+  })
+}
+
+// Register a new theme
+export function registerTheme(themeId: string, theme: Theme): boolean {
+  const validation = validateTheme(theme)
+  if (!validation.isValid) {
+    console.error(`Cannot register invalid theme "${themeId}":`, validation.errors)
+    return false
+  }
   
-  themeRegistry.forEach((theme, themeId) => {
-    const themeFonts = getFontsFromTheme(theme)
-    themeFonts.forEach(font => {
-      allFonts.push({
-        ...font,
-        theme: themeId
-      })
+  themeRegistry[themeId] = theme
+  return true
+}
+
+// Unregister a theme
+export function unregisterTheme(themeId: string): boolean {
+  if (!themeRegistry[themeId]) {
+    return false
+  }
+  
+  delete themeRegistry[themeId]
+  return true
+}
+
+// Check if a theme exists
+export function hasTheme(themeId: string): boolean {
+  return themeId in themeRegistry
+}
+
+// Get theme metadata (name, description) without loading full theme
+export function getThemeMetadata(themeId: string): { name: string; description: string } | null {
+  const theme = themeRegistry[themeId]
+  if (!theme) return null
+  
+  return {
+    name: theme.name,
+    description: theme.description
+  }
+}
+
+// Font utilities using the new interface
+export function getFontsFromTheme(theme: Theme) {
+  return theme.fonts || {}
+}
+
+export function getFontsByProvider(theme: Theme, provider: string) {
+  const fonts = theme.fonts || {}
+  return Object.entries(fonts).filter(([_, font]) => font?.provider === provider)
+}
+
+export function getAllFonts(): Array<{ themeId: string; fontKey: string; font: any }> {
+  const allFonts: Array<{ themeId: string; fontKey: string; font: any }> = []
+  
+  Object.entries(themeRegistry).forEach(([themeId, theme]) => {
+    const fonts = theme.fonts || {}
+    Object.entries(fonts).forEach(([fontKey, font]) => {
+      allFonts.push({ themeId, fontKey, font })
     })
   })
   
   return allFonts
 }
 
-export function getAllFontsByProvider(provider: string): Array<{ name: string; family: string; import?: string; theme: string }> {
-  const allFonts = getAllFonts()
-  return allFonts.filter(font => font.provider === provider)
+export function getAllFontsByProvider(provider: string) {
+  return getAllFonts().filter(({ font }) => font?.provider === provider)
 }
 
 export function generateFontImports(provider: string): string {
   const fonts = getAllFontsByProvider(provider)
-  const uniqueFonts = new Map<string, string>()
+  const imports = fonts.map(({ font }) => font?.import).filter(Boolean)
   
-  fonts.forEach(font => {
-    if (font.import && !uniqueFonts.has(font.import)) {
-      uniqueFonts.set(font.import, font.name)
-    }
-  })
-  
-  if (provider === 'google') {
-    const imports = Array.from(uniqueFonts.entries()).map(([importName, fontName]) => {
-      return `import { ${importName} } from 'next/font/google'`
-    })
-    return imports.join('\n')
-  }
-  
-  // Add support for other providers here
-  return ''
+  return imports.map(importName => 
+    `import { ${importName} } from 'next/font/google'`
+  ).join('\n')
 }
 
 export function generateFontConfigs(provider: string): string {
   const fonts = getAllFontsByProvider(provider)
-  const uniqueFonts = new Map<string, string>()
   
-  fonts.forEach(font => {
-    if (font.import && !uniqueFonts.has(font.import)) {
-      uniqueFonts.set(font.import, font.name)
-    }
-  })
-  
-  if (provider === 'google') {
-    const configs = Array.from(uniqueFonts.entries()).map(([importName, fontName]) => {
-      return `const ${importName.toLowerCase().replace(/_/g, '')} = ${importName}({
+  return fonts.map(({ themeId, fontKey, font }) => 
+    `const ${fontKey} = ${font.import}({
   subsets: ['latin'],
-  variable: '--font-${importName.toLowerCase().replace(/_/g, '-')}',
+  display: 'swap',
 })`
-    })
-    return configs.join('\n\n')
-  }
-  
-  // Add support for other providers here
-  return ''
+  ).join('\n\n')
 }
