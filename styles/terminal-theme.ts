@@ -83,6 +83,41 @@ export const terminalTheme = {
     }
   },
 
+  // Font definitions - Military-grade typography
+  fonts: {
+    // Primary interface font - Geist Sans for clean readability
+    sans: {
+      name: 'Geist Sans',
+      family: '"Geist Sans", -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif',
+      provider: 'google',
+      import: 'Geist_Sans'
+    },
+    
+    // Monospace font for code and technical content
+    mono: {
+      name: 'JetBrains Mono',
+      family: '"JetBrains Mono", "Fira Code", "SF Mono", Monaco, "Cascadia Code", "Roboto Mono", Consolas, "Courier New", monospace',
+      provider: 'google',
+      import: 'JetBrains_Mono'
+    },
+    
+    // Alternative sans-serif for UI elements (if needed)
+    ui: {
+      name: 'Geist Sans',
+      family: '"Geist Sans", -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif',
+      provider: 'google',
+      import: 'Geist_Sans'
+    },
+    
+    // Display font for headers and titles
+    display: {
+      name: 'IBM Plex Mono',
+      family: '"IBM Plex Mono", "SF Mono", Monaco, "Cascadia Code", "Roboto Mono", Consolas, "Courier New", monospace',
+      provider: 'google',
+      import: 'IBM_Plex_Mono'
+    }
+  },
+
   // Typography - Hierarchical system with military precision
   typography: {
     // Display headers - Command center style
