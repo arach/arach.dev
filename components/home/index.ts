@@ -1,20 +1,22 @@
-// Home page components
+// Main page component
 export { HomePage } from './HomePage'
+
+// UI Components
 export { HeroASCIIBanner } from './HeroASCIIBanner'
 export { CompactTypographyCard } from './CompactTypographyCard'
 export { TypographyProjectCard } from './TypographyProjectCard'
 
-// Shared components used in home
-export { GitHubContributions } from '../GitHubContributions'
-
-// Modal components
+// Modal Components
 export { HelpModal } from './HelpModal'
 export { ProjectStatsModal } from './ProjectStatsModal'
 
-// Navigation and interaction components
+// Navigation & Interaction
 export { useKeyboardNavigation } from './KeyboardNavigation'
 export { HeaderActions } from './HeaderActions'
 export { ProjectCategoryFilter } from './ProjectCategoryFilter'
 
-// Animation utilities
+// Shared Components
+export { GitHubContributions } from '../GitHubContributions'
+
+// Animation Utilities
 export * from './animations'

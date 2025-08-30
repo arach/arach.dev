@@ -5,7 +5,7 @@ import { useState, useMemo } from "react"
 
 import { motion, AnimatePresence } from "framer-motion"
 
-import { fadeInUp } from "@/lib/utils"
+import { fadeInUp } from "./animations"
 import { TooltipProvider } from "@/components/ui"
 import {
   HeroASCIIBanner,
