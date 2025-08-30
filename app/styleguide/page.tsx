@@ -162,6 +162,39 @@ function useElementEnhancer(onElementSelect?: (element: any) => void) {
   return containerRef
 }
 
+// Dynamic section detection from theme
+function getThemeSections(theme: Theme | null): string[] {
+  if (!theme) return ['colors', 'typography', 'components']
+  
+  const sections: string[] = []
+  
+  // Always include colors if present
+  if (theme.colors) sections.push('colors')
+  
+  // Include typography if present
+  if (theme.typography) sections.push('typography')
+  
+  // Detect component sections from theme.components
+  if (theme.components) {
+    const componentKeys = Object.keys(theme.components)
+    // Add individual component sections if they exist
+    if (componentKeys.includes('button')) sections.push('buttons')
+    if (componentKeys.includes('input') || componentKeys.includes('textarea')) sections.push('inputs')
+    if (componentKeys.includes('card')) sections.push('cards')
+    if (componentKeys.includes('badge')) sections.push('badges')
+    if (componentKeys.includes('table')) sections.push('tables')
+    if (componentKeys.includes('status')) sections.push('status')
+  }
+  
+  // Add effects section if present
+  if ((theme as any).effects) sections.push('effects')
+  
+  // Add spacing section if present
+  if ((theme as any).spacing) sections.push('spacing')
+  
+  return sections
+}
+
 // Helper functions for section metadata
 function getSectionId(section: string): string {
   const ids: Record<string, string> = {
@@ -172,9 +205,12 @@ function getSectionId(section: string): string {
     cards: 'CRD-005',
     badges: 'BDG-006',
     tables: 'TBL-007',
+    status: 'STS-008',
+    effects: 'EFX-009',
+    spacing: 'SPC-010',
     all: 'ALL-000'
   }
-  return ids[section] || 'UNK-999'
+  return ids[section] || `${section.toUpperCase().slice(0, 3)}-999`
 }
 
 function getSectionTitle(section: string): string {
@@ -186,57 +222,77 @@ function getSectionTitle(section: string): string {
     cards: 'Card Containers',
     badges: 'Badge Indicators',
     tables: 'Data Tables',
+    status: 'Status Indicators',
+    effects: 'Visual Effects',
+    spacing: 'Spacing System',
     all: 'Complete System'
   }
-  return titles[section] || section.replace(/([A-Z])/g, ' $1').trim()
+  return titles[section] || section.charAt(0).toUpperCase() + section.slice(1).replace(/([A-Z])/g, ' $1').trim()
 }
 
-function getSectionDescription(section: string): string {
+function getSectionDescription(section: string, theme: Theme | null): string {
+  // Theme-aware descriptions
+  const themePrefix = theme ? `${theme.name} theme ` : ''
+  
   const descriptions: Record<string, string> = {
-    typography: 'Hierarchical text system with tactical precision and clear information architecture',
-    colors: 'Strategic color deployment for semantic states and visual hierarchy',
-    buttons: 'Action triggers with purposeful styling and interaction states',
-    inputs: 'Data entry components optimized for accuracy and validation',
-    cards: 'Container elements with glass morphism and tactical framing',
-    badges: 'Status indicators and categorical labels with semantic coloring',
-    tables: 'Mission-critical data grids with sortable columns and inline actions',
-    all: 'Complete design system overview with all component categories'
+    typography: `${themePrefix}hierarchical text system with precision and clear information architecture`,
+    colors: `${themePrefix}color deployment for semantic states and visual hierarchy`,
+    buttons: `${themePrefix}action triggers with purposeful styling and interaction states`,
+    inputs: `${themePrefix}data entry components optimized for accuracy and validation`,
+    cards: `${themePrefix}container elements with distinctive styling and framing`,
+    badges: `${themePrefix}status indicators and categorical labels with semantic coloring`,
+    tables: `${themePrefix}data grids with sortable columns and inline actions`,
+    status: `${themePrefix}visual status indicators and state representations`,
+    effects: `${themePrefix}visual effects including shadows, blur, and transparency`,
+    spacing: `${themePrefix}spacing system for consistent layout rhythm`,
+    all: `Complete ${themePrefix}design system overview with all component categories`
   }
-  return descriptions[section] || 'Theme-aware components using CSS variables'
+  return descriptions[section] || `${themePrefix}components using theme variables`
 }
 
-function getSectionComponentCount(section: string): number {
-  const counts: Record<string, number> = {
-    typography: 7,
-    colors: 10,
-    buttons: 7,
-    inputs: 7,
-    cards: 4,
-    badges: 6,
-    tables: 3,
-    all: 44
+function getSectionComponentCount(section: string, theme: Theme | null): number {
+  if (!theme || !theme.components) return 0
+  
+  // Dynamic count based on actual theme data
+  switch(section) {
+    case 'typography':
+      return theme.typography ? Object.keys(theme.typography).length : 0
+    case 'colors':
+      return theme.colors ? Object.keys(theme.colors).flat().length : 0
+    case 'buttons':
+      return theme.components.button ? Object.keys(theme.components.button).length : 0
+    case 'inputs':
+      const inputCount = theme.components.input ? Object.keys(theme.components.input).length : 0
+      const textareaCount = theme.components.textarea ? Object.keys(theme.components.textarea).length : 0
+      return inputCount + textareaCount
+    case 'cards':
+      return theme.components.card ? Object.keys(theme.components.card).length : 0
+    case 'badges':
+      return theme.components.badge ? Object.keys(theme.components.badge).length : 0
+    case 'tables':
+      return theme.components.table ? Object.keys(theme.components.table).length : 0
+    case 'status':
+      return theme.components.status ? Object.keys(theme.components.status).length : 0
+    case 'all':
+      return getThemeSections(theme).reduce((sum, sec) => 
+        sum + getSectionComponentCount(sec, theme), 0
+      )
+    default:
+      return 0
   }
-  return counts[section] || 0
 }
 
-function getSectionVariantCount(section: string): number {
-  const counts: Record<string, number> = {
-    typography: 14,
-    colors: 4,
-    buttons: 7,
-    inputs: 10,
-    cards: 4,
-    badges: 6,
-    tables: 5,
-    all: 50
-  }
-  return counts[section] || 0
+function getSectionVariantCount(section: string, theme: Theme | null): number {
+  // For now, return component count as variant count
+  // This can be enhanced to count actual variants within each component type
+  return getSectionComponentCount(section, theme)
 }
 
 // Unified Tactical Header Component with Sticky Status Bar
 interface TacticalHeaderProps {
   activeSection: string
   activeTheme: string
+  theme?: Theme | null
   status?: 'active' | 'inactive' | 'loading'
   statusColor?: string
   accentColor?: string
@@ -248,6 +304,7 @@ interface TacticalHeaderProps {
 function TacticalHeader({ 
   activeSection, 
   activeTheme,
+  theme = null,
   status = 'active',
   statusColor = 'success',
   accentColor = 'var(--theme-accent-color)',
@@ -324,7 +381,7 @@ function TacticalHeader({
               
               {/* Section description */}
               <p className="text-xs text-muted-foreground font-mono">
-                {getSectionDescription(activeSection)}
+                {getSectionDescription(activeSection, theme)}
               </p>
             </div>
             
@@ -334,11 +391,11 @@ function TacticalHeader({
                 <div className="space-y-2">
                   <div>
                     <div className="text-[10px] font-mono text-muted-foreground uppercase">Components</div>
-                    <div className="text-sm font-mono text-foreground">{getSectionComponentCount(activeSection)}</div>
+                    <div className="text-sm font-mono text-foreground">{getSectionComponentCount(activeSection, theme)}</div>
                   </div>
                   <div>
                     <div className="text-[10px] font-mono text-muted-foreground uppercase">Variants</div>
-                    <div className="text-sm font-mono text-foreground">{getSectionVariantCount(activeSection)}</div>
+                    <div className="text-sm font-mono text-foreground">{getSectionVariantCount(activeSection, theme)}</div>
                   </div>
                 </div>
               </aside>
@@ -416,6 +473,44 @@ function SectionHeader({ title, id, status, componentCount, variantCount }: Sect
       </div>
     </div>
   )
+}
+
+// Dynamic Section Component - Renders sections based on theme data
+interface DynamicSectionProps {
+  sectionId: string
+  theme: Theme | null
+  activeTheme: string
+}
+
+function DynamicSection({ sectionId, theme, activeTheme }: DynamicSectionProps) {
+  if (!theme) {
+    return <div className="p-6 text-muted-foreground">No theme data available</div>
+  }
+
+  switch (sectionId) {
+    case 'typography':
+      return <TypographySection activeTheme={activeTheme} />
+    case 'colors':
+      return <ColorsSection theme={theme} />
+    case 'buttons':
+      return <ButtonsSection theme={theme} />
+    case 'inputs':
+      return <InputsSection theme={theme} />
+    case 'cards':
+      return <CardsSection theme={theme} />
+    case 'badges':
+      return <BadgesSection theme={theme} />
+    case 'tables':
+      return <TablesSection theme={theme} />
+    case 'status':
+      return <StatusSection theme={theme} />
+    case 'effects':
+      return <EffectsSection theme={theme} />
+    case 'spacing':
+      return <SpacingSection theme={theme} />
+    default:
+      return <div className="p-6 text-muted-foreground">Section "{sectionId}" not implemented</div>
+  }
 }
 
 export default function StyleGuidePage() {
@@ -630,15 +725,17 @@ export default function StyleGuidePage() {
     setPinnedStyles([])
   }
 
+  // Get current theme object
+  const currentTheme = getTheme(activeTheme) || null
+  
+  // Dynamically generate sections based on theme
+  const themeSections = getThemeSections(currentTheme)
   const sections = [
     { id: 'all', label: 'All' },
-    { id: 'typography', label: 'Typography' },
-    { id: 'colors', label: 'Colors' },
-    { id: 'buttons', label: 'Buttons' },
-    { id: 'inputs', label: 'Form Elements' },
-    { id: 'cards', label: 'Cards' },
-    { id: 'badges', label: 'Badges' },
-    { id: 'tables', label: 'Data Tables' },
+    ...themeSections.map(sectionId => ({
+      id: sectionId,
+      label: getSectionTitle(sectionId)
+    }))
   ]
 
   return (
@@ -815,6 +912,7 @@ export default function StyleGuidePage() {
           <TacticalHeader 
             activeSection={activeSection}
             activeTheme={activeTheme}
+            theme={currentTheme}
             status="active"
             statusColor="success"
             revision="2.0.1"
@@ -823,96 +921,32 @@ export default function StyleGuidePage() {
           />
 
             {/* Content based on active section */}
-            <div className="space-y-12">
+            <div className="space-y-12 px-6 pb-12">
               {activeSection === 'all' ? (
                 <>
-                  <section id="typography-section">
-                    <SectionHeader 
-                      title="Typography" 
-                      id="TYP-001"
-                      status="active"
-                      componentCount={7}
-                      variantCount={14}
-                    />
-                    <TypographySection activeTheme={activeTheme} />
-                  </section>
-                  
-                  <section id="colors-section">
-                    <SectionHeader 
-                      title="Colors" 
-                      id="CLR-002"
-                      status="active"
-                      componentCount={10}
-                      variantCount={4}
-                    />
-                    <ColorsSection />
-                  </section>
-                  
-                  <section id="buttons-section">
-                    <SectionHeader 
-                      title="Buttons" 
-                      id="BTN-003"
-                      status="active"
-                      componentCount={7}
-                      variantCount={7}
-                    />
-                    <ButtonsSection />
-                  </section>
-                  
-                  <section id="inputs-section">
-                    <SectionHeader 
-                      title="Form Elements" 
-                      id="FRM-004"
-                      status="active"
-                      componentCount={7}
-                      variantCount={10}
-                    />
-                    <InputsSection />
-                  </section>
-                  
-                  <section id="cards-section">
-                    <SectionHeader 
-                      title="Cards" 
-                      id="CRD-005"
-                      status="active"
-                      componentCount={4}
-                      variantCount={4}
-                    />
-                    <CardsSection />
-                  </section>
-                  
-                  <section id="badges-section">
-                    <SectionHeader 
-                      title="Badges" 
-                      id="BDG-006"
-                      status="active"
-                      componentCount={6}
-                      variantCount={6}
-                    />
-                    <BadgesSection />
-                  </section>
-                  
-                  <section id="tables-section">
-                    <SectionHeader 
-                      title="Data Tables" 
-                      id="TBL-007"
-                      status="active"
-                      componentCount={3}
-                      variantCount={5}
-                    />
-                    <TablesSection />
-                  </section>
+                  {themeSections.map((sectionId) => (
+                    <section key={sectionId} id={`${sectionId}-section`}>
+                      <SectionHeader 
+                        title={getSectionTitle(sectionId)}
+                        id={getSectionId(sectionId)}
+                        status="active"
+                        componentCount={getSectionComponentCount(sectionId, currentTheme)}
+                        variantCount={getSectionVariantCount(sectionId, currentTheme)}
+                      />
+                      <DynamicSection 
+                        sectionId={sectionId} 
+                        theme={currentTheme} 
+                        activeTheme={activeTheme}
+                      />
+                    </section>
+                  ))}
                 </>
               ) : (
-                <>
-                  {activeSection === 'typography' && <TypographySection activeTheme={activeTheme} />}
-                  {activeSection === 'colors' && <ColorsSection />}
-                  {activeSection === 'buttons' && <ButtonsSection />}
-                  {activeSection === 'inputs' && <InputsSection />}
-                  {activeSection === 'cards' && <CardsSection />}
-                  {activeSection === 'badges' && <BadgesSection />}
-                  {activeSection === 'tables' && <TablesSection />}
-                </>
+                <DynamicSection 
+                  sectionId={activeSection} 
+                  theme={currentTheme} 
+                  activeTheme={activeTheme}
+                />
               )}
             </div>
         </main>
@@ -1434,7 +1468,7 @@ function TypographySection({ activeTheme }: { activeTheme: string }) {
 }
 
 // Colors Section Component
-function ColorsSection() {
+function ColorsSection({ theme }: { theme?: Theme | null }) {
   const colorVariables = [
     { name: 'Primary', var: 'primary', desc: 'Main brand color' },
     { name: 'Secondary', var: 'secondary', desc: 'Secondary brand color' },
@@ -1509,8 +1543,8 @@ function ColorsSection() {
   )
 }
 
-// Buttons Section Component
-function ButtonsSection() {
+// Buttons Section Component  
+function ButtonsSection({ theme }: { theme?: Theme | null }) {
   const buttonVariants = [
     {
       name: 'Primary',
@@ -1582,8 +1616,8 @@ function ButtonsSection() {
   )
 }
 
-// Form Elements Section Component (Enhanced with Peal variants)
-function InputsSection() {
+// Form Elements Section Component
+function InputsSection({ theme }: { theme?: Theme | null }) {
   const inputVariants = [
     {
       name: 'Default Input',
@@ -1738,8 +1772,8 @@ function InputsSection() {
   )
 }
 
-// Cards Section Component (Simplified)
-function CardsSection() {
+// Cards Section Component
+function CardsSection({ theme }: { theme?: Theme | null }) {
   const cardVariants = [
     {
       name: 'Default Card',
@@ -1801,7 +1835,7 @@ function CardsSection() {
 }
 
 // Badges Section Component
-function BadgesSection() {
+function BadgesSection({ theme }: { theme?: Theme | null }) {
   const badgeVariants = [
     {
       name: 'Default',
@@ -1867,8 +1901,167 @@ function BadgesSection() {
   )
 }
 
+// Status Section Component
+function StatusSection({ theme }: { theme?: Theme | null }) {
+  if (!theme?.components?.status) {
+    return (
+      <section className="space-y-6">
+        <div className="p-6 glass-panel">
+          <h3 className="text-lg font-semibold text-foreground mb-4">Status Indicators</h3>
+          <p className="text-sm text-muted-foreground">No status indicators defined in this theme</p>
+        </div>
+      </section>
+    )
+  }
+
+  const statusIndicators = Object.entries(theme.components.status)
+
+  return (
+    <section className="space-y-6">
+      <div className="p-6 glass-panel">
+        <h3 className="text-lg font-semibold text-foreground mb-4">Status Indicators</h3>
+        <div className="grid grid-cols-2 md:grid-cols-4 gap-6">
+          {statusIndicators.map(([name, classes]) => (
+            <div key={name} className="flex flex-col items-center gap-2">
+              <div className={typeof classes === 'string' ? classes : ''} />
+              <span className="text-xs font-mono text-muted-foreground">{name}</span>
+            </div>
+          ))}
+        </div>
+      </div>
+    </section>
+  )
+}
+
+// Effects Section Component
+function EffectsSection({ theme }: { theme?: Theme | null }) {
+  const effects = (theme as any)?.effects
+
+  if (!effects) {
+    return (
+      <section className="space-y-6">
+        <div className="p-6 glass-panel">
+          <h3 className="text-lg font-semibold text-foreground mb-4">Visual Effects</h3>
+          <p className="text-sm text-muted-foreground">No effects defined in this theme</p>
+        </div>
+      </section>
+    )
+  }
+
+  return (
+    <section className="space-y-6">
+      <div className="p-6 glass-panel">
+        <h3 className="text-lg font-semibold text-foreground mb-4">Visual Effects</h3>
+        
+        {effects.shadows && (
+          <div className="mb-6">
+            <h4 className="text-sm font-semibold text-foreground mb-3">Shadows</h4>
+            <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-4">
+              {Object.entries(effects.shadows).map(([name, value]) => (
+                <div key={name} className="p-4 bg-card rounded-md" style={{ boxShadow: value as string }}>
+                  <span className="text-xs font-mono text-muted-foreground">{name}</span>
+                </div>
+              ))}
+            </div>
+          </div>
+        )}
+
+        {effects.transparency && (
+          <div className="mb-6">
+            <h4 className="text-sm font-semibold text-foreground mb-3">Transparency Levels</h4>
+            <div className="grid grid-cols-2 md:grid-cols-4 gap-3">
+              {Object.entries(effects.transparency).map(([name, value]) => (
+                <div key={name} className="text-center">
+                  <div 
+                    className="h-16 bg-primary rounded-md mb-2" 
+                    style={{ opacity: value as string }}
+                  />
+                  <span className="text-xs font-mono text-muted-foreground">{name}: {String(value)}</span>
+                </div>
+              ))}
+            </div>
+          </div>
+        )}
+
+        {effects.backdrop && (
+          <div>
+            <h4 className="text-sm font-semibold text-foreground mb-3">Backdrop Effects</h4>
+            <div className="grid md:grid-cols-3 gap-3">
+              {Object.entries(effects.backdrop).map(([name, value]) => (
+                <div key={name} className={`p-4 bg-card/50 rounded-md ${value}`}>
+                  <span className="text-xs font-mono text-muted-foreground">{name}</span>
+                </div>
+              ))}
+            </div>
+          </div>
+        )}
+      </div>
+    </section>
+  )
+}
+
+// Spacing Section Component
+function SpacingSection({ theme }: { theme?: Theme | null }) {
+  const spacing = (theme as any)?.spacing
+
+  if (!spacing) {
+    return (
+      <section className="space-y-6">
+        <div className="p-6 glass-panel">
+          <h3 className="text-lg font-semibold text-foreground mb-4">Spacing System</h3>
+          <p className="text-sm text-muted-foreground">No spacing system defined in this theme</p>
+        </div>
+      </section>
+    )
+  }
+
+  return (
+    <section className="space-y-6">
+      <div className="p-6 glass-panel">
+        <h3 className="text-lg font-semibold text-foreground mb-4">Spacing System</h3>
+        
+        {spacing.component && (
+          <div className="mb-6">
+            <h4 className="text-sm font-semibold text-foreground mb-3">Component Spacing</h4>
+            <div className="space-y-2">
+              {Object.entries(spacing.component).map(([name, value]) => (
+                <div key={name} className="flex items-center gap-4">
+                  <span className="text-xs font-mono text-muted-foreground w-12">{name}:</span>
+                  <div 
+                    className="bg-primary" 
+                    style={{ width: value as string, height: value as string }}
+                  />
+                  <span className="text-xs text-muted-foreground">{value as string}</span>
+                </div>
+              ))}
+            </div>
+          </div>
+        )}
+
+        {spacing.section && (
+          <div>
+            <h4 className="text-sm font-semibold text-foreground mb-3">Section Spacing</h4>
+            <div className="space-y-2">
+              {Object.entries(spacing.section).map(([name, value]) => (
+                <div key={name} className="flex items-center gap-4">
+                  <span className="text-xs font-mono text-muted-foreground w-12">{name}:</span>
+                  <div 
+                    className="bg-accent h-4" 
+                    style={{ width: value as string }}
+                  />
+                  <span className="text-xs text-muted-foreground">{value as string}</span>
+                </div>
+              ))}
+            </div>
+          </div>
+        )}
+      </div>
+    </section>
+  )
+}
+
 // Data Tables Section Component
-function TablesSection() {
+function TablesSection({ theme }: { theme?: Theme | null }) {
   const tableData = [
     { id: 1, name: 'api-server-01', status: 'online', cpu: '45%', memory: '2.1 GB', uptime: '15 days', lastCheck: '2 min ago' },
     { id: 2, name: 'db-primary', status: 'online', cpu: '78%', memory: '8.3 GB', uptime: '45 days', lastCheck: '1 min ago' },
