@@ -24,6 +24,7 @@ interface ThemeFont {
   import?: string
   isThemeFont: boolean
   samples: FontSample[]
+  key?: string // Unique key for React rendering
 }
 
 interface TypographyElement {
@@ -90,7 +91,8 @@ export function TypographySection({ theme }: TypographySectionProps) {
           provider: fontData.provider,
           import: fontData.import,
           isThemeFont: true,
-          samples
+          samples,
+          key: fontKey // Add unique key for React
         })
       }
     })
@@ -278,8 +280,8 @@ export function TypographySection({ theme }: TypographySectionProps) {
         <section>
           <h4>Theme Fonts</h4>
           <div>
-            {themeFonts.map((font) => (
-              <article key={font.name}>
+            {themeFonts.map((font, index) => (
+              <article key={font.key || `font-${index}`}>
                 <header>
                   <h5>{font.name}</h5>
                   <p>{font.description}</p>
