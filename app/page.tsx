@@ -4,6 +4,7 @@ import { useState, useEffect } from "react";
 import HomePage from "@/components/home/HomePage";
 import ThemedDottedGrid from "@/components/ThemedDottedGrid";
 import { DebugToolbar } from "@/components/debug/DebugToolbar";
+import { GitHubProvider } from "@/lib/github-context";
 
 function HomeContent() {
   const [mounted, setMounted] = useState(false);
@@ -41,7 +42,7 @@ function HomeContent() {
     { title: "Peal", description: "Web-based notification sound designer", link: "https://arach.github.io/peal", github: "https://github.com/arach/peal", tags: ["web", "TypeScript"], preview: "Batch generate 50 unique sounds. Waveform viz, effects, and CLI: npx peal add" },
   ];
   return (
-    <>
+    <GitHubProvider username="arach">
       {/* Simple dotted grid background - always visible, theme-aware */}
       <ThemedDottedGrid />
       
@@ -60,7 +61,7 @@ function HomeContent() {
           Cmd+D for debug
         </div>
       )}
-    </>
+    </GitHubProvider>
   );
 }
 

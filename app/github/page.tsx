@@ -1,5 +1,6 @@
 import GitHubActivityPage from "@/components/github/GitHubActivityPage"
 import InteractiveBackground from "@/components/InteractiveBackground"
+import { GitHubProvider } from "@/lib/github-context"
 
 import type { Metadata } from 'next'
 
@@ -28,11 +29,11 @@ export const metadata: Metadata = {
 
 export default function GitHubPage() {
   return (
-    <>
+    <GitHubProvider username="arach">
       <InteractiveBackground maxEdges={3} />
       <div className="container mx-auto px-4 py-6 min-h-[90vh] relative z-10">
         <GitHubActivityPage />
       </div>
-    </>
+    </GitHubProvider>
   )
 }

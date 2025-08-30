@@ -140,6 +140,26 @@ export const themes: Theme[] = [
     dotOpacity: 0.08,
     headingColor: '#451a03',
   },
+  {
+    name: 'terminal',
+    displayName: 'Terminal',
+    bgColor: '#0a0a0b',
+    textColor: '#ffffff',
+    headerBg: 'rgba(39, 39, 42, 0.95)',
+    headerText: '#ffffff',
+    headerFont: 'ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace',
+    borderColor: '#27272a',
+    accentColor: '#00b4d8',
+    shadowColor: 'rgba(0, 0, 0, 0.5)',
+    mutedTextColor: '#a1a1aa',
+    cardBg: '#27272a',
+    codeFont: 'ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace',
+    asciiColor: '#00b4d8',
+    projectCardText: '#ffffff',
+    projectCardBg: '#18181b',
+    dotOpacity: 0.08,
+    headingColor: '#ffffff',
+  },
 ];
 
 interface ThemeContextType {

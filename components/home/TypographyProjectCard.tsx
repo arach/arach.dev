@@ -23,7 +23,7 @@ interface TypographyProjectCardProps {
   cardRef: (el: HTMLDivElement | null) => void;
 }
 
-export default function TypographyProjectCard({
+export function TypographyProjectCard({
   project,
   index,
   isKeyboardFocused,

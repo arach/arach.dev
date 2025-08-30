@@ -86,6 +86,25 @@
     --theme-header-font: inherit;
   }
 
+  .theme-terminal {
+    --theme-bg-color: #0a0a0b;
+    --theme-text-color: #ffffff;
+    --theme-header-bg: rgba(39, 39, 42, 0.95);
+    --theme-header-text: #ffffff;
+    --theme-header-font: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace;
+    --theme-border-color: #27272a;
+    --theme-accent-color: #00b4d8;
+    --theme-shadow-color: rgba(0, 0, 0, 0.5);
+    --theme-muted-text: #a1a1aa;
+    --theme-card-bg: #27272a;
+    --theme-code-font: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace;
+    --theme-ascii-color: #00b4d8;
+    --theme-project-card-text: #ffffff;
+    --theme-project-card-bg: #18181b;
+    --theme-dot-opacity: 0.08;
+    --theme-heading-color: #ffffff;
+  }
+
   body {
     background: var(--theme-bg-color);
     color: var(--theme-text-color);

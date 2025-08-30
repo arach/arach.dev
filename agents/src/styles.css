@@ -1,11 +1,18 @@
 :root {
-  --bg-primary: #0a0a0a;
-  --bg-secondary: #1a1a1a;
-  --text-primary: #ffffff;
-  --text-secondary: #a0a0a0;
-  --accent: #00ff88;
-  --border: #333;
+  --bg-primary: #1e293b;
+  --bg-secondary: #334155;
+  --bg-terminal: #0f172a;
+  --text-primary: #fbbf24;
+  --text-secondary: #64748b;
+  --text-terminal: #fbbf24;
+  --accent: #fbbf24;
+  --border: #475569;
+  --terminal-green: #22c55e;
+  --terminal-red: #ef4444;
+  --terminal-yellow: #fbbf24;
 }
+
+@import url('https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500;600&display=swap');
 
 * {
   margin: 0;
@@ -14,138 +21,350 @@
 }
 
 body {
-  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
-  background: var(--bg-primary);
-  color: var(--text-primary);
+  font-family: 'IBM Plex Mono', monospace;
+  background: var(--bg-terminal);
+  color: var(--text-terminal);
   line-height: 1.6;
   min-height: 100vh;
 }
 
 #app {
-  max-width: 1200px;
+  max-width: 1400px;
   margin: 0 auto;
-  padding: 2rem;
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+}
+
+/* Terminal window styling */
+.terminal-window {
+  background: var(--bg-primary);
+  border: 1px solid var(--border);
+  border-radius: 8px;
+  margin: 1rem;
+  box-shadow: 0 4px 24px rgba(0, 0, 0, 0.5);
+}
+
+.terminal-header {
+  background: var(--bg-secondary);
+  padding: 0.75rem 1rem;
+  border-bottom: 1px solid var(--border);
+  display: flex;
+  align-items: center;
+  border-radius: 8px 8px 0 0;
+}
+
+.terminal-dots {
+  display: flex;
+  gap: 0.5rem;
+  margin-right: 1rem;
+}
+
+.terminal-dot {
+  width: 12px;
+  height: 12px;
+  border-radius: 50%;
+}
+
+.terminal-dot.red { background: var(--terminal-red); }
+.terminal-dot.yellow { background: var(--terminal-yellow); }
+.terminal-dot.green { background: var(--terminal-green); }
+
+.terminal-title {
+  color: var(--text-terminal);
+  font-size: 0.875rem;
+  font-weight: 500;
 }
 
 header {
-  text-align: center;
-  padding: 3rem 0;
-  border-bottom: 1px solid var(--border);
-  margin-bottom: 2rem;
+  padding: 2rem;
+  background: var(--bg-terminal);
+}
+
+.header-content {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+  margin-bottom: 1rem;
+}
+
+.terminal-prompt {
+  color: var(--terminal-green);
+  font-weight: 600;
+}
+
+.command {
+  color: var(--text-terminal);
 }
 
 header h1 {
-  font-size: 3rem;
-  margin-bottom: 0.5rem;
-  color: var(--text-primary);
+  font-size: 2rem;
+  margin: 1rem 0;
+  color: var(--text-terminal);
+  font-family: 'IBM Plex Mono', monospace;
+}
+
+header .ascii-art {
+  font-family: 'IBM Plex Mono', monospace;
+  font-size: 0.75rem;
+  line-height: 1;
+  color: var(--accent);
+  margin: 1rem 0;
+  white-space: pre;
 }
 
 header p {
   color: var(--text-secondary);
-  font-size: 1.2rem;
+  font-size: 1rem;
+  margin-bottom: 0.5rem;
+}
+
+.cursor {
+  animation: blink 1s infinite;
+}
+
+@keyframes blink {
+  0%, 50% { opacity: 1; }
+  51%, 100% { opacity: 0; }
+}
+
+@keyframes fadeInUp {
+  from {
+    opacity: 0;
+    transform: translateY(20px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@keyframes slideInFromLeft {
+  from {
+    opacity: 0;
+    transform: translateX(-20px);
+  }
+  to {
+    opacity: 1;
+    transform: translateX(0);
+  }
+}
+
+/* Add animation to agent cards */
+.agent-card {
+  animation: fadeInUp 0.5s ease-out forwards;
+  opacity: 0;
+}
+
+.terminal-window {
+  animation: slideInFromLeft 0.3s ease-out;
+}
+
+/* Smooth transitions */
+.agent-card {
+  transition: all 0.2s ease;
+}
+
+.agent-card:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 4px 12px rgba(251, 191, 36, 0.1);
 }
 
 nav {
+  padding: 0 2rem 1rem;
+  background: var(--bg-terminal);
+}
+
+.nav-content {
   display: flex;
-  gap: 2rem;
-  justify-content: center;
-  margin-bottom: 3rem;
-  padding: 1rem;
-  background: var(--bg-secondary);
-  border-radius: 8px;
+  gap: 0;
+  font-family: 'IBM Plex Mono', monospace;
+}
+
+.nav-prompt {
+  color: var(--terminal-green);
+  font-weight: 600;
 }
 
 nav a {
-  color: var(--text-primary);
+  color: var(--text-terminal);
   text-decoration: none;
-  padding: 0.5rem 1rem;
-  border-radius: 4px;
-  transition: background 0.3s;
+  padding: 0.25rem 0.5rem;
+  margin: 0 0.5rem;
+  border: 1px solid transparent;
+  transition: all 0.2s;
+  font-family: 'IBM Plex Mono', monospace;
 }
 
-nav a:hover {
-  background: var(--accent);
-  color: var(--bg-primary);
+nav a:hover, nav a.active {
+  background: var(--bg-secondary);
+  border-color: var(--accent);
+  color: var(--accent);
+}
+
+nav a::before {
+  content: '[';
+  color: var(--text-secondary);
+}
+
+nav a::after {
+  content: ']';
+  color: var(--text-secondary);
 }
 
 main {
+  flex-grow: 1;
+  padding: 0 2rem 2rem;
+  background: var(--bg-terminal);
+}
+
+.terminal-content {
+  background: var(--bg-primary);
+  border: 1px solid var(--border);
+  border-radius: 4px;
+  padding: 1.5rem;
   min-height: 400px;
 }
 
 .agent-grid {
   display: grid;
-  grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
-  gap: 1.5rem;
-  margin-top: 2rem;
+  grid-template-columns: repeat(auto-fill, minmax(350px, 1fr));
+  gap: 1rem;
+  margin-top: 1rem;
 }
 
 .agent-card {
   background: var(--bg-secondary);
   border: 1px solid var(--border);
-  border-radius: 4px;
-  padding: 1.5rem;
-  transition: border-color 0.2s ease;
+  border-radius: 0;
+  padding: 1rem;
+  position: relative;
+  transition: all 0.2s ease;
+  font-family: 'IBM Plex Mono', monospace;
+}
+
+.agent-card::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  height: 2px;
+  background: var(--accent);
+  transform: scaleX(0);
+  transition: transform 0.2s ease;
 }
 
 .agent-card:hover {
-  border-color: var(--text-secondary);
+  border-color: var(--accent);
+  background: var(--bg-terminal);
+}
+
+.agent-card:hover::before {
+  transform: scaleX(1);
+}
+
+.agent-card .agent-header {
+  display: flex;
+  align-items: center;
+  margin-bottom: 0.75rem;
+  gap: 0.5rem;
 }
 
 .agent-card .agent-type {
+  background: var(--bg-primary);
+  color: var(--accent);
   font-size: 0.75rem;
-  font-weight: 600;
-  text-transform: uppercase;
-  letter-spacing: 0.05em;
-  margin-bottom: 0.75rem;
+  font-weight: 500;
+  padding: 0.25rem 0.5rem;
+  border: 1px solid var(--border);
+  font-family: 'IBM Plex Mono', monospace;
+}
+
+.agent-card .status-indicator {
+  color: var(--terminal-green);
+  font-size: 0.75rem;
 }
 
 .agent-card h3 {
-  color: var(--text-primary);
+  color: var(--text-terminal);
   margin-bottom: 0.75rem;
-  font-size: 1.25rem;
+  font-size: 1.1rem;
+  font-weight: 600;
+  font-family: 'IBM Plex Mono', monospace;
 }
 
 .agent-card .description {
   color: var(--text-secondary);
-  font-size: 0.9rem;
-  line-height: 1.5;
+  font-size: 0.85rem;
+  line-height: 1.4;
   margin-bottom: 1rem;
 }
 
 .agent-card .capabilities {
   display: flex;
   flex-wrap: wrap;
-  gap: 0.5rem;
+  gap: 0.25rem;
   margin-bottom: 1rem;
 }
 
 .capability-tag {
-  background: transparent;
+  background: var(--bg-primary);
   color: var(--text-secondary);
-  padding: 0.25rem 0.5rem;
-  border-radius: 2px;
-  font-size: 0.75rem;
+  padding: 0.2rem 0.4rem;
+  border-radius: 0;
+  font-size: 0.7rem;
   border: 1px solid var(--border);
+  font-family: 'IBM Plex Mono', monospace;
+  transition: all 0.2s;
+}
+
+.capability-tag:hover {
+  color: var(--accent);
+  border-color: var(--accent);
 }
 
 .agent-card .projects {
   color: var(--text-secondary);
-  font-size: 0.8rem;
+  font-size: 0.75rem;
   margin-bottom: 1rem;
+  font-family: 'IBM Plex Mono', monospace;
+}
+
+.agent-card .projects::before {
+  content: '$ projects: ';
+  color: var(--terminal-green);
+  font-weight: 600;
 }
 
 .agent-card .view-details {
-  color: var(--text-primary);
+  color: var(--accent);
   text-decoration: none;
-  font-size: 0.9rem;
-  font-weight: 400;
+  font-size: 0.8rem;
+  font-weight: 500;
   display: inline-flex;
   align-items: center;
   transition: color 0.2s;
+  font-family: 'IBM Plex Mono', monospace;
+  border: 1px solid var(--border);
+  padding: 0.25rem 0.5rem;
+  background: var(--bg-primary);
 }
 
 .agent-card .view-details:hover {
-  color: var(--text-secondary);
+  color: var(--bg-primary);
+  background: var(--accent);
+  border-color: var(--accent);
+}
+
+.agent-card .view-details::before {
+  content: '> ';
+  color: currentColor;
+}
+
+.agent-card .view-details::after {
+  content: ' _';
+  animation: blink 1s infinite;
 }
 
 .agent-card .type {
@@ -171,52 +390,79 @@ main {
 }
 
 footer {
-  text-align: center;
-  padding: 2rem 0;
-  margin-top: 4rem;
+  padding: 1rem 2rem;
+  background: var(--bg-terminal);
   border-top: 1px solid var(--border);
+  font-family: 'IBM Plex Mono', monospace;
+}
+
+.footer-content {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
   color: var(--text-secondary);
+  font-size: 0.875rem;
+}
+
+.footer-prompt {
+  color: var(--terminal-green);
+  font-weight: 600;
 }
 
 footer a {
   color: var(--accent);
   text-decoration: none;
+  transition: color 0.2s;
 }
 
 footer a:hover {
-  text-decoration: underline;
+  color: var(--terminal-green);
 }
 
 /* Agent detail page */
 .agent-detail {
-  max-width: 800px;
+  max-width: 1000px;
   margin: 0 auto;
+  font-family: 'IBM Plex Mono', monospace;
 }
 
 .agent-detail h2 {
   color: var(--accent);
   margin: 2rem 0 1rem;
+  font-family: 'IBM Plex Mono', monospace;
+}
+
+.agent-detail h2::before {
+  content: '# ';
+  color: var(--terminal-green);
 }
 
 .agent-detail h3 {
-  color: var(--text-primary);
+  color: var(--text-terminal);
   margin: 1.5rem 0 0.5rem;
+  font-family: 'IBM Plex Mono', monospace;
+}
+
+.agent-detail h3::before {
+  content: '## ';
+  color: var(--terminal-green);
 }
 
 .agent-detail code {
   background: var(--bg-secondary);
   padding: 0.2rem 0.4rem;
-  border-radius: 3px;
-  font-family: 'SF Mono', Monaco, 'Cascadia Code', monospace;
+  border: 1px solid var(--border);
+  font-family: 'IBM Plex Mono', monospace;
+  color: var(--accent);
 }
 
 .agent-detail pre {
   background: var(--bg-secondary);
   border: 1px solid var(--border);
-  border-radius: 8px;
   padding: 1rem;
   overflow-x: auto;
   margin: 1rem 0;
+  font-family: 'IBM Plex Mono', monospace;
 }
 
 .agent-detail ul {
@@ -228,6 +474,63 @@ footer a:hover {
   margin: 0.5rem 0;
 }
 
+.agent-detail ul li::before {
+  content: '→ ';
+  color: var(--accent);
+  margin-left: -1rem;
+}
+
+/* Overview section */
+.overview {
+  font-family: 'IBM Plex Mono', monospace;
+}
+
+.overview h2 {
+  color: var(--accent);
+  margin-bottom: 1rem;
+  font-size: 1.5rem;
+}
+
+.overview h2::before {
+  content: '$ ';
+  color: var(--terminal-green);
+}
+
+.overview h3 {
+  color: var(--text-terminal);
+  margin: 1.5rem 0 0.5rem;
+}
+
+.overview h3::before {
+  content: '> ';
+  color: var(--terminal-green);
+}
+
+.overview ul {
+  list-style: none;
+  margin-left: 1rem;
+}
+
+.overview ul li {
+  color: var(--text-secondary);
+  margin: 0.5rem 0;
+}
+
+.overview ul li::before {
+  content: '→ ';
+  color: var(--accent);
+  margin-right: 0.5rem;
+}
+
+.overview p {
+  color: var(--text-secondary);
+  margin-bottom: 1rem;
+}
+
+.overview strong {
+  color: var(--accent);
+}
+
 /* Protected content overlay */
 .protected-overlay {
   position: fixed;
@@ -235,35 +538,42 @@ footer a:hover {
   left: 0;
   right: 0;
   bottom: 0;
-  background: rgba(0, 0, 0, 0.9);
+  background: rgba(15, 23, 42, 0.95);
   display: flex;
   align-items: center;
   justify-content: center;
   z-index: 1000;
+  font-family: 'IBM Plex Mono', monospace;
 }
 
 .auth-form {
-  background: var(--bg-secondary);
+  background: var(--bg-primary);
   padding: 2rem;
-  border-radius: 8px;
   border: 1px solid var(--accent);
   max-width: 400px;
   width: 100%;
+  font-family: 'IBM Plex Mono', monospace;
 }
 
 .auth-form h2 {
   color: var(--accent);
   margin-bottom: 1rem;
+  font-family: 'IBM Plex Mono', monospace;
 }
 
 .auth-form input {
   width: 100%;
   padding: 0.75rem;
-  background: var(--bg-primary);
+  background: var(--bg-secondary);
   border: 1px solid var(--border);
-  color: var(--text-primary);
-  border-radius: 4px;
+  color: var(--text-terminal);
   margin-bottom: 1rem;
+  font-family: 'IBM Plex Mono', monospace;
+}
+
+.auth-form input:focus {
+  outline: none;
+  border-color: var(--accent);
 }
 
 .auth-form button {
@@ -271,13 +581,14 @@ footer a:hover {
   padding: 0.75rem;
   background: var(--accent);
   color: var(--bg-primary);
-  border: none;
-  border-radius: 4px;
-  font-weight: bold;
+  border: 1px solid var(--accent);
+  font-weight: 600;
   cursor: pointer;
-  transition: opacity 0.2s;
+  transition: all 0.2s;
+  font-family: 'IBM Plex Mono', monospace;
 }
 
 .auth-form button:hover {
-  opacity: 0.8;
+  background: var(--bg-primary);
+  color: var(--accent);
 }
