@@ -24,7 +24,7 @@ interface ThemeFont {
   import?: string
   isThemeFont: boolean
   samples: FontSample[]
-  key?: string // Unique key for React rendering
+  key: string // Unique key for React rendering
 }
 
 interface TypographyElement {
@@ -33,17 +33,17 @@ interface TypographyElement {
   classes: string
   usage: string
   element?: keyof React.JSX.IntrinsicElements
-  key?: string // Unique key for React rendering
+  key: string // Unique key for React rendering
 }
 
 export function TypographySection({ theme }: TypographySectionProps) {
   if (!theme) {
     return (
-      <section>
-        <header>
-          <h3>Theme Typography</h3>
-          <p>No theme data available</p>
-        </header>
+      <section className="space-y-6">
+        <div className="p-6 glass-panel">
+          <h3 className="text-lg font-semibold text-foreground mb-4">Theme Typography</h3>
+          <p className="text-sm text-muted-foreground">No theme data available</p>
+        </div>
       </section>
     )
   }
@@ -93,7 +93,7 @@ export function TypographySection({ theme }: TypographySectionProps) {
           import: fontData.import,
           isThemeFont: true,
           samples,
-          key: fontKey // Add unique key for React
+          key: `font-${fontKey}` // Ensure unique key
         })
       }
     })
@@ -133,7 +133,7 @@ export function TypographySection({ theme }: TypographySectionProps) {
     })
 
     // Generate samples from relevant typography entries
-    relevantEntries.slice(0, 4).forEach(([key, classes]) => {
+    relevantEntries.slice(0, 4).forEach(([key, classes], index) => {
       if (typeof classes === 'string') {
         // Extract size and weight from the classes
         const sizeMatch = classes.match(/text-(xs|sm|base|lg|xl|2xl|3xl|4xl)/)
@@ -152,7 +152,7 @@ export function TypographySection({ theme }: TypographySectionProps) {
             '// Comments and code annotations',
             'npm install @package/name'
           ]
-          sampleText = codeSamples[samples.length % codeSamples.length]
+          sampleText = codeSamples[index % codeSamples.length]
         } else if (key.includes('h1') || key.includes('display')) {
           sampleText = 'Primary Heading'
         } else if (key.includes('h2') || key.includes('title')) {
@@ -177,6 +177,7 @@ export function TypographySection({ theme }: TypographySectionProps) {
     if (!theme.typography) return []
     
     const elements: TypographyElement[] = []
+    const usedKeys = new Set<string>()
     
     // Look for heading typography
     const headingEntries = Object.entries(theme.typography).filter(([key, value]) => 
@@ -188,12 +189,22 @@ export function TypographySection({ theme }: TypographySectionProps) {
         const element = key.includes('h1') ? 'h1' : key.includes('h2') ? 'h2' : key.includes('h3') ? 'h3' : key.includes('h4') ? 'h4' : 'h1'
         const name = key.replace(/([A-Z])/g, ' $1').replace(/^./, str => str.toUpperCase()).trim()
         
+        // Ensure unique key
+        let uniqueKey = `heading-${key}`
+        let counter = 1
+        while (usedKeys.has(uniqueKey)) {
+          uniqueKey = `heading-${key}-${counter}`
+          counter++
+        }
+        usedKeys.add(uniqueKey)
+        
         elements.push({
           name,
           description: `Theme typography: ${key}`,
           classes,
           usage: `<${element} className="${classes}">${name}</${element}>`,
-          element: element as keyof React.JSX.IntrinsicElements
+          element: element as keyof React.JSX.IntrinsicElements,
+          key: uniqueKey
         })
       }
     })
@@ -207,12 +218,22 @@ export function TypographySection({ theme }: TypographySectionProps) {
       if (typeof classes === 'string') {
         const name = key.replace(/([A-Z])/g, ' $1').replace(/^./, str => str.toUpperCase()).trim()
         
+        // Ensure unique key
+        let uniqueKey = `body-${key}`
+        let counter = 1
+        while (usedKeys.has(uniqueKey)) {
+          uniqueKey = `body-${key}-${counter}`
+          counter++
+        }
+        usedKeys.add(uniqueKey)
+        
         elements.push({
           name,
           description: `Theme typography: ${key}`,
           classes,
           usage: `<p className="${classes}">Body text content</p>`,
-          element: 'p'
+          element: 'p',
+          key: uniqueKey
         })
       }
     })
@@ -226,12 +247,22 @@ export function TypographySection({ theme }: TypographySectionProps) {
       if (typeof classes === 'string') {
         const name = key.replace(/([A-Z])/g, ' $1').replace(/^./, str => str.toUpperCase()).trim()
         
+        // Ensure unique key
+        let uniqueKey = `code-${key}`
+        let counter = 1
+        while (usedKeys.has(uniqueKey)) {
+          uniqueKey = `code-${key}-${counter}`
+          counter++
+        }
+        usedKeys.add(uniqueKey)
+        
         elements.push({
           name,
           description: `Theme typography: ${key}`,
           classes,
           usage: `<code className="${classes}">console.log('Hello, world!')</code>`,
-          element: 'code'
+          element: 'code',
+          key: uniqueKey
         })
       }
     })
@@ -255,10 +286,10 @@ export function TypographySection({ theme }: TypographySectionProps) {
           .trim()
         
         // Ensure unique key
-        let uniqueKey = key
+        let uniqueKey = `variant-${key}`
         let counter = 1
         while (usedKeys.has(uniqueKey)) {
-          uniqueKey = `${key}-${counter}`
+          uniqueKey = `variant-${key}-${counter}`
           counter++
         }
         usedKeys.add(uniqueKey)
@@ -268,7 +299,7 @@ export function TypographySection({ theme }: TypographySectionProps) {
           description: `Theme typography: ${key}`,
           classes: value,
           usage: `<div className="${value}">${formattedName} example text</div>`,
-          key: uniqueKey // Store unique key for React
+          key: uniqueKey
         })
       }
     })
@@ -281,75 +312,105 @@ export function TypographySection({ theme }: TypographySectionProps) {
   const typographyVariants = getTypographyVariants()
 
   return (
-    <section>
-      <header>
-        <h3>Theme Typography</h3>
-        <p>{theme.description}</p>
-      </header>
-      
+    <section className="space-y-6">
       {/* Theme Fonts */}
       {themeFonts.length > 0 && (
-        <section>
-          <h4>Theme Fonts</h4>
-          <div>
-            {themeFonts.map((font, index) => (
-              <article key={font.key || `font-${index}`}>
-                <header>
-                  <h5>{font.name}</h5>
-                  <p>{font.description}</p>
-                  <p>Used for: {font.usage}</p>
-                </header>
-                <div>
+        <div className="p-6 glass-panel">
+          <h3 className="text-lg font-semibold text-foreground mb-4">Theme Fonts</h3>
+          <div className="grid gap-6">
+            {themeFonts.map((font) => (
+              <div 
+                key={font.key}
+                className="p-4 border border-border rounded-lg"
+                data-style-element="font"
+                data-element-name={`${font.name} Font`}
+                data-description={font.description}
+                data-classes={font.classes}
+                data-variant={font.type}
+                data-usage={`font-family: ${font.family}`}
+                data-provider={font.provider}
+                data-import={font.import}
+              >
+                <div className="mb-3">
+                  <h4 className="text-sm font-semibold text-foreground mb-1">{font.name}</h4>
+                  <p className="text-xs text-muted-foreground mb-2">{font.description}</p>
+                  <p className="text-xs text-muted-foreground">Used for: {font.usage}</p>
+                </div>
+                <div className="space-y-2">
                   {font.samples.map((sample, index) => (
-                    <div key={index}>
+                    <div 
+                      key={`${font.key}-sample-${index}`}
+                      className={`${sample.size} ${sample.weight} ${font.classes}`}
+                      style={{ fontFamily: font.family }}
+                    >
                       {sample.text}
                     </div>
                   ))}
                 </div>
-              </article>
+              </div>
             ))}
           </div>
-        </section>
+        </div>
       )}
 
       {/* Typography Elements */}
       {typographyElements.length > 0 && (
-        <section>
-          <h4>Typography Elements</h4>
-          <div>
+        <div className="p-6 glass-panel">
+          <h3 className="text-lg font-semibold text-foreground mb-4">Typography Elements</h3>
+          <div className="space-y-4">
             {typographyElements.map((element) => {
               const Element = element.element || 'div'
               return (
-                <Element key={element.name}>
-                  {element.name}
-                </Element>
+                <div 
+                  key={element.key}
+                  data-style-element="typography"
+                  data-element-name={element.name}
+                  data-description={element.description}
+                  data-classes={element.classes}
+                  data-variant={element.element}
+                  data-usage={element.usage}
+                >
+                  <Element className={element.classes}>
+                    {element.name}
+                  </Element>
+                </div>
               )
             })}
           </div>
-        </section>
+        </div>
       )}
 
       {/* Typography Variants */}
       {typographyVariants.length > 0 && (
-        <section>
-          <h4>{theme.name} Typography Variants</h4>
-          <div>
+        <div className="p-6 glass-panel">
+          <h3 className="text-lg font-semibold text-foreground mb-4">{theme.name} Typography Variants</h3>
+          <div className="grid gap-4">
             {typographyVariants.map((variant) => (
-              <div key={variant.key || variant.name}>
+              <div 
+                key={variant.key}
+                className={variant.classes}
+                data-style-element="typography"
+                data-element-name={variant.name}
+                data-description={variant.description}
+                data-classes={variant.classes}
+                data-variant="variant"
+                data-usage={variant.usage}
+              >
                 {variant.name.includes('Header') ? variant.name.split(' (')[0] : 
                  variant.name.includes('Mono') ? '// Code comment example' :
                  'Sample text content for this variant'}
               </div>
             ))}
           </div>
-        </section>
+        </div>
       )}
 
       {/* No typography data message */}
       {themeFonts.length === 0 && typographyElements.length === 0 && typographyVariants.length === 0 && (
-        <section>
-          <p>No typography data found in the "{theme.name}" theme.</p>
-        </section>
+        <div className="p-6 glass-panel">
+          <h3 className="text-lg font-semibold text-foreground mb-4">Theme Typography</h3>
+          <p className="text-sm text-muted-foreground">No typography data found in the "{theme.name}" theme.</p>
+        </div>
       )}
     </section>
   )
