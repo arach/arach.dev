@@ -402,13 +402,6 @@ export const directoryAnimationClasses = {
   }
 }
 
-// Create a compatible theme using the createTheme helper
-import { createTheme } from './theme-registry'
-
-export const directoryThemeForRegistry = createTheme({
-  name: "Directory",
-  description: "Professional directory-focused design with clean neutrals and monospace typography",
-  // The createTheme helper will merge this with the base terminal theme structure
-})
+// Export the directory theme for registration
 
 export type DirectoryTheme = typeof directoryTheme

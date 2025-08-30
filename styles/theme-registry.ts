@@ -5,12 +5,9 @@
 
 import type { Theme, ThemeRegistry } from '@/types/theme'
 import { adaptTerminalTheme, validateTheme } from '@/lib/theme-adapter'
-import { terminalTheme } from './terminal-theme'
 
-// Registry of all available themes
-const themeRegistry: ThemeRegistry = {
-  terminal: adaptTerminalTheme(terminalTheme)
-}
+// Registry of all available themes - starts empty and gets populated by init-themes.ts
+const themeRegistry: ThemeRegistry = {}
 
 // Get a theme by ID
 export function getTheme(themeId: string): Theme | null {
