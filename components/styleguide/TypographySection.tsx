@@ -33,6 +33,7 @@ interface TypographyElement {
   classes: string
   usage: string
   element?: keyof React.JSX.IntrinsicElements
+  key?: string // Unique key for React rendering
 }
 
 export function TypographySection({ theme }: TypographySectionProps) {
@@ -256,7 +257,8 @@ export function TypographySection({ theme }: TypographySectionProps) {
           name: formattedName,
           description: `Theme typography: ${key}`,
           classes: value,
-          usage: `<div className="${value}">${formattedName} example text</div>`
+          usage: `<div className="${value}">${formattedName} example text</div>`,
+          key: key // Store original key for uniqueness
         })
       }
     })
@@ -323,7 +325,7 @@ export function TypographySection({ theme }: TypographySectionProps) {
           <h4>{theme.name} Typography Variants</h4>
           <div>
             {typographyVariants.map((variant) => (
-              <div key={variant.name}>
+              <div key={variant.key || variant.name}>
                 {variant.name.includes('Header') ? variant.name.split(' (')[0] : 
                  variant.name.includes('Mono') ? '// Code comment example' :
                  'Sample text content for this variant'}
