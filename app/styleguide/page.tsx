@@ -5,6 +5,7 @@ import { useSearchParams, useRouter } from 'next/navigation'
 
 const themes = {
   terminal: 'theme-terminal',
+  directory: 'theme-directory',
   cyberpunk: 'theme-cyberpunk', 
   minimal: 'theme-minimal',
   retro: 'theme-retro',
@@ -525,20 +526,12 @@ export default function StyleGuidePage() {
   return (
     <main className="min-h-screen bg-background text-foreground">
       {/* Header */}
-      <header className={`border-b border-border bg-card/80 backdrop-blur-md sticky top-0 z-30 ${
-        isScrolled ? 'py-2 shadow-sm' : 'py-4'
-      } ${uiAnimations ? 'transition-all duration-300' : ''}`}>
-        <div className="max-w-7xl mx-auto px-6">
+      <header className={`border-b border-border bg-background/95 backdrop-blur-md sticky top-16 z-30 py-2 px-6 ${uiAnimations ? 'transition-all duration-300' : ''}`}>
           <div className="flex items-center justify-between">
-            <div className={`${uiAnimations ? 'transition-all duration-300' : ''} ${isScrolled ? 'scale-90' : ''}`}>
-              <h1 className={`font-bold text-foreground ${
-                isScrolled ? 'text-lg' : 'text-2xl'
-              } ${uiAnimations ? 'transition-all duration-300' : ''}`}>Style Guide</h1>
-              {!isScrolled && (
-                <p className={`text-sm text-muted-foreground mt-1 ${uiAnimations ? 'transition-opacity duration-300' : ''}`}>
-                  Interactive design system showcase
-                </p>
-              )}
+            <div className={`${uiAnimations ? 'transition-all duration-300' : ''}`}>
+              <h1 className="font-mono text-lg font-bold text-foreground uppercase tracking-wide">
+                Style Guide
+              </h1>
             </div>
             
             {/* Actions */}
@@ -624,15 +617,14 @@ export default function StyleGuidePage() {
               </div>
             </div>
           </div>
-        </div>
       </header>
 
       <div className="max-w-full mx-auto flex">
         {/* Sidebar Navigation */}
         <nav className={`${showLeftSidebar ? 'w-64' : 'w-12'} h-[calc(100vh-theme(spacing.16))] border-r border-white/10 bg-card/20 backdrop-blur-md sticky top-16 overflow-hidden shadow-xl shadow-black/10 ${uiAnimations ? 'transition-all duration-200' : ''}`}>
           {showLeftSidebar ? (
-            <div className="p-6">
-              <div className="flex items-center justify-between mb-4">
+            <div className="p-0">
+              <div className="flex items-center justify-between mb-4 px-4 pt-4">
                 <h2 className="text-sm font-semibold text-muted-foreground uppercase tracking-wider">Sections</h2>
                 <button
                   onClick={() => setShowLeftSidebar(false)}
@@ -653,7 +645,7 @@ export default function StyleGuidePage() {
                         updateURL(section.id)
                         setSelectedElement(null)
                       }}
-                      className={`w-full text-left px-3 py-2 rounded-md text-sm transition-colors ${
+                      className={`w-full text-left px-4 py-2 text-sm transition-colors border-l-2 border-transparent ${
                         activeSection === section.id
                           ? 'bg-primary/10 text-primary border-l-2 border-primary'
                           : 'text-muted-foreground hover:text-foreground hover:bg-accent/50'
@@ -683,10 +675,9 @@ export default function StyleGuidePage() {
         </nav>
 
         {/* Main Content */}
-        <main ref={containerRef} className="flex-1 p-8 transition-all duration-200" onClick={handleElementClick}>
-          <div className="max-w-4xl">
-            {/* Tactical Section Header - Integrated Command Center Display */}
-            <header className="mb-8 relative">
+        <div className="flex-1">
+          {/* Tactical Section Header - Full Width Command Center Display */}
+            <header className="sticky top-14 z-20 mb-8 relative bg-background/95 backdrop-blur-md">
               {/* Background scan line effect */}
               <div className="absolute inset-0 bg-gradient-to-r from-primary/5 via-transparent to-transparent" />
               
@@ -863,7 +854,6 @@ export default function StyleGuidePage() {
               )}
             </div>
           </div>
-        </main>
 
         {/* Right Panel - Style Details or Pinned Styles */}
         {(selectedElement || showPinnedPanel) && showRightSidebar && (

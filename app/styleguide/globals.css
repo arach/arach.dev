@@ -504,6 +504,107 @@
     --ring: 45 93% 58%;
   }
   
+  /* Directory Theme - Professional directory-focused design with clean neutrals */
+  .theme-directory {
+    /* Directory Typography - Monospace-first approach */
+    --theme-font-sans: ui-monospace, SFMono-Regular, "SF Mono", Monaco, Inconsolata, "Roboto Mono", monospace;
+    --theme-font-mono: ui-monospace, SFMono-Regular, "SF Mono", Monaco, Inconsolata, "Roboto Mono", monospace;
+    
+    /* Theme-specific variables for headers and styling */
+    --theme-bg-color: #ffffff;
+    --theme-text-color: #111827;
+    --theme-header-bg: rgba(0, 0, 0, 1);
+    --theme-header-text: #ffffff;
+    --theme-header-font: ui-monospace, SFMono-Regular, "SF Mono", Monaco, Inconsolata, "Roboto Mono", monospace;
+    --theme-border-color: #e5e7eb;
+    --theme-accent-color: #3b82f6;
+    --theme-shadow-color: rgba(0, 0, 0, 0.1);
+    --theme-muted-text: #6b7280;
+    --theme-card-bg: #f9fafb;
+    --theme-code-font: ui-monospace, SFMono-Regular, "SF Mono", Monaco, Inconsolata, "Roboto Mono", monospace;
+    --theme-ascii-color: #000000;
+    --theme-project-card-text: #111827;
+    --theme-project-card-bg: #ffffff;
+    --theme-dot-opacity: 0.15;
+    --theme-heading-color: #111827;
+    
+    /* Light theme colors using OKLCH-inspired values converted to HSL */
+    --background: 0 0% 100%;        /* Pure white */
+    --foreground: 0 0% 14.5%;       /* Near black */
+    --card: 0 0% 97%;               /* Light neutral */
+    --card-foreground: 0 0% 14.5%;
+    --popover: 0 0% 100%;
+    --popover-foreground: 0 0% 14.5%;
+    --primary: 0 0% 20.5%;          /* Dark neutral */
+    --primary-foreground: 0 0% 98.5%;
+    --secondary: 0 0% 97%;          /* Very light neutral */
+    --secondary-foreground: 0 0% 20.5%;
+    --muted: 0 0% 97%;
+    --muted-foreground: 0 0% 55.6%;  /* Mid gray */
+    --accent: 0 0% 97%;
+    --accent-foreground: 0 0% 20.5%;
+    --destructive: 27 245% 57.7%;   /* Subtle red */
+    --destructive-foreground: 0 0% 100%;
+    --success: 141 222% 64.6%;      /* Subtle green */
+    --success-foreground: 0 0% 100%;
+    --warning: 84 189% 82.8%;       /* Subtle amber */
+    --warning-foreground: 0 0% 14.5%;
+    --border: 0 0% 92.2%;           /* Light border */
+    --input: 0 0% 92.2%;
+    --ring: 0 0% 70.8%;             /* Ring color */
+    
+    /* Directory-specific CSS variables */
+    --radius-xs: 0.125rem;          /* 2px */
+    --radius-sm: 0.25rem;           /* 4px */
+    --radius-md: 0.625rem;          /* 10px - signature radius */
+    --radius-lg: 0.75rem;           /* 12px */
+    --radius-xl: 1rem;              /* 16px */
+    
+    /* Effects and transparency */
+    --backdrop-blur-sm: blur(4px);
+    --backdrop-blur-md: blur(8px);
+    --opacity-subtle: 0.4;
+    --opacity-medium: 0.8;
+    --opacity-overlay: 0.12;
+    
+    /* Shadow system - inset-first approach */
+    --shadow-card-inset: inset 0 0 0 1px rgba(255,255,255,0.02), 0 6px 20px rgba(0,0,0,0.30);
+    --shadow-button-inset: inset 0 1px 0 rgba(255,255,255,0.08), inset 0 -1px 0 rgba(0,0,0,0.55);
+    --shadow-surface-inset: inset 0 1px 0 rgba(255,255,255,0.04);
+    --shadow-premium-inset: inset 0 1px 0 rgba(255,255,255,0.10), inset 0 -1px 0 rgba(0,0,0,0.55), inset 0 0 0 1px rgba(255,255,255,0.03);
+  }
+  
+  /* Directory Dark Mode Variant */
+  .theme-directory.dark {
+    /* Dark theme-specific variables */
+    --theme-bg-color: #0a0a0a;
+    --theme-text-color: #e5e5e5;
+    --theme-header-bg: rgba(17, 17, 17, 0.95);
+    --theme-header-text: #ffffff;
+    --theme-header-font: ui-monospace, SFMono-Regular, "SF Mono", Monaco, Inconsolata, "Roboto Mono", monospace;
+    --theme-heading-color: #ffffff;
+    
+    --background: 0 0% 14.5%;       /* Deep neutral */
+    --foreground: 0 0% 98.5%;       /* Near white */
+    --card: 0 0% 14.5%;
+    --card-foreground: 0 0% 98.5%;
+    --popover: 0 0% 14.5%;
+    --popover-foreground: 0 0% 98.5%;
+    --primary: 0 0% 98.5%;          /* Light neutral in dark */
+    --primary-foreground: 0 0% 20.5%;
+    --secondary: 0 0% 26.9%;        /* Medium dark neutral */
+    --secondary-foreground: 0 0% 98.5%;
+    --muted: 0 0% 26.9%;
+    --muted-foreground: 0 0% 70.8%; /* Light gray in dark */
+    --accent: 0 0% 26.9%;
+    --accent-foreground: 0 0% 98.5%;
+    --destructive: 25 141% 39.6%;   /* Darker red for dark mode */
+    --destructive-foreground: 25 237% 63.7%;
+    --border: 0 0% 26.9%;           /* Dark border */
+    --input: 0 0% 26.9%;
+    --ring: 0 0% 43.9%;             /* Dark mode ring */
+  }
+  
   body {
     background-color: hsl(var(--background));
     color: hsl(var(--foreground));
