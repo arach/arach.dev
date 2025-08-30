@@ -1,2 +1,2 @@
 // OG components
-export { default as OgComponent } from './OgComponent'
+export { OgComponent } from './OgComponent'

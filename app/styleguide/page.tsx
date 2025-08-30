@@ -363,6 +363,178 @@ export default function StyleGuidePage() {
           </div>
         </header>
 
+        {/* Design Philosophy */}
+        <section id="design-philosophy" className={styles['section-container']}>
+          <h2 className={ts.typography.sectionTitle}>DESIGN PHILOSOPHY</h2>
+          
+          <article className={cx(ts.components.card.default, styles['section-card'])}>
+            <div className="space-y-8">
+              {/* Core Principles */}
+              <section>
+                <h3 className={cx(ts.typography.subsectionTitle, styles['subsection-title'])}>CORE PRINCIPLES</h3>
+                <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+                  <div className="space-y-3">
+                    <h4 className={ts.typography.h4}>MILITARY-GRADE PRECISION</h4>
+                    <p className={ts.typography.bodySmall}>Every element serves a purpose. No decorative flourishes without function. Interfaces should feel like they're built for operators who need to make split-second decisions with perfect clarity.</p>
+                  </div>
+                  <div className="space-y-3">
+                    <h4 className={ts.typography.h4}>TACTICAL INFORMATION HIERARCHY</h4>
+                    <p className={ts.typography.bodySmall}>Information is weaponized. The most critical data gets the highest visual weight. Use typography, spacing, and color to create clear information hierarchies.</p>
+                  </div>
+                  <div className="space-y-3">
+                    <h4 className={ts.typography.h4}>OPERATIONAL EFFICIENCY</h4>
+                    <p className={ts.typography.bodySmall}>Every interaction should feel like it's been optimized for speed and accuracy. Buttons are sized for precision clicking, text is legible at a glance.</p>
+                  </div>
+                </div>
+              </section>
+
+              {/* Design Philosophy in Practice */}
+              <section>
+                <h3 className={cx(ts.typography.subsectionTitle, styles['subsection-title'])}>PHILOSOPHY IN PRACTICE</h3>
+                <div className="space-y-6">
+                  <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                    <div className="space-y-3">
+                      <h4 className={ts.typography.h4}>TYPOGRAPHY: THE COMMAND STRUCTURE</h4>
+                      <ul className={cx(ts.typography.bodySmall, 'space-y-1')}>
+                        <li>• Headers are commands: Uppercase, bold weights, tight tracking</li>
+                        <li>• Body text is intelligence: Clean, readable fonts</li>
+                        <li>• Labels are coordinates: Monospace for technical precision</li>
+                        <li>• Hierarchy through weight: Vary weight and spacing</li>
+                      </ul>
+                    </div>
+                    <div className="space-y-3">
+                      <h4 className={ts.typography.h4}>SPACING: TACTICAL BREATHING ROOM</h4>
+                      <ul className={cx(ts.typography.bodySmall, 'space-y-1')}>
+                        <li>• Tight but not cramped: 4px/8px/16px spacing system</li>
+                        <li>• Group related elements: Visual groups support logic</li>
+                        <li>• Respect the grid: Everything aligns consistently</li>
+                        <li>• Negative space as weapon: Direct attention and focus</li>
+                      </ul>
+                    </div>
+                  </div>
+                  <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                    <div className="space-y-3">
+                      <h4 className={ts.typography.h4}>COLOR: STRATEGIC DEPLOYMENT</h4>
+                      <ul className={cx(ts.typography.bodySmall, 'space-y-1')}>
+                        <li>• Grayscale foundation: Sophisticated contrast</li>
+                        <li>• Accent colors are alerts: Signal important information</li>
+                        <li>• Semantic color coding: Green/Red/Blue/Amber meanings</li>
+                        <li>• Color as hierarchy: Brighter = higher priority</li>
+                      </ul>
+                    </div>
+                    <div className="space-y-3">
+                      <h4 className={ts.typography.h4}>LAYOUT: COMMAND CENTER ARCHITECTURE</h4>
+                      <ul className={cx(ts.typography.bodySmall, 'space-y-1')}>
+                        <li>• Sidebars are control panels: Navigation and controls</li>
+                        <li>• Headers are status displays: Current state and critical info</li>
+                        <li>• Content areas are mission control: Tactical displays</li>
+                        <li>• Grids are intelligence networks: Organize data systematically</li>
+                      </ul>
+                    </div>
+                  </div>
+                </div>
+              </section>
+
+              {/* Interface Patterns */}
+              <section>
+                <h3 className={cx(ts.typography.subsectionTitle, styles['subsection-title'])}>INTERFACE PATTERNS</h3>
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                  <div className="space-y-3">
+                    <h4 className={ts.typography.h4}>DASHBOARD PHILOSOPHY</h4>
+                    <p className={ts.typography.bodySmall}>Dashboards should feel like mission control. The most important metrics get the largest visual weight. Use cards to group related data, and always provide context for what the numbers mean.</p>
+                  </div>
+                  <div className="space-y-3">
+                    <h4 className={ts.typography.h4}>NAVIGATION PHILOSOPHY</h4>
+                    <p className={ts.typography.bodySmall}>Navigation should feel like switching between tactical displays. Use clear, descriptive labels. Group related functions together. The current location should always be obvious.</p>
+                  </div>
+                  <div className="space-y-3">
+                    <h4 className={ts.typography.h4}>DATA DISPLAY PHILOSOPHY</h4>
+                    <p className={ts.typography.bodySmall}>Data should feel like intelligence reports. Use monospace fonts for numbers and technical data. Provide context and units. Use color to highlight anomalies or important trends.</p>
+                  </div>
+                  <div className="space-y-3">
+                    <h4 className={ts.typography.h4}>FORM PHILOSOPHY</h4>
+                    <p className={ts.typography.bodySmall}>Forms should feel like configuring tactical systems. Use clear labels and helpful hints. Group related fields together. Provide immediate feedback on errors.</p>
+                  </div>
+                </div>
+              </section>
+
+              {/* Implementation Guidelines */}
+              <section>
+                <h3 className={cx(ts.typography.subsectionTitle, styles['subsection-title'])}>IMPLEMENTATION GUIDELINES</h3>
+                <div className="space-y-4">
+                  <div>
+                    <h4 className={ts.typography.h4}>WHEN BUILDING INTERFACES</h4>
+                    <ol className={cx(ts.typography.bodySmall, 'space-y-1 mt-2')}>
+                      <li>1. Start with the mission: What is the user trying to accomplish?</li>
+                      <li>2. Identify critical information: What data is most important for decision-making?</li>
+                      <li>3. Create clear hierarchy: Use typography, spacing, and color to guide attention</li>
+                      <li>4. Optimize for speed: Every interaction should feel fast and precise</li>
+                      <li>5. Maintain consistency: Use the design system consistently across all interfaces</li>
+                    </ol>
+                  </div>
+                  <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                    <div>
+                      <h4 className={ts.typography.h4}>COMMON PATTERNS</h4>
+                      <ul className={cx(ts.typography.bodySmall, 'space-y-1 mt-2')}>
+                        <li>• Status displays: Consistent indicators (online/offline/error/warning)</li>
+                        <li>• Data tables: Monospace fonts and clear column headers</li>
+                        <li>• Action buttons: Consistent styles with clear labels</li>
+                        <li>• Navigation: Clear, descriptive labels and logical grouping</li>
+                        <li>• Forms: Clear labels, helpful hints, immediate validation</li>
+                      </ul>
+                    </div>
+                    <div>
+                      <h4 className={ts.typography.h4}>AVOID THESE ANTI-PATTERNS</h4>
+                      <ul className={cx(ts.typography.bodySmall, 'space-y-1 mt-2')}>
+                        <li>• Decorative elements without purpose</li>
+                        <li>• Inconsistent spacing or typography</li>
+                        <li>• Color used without semantic meaning</li>
+                        <li>• Complex animations that don't guide attention</li>
+                        <li>• Interfaces that feel "cute" instead of precise</li>
+                      </ul>
+                    </div>
+                  </div>
+                </div>
+              </section>
+
+              {/* The Terminal Aesthetic */}
+              <section>
+                <h3 className={cx(ts.typography.subsectionTitle, styles['subsection-title'])}>THE TERMINAL AESTHETIC</h3>
+                <div className="space-y-4">
+                  <p className={ts.typography.body}>The goal is to create interfaces that feel like they belong in a high-tech command center. They should be:</p>
+                  <div className="grid grid-cols-2 md:grid-cols-5 gap-4">
+                    <div className="text-center p-3 border border-gray-800 rounded">
+                      <h5 className={ts.typography.h5}>PRECISE</h5>
+                      <p className={ts.typography.bodySmall}>Every element intentionally placed</p>
+                    </div>
+                    <div className="text-center p-3 border border-gray-800 rounded">
+                      <h5 className={ts.typography.h5}>PROFESSIONAL</h5>
+                      <p className={ts.typography.bodySmall}>Serious and business-focused</p>
+                    </div>
+                    <div className="text-center p-3 border border-gray-800 rounded">
+                      <h5 className={ts.typography.h5}>EFFICIENT</h5>
+                      <p className={ts.typography.bodySmall}>Optimized for speed and accuracy</p>
+                    </div>
+                    <div className="text-center p-3 border border-gray-800 rounded">
+                      <h5 className={ts.typography.h5}>INTELLIGENT</h5>
+                      <p className={ts.typography.bodySmall}>Smart use of data hierarchy</p>
+                    </div>
+                    <div className="text-center p-3 border border-gray-800 rounded">
+                      <h5 className={ts.typography.h5}>TACTICAL</h5>
+                      <p className={ts.typography.bodySmall}>Built for quick decisions</p>
+                    </div>
+                  </div>
+                  <div className="mt-6 p-4 border-l-4 border-cyan-500 bg-cyan-950/20">
+                    <p className={cx(ts.typography.bodySmall, 'font-semibold')}>
+                      When in doubt, ask: "Would this feel at home in a military command center or intelligence platform?" If the answer is no, reconsider the design choice.
+                    </p>
+                  </div>
+                </div>
+              </section>
+            </div>
+          </article>
+        </section>
+
         {/* Typography */}
         <StyleSection category="typography">
           <section id="typography-section" className={styles['section-container']}>

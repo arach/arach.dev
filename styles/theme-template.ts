@@ -5,36 +5,38 @@ import type { Theme } from './terminal-theme'
 import { createTheme } from './theme-registry'
 
 // Example of creating a theme with only the changes you want
-export const customTheme: Theme = createTheme({
+export const customTheme = createTheme({
   name: 'Custom Theme',
   description: 'Your theme description here',
   
   // Only override what you want to change
   // Everything else will inherit from the base theme
   
-  colors: {
-    accent: {
-      primary: '#your-color',
-      primaryDim: '#your-color-dim',
-      // ... other accent colors
-    }
-  },
+  // Uncomment and modify the sections you want to override:
   
-  typography: {
-    h1: 'your-custom-h1-classes',
-    // ... other typography overrides
-  },
+  // colors: {
+  //   accent: {
+  //     primary: '#0ea5e9',
+  //     primaryDim: '#0284c7',
+  //     // ... other accent colors
+  //   }
+  // },
   
-  components: {
-    button: {
-      primary: 'your-custom-primary-button-classes',
-      // ... other button overrides
-    }
-  }
+  // typography: {
+  //   h1: 'text-2xl font-bold text-white tracking-tight uppercase',
+  //   // ... other typography overrides
+  // },
+  
+  // components: {
+  //   button: {
+  //     primary: 'inline-flex items-center justify-center rounded-sm bg-blue-600 px-4 py-2 text-xs font-bold uppercase text-white hover:bg-blue-500',
+  //     // ... other button overrides
+  //   }
+  // }
 })
 
 // Full theme example with all properties
-export const fullThemeTemplate: Theme = {
+export const fullThemeTemplate = {
   name: 'Theme Name',
   description: 'Theme description',
   

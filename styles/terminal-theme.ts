@@ -453,7 +453,10 @@ export const terminalTheme = {
 } as const
 
 
-export type Theme = typeof terminalTheme
+export type Theme = Omit<typeof terminalTheme, 'name' | 'description'> & {
+  name: string
+  description: string
+}
 
 // Utility function to combine classes
 export function cx(...classes: (string | undefined | null | false)[]) {

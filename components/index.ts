@@ -1,5 +1,5 @@
 // Main components
-export { default as HomePage } from './home/HomePage'
+export { HomePage } from './home/HomePage'
 export { default as Header } from './Header'
 export { default as Footer } from './Footer'
 export { default as NotFound } from './NotFound'

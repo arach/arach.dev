@@ -58,7 +58,6 @@ export function ProjectCategoryFilter({
           </div>
           {headerActions}
         </div>
-        </div>
       </div>
       
       {/* Desktop category buttons */}

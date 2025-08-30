@@ -1,7 +1,7 @@
 'use client';
 
 import { useState, useEffect } from "react";
-import HomePage from "@/components/home/HomePage";
+import { HomePage } from "@/components/home/HomePage";
 import ThemedDottedGrid from "@/components/ThemedDottedGrid";
 import { DebugToolbar } from "@/components/debug/DebugToolbar";
 import { GitHubProvider } from "@/lib/github-context";
