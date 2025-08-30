@@ -15,7 +15,8 @@ import {
   StatusSection,
   EffectsSection,
   SpacingSection,
-  TablesSection
+  TablesSection,
+  VariablesSection
 } from '@/components/styleguide'
 
 
@@ -183,6 +184,9 @@ function getThemeSections(theme: Theme | null): string[] {
   
   const sections: string[] = []
   
+  // Always include CSS variables section (always available for themes)
+  sections.push('variables')
+  
   // Always include colors if present
   if (theme.colors) sections.push('colors')
   
@@ -232,6 +236,7 @@ function getSectionTitle(section: string): string {
   const titles: Record<string, string> = {
     typography: 'Typography System',
     colors: 'Color Palette',
+    variables: 'CSS Variables',
     buttons: 'Button Components',
     inputs: 'Form Elements',
     cards: 'Card Containers',
@@ -252,6 +257,7 @@ function getSectionDescription(section: string, theme: Theme | null): string {
   const descriptions: Record<string, string> = {
     typography: `${themePrefix}hierarchical text system with precision and clear information architecture`,
     colors: `${themePrefix}color deployment for semantic states and visual hierarchy`,
+    variables: `${themePrefix}CSS custom properties following shadcn/ui conventions for seamless integration`,
     buttons: `${themePrefix}action triggers with purposeful styling and interaction states`,
     inputs: `${themePrefix}data entry components optimized for accuracy and validation`,
     cards: `${themePrefix}container elements with distinctive styling and framing`,
@@ -507,6 +513,8 @@ function DynamicSection({ sectionId, theme, activeTheme }: DynamicSectionProps) 
       return <TypographySection theme={theme} />
     case 'colors':
       return <ColorsSection theme={theme} />
+    case 'variables':
+      return <VariablesSection theme={theme} />
     case 'buttons':
       return <ButtonsSection theme={theme} />
     case 'inputs':
