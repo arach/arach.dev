@@ -5,10 +5,17 @@ import { Github } from "lucide-react";
 import { SocialButton } from "@/components/ui/SocialButton";
 import Image from "next/image";
 import { useState, useEffect } from "react";
+import { usePathname } from "next/navigation";
 
 export default function Header() {
     const [showHeader, setShowHeader] = useState(false);
     const [lastScrollY, setLastScrollY] = useState(0);
+    const pathname = usePathname();
+    
+    // Don't render header on styleguide pages
+    if (pathname?.startsWith('/styleguide')) {
+        return null;
+    }
 
     useEffect(() => {
         const handleScroll = () => {

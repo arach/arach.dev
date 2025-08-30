@@ -34,7 +34,9 @@ export function registerThemes(themes: Record<string, Theme>) {
   })
 }
 
-// Theme loader for dynamic imports
+// Theme loader for dynamic imports (disabled to avoid webpack warnings)
+// Use registerTheme() to manually register themes instead
+/*
 export async function loadTheme(path: string): Promise<Theme | null> {
   try {
     const module = await import(path)
@@ -44,6 +46,7 @@ export async function loadTheme(path: string): Promise<Theme | null> {
     return null
   }
 }
+*/
 
 // Get all registered themes
 export function getAllThemes(): Record<string, Theme> {

@@ -2,16 +2,21 @@
 
 import React, { useState, useEffect, useRef } from 'react'
 import { useSearchParams, useRouter } from 'next/navigation'
+import { getThemeIds, getTheme } from '@/styles/theme-registry'
+import '@/styles/init-themes' // Initialize the theme registry
+import type { Theme } from '@/styles/terminal-theme'
 
-const themes = {
-  terminal: 'theme-terminal',
-  directory: 'theme-directory',
-  cyberpunk: 'theme-cyberpunk', 
-  minimal: 'theme-minimal',
-  retro: 'theme-retro',
+// Get available themes from the registry
+const getThemes = () => {
+  const ids = getThemeIds()
+  const themeMap: Record<string, string> = {}
+  ids.forEach(id => {
+    themeMap[id] = `theme-${id}`
+  })
+  return themeMap
 }
 
-type ThemeName = keyof typeof themes
+type ThemeName = string // Dynamic based on registry
 
 // Centralized element enhancement system
 function useElementEnhancer(onElementSelect?: (element: any) => void) {
@@ -239,7 +244,7 @@ interface SectionHeaderProps {
 
 function SectionHeader({ title, id, status, componentCount, variantCount }: SectionHeaderProps) {
   return (
-    <div className="mb-6 relative">
+    <div className="mb-4 relative">
       {/* Background scan effect */}
       <div className="absolute inset-0 bg-gradient-to-r from-primary/3 via-transparent to-transparent rounded-sm" />
       
@@ -254,7 +259,7 @@ function SectionHeader({ title, id, status, componentCount, variantCount }: Sect
           <div className="w-0.5 self-stretch bg-gradient-to-b from-primary/80 via-primary/40 to-transparent" />
           
           {/* Main content */}
-          <div className="flex-1 px-4 py-3">
+          <div className="flex-1 px-4 py-2">
             <div className="flex items-center justify-between">
               <div className="flex items-center gap-3">
                 {/* Section ID badge */}
@@ -309,7 +314,10 @@ export default function StyleGuidePage() {
   const searchParams = useSearchParams()
   const router = useRouter()
   
-  const [activeTheme, setActiveTheme] = useState<ThemeName>('terminal')
+  const [activeTheme, setActiveTheme] = useState<ThemeName>(() => {
+    const ids = getThemeIds()
+    return ids.includes('terminal') ? 'terminal' : ids[0] || 'terminal'
+  })
   const [activeSection, setActiveSection] = useState('typography')
   const [selectedElement, setSelectedElement] = useState<any>(null)
   const [isScrolled, setIsScrolled] = useState(false)
@@ -351,9 +359,10 @@ export default function StyleGuidePage() {
     router.push(`?${params.toString()}`)
   }
   
-  const currentThemeClass = themes[activeTheme]
+  const themes = getThemes()
+  const currentThemeClass = themes[activeTheme] || 'theme-terminal'
 
-  // Use the centralized element enhancer
+  // Use the centralized element enhancer for automatic element inspection
   const containerRef = useElementEnhancer((element) => {
     setSelectedElement(element)
     setShowPinnedPanel(false)
@@ -396,23 +405,24 @@ export default function StyleGuidePage() {
     return () => window.removeEventListener('scroll', handleScroll)
   }, [])
 
-  // Smart element inspection system
+  // Smart element inspection system (backup for elements without data-style-element)
   const handleElementClick = (event: React.MouseEvent) => {
     const target = event.target as HTMLElement
     
-    // Skip if clicking on typography elements (they handle their own clicks)
-    if (target.getAttribute('title')?.includes('Click to inspect')) {
-      return
+    // The useElementEnhancer handles data-style-element clicks
+    // This is for fallback manual inspection only
+    if (target.getAttribute('data-style-element')) {
+      return // Let the enhancer handle it
     }
     
-    // Skip if clicking on text or non-interactive elements
-    if (target.tagName === 'P' || target.tagName === 'H1' || target.tagName === 'H2' || target.tagName === 'H3' || target.tagName === 'SPAN') {
+    // Skip if clicking on non-interactive elements without styling
+    if (!target.className || target.className === '') {
       return
     }
     
     event.stopPropagation()
     
-    // Extract style information from the element
+    // Try to extract style information from the element
     const elementData = inspectElement(target)
     if (elementData) {
       setSelectedElement(elementData)
@@ -526,12 +536,26 @@ export default function StyleGuidePage() {
   return (
     <main className="min-h-screen bg-background text-foreground">
       {/* Header */}
-      <header className={`border-b border-border bg-background/95 backdrop-blur-md sticky top-16 z-30 py-2 px-6 ${uiAnimations ? 'transition-all duration-300' : ''}`}>
+      <header className={`border-b border-border bg-background/95 backdrop-blur-md sticky top-0 z-30 py-2 px-6 ${uiAnimations ? 'transition-all duration-300' : ''}`}>
           <div className="flex items-center justify-between">
-            <div className={`${uiAnimations ? 'transition-all duration-300' : ''}`}>
-              <h1 className="font-mono text-lg font-bold text-foreground uppercase tracking-wide">
-                Style Guide
-              </h1>
+            <div className="flex items-center gap-2">
+              {/* Back to Home Link */}
+              <a
+                href="/"
+                className="flex items-center gap-1.5 px-3 py-1.5 text-sm text-muted-foreground hover:text-foreground bg-card/50 hover:bg-card border border-border rounded-md transition-all duration-200"
+                title="Back to arach.dev"
+              >
+                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+                  <path d="m15 18-6-6 6-6"/>
+                </svg>
+                arach.dev
+              </a>
+              
+              <div className={`${uiAnimations ? 'transition-all duration-300' : ''}`}>
+                <h1 className="font-mono text-lg font-bold text-foreground uppercase tracking-wide">
+                  Style Guide
+                </h1>
+              </div>
             </div>
             
             {/* Actions */}
@@ -605,12 +629,15 @@ export default function StyleGuidePage() {
                 <label className="text-sm font-medium text-muted-foreground">Theme:</label>
                 <select 
                   value={activeTheme}
-                  onChange={(e) => setActiveTheme(e.target.value as ThemeName)}
+                  onChange={(e) => {
+                    setActiveTheme(e.target.value as ThemeName)
+                    updateURL(activeSection, e.target.value as ThemeName)
+                  }}
                   className="bg-input border border-border rounded-md px-3 py-1 text-foreground text-sm focus:outline-none focus:ring-2 focus:ring-ring"
                 >
-                  {Object.keys(themes).map((theme) => (
-                    <option key={theme} value={theme}>
-                      {theme.charAt(0).toUpperCase() + theme.slice(1)}
+                  {getThemeIds().map((themeId) => (
+                    <option key={themeId} value={themeId}>
+                      {themeId.charAt(0).toUpperCase() + themeId.slice(1)}
                     </option>
                   ))}
                 </select>
@@ -621,7 +648,7 @@ export default function StyleGuidePage() {
 
       <div className="max-w-full mx-auto flex">
         {/* Sidebar Navigation */}
-        <nav className={`${showLeftSidebar ? 'w-64' : 'w-12'} h-[calc(100vh-theme(spacing.16))] border-r border-white/10 bg-card/20 backdrop-blur-md sticky top-16 overflow-hidden shadow-xl shadow-black/10 ${uiAnimations ? 'transition-all duration-200' : ''}`}>
+        <nav className={`${showLeftSidebar ? 'w-64' : 'w-12'} min-h-screen border-r border-white/10 bg-card/20 backdrop-blur-md shadow-xl shadow-black/10 ${uiAnimations ? 'transition-all duration-200' : ''}`}>
           {showLeftSidebar ? (
             <div className="p-0">
               <div className="flex items-center justify-between mb-4 px-4 pt-4">
@@ -674,10 +701,10 @@ export default function StyleGuidePage() {
           )}
         </nav>
 
-        {/* Main Content */}
-        <div className="flex-1">
+        {/* Main Content - with containerRef for element enhancement */}
+        <div ref={containerRef} className="flex-1" onClick={handleElementClick}>
           {/* Tactical Section Header - Full Width Command Center Display */}
-            <header className="sticky top-14 z-20 mb-8 relative bg-background/95 backdrop-blur-md">
+            <header className="z-20 mb-8 relative bg-background/95 backdrop-blur-md">
               {/* Background scan line effect */}
               <div className="absolute inset-0 bg-gradient-to-r from-primary/5 via-transparent to-transparent" />
               
@@ -853,11 +880,11 @@ export default function StyleGuidePage() {
                 </>
               )}
             </div>
-          </div>
+        </div>
 
         {/* Right Panel - Style Details or Pinned Styles */}
         {(selectedElement || showPinnedPanel) && showRightSidebar && (
-          <aside className="w-96 h-[calc(100vh-4rem)] border-l border-white/10 bg-card/80 backdrop-blur-md sticky top-16 overflow-y-auto transition-all duration-200 shadow-xl shadow-black/20">
+          <aside className="w-96 min-h-screen border-l border-white/10 bg-card/80 backdrop-blur-md overflow-y-auto transition-all duration-200 shadow-xl shadow-black/20">
             <div className="p-6 h-full overflow-y-auto">
               <div className="flex items-center justify-between mb-4 sticky top-0 bg-card/95 backdrop-blur-sm pb-4 border-b border-border">
                 <h2 className="text-sm font-semibold text-muted-foreground uppercase tracking-wider">
@@ -1009,7 +1036,7 @@ export default function StyleGuidePage() {
 
         {/* Right Sidebar Expand Button */}
         {(selectedElement || showPinnedPanel) && !showRightSidebar && (
-          <div className="sticky top-16 h-[calc(100vh-4rem)] flex items-start pt-6">
+          <div className="flex items-start pt-6">
             <button
               onClick={() => setShowRightSidebar(true)}
               className="p-2 border-l border-border bg-card/95 text-muted-foreground hover:text-foreground hover:bg-card transition-all duration-200 rounded-l-md"
@@ -1029,14 +1056,57 @@ export default function StyleGuidePage() {
 // Typography Section Component
 function TypographySection({ activeTheme }: { activeTheme: string }) {
 
+  // Get current theme data from registry
+  const theme = getTheme(activeTheme)
+  
   // Current Theme Fonts (dynamic based on active theme)
   const getThemeFonts = () => {
-    return [
-      {
-        name: 'Manrope',
+    const theme = getTheme(activeTheme)
+    if (!theme) {
+      // Fallback fonts if theme not found
+      return [
+        {
+          name: 'System Sans',
+          type: 'Sans-serif',
+          usage: 'UI components and content',
+          description: 'Default system sans-serif font',
+          classes: 'font-sans',
+          isThemeFont: true,
+          samples: [
+            { text: 'Primary Interface Typography', size: 'text-2xl', weight: 'font-bold' },
+            { text: 'User interface elements and content', size: 'text-lg', weight: 'font-normal' },
+            { text: 'Body text and readable content', size: 'text-base', weight: 'font-medium' },
+            { text: 'Labels and smaller interface text', size: 'text-sm', weight: 'font-normal' }
+          ]
+        },
+        {
+          name: 'System Mono',
+          type: 'Monospace',
+          usage: 'Code and technical content',
+          description: 'Default system monospace font',
+          classes: 'font-mono',
+          isThemeFont: true,
+          samples: [
+            { text: 'const example = "Hello World"', size: 'text-base', weight: 'font-normal' },
+            { text: 'function setup() { return true; }', size: 'text-sm', weight: 'font-normal' },
+            { text: '// Comments and code annotations', size: 'text-sm', weight: 'font-normal' },
+            { text: 'npm install @package/name', size: 'text-xs', weight: 'font-normal' }
+          ]
+        }
+      ]
+    }
+    
+    // Build font information from theme
+    const fonts = []
+    
+    // Check if theme has typography configuration
+    if (theme.typography) {
+      // Add sans-serif font
+      fonts.push({
+        name: theme.name === 'Terminal' ? 'IBM Plex Mono' : 'Manrope',
         type: 'Sans-serif',
         usage: 'UI components and content',
-        description: 'Modern geometric sans-serif for clean, readable interface design',
+        description: theme.name === 'Terminal' ? 'Technical monospace font for terminal interface' : 'Modern geometric sans-serif for clean interface',
         classes: 'font-sans',
         isThemeFont: true,
         samples: [
@@ -1045,12 +1115,14 @@ function TypographySection({ activeTheme }: { activeTheme: string }) {
           { text: 'Body text and readable content', size: 'text-base', weight: 'font-medium' },
           { text: 'Labels and smaller interface text', size: 'text-sm', weight: 'font-normal' }
         ]
-      },
-      {
+      })
+      
+      // Add monospace font
+      fonts.push({
         name: 'JetBrains Mono',
         type: 'Monospace',
         usage: 'Code and technical content',
-        description: 'Developer-focused monospace font optimized for coding and technical readability',
+        description: 'Developer-focused monospace font optimized for coding',
         classes: 'font-mono',
         isThemeFont: true,
         samples: [
@@ -1058,6 +1130,23 @@ function TypographySection({ activeTheme }: { activeTheme: string }) {
           { text: 'function setup() { return true; }', size: 'text-sm', weight: 'font-normal' },
           { text: '// Comments and code annotations', size: 'text-sm', weight: 'font-normal' },
           { text: 'npm install @package/name', size: 'text-xs', weight: 'font-normal' }
+        ]
+      })
+    }
+    
+    return fonts.length > 0 ? fonts : [
+      {
+        name: 'Default Font',
+        type: 'Sans-serif',
+        usage: 'UI components and content',
+        description: 'Theme default font',
+        classes: 'font-sans',
+        isThemeFont: true,
+        samples: [
+          { text: 'Primary Interface Typography', size: 'text-2xl', weight: 'font-bold' },
+          { text: 'User interface elements and content', size: 'text-lg', weight: 'font-normal' },
+          { text: 'Body text and readable content', size: 'text-base', weight: 'font-medium' },
+          { text: 'Labels and smaller interface text', size: 'text-sm', weight: 'font-normal' }
         ]
       }
     ]
@@ -1166,20 +1255,23 @@ function TypographySection({ activeTheme }: { activeTheme: string }) {
       {/* Theme Typography */}
       <div className="space-y-6">
         <h3 className="text-lg font-semibold text-foreground">Theme Typography</h3>
-        <p className="text-sm text-muted-foreground">Typography system for the {activeTheme ? activeTheme.charAt(0).toUpperCase() + activeTheme.slice(1) : 'current'} theme</p>
+        <p className="text-sm text-muted-foreground">
+          {theme ? theme.description : `Typography system for the ${activeTheme ? activeTheme.charAt(0).toUpperCase() + activeTheme.slice(1) : 'current'} theme`}
+        </p>
         
         <div className="space-y-4">
           <div className="grid md:grid-cols-2 gap-6">
             {getThemeFonts().map((font) => (
               <div 
                 key={font.name}
-                className="glass-panel p-6"
+                className="glass-panel p-6 cursor-pointer hover:border-primary/20 transition-all duration-200"
                 data-style-element="typography"
                 data-element-name={`${font.name} Font (Theme)`}
                 data-description={font.description}
                 data-classes={font.classes}
                 data-variant={font.type.toLowerCase()}
                 data-usage={`<div className="${font.classes}">Sample text</div>`}
+                title={`${font.name} Font - Click to inspect`}
               >
                 <div className="mb-4">
                   <h4 className="text-base font-semibold text-foreground flex items-center gap-2">
