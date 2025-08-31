@@ -1,13 +1,20 @@
 'use client';
 
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { Palette, Check } from 'lucide-react';
 import { useTheme, themes } from '@/lib/theme-context';
+import { usePathname } from 'next/navigation';
 
 export default function ThemePicker() {
   const { currentTheme, setTheme } = useTheme();
   const [isOpen, setIsOpen] = useState(false);
+  const pathname = usePathname();
+  
+  // Don't render on styleguide pages - they have their own theme system
+  if (pathname?.startsWith('/styleguide')) {
+    return null;
+  }
 
   return (
     <div className="fixed bottom-4 right-4 z-50">
