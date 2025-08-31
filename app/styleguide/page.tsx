@@ -309,6 +309,7 @@ interface TacticalHeaderProps {
   accentColor?: string
   revision?: string
   showMetrics?: boolean
+  headerHeight?: number
 }
 
 function TacticalHeader({ 
@@ -319,7 +320,8 @@ function TacticalHeader({
   statusColor = 'success',
   accentColor = 'var(--theme-accent-color)',
   revision = '2.0.1',
-  showMetrics = true
+  showMetrics = true,
+  headerHeight = 39
 }: TacticalHeaderProps) {
   const statusColorClass = status === 'active' ? `bg-${statusColor}` : 
                            status === 'loading' ? 'bg-warning' : 'bg-muted'
@@ -327,7 +329,10 @@ function TacticalHeader({
   return (
     <>
       {/* Sticky Status Bar */}
-      <div className="sticky top-[40px] z-30 bg-muted/10 border-b border-border/20 backdrop-blur-xl backdrop-saturate-150" role="status" aria-label="System status">
+      <div className="sticky z-30 bg-muted/10 border-b border-border/20 backdrop-blur-xl backdrop-saturate-150" 
+           style={{ top: `${headerHeight}px` }}
+           role="status" 
+           aria-label="System status">
         <div className="flex items-center">
           <div className="w-1 mr-4" style={{ height: '20px', backgroundColor: accentColor }} aria-hidden="true"></div>
           <div className="flex items-center gap-3 mr-6">
@@ -527,6 +532,9 @@ function DynamicSection({ sectionId, theme, activeTheme }: DynamicSectionProps) 
 export default function StyleGuidePage() {
   const searchParams = useSearchParams()
   const router = useRouter()
+  
+  // Header height constant for consistent positioning across all sticky elements
+  const HEADER_HEIGHT = 39 // pixels - actual computed height of the header
   
   const [activeTheme, setActiveTheme] = useState<ThemeName>(() => {
     const ids = getThemeIds()
@@ -864,7 +872,8 @@ export default function StyleGuidePage() {
 
       <div className="max-w-full mx-auto flex relative">
         {/* Sidebar Navigation - Fixed position */}
-        <nav className={`${showLeftSidebar ? 'w-64' : 'w-12'} fixed left-0 top-[45px] h-[calc(100vh-45px)] border-r border-white/10 bg-card/20 backdrop-blur-md shadow-xl shadow-black/10 ${uiAnimations ? 'transition-all duration-200' : ''} overflow-y-auto z-20`}>
+        <nav className={`${showLeftSidebar ? 'w-64' : 'w-12'} fixed left-0 border-r border-white/10 bg-card/20 backdrop-blur-md shadow-xl shadow-black/10 ${uiAnimations ? 'transition-all duration-200' : ''} overflow-y-auto z-20`}
+             style={{ top: `${HEADER_HEIGHT}px`, height: `calc(100vh - ${HEADER_HEIGHT}px)` }}>
           {showLeftSidebar ? (
             <div>
               <div className="flex items-center justify-between mb-4 px-6 pt-6">
@@ -928,6 +937,7 @@ export default function StyleGuidePage() {
             statusColor="success"
             revision="2.0.1"
             showMetrics={true}
+            headerHeight={HEADER_HEIGHT}
           />
 
             {/* Content based on active section */}
@@ -963,7 +973,8 @@ export default function StyleGuidePage() {
 
         {/* Right Panel - Style Details or Pinned Styles - Fixed position */}
         {(selectedElement || showPinnedPanel) && showRightSidebar && (
-          <aside className="w-96 fixed right-0 top-[45px] h-[calc(100vh-45px)] border-l border-white/10 bg-card/80 backdrop-blur-md overflow-y-auto transition-all duration-200 shadow-xl shadow-black/20 z-20">
+          <aside className="w-96 fixed right-0 border-l border-white/10 bg-card/80 backdrop-blur-md overflow-y-auto transition-all duration-200 shadow-xl shadow-black/20 z-20"
+                 style={{ top: `${HEADER_HEIGHT}px`, height: `calc(100vh - ${HEADER_HEIGHT}px)` }}>
             <div className="p-6 h-full overflow-y-auto">
               <div className="flex items-center justify-between mb-4 sticky top-0 bg-card/95 backdrop-blur-sm pb-4 border-b border-border">
                 <h2 className="text-sm font-semibold text-muted-foreground uppercase tracking-wider">
