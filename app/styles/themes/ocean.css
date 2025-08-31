@@ -1,0 +1,23 @@
+/* Ocean Theme - Deep blues and aqua */
+
+/* Font imports for this theme */
+@import url('https://fonts.googleapis.com/css2?family=Outfit:wght@400;500;600;700&family=DM+Sans:wght@400;500;600&display=swap');
+
+[data-theme="ocean"] {
+  --theme-bg-color: #0f172a;
+  --theme-text-color: #cbd5e1;
+  --theme-header-bg: rgba(30, 58, 138, 0.9);
+  --theme-header-text: #e0f2fe;
+  --theme-header-font: "Outfit", "DM Sans", system-ui, sans-serif;
+  --theme-border-color: #1e293b;
+  --theme-accent-color: #38bdf8;
+  --theme-shadow-color: rgba(14, 165, 233, 0.15);
+  --theme-muted-text: #94a3b8;
+  --theme-card-bg: #1e293b;
+  --theme-code-font: ui-monospace, SFMono-Regular, "SF Mono", Monaco, Inconsolata, "Roboto Mono", monospace;
+  --theme-ascii-color: #e0f2fe;
+  --theme-project-card-text: #cbd5e1;
+  --theme-project-card-bg: #1e293b;
+  --theme-dot-opacity: 0.2;
+  --theme-heading-color: #38bdf8;
+}

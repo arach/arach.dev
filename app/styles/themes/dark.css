@@ -1,0 +1,23 @@
+/* Dark/Midnight Theme */
+
+/* Font imports for this theme */
+@import url('https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;600;700&family=Inter:wght@400;500;600&display=swap');
+
+[data-theme="dark"] {
+  --theme-bg-color: #0a0a0a;
+  --theme-text-color: #e5e5e5;
+  --theme-header-bg: rgba(17, 17, 17, 0.95);
+  --theme-header-text: #ffffff;
+  --theme-header-font: "Space Grotesk", "Inter", system-ui, sans-serif;
+  --theme-border-color: #262626;
+  --theme-accent-color: #60a5fa;
+  --theme-shadow-color: rgba(0, 0, 0, 0.5);
+  --theme-muted-text: #a3a3a3;
+  --theme-card-bg: #171717;
+  --theme-code-font: ui-monospace, SFMono-Regular, "SF Mono", Monaco, Inconsolata, "Roboto Mono", monospace;
+  --theme-ascii-color: #f5f5f5;
+  --theme-project-card-text: #e5e5e5;
+  --theme-project-card-bg: #1a1a1a;
+  --theme-dot-opacity: 0.25;
+  --theme-heading-color: #60a5fa;
+}

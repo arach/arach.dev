@@ -1,7 +1,7 @@
 'use client';
 
 import { useEffect, useState } from 'react';
-import { useTheme } from '@/lib/theme-context';
+import { useTheme } from '@/lib/theme-provider-clean';
 import ProjectPageServer from './ProjectPageServer';
 import type { Project } from '@/lib/projects';
 

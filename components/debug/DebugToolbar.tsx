@@ -3,7 +3,7 @@
 import { useState, useEffect } from 'react';
 import { Bug, Database, Activity, X, ChevronRight, ChevronDown, RefreshCw, Trash2, Copy, Check, Maximize2, Minimize2, Palette } from 'lucide-react';
 import { motion, AnimatePresence } from 'framer-motion';
-import { useTheme, themes as siteThemes } from '@/lib/theme-context';
+import { useTheme } from '@/lib/theme-provider-clean';
 import './debug-animations.css';
 
 interface CacheStats {
@@ -32,7 +32,7 @@ interface CacheEntry {
 interface DebugToolbarProps {}
 
 export function DebugToolbar({}: DebugToolbarProps) {
-  const { currentTheme: siteTheme, setTheme: setSiteTheme } = useTheme();
+  const { currentTheme: siteTheme, setTheme: setSiteTheme, themes } = useTheme();
   const [isCollapsed, setIsCollapsed] = useState(true);
   const [isExpanded, setIsExpanded] = useState(false);
   const [cacheStats, setCacheStats] = useState<CacheStats | null>(null);
@@ -391,14 +391,14 @@ export function DebugToolbar({}: DebugToolbarProps) {
                         Changes background, text colors, and header styling only
                       </div>
                       <div className="grid grid-cols-2 gap-2">
-                        {siteThemes.map((theme) => (
+                        {Object.entries(themes).map(([id, theme]) => (
                           <button
-                            key={theme.name}
+                            key={id}
                             onClick={(e) => {
                               e.stopPropagation();
-                              console.log('[DebugToolbar] Theme button clicked:', theme);
-                              setSiteTheme(theme);
-                              setThemeChangeMessage(`Site theme changed to ${theme.displayName}`);
+                              console.log('[DebugToolbar] Theme button clicked:', id, theme);
+                              setSiteTheme(id as any);
+                              setThemeChangeMessage(`Site theme changed to ${theme.name}`);
                               setTimeout(() => setThemeChangeMessage(null), 2000);
                               
                               // Debug: Check if CSS variables are set
@@ -414,7 +414,7 @@ export function DebugToolbar({}: DebugToolbarProps) {
                               }, 100);
                             }}
                             className={`p-2 rounded-lg border transition-all duration-200 text-xs
-                                      ${theme.name === siteTheme.name
+                                      ${id === siteTheme
                                         ? 'bg-indigo-500/30 border-indigo-500/40 text-indigo-400' 
                                         : 'bg-gray-800/50 border-gray-700/50 text-gray-300 hover:bg-gray-800 hover:border-gray-600'}`}
                           >
@@ -422,14 +422,14 @@ export function DebugToolbar({}: DebugToolbarProps) {
                               <div className="flex gap-0.5">
                                 <span 
                                   className="inline-block w-2 h-2 rounded-sm border border-gray-600"
-                                  style={{ backgroundColor: theme.bgColor }}
+                                  style={{ backgroundColor: theme.colors.bg }}
                                 />
                                 <span 
                                   className="inline-block w-2 h-2 rounded-sm border border-gray-600"
-                                  style={{ backgroundColor: theme.headerBg }}
+                                  style={{ backgroundColor: theme.colors.accent }}
                                 />
                               </div>
-                              <span className="text-[10px] font-medium">{theme.displayName}</span>
+                              <span className="text-[10px] font-medium">{theme.name}</span>
                             </div>
                           </button>
                         ))}

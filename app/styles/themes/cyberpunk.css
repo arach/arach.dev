@@ -1,0 +1,23 @@
+/* Cyberpunk Theme - Neon purple and pink */
+
+/* Font imports for this theme */
+@import url('https://fonts.googleapis.com/css2?family=Orbitron:wght@400;500;700;900&family=Exo+2:wght@400;500;600&family=Space+Mono:wght@400;700&display=swap');
+
+[data-theme="cyberpunk"] {
+  --theme-bg-color: #0a0014;
+  --theme-text-color: #e0f2fe;
+  --theme-header-bg: linear-gradient(90deg, rgba(139, 92, 246, 0.9), rgba(236, 72, 153, 0.9));
+  --theme-header-text: #ffffff;
+  --theme-header-font: "Orbitron", "Exo 2", "Space Mono", monospace;
+  --theme-border-color: #6366f1;
+  --theme-accent-color: #f472b6;
+  --theme-shadow-color: rgba(139, 92, 246, 0.3);
+  --theme-muted-text: #94a3b8;
+  --theme-card-bg: #1e1b4b;
+  --theme-code-font: "Fira Code", "Victor Mono", monospace;
+  --theme-ascii-color: #f472b6;
+  --theme-project-card-text: #e0f2fe;
+  --theme-project-card-bg: #2e1065;
+  --theme-dot-opacity: 0.3;
+  --theme-heading-color: #fbbf24;
+}

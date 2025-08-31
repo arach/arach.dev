@@ -2,7 +2,7 @@
 
 import Link from 'next/link';
 import { ArrowLeft, Github, Globe } from 'lucide-react';
-import { useTheme } from '@/lib/theme-context';
+import { useTheme } from '@/lib/theme-provider-clean';
 import ThemedDottedGrid from '@/components/ThemedDottedGrid';
 import type { Project } from '@/lib/projects';
 import { motion } from 'framer-motion';

@@ -1,0 +1,19 @@
+/* Default Theme - Light, clean aesthetic */
+[data-theme="default"] {
+  --theme-bg-color: #ffffff;
+  --theme-text-color: #111827;
+  --theme-header-bg: rgba(0, 0, 0, 1);
+  --theme-header-text: #ffffff;
+  --theme-header-font: ui-monospace, SFMono-Regular, "SF Mono", Monaco, Inconsolata, "Roboto Mono", monospace;
+  --theme-border-color: #e5e7eb;
+  --theme-accent-color: #3b82f6;
+  --theme-shadow-color: rgba(0, 0, 0, 0.1);
+  --theme-muted-text: #6b7280;
+  --theme-card-bg: #f9fafb;
+  --theme-code-font: ui-monospace, SFMono-Regular, "SF Mono", Monaco, Inconsolata, "Roboto Mono", monospace;
+  --theme-ascii-color: #000000;
+  --theme-project-card-text: #111827;
+  --theme-project-card-bg: #ffffff;
+  --theme-dot-opacity: 0.15;
+  --theme-heading-color: #111827;
+}

@@ -2,11 +2,11 @@
 
 import React, { useState, useEffect } from 'react';
 import DottedGrid from './DottedGrid';
-import { useTheme } from '@/lib/theme-context';
+import { useTheme } from '@/lib/theme-provider-clean';
 
 export default function ThemedDottedGrid() {
   const [mounted, setMounted] = useState(false);
-  const { currentTheme: siteTheme } = useTheme();
+  const { currentTheme, themes } = useTheme();
   
   useEffect(() => {
     setMounted(true);
@@ -17,14 +17,16 @@ export default function ThemedDottedGrid() {
     return null;
   }
   
+  const theme = themes[currentTheme];
+  
   // Use site theme's accent color for dots
   const getDotColor = () => {
-    return siteTheme.accentColor || '#3b82f6';
+    return theme?.colors?.accent || '#3b82f6';
   };
   
   // Vary dot size based on site theme for more character
   const getDotSize = () => {
-    switch(siteTheme.name) {
+    switch(currentTheme) {
       case 'cyberpunk':
         return 1.5; // Larger dots for cyber aesthetic
       case 'dark':
@@ -38,7 +40,7 @@ export default function ThemedDottedGrid() {
   
   // Use site theme's dot opacity
   const getDotOpacity = () => {
-    return siteTheme.dotOpacity || 0.15;
+    return theme?.effects?.dotOpacity ? parseFloat(theme.effects.dotOpacity) : 0.15;
   };
   
   return (

@@ -4,7 +4,7 @@ import { useState, useRef, memo } from "react"
 import { Button } from "@/components/ui/button"
 import { Github, AlertCircle, RefreshCw, TrendingUp, Zap } from "lucide-react"
 import type { GitHubContributionsProps, ContributionDay } from "@/types/github"
-import { useTheme } from "@/lib/theme-context"
+import { useTheme } from "@/lib/theme-provider-clean"
 import { useGitHub } from "@/lib/github-context"
 
 const GitHubContributions = memo(function GitHubContributions({
@@ -16,7 +16,7 @@ const GitHubContributions = memo(function GitHubContributions({
   const previewTimeoutRef = useRef<NodeJS.Timeout | null>(null)
   const buttonRef = useRef<HTMLDivElement>(null)
   const previewRef = useRef<HTMLDivElement>(null)
-  const { currentTheme: theme } = useTheme()
+  const { currentTheme } = useTheme()
 
   // Remove the old fetch logic - now handled by context
 
@@ -127,12 +127,12 @@ const GitHubContributions = memo(function GitHubContributions({
           size="sm"
           className="flex items-center gap-1 text-[10px] sm:text-xs hover:shadow-md transition-all duration-300 px-1.5 sm:px-2 py-1 sm:py-1.5 h-auto"
           style={{
-            background: 'var(--theme-card-bg)',
-            borderColor: 'var(--theme-border-color)',
-            color: 'var(--theme-text-color)'
+            background: 'var(--theme-card)',
+            borderColor: 'var(--theme-border)',
+            color: 'var(--theme-text)'
           }}
         >
-          <Github className="w-3 h-3" style={{ color: 'var(--theme-accent-color)' }} />
+          <Github className="w-3 h-3" style={{ color: 'var(--theme-accent)' }} />
           {/* Show streak when ready, no loading indicator */}
           {stats && stats.currentStreak >= 7 && (
             <>
@@ -146,7 +146,7 @@ const GitHubContributions = memo(function GitHubContributions({
               <span className="text-purple-500 font-medium">{stats.currentStreak}</span>
             </>
           )}
-          <TrendingUp className="w-2.5 h-2.5" style={{ color: 'var(--theme-muted-text)' }} />
+          <TrendingUp className="w-2.5 h-2.5" style={{ color: 'var(--theme-muted)' }} />
         </Button>
 
         {/* Custom Hover Preview */}
@@ -159,11 +159,9 @@ const GitHubContributions = memo(function GitHubContributions({
             ref={previewRef}
             className="rounded-lg shadow-2xl p-4 w-96 relative border overflow-visible"
             style={{
-              backgroundColor: theme?.cardBg || theme?.bgColor || '#ffffff',
-              borderColor: theme?.borderColor || 'rgb(229, 231, 235)',
-              boxShadow: theme?.shadowColor 
-                ? `0 25px 50px -12px ${theme.shadowColor}, 0 0 0 1px ${theme.shadowColor}` 
-                : "0 25px 50px -12px rgba(0, 0, 0, 0.25), 0 0 0 1px rgba(0, 0, 0, 0.05)",
+              backgroundColor: 'var(--theme-card, #ffffff)',
+              borderColor: 'var(--theme-border, rgb(229, 231, 235))',
+              boxShadow: "0 25px 50px -12px var(--theme-shadow, rgba(0, 0, 0, 0.25)), 0 0 0 1px var(--theme-shadow, rgba(0, 0, 0, 0.05))",
               backdropFilter: "blur(8px)",
               WebkitBackdropFilter: "blur(8px)",
             }}
@@ -171,17 +169,17 @@ const GitHubContributions = memo(function GitHubContributions({
             onMouseLeave={handlePreviewMouseLeave}
           >
             {/* Preview Header */}
-            <div className="flex items-center justify-between mb-3 pb-2 border-b" style={{ borderColor: theme?.borderColor || 'rgb(243, 244, 246)' }}>
+            <div className="flex items-center justify-between mb-3 pb-2 border-b" style={{ borderColor: 'var(--theme-border, rgb(243, 244, 246))' }}>
               <div className="flex items-center gap-1.5">
-                <Github className="w-4 h-4" style={{ color: theme?.mutedTextColor || 'rgb(107, 114, 128)' }} />
-                <span className="font-medium text-sm" style={{ color: theme?.textColor || 'rgb(17, 24, 39)' }}>Activity</span>
+                <Github className="w-4 h-4" style={{ color: 'var(--theme-muted, rgb(107, 114, 128))' }} />
+                <span className="font-medium text-sm" style={{ color: 'var(--theme-text, rgb(17, 24, 39))' }}>Activity</span>
               </div>
               <a 
                 href={`https://github.com/${username}`}
                 target="_blank"
                 rel="noopener noreferrer"
                 className="flex items-center gap-1 text-xs hover:underline transition-all"
-                style={{ color: theme?.accentColor || 'rgb(59, 130, 246)' }}
+                style={{ color: 'var(--theme-accent, rgb(59, 130, 246))' }}
                 onClick={(e) => e.stopPropagation()}
               >
                 @{username} →
@@ -191,8 +189,8 @@ const GitHubContributions = memo(function GitHubContributions({
             {/* Loading State */}
             {loading && (
               <div className="text-center py-4">
-                <RefreshCw className="w-6 h-6 mx-auto mb-2 animate-spin" style={{ color: theme?.accentColor || 'rgb(59, 130, 246)' }} />
-                <p className="text-sm" style={{ color: theme?.mutedTextColor || 'rgb(107, 114, 128)' }}>Loading GitHub data...</p>
+                <RefreshCw className="w-6 h-6 mx-auto mb-2 animate-spin" style={{ color: 'var(--theme-accent, rgb(59, 130, 246))' }} />
+                <p className="text-sm" style={{ color: 'var(--theme-muted, rgb(107, 114, 128))' }}>Loading GitHub data...</p>
               </div>
             )}
 
@@ -214,28 +212,28 @@ const GitHubContributions = memo(function GitHubContributions({
                 <div className="grid grid-cols-3 gap-4 mb-3">
                   <div className="text-center">
                     <div className="text-2xl" style={{ 
-                      color: theme?.textColor || 'rgb(17, 24, 39)',
-                      fontFamily: theme?.headerFont || 'inherit',
+                      color: 'var(--theme-text, rgb(17, 24, 39))',
+                      fontFamily: 'var(--theme-header-font, inherit)',
                       fontWeight: 'bold'
                     }}>
                       {stats.threeMonthContributions.toLocaleString()}
                     </div>
                     <div className="text-[11px]" style={{ 
-                      color: theme?.mutedTextColor || 'rgb(107, 114, 128)',
-                      fontFamily: theme?.headerFont || 'inherit'
+                      color: 'var(--theme-muted, rgb(107, 114, 128))',
+                      fontFamily: 'var(--theme-header-font, inherit)'
                     }}>Contributions</div>
                   </div>
                   <div className="text-center">
                     <div className="text-2xl" style={{ 
-                      color: theme?.textColor || 'rgb(17, 24, 39)',
-                      fontFamily: theme?.headerFont || 'inherit',
+                      color: 'var(--theme-text, rgb(17, 24, 39))',
+                      fontFamily: 'var(--theme-header-font, inherit)',
                       fontWeight: 'bold'
                     }}>
                       {contributions.filter((d) => d.count > 0).length}
                     </div>
                     <div className="text-[11px]" style={{ 
-                      color: theme?.mutedTextColor || 'rgb(107, 114, 128)',
-                      fontFamily: theme?.headerFont || 'inherit'
+                      color: 'var(--theme-muted, rgb(107, 114, 128))',
+                      fontFamily: 'var(--theme-header-font, inherit)'
                     }}>Active Days</div>
                   </div>
                   <div className="text-center">
@@ -243,15 +241,15 @@ const GitHubContributions = memo(function GitHubContributions({
                       {stats.currentStreak >= 7 && <span className="text-base">🔥</span>}
                       {stats.currentStreak >= 3 && stats.currentStreak < 7 && <span className="text-base">✨</span>}
                       <div className="text-2xl font-bold" style={{ 
-                        color: stats.currentStreak >= 7 ? '#f97316' : stats.currentStreak >= 3 ? '#8b5cf6' : theme?.textColor || 'rgb(17, 24, 39)',
-                        fontFamily: theme?.headerFont || 'inherit'
+                        color: stats.currentStreak >= 7 ? '#f97316' : stats.currentStreak >= 3 ? '#8b5cf6' : 'var(--theme-text, rgb(17, 24, 39))',
+                        fontFamily: 'var(--theme-header-font, inherit)'
                       }}>
                         {stats.currentStreak}
                       </div>
                     </div>
                     <div className="text-[11px] whitespace-nowrap" style={{ 
-                      color: theme?.mutedTextColor || 'rgb(107, 114, 128)',
-                      fontFamily: theme?.headerFont || 'inherit'
+                      color: 'var(--theme-muted, rgb(107, 114, 128))',
+                      fontFamily: 'var(--theme-header-font, inherit)'
                     }}>Streak</div>
                   </div>
                 </div>
@@ -300,18 +298,18 @@ const GitHubContributions = memo(function GitHubContributions({
                       <div className="flex-1 overflow-visible">
                         {/* Month header */}
                         <div className="flex items-center justify-between mb-1">
-                          <span className="text-[10px] font-medium" style={{ color: theme?.textColor || 'rgb(55, 65, 81)' }}>
+                          <span className="text-[10px] font-medium" style={{ color: 'var(--theme-text, rgb(55, 65, 81))' }}>
                             {new Date(year, month).toLocaleDateString('en-US', { month: 'short' })}
                           </span>
                           {isCurrentMonth && (
-                            <Zap className="w-2.5 h-2.5" style={{ color: theme?.accentColor || 'rgb(96, 165, 250)' }} />
+                            <Zap className="w-2.5 h-2.5" style={{ color: 'var(--theme-accent, rgb(96, 165, 250))' }} />
                           )}
                         </div>
                         
                         {/* Day labels */}
                         <div className="grid grid-cols-7 gap-0.5 mb-0.5">
                           {['S', 'M', 'T', 'W', 'T', 'F', 'S'].map((day, i) => (
-                            <div key={i} className="text-[7px] text-center" style={{ color: theme?.mutedTextColor || 'rgb(156, 163, 175)' }}>
+                            <div key={i} className="text-[7px] text-center" style={{ color: 'var(--theme-muted, rgb(156, 163, 175))' }}>
                               {day}
                             </div>
                           ))}
@@ -333,15 +331,15 @@ const GitHubContributions = memo(function GitHubContributions({
                                   <div 
                                     className="px-2 py-1 rounded text-[10px] whitespace-nowrap shadow-lg"
                                     style={{
-                                      backgroundColor: theme?.cardBg || 'rgb(31, 41, 55)',
-                                      color: theme?.textColor || 'rgb(243, 244, 246)',
-                                      border: `1px solid ${theme?.borderColor || 'rgba(255, 255, 255, 0.1)'}`,
+                                      backgroundColor: 'var(--theme-card, rgb(31, 41, 55))',
+                                      color: 'var(--theme-text, rgb(243, 244, 246))',
+                                      border: `1px solid ${'var(--theme-border, rgba(255, 255, 255, 0.1))'}`,
                                     }}
                                   >
-                                    <div className="font-semibold" style={{ color: theme?.accentColor || 'rgb(147, 197, 253)' }}>
+                                    <div className="font-semibold" style={{ color: 'var(--theme-accent, rgb(147, 197, 253))' }}>
                                       {day.count} contribution{day.count !== 1 ? 's' : ''}
                                     </div>
-                                    <div style={{ color: theme?.mutedTextColor || 'rgb(156, 163, 175)' }}>
+                                    <div style={{ color: 'var(--theme-muted, rgb(156, 163, 175))' }}>
                                       {new Date(day.date).toLocaleDateString('en-US', { 
                                         month: 'short', 
                                         day: 'numeric',
@@ -352,7 +350,7 @@ const GitHubContributions = memo(function GitHubContributions({
                                   <div 
                                     className="absolute top-full left-1/2 -translate-x-1/2 w-0 h-0 border-4 border-transparent"
                                     style={{
-                                      borderTopColor: theme?.cardBg || 'rgb(31, 41, 55)',
+                                      borderTopColor: 'var(--theme-card, rgb(31, 41, 55))',
                                     }}
                                   />
                                 </div>
@@ -373,52 +371,52 @@ const GitHubContributions = memo(function GitHubContributions({
                       </div>
                       
                       {/* 30-day metrics */}
-                      <div className="pt-2 border-t" style={{ borderColor: theme?.borderColor || 'rgb(243, 244, 246)' }}>
+                      <div className="pt-2 border-t" style={{ borderColor: 'var(--theme-border, rgb(243, 244, 246))' }}>
                         <div className="text-[10px] font-medium mb-1" style={{ 
-                          color: theme?.mutedTextColor || 'rgb(107, 114, 128)',
-                          fontFamily: theme?.headerFont || 'inherit'
+                          color: 'var(--theme-muted, rgb(107, 114, 128))',
+                          fontFamily: 'var(--theme-header-font, inherit)'
                         }}>
                           Last 30 Days
                         </div>
                         <div className="grid grid-cols-3 gap-2">
                           <div>
                             <div className="text-lg font-semibold" style={{ 
-                              color: theme?.textColor || 'rgb(17, 24, 39)',
-                              fontFamily: theme?.headerFont || 'inherit'
+                              color: 'var(--theme-text, rgb(17, 24, 39))',
+                              fontFamily: 'var(--theme-header-font, inherit)'
                             }}>
                               {contributions.slice(-30).reduce((sum, day) => sum + day.count, 0)}
                             </div>
                             <div className="text-[10px]" style={{ 
-                              color: theme?.mutedTextColor || 'rgb(156, 163, 175)',
-                              fontFamily: theme?.headerFont || 'inherit'
+                              color: 'var(--theme-muted, rgb(156, 163, 175))',
+                              fontFamily: 'var(--theme-header-font, inherit)'
                             }}>
                               commits
                             </div>
                           </div>
                           <div>
                             <div className="text-lg font-semibold" style={{ 
-                              color: theme?.textColor || 'rgb(17, 24, 39)',
-                              fontFamily: theme?.headerFont || 'inherit'
+                              color: 'var(--theme-text, rgb(17, 24, 39))',
+                              fontFamily: 'var(--theme-header-font, inherit)'
                             }}>
                               {contributions.slice(-30).filter(d => d.count > 0).length}
                             </div>
                             <div className="text-[10px]" style={{ 
-                              color: theme?.mutedTextColor || 'rgb(156, 163, 175)',
-                              fontFamily: theme?.headerFont || 'inherit'
+                              color: 'var(--theme-muted, rgb(156, 163, 175))',
+                              fontFamily: 'var(--theme-header-font, inherit)'
                             }}>
                               active days
                             </div>
                           </div>
                           <div>
                             <div className="text-lg font-semibold" style={{ 
-                              color: theme?.textColor || 'rgb(17, 24, 39)',
-                              fontFamily: theme?.headerFont || 'inherit'
+                              color: 'var(--theme-text, rgb(17, 24, 39))',
+                              fontFamily: 'var(--theme-header-font, inherit)'
                             }}>
                               {Math.round(contributions.slice(-30).reduce((sum, day) => sum + day.count, 0) / 30 * 10) / 10}
                             </div>
                             <div className="text-[10px]" style={{ 
-                              color: theme?.mutedTextColor || 'rgb(156, 163, 175)',
-                              fontFamily: theme?.headerFont || 'inherit'
+                              color: 'var(--theme-muted, rgb(156, 163, 175))',
+                              fontFamily: 'var(--theme-header-font, inherit)'
                             }}>
                               daily avg
                             </div>
@@ -434,7 +432,7 @@ const GitHubContributions = memo(function GitHubContributions({
 
             {/* Enhanced Call to Action */}
             {!loading && (
-              <div className="mt-3 pt-2 border-t text-center animate-in fade-in-50 slide-in-from-bottom-8 duration-1000" style={{ borderColor: theme?.borderColor || 'rgb(243, 244, 246)' }}>
+              <div className="mt-3 pt-2 border-t text-center animate-in fade-in-50 slide-in-from-bottom-8 duration-1000" style={{ borderColor: 'var(--theme-border, rgb(243, 244, 246))' }}>
                 <Button
                   size="sm"
                   onClick={() => {
@@ -443,8 +441,8 @@ const GitHubContributions = memo(function GitHubContributions({
                   }}
                   className="text-xs text-white"
                   style={{ 
-                    backgroundColor: theme?.accentColor || 'rgb(37, 99, 235)',
-                    borderColor: theme?.accentColor || 'rgb(37, 99, 235)'
+                    backgroundColor: 'var(--theme-accent, rgb(37, 99, 235))',
+                    borderColor: 'var(--theme-accent, rgb(37, 99, 235))'
                   }}
                   onMouseEnter={(e) => {
                     e.currentTarget.style.opacity = '0.9';
