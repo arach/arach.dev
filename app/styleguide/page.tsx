@@ -2,6 +2,7 @@
 
 import React, { useState, useEffect, useRef } from 'react'
 import { useSearchParams, useRouter } from 'next/navigation'
+import Link from 'next/link'
 import { getThemeIds, getTheme } from '@/styles/theme-registry'
 import '@/styles/init-themes'
 import type { Theme } from '@/types/theme'
@@ -765,7 +766,7 @@ export default function StyleGuidePage() {
           <div className="flex items-center justify-between">
             <div className="flex items-center gap-2">
               {/* Back to Home Link */}
-              <a
+              <Link
                 href="/"
                 className="flex items-center gap-1.5 px-2.5 py-1 text-sm text-muted-foreground hover:text-foreground bg-card/50 hover:bg-card border border-border rounded-md transition-all duration-200"
                 title="Back to arach.dev"
@@ -774,7 +775,7 @@ export default function StyleGuidePage() {
                   <path d="m15 18-6-6 6-6"/>
                 </svg>
                 arach.dev
-              </a>
+              </Link>
               
               <div className={`${uiAnimations ? 'transition-all duration-300' : ''}`}>
                 <h1 className="font-mono text-lg font-bold text-foreground uppercase tracking-wide">
