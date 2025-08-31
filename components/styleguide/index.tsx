@@ -1,0 +1,12 @@
+// Export all styleguide section components
+export { TypographySection } from './TypographySection'
+export { ColorsSection } from './ColorsSection'
+export { ButtonsSection } from './ButtonsSection'
+export { InputsSection } from './InputsSection'
+export { CardsSection } from './CardsSection'
+export { BadgesSection } from './BadgesSection'
+export { StatusSection } from './StatusSection'
+export { EffectsSection } from './EffectsSection'
+export { SpacingSection } from './SpacingSection'
+export { TablesSection } from './TablesSection'
+export { VariablesSection } from './VariablesSection'

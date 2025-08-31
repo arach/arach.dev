@@ -155,6 +155,7 @@ function calculateStats(contributions: ContributionDay[]): GitHubStats {
   longestStreak = longestTempStreak
 
   return {
+    totalCommits: threeMonthContributions, // Using contributions as commits proxy
     totalForks,
     currentStreak,
     longestStreak,

@@ -10,4 +10,4 @@ export { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from './tool
 
 // Custom UI components
 export { SocialButton } from './SocialButton'
-export { TypeWriter } from './TypeWriter'
+export { default as TypeWriter } from './TypeWriter'

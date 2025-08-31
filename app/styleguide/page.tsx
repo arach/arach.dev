@@ -1,979 +1,1151 @@
 'use client'
 
-import React, { useState, useEffect, createContext, useContext } from 'react'
-import { getAllThemes, type ThemeName, cx } from '@/styles'
-import type { Theme } from '@/styles'
-import styles from './styleguide.module.css'
+import React, { useState, useEffect, useRef } from 'react'
+import { useSearchParams, useRouter } from 'next/navigation'
+import { getThemeIds, getTheme } from '@/styles/theme-registry'
+import '@/styles/init-themes'
+import type { Theme } from '@/types/theme'
+import {
+  TypographySection,
+  ColorsSection,
+  ButtonsSection,
+  InputsSection,
+  CardsSection,
+  BadgesSection,
+  StatusSection,
+  EffectsSection,
+  SpacingSection,
+  TablesSection,
+  VariablesSection
+} from '@/components/styleguide'
 
-interface StyleSpec {
-  name: string
-  type: 'typography' | 'color' | 'input' | 'button' | 'card' | 'badge' | 'status' | 'effect'
-  style: string  // The actual style definition string
-  details: Record<string, string>
-  extras?: string
+
+
+
+type ThemeName = string // Dynamic based on registry
+
+// Centralized element enhancement system
+function useElementEnhancer(onElementSelect?: (element: any) => void) {
+  const containerRef = useRef<HTMLDivElement>(null)
+
+  useEffect(() => {
+    if (!containerRef.current || !onElementSelect) return
+
+    const container = containerRef.current
+    
+    // Element selectors and their metadata extractors
+    const elementTargets = [
+      {
+        selector: '[data-style-element="typography"]',
+        extractor: (el: HTMLElement) => ({
+          name: el.getAttribute('data-element-name') || 'Typography Element',
+          description: el.getAttribute('data-description') || 'Typography element',
+          classes: el.getAttribute('data-classes') || el.className,
+          type: 'typography',
+          variant: el.getAttribute('data-variant') || 'default',
+          usage: el.getAttribute('data-usage') || `<${el.tagName.toLowerCase()} className="${el.className}">${el.textContent}</${el.tagName.toLowerCase()}>`
+        })
+      },
+      {
+        selector: '[data-style-element="color"]',
+        extractor: (el: HTMLElement) => ({
+          name: el.getAttribute('data-element-name') || 'Color Element',
+          description: el.getAttribute('data-description') || 'Color swatch',
+          classes: el.getAttribute('data-classes') || el.className,
+          cssVar: el.getAttribute('data-css-var') || '',
+          type: 'color',
+          variant: el.getAttribute('data-variant') || 'default',
+          usage: el.getAttribute('data-usage') || `<div className="${el.getAttribute('data-classes')}">Content</div>`
+        })
+      },
+      {
+        selector: '[data-style-element="button"]',
+        extractor: (el: HTMLElement) => ({
+          name: el.getAttribute('data-element-name') || 'Button Element',
+          description: el.getAttribute('data-description') || 'Button component',
+          classes: el.getAttribute('data-classes') || el.className,
+          type: 'button',
+          variant: el.getAttribute('data-variant') || 'default',
+          usage: el.getAttribute('data-usage') || `<button className="${el.getAttribute('data-classes')}">${el.textContent}</button>`
+        })
+      },
+      {
+        selector: '[data-style-element="input"]',
+        extractor: (el: HTMLElement) => ({
+          name: el.getAttribute('data-element-name') || 'Input Element',
+          description: el.getAttribute('data-description') || 'Form input',
+          classes: el.getAttribute('data-classes') || '',
+          labelClasses: el.getAttribute('data-label-classes') || '',
+          type: 'input',
+          variant: el.getAttribute('data-variant') || 'default',
+          usage: el.getAttribute('data-usage') || `<input className="${el.getAttribute('data-classes')}" />`
+        })
+      },
+      {
+        selector: '[data-style-element="card"]',
+        extractor: (el: HTMLElement) => ({
+          name: el.getAttribute('data-element-name') || 'Card Element',
+          description: el.getAttribute('data-description') || 'Card component',
+          classes: el.getAttribute('data-classes') || el.className,
+          type: 'card',
+          variant: el.getAttribute('data-variant') || 'default',
+          usage: el.getAttribute('data-usage') || `<div className="${el.getAttribute('data-classes')}">Card content</div>`
+        })
+      },
+      {
+        selector: '[data-style-element="badge"]',
+        extractor: (el: HTMLElement) => ({
+          name: el.getAttribute('data-element-name') || 'Badge Element',
+          description: el.getAttribute('data-description') || 'Badge component',
+          classes: el.getAttribute('data-classes') || el.className,
+          type: 'badge',
+          variant: el.getAttribute('data-variant') || 'default',
+          usage: el.getAttribute('data-usage') || `<span className="${el.getAttribute('data-classes')}">${el.textContent}</span>`
+        })
+      }
+    ]
+
+    // Attach handlers to all target elements
+    const attachedHandlers: { element: Element; handler: (e: Event) => void }[] = []
+
+    elementTargets.forEach(({ selector, extractor }) => {
+      const elements = container.querySelectorAll(selector)
+      
+      elements.forEach((element) => {
+        const htmlElement = element as HTMLElement
+        
+        // Create click handler
+        const clickHandler = (event: Event) => {
+          event.stopPropagation()
+          const elementData = extractor(htmlElement)
+          onElementSelect(elementData)
+        }
+
+        // Add visual enhancements
+        htmlElement.style.cursor = 'pointer'
+        htmlElement.classList.add('group', 'relative')
+        
+        // Add hover effects (only if UI animations are enabled)
+        const hoverEnhancement = () => {
+          const animationsEnabled = document.documentElement.getAttribute('data-ui-animations') === 'true'
+          if (animationsEnabled) {
+            htmlElement.style.transform = 'scale(1.02)'
+            htmlElement.style.boxShadow = '0 8px 25px -8px rgba(0,0,0,0.2)'
+            htmlElement.style.transition = 'all 300ms'
+          }
+        }
+        
+        const hoverReset = () => {
+          htmlElement.style.transform = 'scale(1)'
+          htmlElement.style.boxShadow = 'none'
+          htmlElement.style.transition = ''
+        }
+
+        // Attach event listeners
+        htmlElement.addEventListener('click', clickHandler)
+        htmlElement.addEventListener('mouseenter', hoverEnhancement)
+        htmlElement.addEventListener('mouseleave', hoverReset)
+        
+        // Store for cleanup
+        attachedHandlers.push({ element: htmlElement, handler: clickHandler })
+      })
+    })
+
+    // Cleanup function
+    return () => {
+      attachedHandlers.forEach(({ element, handler }) => {
+        element.removeEventListener('click', handler)
+        const htmlElement = element as HTMLElement
+        htmlElement.removeEventListener('mouseenter', () => {})
+        htmlElement.removeEventListener('mouseleave', () => {})
+        htmlElement.style.cursor = ''
+        htmlElement.style.transform = ''
+        htmlElement.style.boxShadow = ''
+      })
+    }
+  }, [onElementSelect])
+
+  return containerRef
 }
 
-// Context for style sections to provide category info
-const StyleSectionContext = createContext<{ category: StyleSpec['type'] }>({ 
-  category: 'typography' 
-})
+// Dynamic section detection from theme
+function getThemeSections(theme: Theme | null): string[] {
+  if (!theme) return ['colors', 'typography', 'components']
+  
+  const sections: string[] = []
+  
+  // Always include CSS variables section (always available for themes)
+  sections.push('variables')
+  
+  // Always include colors if present
+  if (theme.colors) sections.push('colors')
+  
+  // Include typography if present
+  if (theme.typography) sections.push('typography')
+  
+  // Detect component sections from theme.components
+  if (theme.components) {
+    const componentKeys = Object.keys(theme.components)
+    // Add individual component sections if they exist
+    if (componentKeys.includes('button')) sections.push('buttons')
+    if (componentKeys.includes('input') || componentKeys.includes('textarea')) sections.push('inputs')
+    if (componentKeys.includes('card')) sections.push('cards')
+    if (componentKeys.includes('badge')) sections.push('badges')
+    if (componentKeys.includes('table')) sections.push('tables')
+    if (componentKeys.includes('status')) sections.push('status')
+  }
+  
+  // Add effects section if present
+  if ((theme as any).effects) sections.push('effects')
+  
+  // Add spacing section if present
+  if ((theme as any).spacing) sections.push('spacing')
+  
+  return sections
+}
+
+// Helper functions for section metadata
+function getSectionId(section: string): string {
+  const ids: Record<string, string> = {
+    typography: 'TYP-001',
+    colors: 'CLR-002',
+    buttons: 'BTN-003',
+    inputs: 'FRM-004',
+    cards: 'CRD-005',
+    badges: 'BDG-006',
+    tables: 'TBL-007',
+    status: 'STS-008',
+    effects: 'EFX-009',
+    spacing: 'SPC-010',
+    all: 'ALL-000'
+  }
+  return ids[section] || `${section.toUpperCase().slice(0, 3)}-999`
+}
+
+function getSectionTitle(section: string): string {
+  const titles: Record<string, string> = {
+    typography: 'Typography System',
+    colors: 'Color Palette',
+    variables: 'CSS Variables',
+    buttons: 'Button Components',
+    inputs: 'Form Elements',
+    cards: 'Card Containers',
+    badges: 'Badge Indicators',
+    tables: 'Data Tables',
+    status: 'Status Indicators',
+    effects: 'Visual Effects',
+    spacing: 'Spacing System',
+    all: 'Complete System'
+  }
+  return titles[section] || section.charAt(0).toUpperCase() + section.slice(1).replace(/([A-Z])/g, ' $1').trim()
+}
+
+function getSectionDescription(section: string, theme: Theme | null): string {
+  // Theme-aware descriptions
+  const themePrefix = theme ? `${theme.name} theme ` : ''
+  
+  const descriptions: Record<string, string> = {
+    typography: `${themePrefix}hierarchical text system with precision and clear information architecture`,
+    colors: `${themePrefix}color deployment for semantic states and visual hierarchy`,
+    variables: `${themePrefix}CSS custom properties following shadcn/ui conventions for seamless integration`,
+    buttons: `${themePrefix}action triggers with purposeful styling and interaction states`,
+    inputs: `${themePrefix}data entry components optimized for accuracy and validation`,
+    cards: `${themePrefix}container elements with distinctive styling and framing`,
+    badges: `${themePrefix}status indicators and categorical labels with semantic coloring`,
+    tables: `${themePrefix}data grids with sortable columns and inline actions`,
+    status: `${themePrefix}visual status indicators and state representations`,
+    effects: `${themePrefix}visual effects including shadows, blur, and transparency`,
+    spacing: `${themePrefix}spacing system for consistent layout rhythm`,
+    all: `Complete ${themePrefix}design system overview with all component categories`
+  }
+  return descriptions[section] || `${themePrefix}components using theme variables`
+}
+
+function getSectionComponentCount(section: string, theme: Theme | null): number {
+  if (!theme || !theme.components) return 0
+  
+  // Dynamic count based on actual theme data
+  switch(section) {
+    case 'typography':
+      return theme.typography ? Object.keys(theme.typography).length : 0
+    case 'colors':
+      return theme.colors ? Object.keys(theme.colors).flat().length : 0
+    case 'buttons':
+      return theme.components.button ? Object.keys(theme.components.button).length : 0
+    case 'inputs':
+      const inputCount = theme.components.input ? Object.keys(theme.components.input).length : 0
+      const textareaCount = theme.components.textarea ? Object.keys(theme.components.textarea).length : 0
+      return inputCount + textareaCount
+    case 'cards':
+      return theme.components.card ? Object.keys(theme.components.card).length : 0
+    case 'badges':
+      return theme.components.badge ? Object.keys(theme.components.badge).length : 0
+    case 'tables':
+      return theme.components.table ? Object.keys(theme.components.table).length : 0
+    case 'status':
+      return theme.components.status ? Object.keys(theme.components.status).length : 0
+    case 'all':
+      return getThemeSections(theme).reduce((sum, sec) => 
+        sum + getSectionComponentCount(sec, theme), 0
+      )
+    default:
+      return 0
+  }
+}
+
+function getSectionVariantCount(section: string, theme: Theme | null): number {
+  // For now, return component count as variant count
+  // This can be enhanced to count actual variants within each component type
+  return getSectionComponentCount(section, theme)
+}
+
+// Unified Tactical Header Component with Sticky Status Bar
+interface TacticalHeaderProps {
+  activeSection: string
+  activeTheme: string
+  theme?: Theme | null
+  status?: 'active' | 'inactive' | 'loading'
+  statusColor?: string
+  accentColor?: string
+  revision?: string
+  showMetrics?: boolean
+}
+
+function TacticalHeader({ 
+  activeSection, 
+  activeTheme,
+  theme = null,
+  status = 'active',
+  statusColor = 'success',
+  accentColor = 'var(--theme-accent-color)',
+  revision = '2.0.1',
+  showMetrics = true
+}: TacticalHeaderProps) {
+  const statusColorClass = status === 'active' ? `bg-${statusColor}` : 
+                           status === 'loading' ? 'bg-warning' : 'bg-muted'
+  
+  return (
+    <>
+      {/* Sticky Status Bar */}
+      <div className="sticky z-30 bg-muted/10 border-b border-border/20 backdrop-blur-xl backdrop-saturate-150" 
+           style={{ top: 'var(--header-height, 39px)' }}
+           role="status" 
+           aria-label="System status">
+        <div className="flex items-center">
+          <div className="w-1 mr-4" style={{ height: '20px', backgroundColor: accentColor }} aria-hidden="true"></div>
+          <div className="flex items-center gap-3 mr-6">
+            {/* Status indicators */}
+            <div className="flex items-center gap-1" role="status" aria-label={`${status} status`}>
+              <div className={`w-2 h-2 rounded-full ${statusColorClass} ${status === 'active' ? 'animate-pulse' : ''}`} aria-hidden="true" />
+              <span className={`text-[10px] font-mono text-${statusColor} uppercase`}>{status.toUpperCase()}</span>
+            </div>
+            <div className="h-3 w-px bg-border/50" aria-hidden="true" />
+            <span className="text-[10px] font-mono text-muted-foreground uppercase tracking-wider">
+              SECTION: {activeSection.toUpperCase()}
+            </span>
+          </div>
+          <div className="flex items-center gap-2 ml-auto mr-6" role="status" aria-label="System information">
+            <span className="text-[10px] font-mono text-muted-foreground">
+              THEME: {activeTheme.toUpperCase()}
+            </span>
+            <div className="h-3 w-px bg-border/50" aria-hidden="true" />
+            <span className="text-[10px] font-mono text-muted-foreground">
+              REV: {revision}
+            </span>
+          </div>
+        </div>
+      </div>
+      
+      {/* Tactical Section Header */}
+      <header className="z-20 relative bg-background/95 backdrop-blur-md" role="banner" aria-label="Section header">
+        {/* Background scan line effect */}
+        <div className="absolute inset-0 bg-gradient-to-r from-primary/5 via-transparent to-transparent" aria-hidden="true" />
+        
+        {/* Main header container with tactical frame */}
+        <div className="relative bg-card/30 backdrop-blur-sm overflow-hidden section-header-tactical mr-6" role="region" aria-label="Tactical header frame">
+          
+          {/* Main content area with left accent */}
+          <div className="flex" role="region" aria-label="Header content">
+            {/* Tactical accent bar */}
+            <div className="w-1 bg-gradient-to-b from-primary via-primary/50 to-transparent" aria-hidden="true" />
+            
+            {/* Content */}
+            <div className="flex-1 px-6 py-3" role="main">
+              {/* Section identifier */}
+              <nav className="flex items-center gap-2 mb-1.5" aria-label="Breadcrumb navigation">
+                <div className="px-2 py-0.5 bg-primary/10 border border-primary/30 rounded-sm">
+                  <span className="text-[10px] font-mono text-primary uppercase tracking-wider">
+                    {getSectionId(activeSection)}
+                  </span>
+                </div>
+                <div className="flex items-center gap-1 text-[10px] font-mono text-muted-foreground">
+                  <span>/</span>
+                  <span>STYLEGUIDE</span>
+                  <span>/</span>
+                  <span>COMPONENTS</span>
+                </div>
+              </nav>
+              
+              {/* Section title */}
+              <h1 className="text-lg font-bold text-foreground uppercase tracking-tight mb-0.5">
+                {getSectionTitle(activeSection)}
+              </h1>
+              
+              {/* Section description */}
+              <p className="text-xs text-muted-foreground font-mono">
+                {getSectionDescription(activeSection, theme)}
+              </p>
+            </div>
+            
+            {/* Right side metrics */}
+            {showMetrics && (
+              <aside className="px-4 py-3 border-l border-border/30 bg-muted/5" role="complementary" aria-label="Section metrics">
+                <div className="space-y-2">
+                  <div>
+                    <div className="text-[10px] font-mono text-muted-foreground uppercase">Components</div>
+                    <div className="text-sm font-mono text-foreground">{getSectionComponentCount(activeSection, theme)}</div>
+                  </div>
+                  <div>
+                    <div className="text-[10px] font-mono text-muted-foreground uppercase">Variants</div>
+                    <div className="text-sm font-mono text-foreground">{getSectionVariantCount(activeSection, theme)}</div>
+                  </div>
+                </div>
+              </aside>
+            )}
+          </div>
+          
+          {/* Bottom telemetry bar */}
+          <div className="h-px bg-gradient-to-r from-transparent via-primary/30 to-transparent" aria-hidden="true" />
+        </div>
+      </header>
+    </>
+  )
+}
+
+// Section Header Component - Integrated tactical display
+interface SectionHeaderProps {
+  title: string
+  id: string
+  status: 'active' | 'inactive' | 'loading'
+  componentCount: number
+  variantCount: number
+}
+
+function SectionHeader({ title, id, status, componentCount, variantCount }: SectionHeaderProps) {
+  return (
+    <div className="mb-4 relative">
+      {/* Background scan effect */}
+      <div className="absolute inset-0 bg-gradient-to-r from-primary/3 via-transparent to-transparent rounded-sm" />
+      
+      {/* Main header container */}
+      <div className="relative border border-border/40 bg-card/20 backdrop-blur-sm rounded-sm overflow-hidden section-header-tactical">
+        {/* Top telemetry bar */}
+        <div className="h-px telemetry-bar" />
+        
+        {/* Header content */}
+        <div className="flex items-center">
+          {/* Left accent */}
+          <div className="w-0.5 self-stretch" />
+          
+          {/* Main content */}
+          <div className="flex-1 px-6 py-2">
+            <div className="flex items-center justify-between">
+              <div className="flex items-center gap-3">
+                {/* Section ID badge */}
+                <div className="px-2 py-0.5 bg-primary/10 border border-primary/20 rounded-sm">
+                  <span className="text-[10px] font-mono text-primary/90 uppercase tracking-wider">
+                    {id}
+                  </span>
+                </div>
+                
+                {/* Section title */}
+                <h3 className="text-base font-bold text-foreground uppercase tracking-tight">
+                  {title}
+                </h3>
+              </div>
+              
+              {/* Right side metrics */}
+              <div className="flex items-center gap-4">
+                <div className="flex items-center gap-2">
+                  <span className="text-[10px] font-mono text-muted-foreground uppercase">Components:</span>
+                  <span className="text-xs font-mono text-foreground">{componentCount}</span>
+                </div>
+                <div className="h-3 w-px bg-border/50" />
+                <div className="flex items-center gap-2">
+                  <span className="text-[10px] font-mono text-muted-foreground uppercase">Variants:</span>
+                  <span className="text-xs font-mono text-foreground">{variantCount}</span>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+        
+        {/* Bottom telemetry bar */}
+        <div className="h-px bg-gradient-to-r from-transparent via-primary/10 to-transparent telemetry-bar" />
+      </div>
+    </div>
+  )
+}
+
+// Dynamic Section Component - Renders sections based on theme data
+interface DynamicSectionProps {
+  sectionId: string
+  theme: Theme | null
+  activeTheme: string
+}
+
+function DynamicSection({ sectionId, theme, activeTheme }: DynamicSectionProps) {
+  if (!theme) {
+    return <div className="p-6 text-muted-foreground">No theme data available</div>
+  }
+
+  switch (sectionId) {
+    case 'typography':
+      return <TypographySection theme={theme} />
+    case 'colors':
+      return <ColorsSection theme={theme} />
+    case 'variables':
+      return <VariablesSection theme={theme} />
+    case 'buttons':
+      return <ButtonsSection theme={theme} />
+    case 'inputs':
+      return <InputsSection theme={theme} />
+    case 'cards':
+      return <CardsSection theme={theme} />
+    case 'badges':
+      return <BadgesSection theme={theme} />
+    case 'tables':
+      return <TablesSection theme={theme} />
+    case 'status':
+      return <StatusSection theme={theme} />
+    case 'effects':
+      return <EffectsSection theme={theme} />
+    case 'spacing':
+      return <SpacingSection theme={theme} />
+    default:
+      return <div className="p-6 text-muted-foreground">Section "{sectionId}" not implemented</div>
+  }
+}
 
 export default function StyleGuidePage() {
-  const [selectedTheme, setSelectedTheme] = useState<ThemeName>('terminal')
-  const [hoveredSpec, setHoveredSpec] = useState<StyleSpec | null>(null)
-  const [pinnedSpecs, setPinnedSpecs] = useState<StyleSpec[]>([])
-  const [currentPinnedIndex, setCurrentPinnedIndex] = useState(0)
+  const searchParams = useSearchParams()
+  const router = useRouter()
   
-  const themes = getAllThemes()
-  const ts = themes[selectedTheme]
+  const [activeTheme, setActiveTheme] = useState<ThemeName>(() => {
+    const ids = getThemeIds()
+    return ids.includes('terminal') ? 'terminal' : ids[0] || 'terminal'
+  })
+  const [activeSection, setActiveSection] = useState<string>('typography')
+  const [selectedElement, setSelectedElement] = useState<any>(null)
+  const [isScrolled, setIsScrolled] = useState(false)
+  const [pinnedStyles, setPinnedStyles] = useState<any[]>([])
+  const [showPinnedPanel, setShowPinnedPanel] = useState(false)
+  const [showLeftSidebar, setShowLeftSidebar] = useState(true)
+  const [showRightSidebar, setShowRightSidebar] = useState(true)
+  const [uiAnimations, setUiAnimations] = useState(true)
+  const [darkMode, setDarkMode] = useState(true)
+  const [isHydrated, setIsHydrated] = useState(false)
 
-  // Utility to detect element type from React children
-  const detectElementType = (children: React.ReactNode): string | null => {
-    if (!children || typeof children !== 'object') return null
+  // Handle hydration and localStorage loading
+  useEffect(() => {
+    setIsHydrated(true)
+    const savedAnimations = localStorage.getItem('ui-animations')
+    const savedDarkMode = localStorage.getItem('dark-mode')
+    if (savedAnimations !== null) {
+      setUiAnimations(savedAnimations === 'true')
+    }
+    if (savedDarkMode !== null) {
+      setDarkMode(savedDarkMode === 'true')
+    }
+  }, [])
+
+  // Sync with URL params
+  useEffect(() => {
+    const section = searchParams.get('section')
+    const theme = searchParams.get('theme') as ThemeName
     
-    const child = React.Children.toArray(children)[0]
-    if (React.isValidElement(child)) {
-      const elementType = child.type
-      if (typeof elementType === 'string') {
-        return `<${elementType}>`
+    if (section) setActiveSection(section)
+    if (theme && getThemeIds().includes(theme)) setActiveTheme(theme)
+  }, [searchParams])
+
+  // Update URL when section/theme changes
+  const updateURL = (section?: string, theme?: ThemeName) => {
+    const params = new URLSearchParams(searchParams.toString())
+    if (section) params.set('section', section)
+    if (theme) params.set('theme', theme)
+    router.push(`?${params.toString()}`)
+  }
+  
+  // Use the centralized element enhancer for automatic element inspection
+  const containerRef = useElementEnhancer((element) => {
+    setSelectedElement(element)
+    setShowPinnedPanel(false)
+    setShowRightSidebar(true) // Auto-expand preview on element click
+  })
+
+  // Apply base UI theme (terminal) to body for consistent chrome
+  // Component themes are passed via props and don't affect global styles
+  useEffect(() => {
+    // Always use theme-terminal for the UI chrome to maintain dark mode
+    // The actual component theme is passed as props to each section
+    document.body.className = 'theme-terminal'
+    
+    // Set CSS variables for layout measurements
+    document.documentElement.style.setProperty('--header-height', '39px')
+    document.documentElement.style.setProperty('--sidebar-width', '256px')
+    document.documentElement.style.setProperty('--sidebar-collapsed-width', '48px')
+    document.documentElement.style.setProperty('--right-panel-width', '384px')
+  }, [])
+
+  // Save UI animations preference (only after hydration)
+  useEffect(() => {
+    if (isHydrated) {
+      localStorage.setItem('ui-animations', String(uiAnimations))
+      // Apply data attribute to control CSS
+      document.documentElement.setAttribute('data-ui-animations', String(uiAnimations))
+    }
+  }, [uiAnimations, isHydrated])
+
+  // Handle dark mode
+  useEffect(() => {
+    if (isHydrated) {
+      localStorage.setItem('dark-mode', String(darkMode))
+      if (darkMode) {
+        document.documentElement.classList.add('dark')
+      } else {
+        document.documentElement.classList.remove('dark')
       }
     }
+  }, [darkMode, isHydrated])
+
+  // Handle scroll detection for header sizing
+  useEffect(() => {
+    const handleScroll = () => {
+      setIsScrolled(window.scrollY > 20)
+    }
+
+    window.addEventListener('scroll', handleScroll)
+    return () => window.removeEventListener('scroll', handleScroll)
+  }, [])
+
+  // Smart element inspection system (backup for elements without data-style-element)
+  const handleElementClick = (event: React.MouseEvent) => {
+    const target = event.target as HTMLElement
+    
+    // The useElementEnhancer handles data-style-element clicks
+    // This is for fallback manual inspection only
+    if (target.getAttribute('data-style-element')) {
+      return // Let the enhancer handle it
+    }
+    
+    // Skip if clicking on non-interactive elements without styling
+    if (!target.className || target.className === '') {
+      return
+    }
+    
+    event.stopPropagation()
+    
+    // Try to extract style information from the element
+    const elementData = inspectElement(target)
+    if (elementData) {
+      setSelectedElement(elementData)
+      setShowPinnedPanel(false)
+      setShowRightSidebar(true) // Auto-expand preview on element click
+    }
+  }
+
+  // Inspect an element and extract relevant style information
+  const inspectElement = (element: HTMLElement) => {
+    const tagName = element.tagName.toLowerCase()
+    const className = element.className
+    
+    // Button inspection
+    if (tagName === 'button') {
+      const variant = getButtonVariant(className)
+      return {
+        name: `${variant.charAt(0).toUpperCase() + variant.slice(1)} Button`,
+        description: getButtonDescription(variant),
+        classes: className,
+        type: 'button',
+        variant: variant,
+        usage: `<button className="${className}">
+  Button Text
+</button>`
+      }
+    }
+    
+    // Color swatch inspection
+    if (element.style.backgroundColor) {
+      const color = element.style.backgroundColor
+      return {
+        name: 'Color Swatch',
+        description: 'Theme color from the color palette',
+        color: color,
+        colorName: 'theme-color',
+        classes: className,
+        type: 'color'
+      }
+    }
+    
+    // Card inspection
+    if (className.includes('bg-card') || className.includes('border')) {
+      return {
+        name: 'Card Component',
+        description: 'Container element with theme styling',
+        classes: className,
+        type: 'card',
+        usage: `<div className="${className}">
+  Card content
+</div>`
+      }
+    }
+    
     return null
   }
 
-  // StyleSection component to provide context
-  const StyleSection = ({ category, children }: { category: StyleSpec['type'], children: React.ReactNode }) => {
-    return (
-      <StyleSectionContext.Provider value={{ category }}>
-        {children}
-      </StyleSectionContext.Provider>
+  const getButtonVariant = (className: string) => {
+    if (className.includes('bg-primary')) return 'primary'
+    if (className.includes('bg-secondary')) return 'secondary'
+    if (className.includes('bg-transparent')) return 'ghost'
+    if (className.includes('bg-destructive')) return 'danger'
+    if (className.includes('bg-success')) return 'success'
+    return 'unknown'
+  }
+
+  const getButtonDescription = (variant: string) => {
+    const descriptions: Record<string, string> = {
+      primary: 'Main call-to-action button',
+      secondary: 'Secondary actions and alternatives',
+      ghost: 'Subtle actions with minimal visual weight',
+      danger: 'Destructive actions like delete or cancel',
+      success: 'Positive confirmations and successful actions'
+    }
+    return descriptions[variant] || 'Button component'
+  }
+
+  // Pin/unpin functionality
+  const pinStyle = (element: any) => {
+    const elementWithId = { ...element, id: `${element.type}-${Date.now()}` }
+    setPinnedStyles(prev => [...prev, elementWithId])
+  }
+
+  const unpinStyle = (id: string) => {
+    setPinnedStyles(prev => prev.filter(item => item.id !== id))
+  }
+
+  const isStylePinned = (element: any) => {
+    return pinnedStyles.some(pinned => 
+      pinned.type === element?.type && 
+      pinned.variant === element?.variant &&
+      pinned.classes === element?.classes
     )
   }
 
-  // Utility to create style spec
-  const createStyleSpec = (
-    name: string,
-    category: StyleSpec['type'],
-    styleValue: string,
-    elementType: string | null
-  ): StyleSpec => {
-    return {
-      name,
-      type: category,
-      style: styleValue,
-      details: { classes: styleValue },
-      extras: elementType || undefined
-    }
+  const clearAllPinned = () => {
+    setPinnedStyles([])
   }
 
-  // Thin wrapper component - just handles interaction
-  const StyleElement = ({ 
-    styleValue, 
-    children, 
-    className = "",
-    displayName
-  }: { 
-    styleValue: string,
-    children: React.ReactNode,
-    className?: string,
-    displayName?: string
-  }) => {
-    const { category } = useContext(StyleSectionContext)
-    const name = displayName || ''
-    const elementType = detectElementType(children)
-    const spec = createStyleSpec(name, category, styleValue, elementType)
-
-    return (
-      <div
-        className={`${styles['style-element']} ${className}`}
-        role="listitem"
-        tabIndex={0}
-        onMouseEnter={() => setHoveredSpec(spec)}
-        onMouseLeave={() => setHoveredSpec(null)}
-        onMouseUp={(e) => {
-          const target = e.target as HTMLElement
-          // Skip if clicking on actual interactive buttons
-          if (target.tagName === 'BUTTON' || target.closest('button')) {
-            return
-          }
-          handleClick(spec)
-        }}
-        onKeyUp={(e) => {
-          if (e.key === 'Enter' || e.key === ' ') {
-            e.preventDefault()
-            handleClick(spec)
-          }
-        }}
-      >
-        {children}
-      </div>
-    )
-  }
-
-  const handleClick = (spec: StyleSpec) => {
-    const existingIndex = pinnedSpecs.findIndex(s => s.name === spec.name)
-    if (existingIndex > -1) {
-      // Remove if already pinned
-      setPinnedSpecs(pinnedSpecs.filter((_, i) => i !== existingIndex))
-      // Adjust current index if needed
-      if (currentPinnedIndex >= pinnedSpecs.length - 1) {
-        setCurrentPinnedIndex(Math.max(0, pinnedSpecs.length - 2))
-      }
-    } else {
-      // Add to pinned stack (no limit)
-      setPinnedSpecs([...pinnedSpecs, spec])
-      setCurrentPinnedIndex(pinnedSpecs.length)
-    }
-  }
-
-  // Keyboard navigation for pinned items
-  useEffect(() => {
-    const handleKeyPress = (e: KeyboardEvent) => {
-      if (pinnedSpecs.length <= 1) return
-      
-      if (e.key === 'ArrowLeft' && currentPinnedIndex > 0) {
-        setCurrentPinnedIndex(currentPinnedIndex - 1)
-      } else if (e.key === 'ArrowRight' && currentPinnedIndex < pinnedSpecs.length - 1) {
-        setCurrentPinnedIndex(currentPinnedIndex + 1)
-      }
-    }
-    
-    window.addEventListener('keydown', handleKeyPress)
-    return () => window.removeEventListener('keydown', handleKeyPress)
-  }, [currentPinnedIndex, pinnedSpecs.length])
-
-  const handleButtonClick = (variant: string, action: string) => {
-    // Simple notification instead of toast
-    console.log(`${action.toUpperCase()} INITIATED - ${variant} action triggered`)
-  }
+  // Get current theme object
+  const currentTheme = getTheme(activeTheme) || null
+  
+  // Dynamically generate sections based on theme
+  const themeSections = getThemeSections(currentTheme)
+  const sections = [
+    { id: 'all', label: 'All' },
+    ...themeSections.map(sectionId => ({
+      id: sectionId,
+      label: getSectionTitle(sectionId)
+    }))
+  ]
 
   return (
-    <main className={styles['styleguide-main']}>
-      {/* Grid background effect */}
-      <div className={styles['grid-background']} aria-hidden="true" />
-      
-      {/* Theme Selector - Top left */}
-      <aside className={styles['theme-selector']}>
-        <label htmlFor="theme-selector-dropdown" className="sr-only">Select theme</label>
-        <select
-          id="theme-selector-dropdown"
-          value={selectedTheme}
-          onChange={(e) => setSelectedTheme(e.target.value as ThemeName)}
-          className={cx(ts.components.input.default, styles['theme-selector-input'])}
-        >
-          {Object.entries(themes).map(([key, theme]) => (
-            <option key={key} value={key}>
-              {theme.name} Theme
-            </option>
-          ))}
-        </select>
-      </aside>
-      
-      {/* Fixed Pinned Specs Carousel - Top right */}
-      <aside 
-        className={cx(styles['pinned-carousel'], pinnedSpecs.length === 0 && styles['hidden'])}
-        aria-live="polite"
-        aria-label="Pinned styles carousel"
-      >
-        <section className={styles['inspector-card-small']}>
-          {/* Subtle scanline effect on inspector */}
-          <div className={styles['scanline-effect']} aria-hidden="true" />
-          <header className="flex items-center justify-between mb-3 relative z-10">
-            <h4 className={ts.typography.uiSectionHeader + ' text-amber-500'}>Pinned Styles</h4>
+    <main className="min-h-screen bg-background text-foreground">
+      {/* Header */}
+      <header className={`border-b border-border bg-background/95 backdrop-blur-md sticky top-0 z-30 py-1 px-6 ${uiAnimations ? 'transition-all duration-300' : ''}`}>
+          <div className="flex items-center justify-between">
             <div className="flex items-center gap-2">
-              <span className="text-[10px] text-gray-500">{currentPinnedIndex + 1}/{pinnedSpecs.length}</span>
-            </div>
-          </header>
-          
-          {/* Carousel Container */}
-          <nav className={styles['carousel-nav']} aria-label="Carousel navigation">
-            {/* Previous Button */}
-            {pinnedSpecs.length > 1 && currentPinnedIndex > 0 && (
-              <button
-                onClick={() => setCurrentPinnedIndex(currentPinnedIndex - 1)}
-                className={cx(styles['carousel-button'], styles['prev'])}
-                aria-label="Previous"
+              {/* Back to Home Link */}
+              <a
+                href="/"
+                className="flex items-center gap-1.5 px-2.5 py-1 text-sm text-muted-foreground hover:text-foreground bg-card/50 hover:bg-card border border-border rounded-md transition-all duration-200"
+                title="Back to arach.dev"
               >
-                ‹
-              </button>
-            )}
-            
-            {/* Next Button */}
-            {pinnedSpecs.length > 1 && currentPinnedIndex < pinnedSpecs.length - 1 && (
-              <button
-                onClick={() => setCurrentPinnedIndex(currentPinnedIndex + 1)}
-                className={cx(styles['carousel-button'], styles['next'])}
-                aria-label="Next"
-              >
-                ›
-              </button>
-            )}
-            
-            <div className={styles['carousel-container']}>
-              <div 
-                className={styles['carousel-track']}
-                style={{ transform: `translateX(-${currentPinnedIndex * 100}%)` }}
-              >
-                {pinnedSpecs.map((spec, index) => (
-                  <div 
-                    key={spec.name}
-                    className={styles['carousel-item']}
-                  >
-                    <div className={styles['pinned-card']}>
-                      <div className={styles['pinned-header']}>
-                        <span className={styles['pinned-title']}>
-                          <span className={styles['pinned-indicator']}></span>
-                          <span>{spec.name}</span>
-                        </span>
-                        <button 
-                          className={styles['pinned-close']}
-                          onClick={(e) => {
-                            e.stopPropagation()
-                            setPinnedSpecs(pinnedSpecs.filter((_, i) => i !== index))
-                            // Adjust current index if needed
-                            if (currentPinnedIndex >= pinnedSpecs.length - 1) {
-                              setCurrentPinnedIndex(Math.max(0, pinnedSpecs.length - 2))
-                            }
-                          }}
-                          title="Unpin"
-                        >
-                          ×
-                        </button>
-                      </div>
-                      <div className={styles['pinned-type']}>{spec.type}</div>
-                      <div className={styles['pinned-details']}>
-                        {spec.extras && (
-                          <div className={styles['pinned-detail-row']}>
-                            <span className={styles['pinned-detail-label']}>element</span>
-                            <span className={styles['pinned-detail-value']}>{spec.extras}</span>
-                          </div>
-                        )}
-                        {spec.details && Object.entries(spec.details).slice(0, 4).map(([key, value]) => {
-                            if (key === 'classes') {
-                              return (
-                                <div key={key} className={styles['pinned-classes']}>
-                                  <span className={styles['pinned-classes-label']}>CLASSES:</span>
-                                  <div className={styles['pinned-classes-value']}>
-                                    {value.slice(0, 100)}{value.length > 100 ? '...' : ''}
-                                  </div>
-                                </div>
-                              )
-                            }
-                            return (
-                              <div key={key} className={cx(styles['pinned-detail-row'], 'text-[10px]')}>
-                                <span className={styles['pinned-detail-label']}>{key}</span>
-                                <span className="text-gray-400 truncate ml-2" style={{ maxWidth: '150px' }}>{value}</span>
-                              </div>
-                            )
-                          })}
-                      </div>
-                    </div>
-                  </div>
-                ))}
+                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+                  <path d="m15 18-6-6 6-6"/>
+                </svg>
+                arach.dev
+              </a>
+              
+              <div className={`${uiAnimations ? 'transition-all duration-300' : ''}`}>
+                <h1 className="font-mono text-lg font-bold text-foreground uppercase tracking-wide">
+                  Style Guide
+                </h1>
               </div>
             </div>
             
-            {/* Carousel Indicators */}
-            {pinnedSpecs.length > 1 && (
-              <nav className={styles['carousel-indicators']} role="tablist">
-                {pinnedSpecs.map((_, index) => (
-                  <button
-                    key={index}
-                    onClick={() => setCurrentPinnedIndex(index)}
-                    className={cx(
-                      styles['carousel-dot'],
-                      index === currentPinnedIndex ? styles['active'] : styles['inactive']
-                    )}
-                    role="tab"
-                    aria-selected={index === currentPinnedIndex}
-                    aria-label={`Go to pinned style ${index + 1}`}
-                  />
-                ))}
-              </nav>
-            )}
-          </nav>
-        </section>
-      </aside>
-
-      {/* Fixed Active Preview - Middle right */}
-      <aside className={styles['preview-panel']} aria-label="Active style preview">
-        <article className={cx(
-          styles['inspector-card'],
-          'w-[280px] transition-all duration-300',
-          hoveredSpec ? 'opacity-100 translate-x-0' : 'opacity-0 translate-x-4 pointer-events-none'
-        )}>
-          {/* Subtle scanline effect on inspector */}
-          <div className={styles['scanline-effect-blue']} aria-hidden="true" />
-          <header>
-            <h4 className={cx(ts.typography.uiSectionHeader, 'mb-3 relative z-10')}>Active Preview</h4>
-          </header>
-          {hoveredSpec && (
-            <div className={styles['preview-content']}>
-              <header className={styles['preview-header']}>
-                <p className={styles['preview-title']}>{hoveredSpec.name}</p>
-                <span className={styles['preview-type']}>{hoveredSpec.type}</span>
-              </header>
-              <dl className={styles['preview-details']}>
-                  {hoveredSpec.extras && (
-                    <div className={styles['preview-detail-row']}>
-                      <dt className={styles['preview-detail-label']}>element</dt>
-                      <dd className={styles['preview-detail-value']}>{hoveredSpec.extras}</dd>
-                    </div>
+            {/* Actions */}
+            <div className="flex items-center gap-4">
+              {/* Dark Mode Toggle */}
+              <button
+                onClick={() => setDarkMode(!darkMode)}
+                className="btn-ghost btn-sm flex items-center gap-2"
+                title={darkMode ? 'Switch to Light Mode' : 'Switch to Dark Mode'}
+              >
+                <svg
+                  width="14"
+                  height="14"
+                  viewBox="0 0 24 24"
+                  fill="none"
+                  stroke="currentColor"
+                  strokeWidth="2"
+                >
+                  {darkMode ? (
+                    <path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"/>
+                  ) : (
+                    <>
+                      <circle cx="12" cy="12" r="5"/>
+                      <path d="M12 1v2M12 21v2M4.22 4.22l1.42 1.42M18.36 18.36l1.42 1.42M1 12h2M21 12h2M4.22 19.78l1.42-1.42M18.36 5.64l1.42-1.42"/>
+                    </>
                   )}
-                  {hoveredSpec.details && Object.entries(hoveredSpec.details).map(([key, value]) => {
-                  if (key === 'classes') {
-                    return (
-                      <div key={key} className={styles['preview-classes']}>
-                        <dt className={styles['preview-classes-label']}>CLASSES:</dt>
-                        <dd className={styles['preview-classes-value']}>
-                          {value}
-                        </dd>
-                      </div>
-                    )
-                  }
-                  return (
-                    <div key={key} className={styles['preview-detail-row']}>
-                      <dt className={styles['preview-detail-label']}>{key}</dt>
-                      <dd className={styles['preview-detail-value']}>{value}</dd>
-                    </div>
-                  )
-                  })}
-                </dl>
-              <footer className={styles['preview-footer']}>
-                <span className={styles['preview-hint']}>Click to pin</span>
-              </footer>
-            </div>
-          )}
-        </article>
-      </aside>
-      
-      <div className={styles['content-wrapper']}>
-        {/* Header with scanline effect */}
-        <header className={styles['page-header']}>
-          <div className={styles['scanline-effect-blue']} aria-hidden="true" />
-          <div className={styles['header-card']}>
-            <h1 className={styles['header-title']}>
-              {ts.name.toUpperCase()} {/* STYLE GUIDE */}
-            </h1>
-            <p className={ts.typography.bodyMono}>{ts.description}</p>
-            <div className={styles['status-indicator']}>
-              <span className={ts.components.status.online} aria-hidden="true" />
-              <span className={ts.typography.bodySmallMono}>SYSTEM OPERATIONAL</span>
+                </svg>
+                <span className="text-[10px]">{darkMode ? 'Dark' : 'Light'}</span>
+              </button>
+
+              {/* UI Animations Toggle */}
+              <button
+                onClick={() => setUiAnimations(!uiAnimations)}
+                className={`btn-ghost btn-sm flex items-center gap-2`}
+                title={uiAnimations ? 'Disable UI Chrome animations' : 'Enable UI Chrome animations'}
+              >
+                <svg
+                  width="14"
+                  height="14"
+                  viewBox="0 0 24 24"
+                  fill="none"
+                  stroke="currentColor"
+                  strokeWidth="2"
+                  className={uiAnimations ? '' : 'opacity-50'}
+                >
+                  <path d="M12 2L2 7v10c0 5.55 3.84 10.74 9 12 5.16-1.26 9-6.45 9-12V7l-10-5z"/>
+                  {uiAnimations && <path d="M9 12l2 2 4-4" strokeLinecap="round" strokeLinejoin="round"/>}
+                </svg>
+                <span className="text-[10px]">{uiAnimations ? 'UI FX On' : 'UI FX Off'}</span>
+              </button>
+
+              {/* Pinned Styles Button */}
+              <button
+                onClick={() => setShowPinnedPanel(!showPinnedPanel)}
+                className={`relative text-[10px] px-2 py-1 ${
+                  showPinnedPanel || pinnedStyles.length > 0
+                    ? 'btn-primary' 
+                    : 'btn-secondary'
+                }`}
+              >
+                Pinned
+                {pinnedStyles.length > 0 && (
+                  <span className="absolute -top-1 -right-1 bg-destructive text-destructive-foreground text-[10px] rounded-full w-4 h-4 flex items-center justify-center">
+                    {pinnedStyles.length}
+                  </span>
+                )}
+              </button>
+
+              {/* Theme Selector */}
+              <div className="flex items-center gap-3">
+                <label className="text-xs font-medium text-muted-foreground">Theme:</label>
+                <select 
+                  value={activeTheme}
+                  onChange={(e) => {
+                    setActiveTheme(e.target.value as ThemeName)
+                    updateURL(activeSection, e.target.value as ThemeName)
+                  }}
+                  className="bg-input border border-border rounded-md px-2 py-0.5 text-foreground text-xs focus:outline-none focus:ring-2 focus:ring-ring"
+                >
+                  {getThemeIds().map((themeId) => (
+                    <option key={themeId} value={themeId}>
+                      {themeId.charAt(0).toUpperCase() + themeId.slice(1)}
+                    </option>
+                  ))}
+                </select>
+              </div>
             </div>
           </div>
-        </header>
+      </header>
 
-        {/* Typography */}
-        <StyleSection category="typography">
-          <section id="typography-section" className={styles['section-container']}>
-            <h2 className={ts.typography.sectionTitle}>TYPOGRAPHY SYSTEM</h2>
-            
-            <article className={cx(ts.components.card.default, styles['section-card'])}>
-              {/* Headers Section */}
-              <section id="typography-headers" className={styles['subsection']}>
-                <h3 className={cx(ts.typography.subsectionTitle, styles['subsection-title'])}>HEADERS</h3>
-                <div className={styles['typography-list']} role="list">
-                  <StyleElement 
-                    styleValue={ts.typography.h1}
-                    displayName="Primary Header"
-                  >
-                    <h1 className={ts.typography.h1}>Primary Header</h1>
-                  </StyleElement>
-                  
-                  <StyleElement
-                    styleValue={ts.typography.h2}
-                    displayName="Section Header"
-                  >
-                    <h2 className={ts.typography.h2}>Section Header</h2>
-                  </StyleElement>
-                  
-                  <StyleElement
-                    styleValue={ts.typography.h3}
-                    displayName="Subsection Header"
-                  >
-                    <h3 className={ts.typography.h3}>Subsection Header</h3>
-                  </StyleElement>
-                  
-                  <StyleElement
-                    styleValue={ts.typography.h4}
-                    displayName="Component Header"
-                  >
-                    <h4 className={ts.typography.h4}>Component Header</h4>
-                  </StyleElement>
-                </div>
-              </section>
-              
-              {/* Titles & Labels Section */}
-              <section id="typography-titles-labels" className={styles['subsection']}>
-                <h3 className={cx(ts.typography.subsectionTitle, styles['subsection-title'])}>TITLES & LABELS</h3>
-                <div className={styles['typography-list-compact']} role="list">
-                  <StyleElement
-                    styleValue={ts.typography.sectionTitle}
-                    displayName="SECTION TITLE"
-                  >
-                    <p className={ts.typography.sectionTitle}>SECTION TITLE</p>
-                  </StyleElement>
-                  
-                  <StyleElement
-                    styleValue={ts.typography.subsectionTitle}
-                    displayName="SUBSECTION TITLE"
-                  >
-                    <p className={ts.typography.subsectionTitle}>SUBSECTION TITLE</p>
-                  </StyleElement>
-                  
-                  <StyleElement
-                    styleValue={ts.typography.label}
-                    displayName="INPUT LABEL"
-                  >
-                    <label className={ts.typography.label}>INPUT LABEL</label>
-                  </StyleElement>
-                  
-                  <StyleElement
-                    styleValue={ts.typography.labelRequired}
-                    displayName="REQUIRED FIELD"
-                  >
-                    <label className={ts.typography.labelRequired}>REQUIRED FIELD</label>
-                  </StyleElement>
-                </div>
-              </section>
-              
-              {/* Body Text Section */}
-              <section id="typography-body-text">
-                <h3 className={cx(ts.typography.subsectionTitle, styles['subsection-title'])}>BODY TEXT</h3>
-                <div className={styles['typography-list-compact']} role="list">
-                  <StyleElement
-                    styleValue={ts.typography.body}
-                    displayName="Standard body text"
-                  >
-                    <p className={ts.typography.body}>Standard body text for general content</p>
-                  </StyleElement>
-                  
-                  <StyleElement
-                    styleValue={ts.typography.bodyMono}
-                    displayName="Monospace body text"
-                  >
-                    <p className={ts.typography.bodyMono}>Monospace body text for technical content</p>
-                  </StyleElement>
-                  
-                  <StyleElement
-                    styleValue={ts.typography.bodySmall}
-                    displayName="Small text"
-                  >
-                    <p className={ts.typography.bodySmall}>Small text for secondary information</p>
-                  </StyleElement>
-                  
-                  <StyleElement
-                    styleValue={ts.typography.bodySmallMono}
-                    displayName="Small monospace"
-                  >
-                    <p className={ts.typography.bodySmallMono}>Small monospace for metadata</p>
-                  </StyleElement>
-                  
-                  <StyleElement
-                    styleValue={ts.typography.code}
-                    displayName="Inline code"
-                  >
-                    <div>
-                      <code className={ts.typography.code}>inline.code()</code>
-                    </div>
-                  </StyleElement>
-                </div>
-              </section>
-            </article>
-          </section>
-        </StyleSection>
-
-        {/* Color Palette */}
-        <StyleSection category="color">
-          <section id="color-palette" className={styles['section-container']}>
-            <h2 className={ts.typography.sectionTitle}>COLOR PROTOCOL</h2>
-            
-            <div className={styles['color-grid']}>
-              {/* Grayscale */}
-              <article id="color-grayscale" className={cx(ts.components.card.default, styles['section-card'])}>
-                <h3 className={ts.typography.subsectionTitle}>GRAYSCALE FOUNDATION</h3>
-                <div className={styles['grayscale-grid']} role="list">
-                  {Object.entries(ts.colors.gray).slice(0, 5).map(([key, value]) => (
-                    <StyleElement
-                      key={key}
-                      styleValue={value}
-                      displayName={`Gray ${key}`}
-                      className="h-16"
+      <div className="max-w-full mx-auto flex relative">
+        {/* Sidebar Navigation - Fixed position */}
+        <nav className={`${showLeftSidebar ? 'w-64' : 'w-12'} fixed left-0 border-r border-white/10 bg-card/20 backdrop-blur-md shadow-xl shadow-black/10 ${uiAnimations ? 'transition-all duration-200' : ''} overflow-y-auto z-20`}
+             style={{ 
+               top: 'var(--header-height, 39px)', 
+               height: 'calc(100vh - var(--header-height, 39px))' 
+             }}>
+          {showLeftSidebar ? (
+            <div>
+              <div className="flex items-center justify-between mb-4 px-6 pt-6">
+                <h2 className="text-sm font-semibold text-muted-foreground uppercase tracking-wider">Sections</h2>
+                <button
+                  onClick={() => setShowLeftSidebar(false)}
+                  className="p-1 rounded text-muted-foreground hover:text-foreground hover:bg-accent transition-colors"
+                  title="Collapse sidebar"
+                >
+                  <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+                    <path d="m15 18-6-6 6-6"/>
+                  </svg>
+                </button>
+              </div>
+              <ul className="space-y-1">
+                {sections.map((section) => (
+                  <li key={section.id}>
+                    <button
+                      onClick={() => {
+                        setActiveSection(section.id)
+                        updateURL(section.id)
+                        setSelectedElement(null)
+                      }}
+                      className={`w-full text-left px-6 py-2.5 text-sm transition-colors ${
+                        activeSection === section.id
+                          ? 'bg-primary/10 text-primary border-l-2 border-primary'
+                          : 'text-muted-foreground hover:text-foreground hover:bg-accent/50'
+                      }`}
                     >
-                      <div 
-                        className={styles['color-swatch']}
-                        style={{ backgroundColor: value }}
-                      >
-                        <span className={styles['color-swatch-label']}>{key}</span>
-                      </div>
-                    </StyleElement>
-                  ))}
-                </div>
-              </article>
-              
-              {/* Accent Colors */}
-              <article id="color-accent" className={cx(ts.components.card.default, styles['section-card'])}>
-                <h3 className={ts.typography.subsectionTitle}>CRITICAL STATE INDICATORS</h3>
-                <div className={styles['accent-list']} role="list">
-                  <StyleElement
-                    styleValue={ts.colors.accent.primary}
-                    displayName="Primary Action"
-                  >
-                    <div className={styles['accent-item']}>
-                      <div 
-                        className={styles['accent-preview']}
-                        style={{ 
-                          backgroundColor: ts.colors.accent.primary + '33',
-                          borderColor: ts.colors.accent.primary + '80'
-                        }}
-                      />
-                      <span className={styles['accent-label']} style={{ color: ts.colors.accent.primary }}>PRIMARY ACTION</span>
-                    </div>
-                  </StyleElement>
-                  
-                  <StyleElement
-                    styleValue={ts.colors.accent.success}
-                    displayName="Success State"
-                  >
-                    <div className={styles['accent-item']}>
-                      <div 
-                        className={styles['accent-preview']}
-                        style={{ 
-                          backgroundColor: ts.colors.accent.success + '33',
-                          borderColor: ts.colors.accent.success + '80'
-                        }}
-                      />
-                      <span className={styles['accent-label']} style={{ color: ts.colors.accent.success }}>SUCCESS STATE</span>
-                    </div>
-                  </StyleElement>
-                  
-                  <StyleElement
-                    styleValue={ts.colors.accent.warning}
-                    displayName="Warning State"
-                  >
-                    <div className={styles['accent-item']}>
-                      <div 
-                        className={styles['accent-preview']}
-                        style={{ 
-                          backgroundColor: ts.colors.accent.warning + '33',
-                          borderColor: ts.colors.accent.warning + '80'
-                        }}
-                      />
-                      <span className={styles['accent-label']} style={{ color: ts.colors.accent.warning }}>WARNING STATE</span>
-                    </div>
-                  </StyleElement>
-                  
-                  <StyleElement
-                    styleValue={ts.colors.accent.error}
-                    displayName="Error State"
-                  >
-                    <div className={styles['accent-item']}>
-                      <div 
-                        className={styles['accent-preview']}
-                        style={{ 
-                          backgroundColor: ts.colors.accent.error + '33',
-                          borderColor: ts.colors.accent.error + '80'
-                        }}
-                      />
-                      <span className={styles['accent-label']} style={{ color: ts.colors.accent.error }}>ERROR STATE</span>
-                    </div>
-                  </StyleElement>
-                </div>
-              </article>
+                      {section.label}
+                    </button>
+                  </li>
+                ))}
+              </ul>
             </div>
-          </section>
-        </StyleSection>
+          ) : (
+            <div className="flex flex-col h-full">
+              <div className="p-6 flex justify-center">
+                <button
+                  onClick={() => setShowLeftSidebar(true)}
+                  className="p-2 rounded text-muted-foreground hover:text-foreground hover:bg-accent transition-colors"
+                  title="Expand navigation sidebar"
+                >
+                  <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+                    <path d="m9 18 6-6-6-6"/>
+                  </svg>
+                </button>
+              </div>
+            </div>
+          )}
+        </nav>
 
-        {/* Components */}
-        <section id="component-library" className={styles['section-container']}>
-          <h2 className={ts.typography.sectionTitle}>COMPONENT LIBRARY</h2>
-          
-          <div className={styles['component-grid']}>
-            {/* Inputs */}
-            <StyleSection category="input">
-              <article id="component-inputs" className={cx(ts.components.card.default, styles['section-card-spacing'])}>
-                <h3 className={ts.typography.subsectionTitle}>INPUT FIELDS</h3>
-              
-              <StyleElement
-                styleValue={ts.components.input.default}
-                displayName="Default Input"
-              >
-                <div>
-                  <label htmlFor="input-default" className={ts.typography.label}>DEFAULT INPUT</label>
-                  <input id="input-default" className={ts.components.input.default} placeholder="Enter command..." />
-                </div>
-              </StyleElement>
-              
-              <StyleElement
-                styleValue={ts.components.input.active}
-                displayName="Active Input"
-              >
-                <div>
-                  <label htmlFor="input-active" className={ts.typography.label}>ACTIVE INPUT</label>
-                  <input id="input-active" className={ts.components.input.active} placeholder="Active state..." />
-                </div>
-              </StyleElement>
-              
-              <StyleElement
-                styleValue={ts.components.input.error}
-                displayName="Error Input"
-              >
-                <div>
-                  <label htmlFor="input-error" className={ts.typography.label}>ERROR INPUT</label>
-                  <input id="input-error" className={ts.components.input.error} placeholder="Error state..." aria-invalid="true" />
-                </div>
-              </StyleElement>
-              
-              <StyleElement
-                styleValue={ts.components.input.minimal}
-                displayName="Minimal Input"
-              >
-                <div>
-                  <label htmlFor="input-minimal" className={ts.typography.label}>MINIMAL INPUT</label>
-                  <input id="input-minimal" className={ts.components.input.minimal} placeholder="Minimal style..." />
-                </div>
-                </StyleElement>
-              </article>
-            </StyleSection>
-            
-            {/* Buttons */}
-            <StyleSection category="button">
-              <article id="component-buttons" className={cx(ts.components.card.default, styles['section-card-spacing-large'])}>
-                <h3 className={ts.typography.subsectionTitle}>ACTION BUTTONS</h3>
-              
-              <div className="space-y-3">
-                <div className={styles['button-grid']}>
-                  <StyleElement
-                    styleValue={ts.components.button.primary}
-                    displayName="Primary Button"
-                  >
-                    <button className={ts.components.button.primary}>
-                      EXECUTE
+        {/* Main Content - with containerRef for element enhancement */}
+        <main ref={containerRef} className={`flex-1 relative ${showLeftSidebar ? 'ml-64' : 'ml-12'} ${(selectedElement || showPinnedPanel) && showRightSidebar ? 'mr-96' : ''} ${uiAnimations ? 'transition-all duration-200' : ''}`} onClick={handleElementClick} role="main" aria-label="Style guide content">
+          {/* Tactical Header with Sticky Status Bar */}
+          <TacticalHeader 
+            activeSection={activeSection}
+            activeTheme={activeTheme}
+            theme={currentTheme}
+            status="active"
+            statusColor="success"
+            revision="2.0.1"
+            showMetrics={true}
+          />
+
+            {/* Content based on active section */}
+            <div className="space-y-12 px-6 pt-4 pb-12">
+              {activeSection === 'all' ? (
+                <>
+                  {themeSections.map((sectionId) => (
+                    <section key={sectionId} id={`${sectionId}-section`}>
+                      <SectionHeader 
+                        title={getSectionTitle(sectionId)}
+                        id={getSectionId(sectionId)}
+                        status="active"
+                        componentCount={getSectionComponentCount(sectionId, currentTheme)}
+                        variantCount={getSectionVariantCount(sectionId, currentTheme)}
+                      />
+                      <DynamicSection 
+                        sectionId={sectionId} 
+                        theme={currentTheme} 
+                        activeTheme={activeTheme}
+                      />
+                    </section>
+                  ))}
+                </>
+              ) : (
+                <DynamicSection 
+                  sectionId={activeSection} 
+                  theme={currentTheme} 
+                  activeTheme={activeTheme}
+                />
+              )}
+            </div>
+        </main>
+
+        {/* Right Panel - Style Details or Pinned Styles - Fixed position */}
+        {(selectedElement || showPinnedPanel) && showRightSidebar && (
+          <aside className="w-96 fixed right-0 border-l border-white/10 bg-card/80 backdrop-blur-md overflow-y-auto transition-all duration-200 shadow-xl shadow-black/20 z-20"
+                 style={{ 
+               top: 'var(--header-height, 39px)', 
+               height: 'calc(100vh - var(--header-height, 39px))' 
+             }}>
+            <div className="p-6 h-full overflow-y-auto">
+              <div className="flex items-center justify-between mb-4 sticky top-0 bg-card/95 backdrop-blur-sm pb-4 border-b border-border">
+                <h2 className="text-sm font-semibold text-muted-foreground uppercase tracking-wider">
+                  {showPinnedPanel ? 'Pinned Styles' : 'Style Details'}
+                </h2>
+                <div className="flex items-center gap-2">
+                  {showPinnedPanel && pinnedStyles.length > 0 && (
+                    <button
+                      onClick={clearAllPinned}
+                      className={`text-xs text-destructive hover:text-destructive/80 px-2 py-1 rounded hover:bg-destructive/10 ${uiAnimations ? 'transition-colors' : ''}`}
+                    >
+                      Clear All
                     </button>
-                  </StyleElement>
-                  
-                  <StyleElement
-                    styleValue={ts.components.button.secondary}
-                    displayName="Secondary Button"
+                  )}
+                  <button
+                    onClick={() => setShowRightSidebar(false)}
+                    className="p-1 rounded text-muted-foreground hover:text-foreground hover:bg-accent transition-colors"
+                    title="Collapse sidebar"
                   >
-                    <button className={ts.components.button.secondary}>
-                      CONFIGURE
-                    </button>
-                  </StyleElement>
-                  
-                  <StyleElement
-                    styleValue={ts.components.button.ghost}
-                    displayName="Ghost Button"
-                  >
-                    <button className={ts.components.button.ghost}>
-                      CANCEL
-                    </button>
-                  </StyleElement>
-                  
-                  <StyleElement
-                    styleValue={ts.components.button.danger}
-                    displayName="Danger Button"
-                  >
-                    <button className={ts.components.button.danger}>
-                      TERMINATE
-                    </button>
-                  </StyleElement>
-                  
-                  <StyleElement
-                    styleValue={ts.components.button.success}
-                    displayName="Success Button"
-                  >
-                    <button className={ts.components.button.success}>
-                      CONFIRM
-                    </button>
-                  </StyleElement>
-                  
-                  <StyleElement
-                    styleValue={ts.components.button.warning}
-                    displayName="Warning Button"
-                  >
-                    <button className={ts.components.button.warning}>
-                      WARNING
-                    </button>
-                  </StyleElement>
-                </div>
-                
-                <div className={styles['button-section-divider']}>
-                  <p className={cx(ts.typography.label, styles['button-disabled-label'])}>DISABLED STATE</p>
-                  <button className={ts.components.button.primary} disabled aria-disabled="true">
-                    DISABLED
+                    <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+                      <path d="m9 18 6-6-6-6"/>
+                    </svg>
                   </button>
                 </div>
               </div>
-            </article>
-          </StyleSection>
-        </div>
-      </section>
-
-        {/* Cards */}
-        <StyleSection category="card">
-          <section id="container-types" className={styles['section-container']}>
-            <h2 className={ts.typography.sectionTitle}>CONTAINER TYPES</h2>
-            
-            <div className={styles['component-grid-triple']}>
-              <StyleElement
-                styleValue={ts.components.card.default}
-                displayName="Default Card"
-              >
-                <article className={cx(ts.components.card.default, 'p-4')}>
-                  <h3 className={ts.typography.subsectionTitle}>DEFAULT CARD</h3>
-                  <p className={ts.typography.bodySmallMono}>Standard container with border</p>
-                </article>
-              </StyleElement>
               
-              <StyleElement
-                styleValue={ts.components.card.elevated}
-                displayName="Elevated Card"
-              >
-                <article className={cx(ts.components.card.elevated, 'p-4')}>
-                  <h3 className={ts.typography.subsectionTitle}>ELEVATED CARD</h3>
-                  <p className={ts.typography.bodySmallMono}>Enhanced depth with shadow</p>
-                </article>
-              </StyleElement>
-              
-              <StyleElement
-                styleValue={ts.components.card.glass}
-                displayName="Glass Card"
-              >
-                <article className={cx(ts.components.card.glass, 'p-4')}>
-                  <h3 className={ts.typography.subsectionTitle}>GLASS CARD</h3>
-                  <p className={ts.typography.bodySmallMono}>Transparent with backdrop blur</p>
-                </article>
-              </StyleElement>
-            </div>
-          </section>
-        </StyleSection>
-
-        {/* Badges */}
-        <StyleSection category="badge">
-          <section id="status-badges" className={styles['section-container']}>
-            <h2 className={ts.typography.sectionTitle}>STATUS BADGES</h2>
-            
-            <article className={cx(ts.components.card.default, styles['section-card'])}>
-              <div className={styles['badge-list']}>
-                <StyleElement
-                  styleValue={`${ts.components.badge.default} ${ts.components.badge.neutral}`}
-                  displayName="Neutral Badge"
-                >
-                  <span className={cx(ts.components.badge.default, ts.components.badge.neutral)}>NEUTRAL</span>
-                </StyleElement>
-                
-                <StyleElement
-                  styleValue={`${ts.components.badge.default} ${ts.components.badge.primary}`}
-                  displayName="Primary Badge"
-                >
-                  <span className={cx(ts.components.badge.default, ts.components.badge.primary)}>PRIMARY</span>
-                </StyleElement>
-                
-                <StyleElement
-                  styleValue={`${ts.components.badge.default} ${ts.components.badge.success}`}
-                  displayName="Success Badge"
-                >
-                  <span className={cx(ts.components.badge.default, ts.components.badge.success)}>SUCCESS</span>
-                </StyleElement>
-                
-                <StyleElement
-                  styleValue={`${ts.components.badge.default} ${ts.components.badge.warning}`}
-                  displayName="Warning Badge"
-                >
-                  <span className={cx(ts.components.badge.default, ts.components.badge.warning)}>WARNING</span>
-                </StyleElement>
-                
-                <StyleElement
-                  styleValue={`${ts.components.badge.default} ${ts.components.badge.error}`}
-                  displayName="Error Badge"
-                >
-                  <span className={cx(ts.components.badge.default, ts.components.badge.error)}>ERROR</span>
-                </StyleElement>
-              </div>
-            </article>
-          </section>
-        </StyleSection>
-
-        {/* Data Table */}
-        <StyleSection category="status">
-          <section id="data-table" className={styles['section-container']}>
-            <h2 className={ts.typography.sectionTitle}>DATA VISUALIZATION</h2>
-            
-            <article className={ts.components.card.default}>
-              <table className={styles['data-table']}>
-                <thead>
-                  <tr className={ts.components.table.header}>
-                    <th className="text-left px-3 py-2" scope="col">ID</th>
-                    <th className="text-left px-3 py-2" scope="col">SIGNAL</th>
-                    <th className="text-left px-3 py-2" scope="col">FREQUENCY</th>
-                    <th className="text-left px-3 py-2" scope="col">STATUS</th>
-                    <th className="text-left px-3 py-2" scope="col">ACTION</th>
-                  </tr>
-                </thead>
-                <tbody>
-                  <tr className={cx(ts.components.table.row, styles['table-row-hover'])}>
-                    <td className={ts.components.table.cell}>001</td>
-                    <td className={ts.components.table.cell}>ALPHA</td>
-                    <td className={ts.components.table.cell}>440Hz</td>
-                    <td className={ts.components.table.cell}>
-                      <StyleElement
-                        styleValue={ts.components.status.online}
-                        displayName="Online Status"
-                      >
-                        <div className="flex items-center gap-2">
-                          <span className={ts.components.status.online} />
-                          <span style={{ color: ts.colors.accent.success }}>ACTIVE</span>
-                        </div>
-                      </StyleElement>
-                    </td>
-                    <td className={ts.components.table.cell}>
-                      <button className="text-sky-500 hover:text-sky-400 text-xs">MODIFY</button>
-                    </td>
-                  </tr>
-                  <tr className={cx(ts.components.table.row, styles['table-row-hover'])}>
-                    <td className={ts.components.table.cell}>002</td>
-                    <td className={ts.components.table.cell}>BETA</td>
-                    <td className={ts.components.table.cell}>880Hz</td>
-                    <td className={ts.components.table.cell}>
-                      <StyleElement
-                        styleValue={ts.components.status.warning}
-                        displayName="Warning Status"
-                      >
-                        <div className="flex items-center gap-2">
-                          <span className={ts.components.status.warning} />
-                          <span style={{ color: ts.colors.accent.warning }}>PENDING</span>
-                        </div>
-                      </StyleElement>
-                    </td>
-                    <td className={ts.components.table.cell}>
-                      <button className="text-sky-500 hover:text-sky-400 text-xs">MODIFY</button>
-                    </td>
-                  </tr>
-                  <tr className={cx(ts.components.table.row, styles['table-row-hover'])}>
-                    <td className={ts.components.table.cell}>003</td>
-                    <td className={ts.components.table.cell}>GAMMA</td>
-                    <td className={ts.components.table.cell}>220Hz</td>
-                    <td className={ts.components.table.cell}>
-                      <StyleElement
-                        styleValue={ts.components.status.offline}
-                        displayName="Offline Status"
-                      >
-                        <div className="flex items-center gap-2">
-                          <span className={ts.components.status.offline} />
-                          <span className="text-gray-500">OFFLINE</span>
-                        </div>
-                      </StyleElement>
-                    </td>
-                    <td className={ts.components.table.cell}>
-                      <button className="text-sky-500 hover:text-sky-400 text-xs">MODIFY</button>
-                    </td>
-                  </tr>
-                </tbody>
-              </table>
-            </article>
-          </section>
-        </StyleSection>
-
-        {/* Special Effects */}
-        {ts.effects && (ts.effects.glowPrimary || ts.effects.scanline || ts.effects.grid) && (
-          <StyleSection category="effect">
-            <section id="special-effects" className={styles['section-container']}>
-              <h2 className={ts.typography.sectionTitle}>SPECIAL EFFECTS</h2>
-              
-              <article className={cx(ts.components.card.default, styles['section-card'])}>
-                {ts.effects.glowPrimary && (
-                  <section id="effect-glow">
-                    <h3 className={cx(ts.typography.subsectionTitle, styles['subsection-title'])}>GLOW EFFECTS</h3>
-                    <div className={styles['effects-grid']}>
-                      <StyleElement
-                        styleValue={ts.effects.glowPrimary}
-                        displayName="Primary Glow"
-                      >
-                        <button className={cx(ts.components.button.primary, ts.effects.glowPrimary)}>
-                          PRIMARY
-                        </button>
-                      </StyleElement>
-                      
-                      <StyleElement
-                        styleValue={ts.effects.glowSuccess}
-                        displayName="Success Glow"
-                      >
-                        <button className={cx(ts.components.button.success, ts.effects.glowSuccess)}>
-                          SUCCESS
-                        </button>
-                      </StyleElement>
-                      
-                      <StyleElement
-                        styleValue={ts.effects.glowWarning}
-                        displayName="Warning Glow"
-                      >
-                        <button className={cx(ts.components.button.warning, ts.effects.glowWarning)}>
-                          WARNING
-                        </button>
-                      </StyleElement>
-                      
-                      <StyleElement
-                        styleValue={ts.effects.glowError}
-                        displayName="Error Glow"
-                      >
-                        <button className={cx(ts.components.button.danger, ts.effects.glowError)}>
-                          ERROR
-                        </button>
-                      </StyleElement>
+              {showPinnedPanel ? (
+                /* Pinned Styles Collection */
+                <div className="space-y-4">
+                  {pinnedStyles.length === 0 ? (
+                    <div className="text-center py-8">
+                      <div className="text-4xl mb-4">📋</div>
+                      <p className="text-muted-foreground text-sm">No styles pinned yet</p>
+                      <p className="text-muted-foreground text-xs mt-2">Click on components to inspect and pin them</p>
                     </div>
-                  </section>
-                )}
-                
-                {ts.effects.scanline && (
-                  <section id="effect-scanline" className="mb-6">
-                    <h3 className={cx(ts.typography.subsectionTitle, styles['subsection-title'])}>SCANLINE EFFECT</h3>
-                    <StyleElement
-                      styleValue={ts.effects.scanline}
-                      displayName="Scanline Animation"
-                    >
-                      <div className={cx(
-                        ts.components.card.elevated,
-                        ts.effects.scanline,
-                        styles['effect-card']
-                      )}>
-                        <p className={ts.typography.body}>Terminal scanline animation</p>
+                  ) : (
+                    pinnedStyles.map((pinnedStyle) => (
+                      <div key={pinnedStyle.id} className="border border-border rounded-lg p-4 bg-muted/30">
+                        <div className="flex items-start justify-between mb-3">
+                          <div>
+                            <h4 className="text-foreground font-medium text-sm">{pinnedStyle.name}</h4>
+                            <p className="text-xs text-muted-foreground mt-1">{pinnedStyle.description}</p>
+                          </div>
+                          <button
+                            onClick={() => unpinStyle(pinnedStyle.id)}
+                            className="text-muted-foreground hover:text-destructive transition-colors p-1 hover:bg-destructive/10 rounded"
+                          >
+                            ✕
+                          </button>
+                        </div>
+                        
+                        {pinnedStyle.classes && (
+                          <div className="mb-3">
+                            <div className="bg-background rounded p-2 font-mono text-xs text-foreground overflow-x-auto">
+                              <code>{pinnedStyle.classes}</code>
+                            </div>
+                            <button
+                              onClick={() => navigator.clipboard.writeText(pinnedStyle.classes)}
+                              className="mt-1 text-xs text-primary hover:text-primary/80 transition-colors"
+                            >
+                              Copy
+                            </button>
+                          </div>
+                        )}
+
+                        {pinnedStyle.usage && (
+                          <details className="group">
+                            <summary className="text-xs text-muted-foreground cursor-pointer hover:text-foreground transition-colors">
+                              View Usage
+                            </summary>
+                            <div className="mt-2 glass-card p-3 font-mono text-xs text-foreground">
+                              <pre className="whitespace-pre-wrap break-all leading-relaxed">{pinnedStyle.usage}</pre>
+                            </div>
+                          </details>
+                        )}
                       </div>
-                    </StyleElement>
-                  </section>
-                )}
-                
-                {ts.effects.grid && (
-                  <section id="effect-grid">
-                    <h3 className={cx(ts.typography.subsectionTitle, styles['subsection-title'])}>GRID BACKGROUND</h3>
-                    <StyleElement
-                      styleValue={ts.effects.grid}
-                      displayName="Grid Pattern"
-                    >
-                      <div className={cx(
-                        ts.components.card.elevated,
-                        ts.effects.grid,
-                        styles['effect-card']
-                      )}>
-                        <p className={ts.typography.body}>Grid pattern background</p>
+                    ))
+                  )}
+                </div>
+              ) : selectedElement && (
+                /* Selected Element Details */
+                <div className="space-y-6">
+                  {/* Element Info */}
+                  <div>
+                    <div className="flex items-start justify-between mb-2">
+                      <h3 className="text-foreground font-medium">{selectedElement.name}</h3>
+                      <button
+                        onClick={() => pinStyle(selectedElement)}
+                        disabled={isStylePinned(selectedElement)}
+                        className={`text-xs px-2 py-1 rounded transition-colors ${
+                          isStylePinned(selectedElement)
+                            ? 'text-muted-foreground bg-muted cursor-not-allowed'
+                            : 'text-primary bg-primary/10 hover:bg-primary/20'
+                        }`}
+                      >
+                        {isStylePinned(selectedElement) ? 'Pinned' : 'Pin'}
+                      </button>
+                    </div>
+                    <p className="text-sm text-muted-foreground mb-4">{selectedElement.description}</p>
+                  </div>
+
+                  {/* CSS Classes */}
+                  {selectedElement.classes && (
+                    <div>
+                      <h4 className="text-sm font-medium text-muted-foreground mb-2">CSS Classes</h4>
+                      <div className="bg-muted rounded-md p-3 font-mono text-xs text-foreground overflow-x-auto">
+                        <code>{selectedElement.classes}</code>
                       </div>
-                    </StyleElement>
-                  </section>
-                )}
-              </article>
-            </section>
-          </StyleSection>
+                      <button
+                        onClick={() => navigator.clipboard.writeText(selectedElement.classes)}
+                        className="mt-2 text-xs text-primary hover:text-primary/80 transition-colors"
+                      >
+                        Copy classes
+                      </button>
+                    </div>
+                  )}
+
+                  {/* Color Info */}
+                  {selectedElement.color && (
+                    <div>
+                      <h4 className="text-sm font-medium text-muted-foreground mb-2">Color</h4>
+                      <div className="flex items-center gap-3">
+                        <div 
+                          className="w-8 h-8 rounded-md border border-border"
+                          style={{ backgroundColor: selectedElement.color }}
+                        />
+                        <div>
+                          <div className="text-sm text-foreground font-mono">{selectedElement.color}</div>
+                          <div className="text-xs text-muted-foreground">{selectedElement.colorName}</div>
+                        </div>
+                      </div>
+                    </div>
+                  )}
+
+                  {/* Usage Examples */}
+                  {selectedElement.usage && (
+                    <div>
+                      <h4 className="text-sm font-medium text-muted-foreground mb-2">Usage</h4>
+                      <div className="glass-card p-3 font-mono text-xs text-foreground">
+                        <pre className="whitespace-pre-wrap break-all leading-relaxed">{selectedElement.usage}</pre>
+                      </div>
+                    </div>
+                  )}
+                </div>
+              )}
+            </div>
+          </aside>
         )}
 
-        {/* Footer */}
-        <footer className={styles['page-footer']}>
-          <p className={ts.typography.bodySmallMono}>
-            <time dateTime={new Date().getFullYear().toString()}>
-              {ts.name.toUpperCase()} THEME // VERSION 1.0.0 // {new Date().getFullYear()}
-            </time>
-          </p>
-        </footer>
+        {/* Right Sidebar Expand Button */}
+        {(selectedElement || showPinnedPanel) && !showRightSidebar && (
+          <div className="flex items-start pt-6">
+            <button
+              onClick={() => setShowRightSidebar(true)}
+              className="p-2 border-l border-border bg-card/95 text-muted-foreground hover:text-foreground hover:bg-card transition-all duration-200 rounded-l-md"
+              title="Expand details sidebar"
+            >
+              <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+                <path d="m15 18-6-6 6-6"/>
+              </svg>
+            </button>
+          </div>
+        )}
       </div>
     </main>
   )
 }
+// All duplicate component definitions removed - now imported from @/components/styleguide
