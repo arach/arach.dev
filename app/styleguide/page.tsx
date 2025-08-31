@@ -874,12 +874,12 @@ export default function StyleGuidePage() {
           </div>
       </header>
 
-      <div className="max-w-full mx-auto flex">
-        {/* Sidebar Navigation */}
-        <nav className={`${showLeftSidebar ? 'w-64' : 'w-12'} min-h-screen border-r border-white/10 bg-card/20 backdrop-blur-md shadow-xl shadow-black/10 ${uiAnimations ? 'transition-all duration-200' : ''}`}>
+      <div className="max-w-full mx-auto flex relative">
+        {/* Sidebar Navigation - Fixed position */}
+        <nav className={`${showLeftSidebar ? 'w-64' : 'w-12'} fixed left-0 top-[57px] h-[calc(100vh-57px)] border-r border-white/10 bg-card/20 backdrop-blur-md shadow-xl shadow-black/10 ${uiAnimations ? 'transition-all duration-200' : ''} overflow-y-auto z-20`}>
           {showLeftSidebar ? (
-            <div className="p-0">
-              <div className="flex items-center justify-between mb-4 px-4 pt-4">
+            <div className="p-6">
+              <div className="flex items-center justify-between mb-4">
                 <h2 className="text-sm font-semibold text-muted-foreground uppercase tracking-wider">Sections</h2>
                 <button
                   onClick={() => setShowLeftSidebar(false)}
@@ -900,7 +900,7 @@ export default function StyleGuidePage() {
                         updateURL(section.id)
                         setSelectedElement(null)
                       }}
-                      className={`w-full text-left px-4 py-2 text-sm transition-colors border-l-2 border-transparent ${
+                      className={`w-full text-left px-6 py-2 text-sm transition-colors border-l-2 -ml-6 pl-6 ${
                         activeSection === section.id
                           ? 'bg-primary/10 text-primary border-l-2 border-primary'
                           : 'text-muted-foreground hover:text-foreground hover:bg-accent/50'
@@ -914,7 +914,7 @@ export default function StyleGuidePage() {
             </div>
           ) : (
             <div className="flex flex-col h-full">
-              <div className="p-3 flex justify-center">
+              <div className="p-6 flex justify-center">
                 <button
                   onClick={() => setShowLeftSidebar(true)}
                   className="p-2 rounded text-muted-foreground hover:text-foreground hover:bg-accent transition-colors"
@@ -930,7 +930,7 @@ export default function StyleGuidePage() {
         </nav>
 
         {/* Main Content - with containerRef for element enhancement */}
-        <main ref={containerRef} className="flex-1 relative" onClick={handleElementClick} role="main" aria-label="Style guide content">
+        <main ref={containerRef} className={`flex-1 relative ${showLeftSidebar ? 'ml-64' : 'ml-12'} ${(selectedElement || showPinnedPanel) && showRightSidebar ? 'mr-96' : ''} ${uiAnimations ? 'transition-all duration-200' : ''}`} onClick={handleElementClick} role="main" aria-label="Style guide content">
           {/* Tactical Header with Sticky Status Bar */}
           <TacticalHeader 
             activeSection={activeSection}
@@ -974,9 +974,9 @@ export default function StyleGuidePage() {
             </div>
         </main>
 
-        {/* Right Panel - Style Details or Pinned Styles */}
+        {/* Right Panel - Style Details or Pinned Styles - Fixed position */}
         {(selectedElement || showPinnedPanel) && showRightSidebar && (
-          <aside className="w-96 min-h-screen border-l border-white/10 bg-card/80 backdrop-blur-md overflow-y-auto transition-all duration-200 shadow-xl shadow-black/20">
+          <aside className="w-96 fixed right-0 top-[57px] h-[calc(100vh-57px)] border-l border-white/10 bg-card/80 backdrop-blur-md overflow-y-auto transition-all duration-200 shadow-xl shadow-black/20 z-20">
             <div className="p-6 h-full overflow-y-auto">
               <div className="flex items-center justify-between mb-4 sticky top-0 bg-card/95 backdrop-blur-sm pb-4 border-b border-border">
                 <h2 className="text-sm font-semibold text-muted-foreground uppercase tracking-wider">
