@@ -1,9 +1,13 @@
 import { NextResponse } from 'next/server';
-import { NeonCache } from '@/lib/neon-cache';
-import { getCacheStatistics } from '@/lib/cache-stats';
-import { neon } from "@neondatabase/serverless";
 
-const sql = process.env.DATABASE_URL ? neon(process.env.DATABASE_URL) : null;
+// Dynamically import database dependencies to avoid build issues
+const getDependencies = async () => {
+  const { NeonCache } = await import('@/lib/neon-cache');
+  const { getCacheStatistics } = await import('@/lib/cache-stats');
+  const { neon } = await import("@neondatabase/serverless");
+  const sql = process.env.DATABASE_URL ? neon(process.env.DATABASE_URL) : null;
+  return { NeonCache, getCacheStatistics, sql };
+};
 
 export async function GET() {
   // Only allow in development
@@ -12,6 +16,7 @@ export async function GET() {
   }
 
   try {
+    const { NeonCache, getCacheStatistics, sql } = await getDependencies();
     const cache = new NeonCache();
     
     // Get all cache entries from the database

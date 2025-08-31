@@ -13,8 +13,8 @@ import { directoryTheme } from './directory-theme'
 registerTheme('terminal', adaptTerminalTheme(terminalTheme))
 // Terminal Hybrid - CSS variables version for testing
 registerTheme('terminal-hybrid', adaptTerminalTheme(terminalThemeHybrid))
-// Directory theme is already in the new format
-registerTheme('directory', directoryTheme)
+// Directory theme also needs adaptation
+registerTheme('directory', adaptTerminalTheme(directoryTheme))
 // registerTheme('cyberpunk', cyberpunkTheme)  // Temporarily disabled due to type mismatch
 // registerTheme('minimal', minimalTheme)       // Temporarily disabled 
 // registerTheme('retro', retroTheme)           // Temporarily disabled

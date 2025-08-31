@@ -1,8 +1,8 @@
 // Theme Template - Use this as a starting point for new themes
 // Copy this file and modify the values to create your own theme
 
-import type { Theme } from './terminal-theme'
-import { createTheme } from './theme-registry'
+import type { Theme } from '@/types/theme'
+import { createTheme } from '@/lib/theme-adapter'
 
 // Example of creating a theme with only the changes you want
 export const customTheme = createTheme({

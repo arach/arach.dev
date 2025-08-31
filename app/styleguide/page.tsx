@@ -1,6 +1,6 @@
 'use client'
 
-import React, { useState, useEffect, useRef } from 'react'
+import React, { useState, useEffect, useRef, Suspense } from 'react'
 import { useSearchParams, useRouter } from 'next/navigation'
 import Link from 'next/link'
 import { getThemeIds, getTheme } from '@/styles/theme-registry'
@@ -528,7 +528,7 @@ function DynamicSection({ sectionId, theme, activeTheme }: DynamicSectionProps) 
   }
 }
 
-export default function StyleGuidePage() {
+function StyleGuideContent() {
   const searchParams = useSearchParams()
   const router = useRouter()
   
@@ -1149,4 +1149,17 @@ export default function StyleGuidePage() {
     </main>
   )
 }
+
+export default function StyleGuidePage() {
+  return (
+    <Suspense fallback={
+      <div className="flex items-center justify-center min-h-screen bg-background text-foreground">
+        <div className="text-lg">Loading styleguide...</div>
+      </div>
+    }>
+      <StyleGuideContent />
+    </Suspense>
+  )
+}
+
 // All duplicate component definitions removed - now imported from @/components/styleguide

@@ -1,5 +1,10 @@
 import { type NextRequest, NextResponse } from "next/server"
-import { neonCache } from "@/lib/neon-cache"
+
+// Dynamically import database dependencies to avoid build issues
+const getDependencies = async () => {
+  const { neonCache } = await import("@/lib/neon-cache");
+  return { neonCache };
+};
 
 interface GitHubUser {
   login: string
@@ -40,7 +45,10 @@ export async function GET(request: NextRequest) {
   const requestStart = Date.now()
   console.log(`[API] 🚀 Processing GitHub user/repos request for ${username}`)
 
+  const { neonCache } = await getDependencies();
+
   try {
+    
     // Check cache for user data
     const cachedUser = await neonCache.get<any>(userCacheKey)
     const cachedRepos = await neonCache.get<any>(reposCacheKey)
