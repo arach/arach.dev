@@ -309,7 +309,6 @@ interface TacticalHeaderProps {
   accentColor?: string
   revision?: string
   showMetrics?: boolean
-  headerHeight?: number
 }
 
 function TacticalHeader({ 
@@ -320,8 +319,7 @@ function TacticalHeader({
   statusColor = 'success',
   accentColor = 'var(--theme-accent-color)',
   revision = '2.0.1',
-  showMetrics = true,
-  headerHeight = 39
+  showMetrics = true
 }: TacticalHeaderProps) {
   const statusColorClass = status === 'active' ? `bg-${statusColor}` : 
                            status === 'loading' ? 'bg-warning' : 'bg-muted'
@@ -330,7 +328,7 @@ function TacticalHeader({
     <>
       {/* Sticky Status Bar */}
       <div className="sticky z-30 bg-muted/10 border-b border-border/20 backdrop-blur-xl backdrop-saturate-150" 
-           style={{ top: `${headerHeight}px` }}
+           style={{ top: 'var(--header-height, 39px)' }}
            role="status" 
            aria-label="System status">
         <div className="flex items-center">
@@ -533,14 +531,11 @@ export default function StyleGuidePage() {
   const searchParams = useSearchParams()
   const router = useRouter()
   
-  // Header height constant for consistent positioning across all sticky elements
-  const HEADER_HEIGHT = 39 // pixels - actual computed height of the header
-  
   const [activeTheme, setActiveTheme] = useState<ThemeName>(() => {
     const ids = getThemeIds()
     return ids.includes('terminal') ? 'terminal' : ids[0] || 'terminal'
   })
-  const [activeSection, setActiveSection] = useState('typography')
+  const [activeSection, setActiveSection] = useState<string>('typography')
   const [selectedElement, setSelectedElement] = useState<any>(null)
   const [isScrolled, setIsScrolled] = useState(false)
   const [pinnedStyles, setPinnedStyles] = useState<any[]>([])
@@ -594,6 +589,12 @@ export default function StyleGuidePage() {
     // Always use theme-terminal for the UI chrome to maintain dark mode
     // The actual component theme is passed as props to each section
     document.body.className = 'theme-terminal'
+    
+    // Set CSS variables for layout measurements
+    document.documentElement.style.setProperty('--header-height', '39px')
+    document.documentElement.style.setProperty('--sidebar-width', '256px')
+    document.documentElement.style.setProperty('--sidebar-collapsed-width', '48px')
+    document.documentElement.style.setProperty('--right-panel-width', '384px')
   }, [])
 
   // Save UI animations preference (only after hydration)
@@ -873,7 +874,10 @@ export default function StyleGuidePage() {
       <div className="max-w-full mx-auto flex relative">
         {/* Sidebar Navigation - Fixed position */}
         <nav className={`${showLeftSidebar ? 'w-64' : 'w-12'} fixed left-0 border-r border-white/10 bg-card/20 backdrop-blur-md shadow-xl shadow-black/10 ${uiAnimations ? 'transition-all duration-200' : ''} overflow-y-auto z-20`}
-             style={{ top: `${HEADER_HEIGHT}px`, height: `calc(100vh - ${HEADER_HEIGHT}px)` }}>
+             style={{ 
+               top: 'var(--header-height, 39px)', 
+               height: 'calc(100vh - var(--header-height, 39px))' 
+             }}>
           {showLeftSidebar ? (
             <div>
               <div className="flex items-center justify-between mb-4 px-6 pt-6">
@@ -937,7 +941,6 @@ export default function StyleGuidePage() {
             statusColor="success"
             revision="2.0.1"
             showMetrics={true}
-            headerHeight={HEADER_HEIGHT}
           />
 
             {/* Content based on active section */}
@@ -974,7 +977,10 @@ export default function StyleGuidePage() {
         {/* Right Panel - Style Details or Pinned Styles - Fixed position */}
         {(selectedElement || showPinnedPanel) && showRightSidebar && (
           <aside className="w-96 fixed right-0 border-l border-white/10 bg-card/80 backdrop-blur-md overflow-y-auto transition-all duration-200 shadow-xl shadow-black/20 z-20"
-                 style={{ top: `${HEADER_HEIGHT}px`, height: `calc(100vh - ${HEADER_HEIGHT}px)` }}>
+                 style={{ 
+               top: 'var(--header-height, 39px)', 
+               height: 'calc(100vh - var(--header-height, 39px))' 
+             }}>
             <div className="p-6 h-full overflow-y-auto">
               <div className="flex items-center justify-between mb-4 sticky top-0 bg-card/95 backdrop-blur-sm pb-4 border-b border-border">
                 <h2 className="text-sm font-semibold text-muted-foreground uppercase tracking-wider">
