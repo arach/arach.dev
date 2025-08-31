@@ -104,14 +104,6 @@ export const terminalTheme = {
       family: '"Geist Sans", -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif',
       provider: 'google',
       import: 'Geist_Sans'
-    },
-    
-    // Display font for headers and titles
-    display: {
-      name: 'IBM Plex Mono',
-      family: '"IBM Plex Mono", "SF Mono", Monaco, "Cascadia Code", "Roboto Mono", Consolas, "Courier New", monospace',
-      provider: 'google',
-      import: 'IBM_Plex_Mono'
     }
   },
 
