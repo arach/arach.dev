@@ -327,7 +327,7 @@ function TacticalHeader({
   return (
     <>
       {/* Sticky Status Bar */}
-      <div className="sticky top-[57px] z-30 bg-muted/20 border-b border-border/30 backdrop-blur-md" role="status" aria-label="System status">
+      <div className="sticky top-[53px] z-30 bg-muted/20 border-b border-border/30 backdrop-blur-md" role="status" aria-label="System status">
         <div className="flex items-center">
           <div className="w-1 mr-4" style={{ height: '20px', backgroundColor: accentColor }} aria-hidden="true"></div>
           <div className="flex items-center gap-3 mr-6">
