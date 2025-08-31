@@ -370,9 +370,9 @@ function TacticalHeader({
             <div className="w-1 bg-gradient-to-b from-primary via-primary/50 to-transparent" aria-hidden="true" />
             
             {/* Content */}
-            <div className="flex-1 px-6 py-4" role="main">
+            <div className="flex-1 px-6 py-3" role="main">
               {/* Section identifier */}
-              <nav className="flex items-center gap-2 mb-2" aria-label="Breadcrumb navigation">
+              <nav className="flex items-center gap-2 mb-1.5" aria-label="Breadcrumb navigation">
                 <div className="px-2 py-0.5 bg-primary/10 border border-primary/30 rounded-sm">
                   <span className="text-[10px] font-mono text-primary uppercase tracking-wider">
                     {getSectionId(activeSection)}
@@ -387,7 +387,7 @@ function TacticalHeader({
               </nav>
               
               {/* Section title */}
-              <h1 className="text-xl font-bold text-foreground uppercase tracking-tight mb-1">
+              <h1 className="text-lg font-bold text-foreground uppercase tracking-tight mb-0.5">
                 {getSectionTitle(activeSection)}
               </h1>
               
@@ -399,7 +399,7 @@ function TacticalHeader({
             
             {/* Right side metrics */}
             {showMetrics && (
-              <aside className="px-4 py-4 border-l border-border/30 bg-muted/5" role="complementary" aria-label="Section metrics">
+              <aside className="px-4 py-3 border-l border-border/30 bg-muted/5" role="complementary" aria-label="Section metrics">
                 <div className="space-y-2">
                   <div>
                     <div className="text-[10px] font-mono text-muted-foreground uppercase">Components</div>
@@ -944,7 +944,7 @@ export default function StyleGuidePage() {
           />
 
             {/* Content based on active section */}
-            <div className="space-y-12 px-6 pb-12">
+            <div className="space-y-12 px-6 pt-2 pb-12">
               {activeSection === 'all' ? (
                 <>
                   {themeSections.map((sectionId) => (
