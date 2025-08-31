@@ -868,8 +868,8 @@ export default function StyleGuidePage() {
         {/* Sidebar Navigation - Fixed position */}
         <nav className={`${showLeftSidebar ? 'w-64' : 'w-12'} fixed left-0 top-[57px] h-[calc(100vh-57px)] border-r border-white/10 bg-card/20 backdrop-blur-md shadow-xl shadow-black/10 ${uiAnimations ? 'transition-all duration-200' : ''} overflow-y-auto z-20`}>
           {showLeftSidebar ? (
-            <div className="p-6">
-              <div className="flex items-center justify-between mb-4">
+            <div>
+              <div className="flex items-center justify-between mb-4 px-6 pt-6">
                 <h2 className="text-sm font-semibold text-muted-foreground uppercase tracking-wider">Sections</h2>
                 <button
                   onClick={() => setShowLeftSidebar(false)}
@@ -881,7 +881,7 @@ export default function StyleGuidePage() {
                   </svg>
                 </button>
               </div>
-              <ul className="space-y-2">
+              <ul className="space-y-1">
                 {sections.map((section) => (
                   <li key={section.id}>
                     <button
@@ -890,9 +890,9 @@ export default function StyleGuidePage() {
                         updateURL(section.id)
                         setSelectedElement(null)
                       }}
-                      className={`w-full text-left px-6 py-2 text-sm transition-colors ${
+                      className={`w-full text-left px-6 py-2.5 text-sm transition-colors ${
                         activeSection === section.id
-                          ? 'bg-primary/10 text-primary border-l-2 border-primary -ml-6 pl-6'
+                          ? 'bg-primary/10 text-primary border-l-2 border-primary'
                           : 'text-muted-foreground hover:text-foreground hover:bg-accent/50'
                       }`}
                     >
