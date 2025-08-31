@@ -783,8 +783,8 @@ export default function StyleGuidePage() {
                 title={darkMode ? 'Switch to Light Mode' : 'Switch to Dark Mode'}
               >
                 <svg
-                  width="16"
-                  height="16"
+                  width="14"
+                  height="14"
                   viewBox="0 0 24 24"
                   fill="none"
                   stroke="currentColor"
@@ -799,7 +799,7 @@ export default function StyleGuidePage() {
                     </>
                   )}
                 </svg>
-                <span className="text-xs">{darkMode ? 'Dark' : 'Light'}</span>
+                <span className="text-[10px]">{darkMode ? 'Dark' : 'Light'}</span>
               </button>
 
               {/* UI Animations Toggle */}
@@ -809,8 +809,8 @@ export default function StyleGuidePage() {
                 title={uiAnimations ? 'Disable UI Chrome animations' : 'Enable UI Chrome animations'}
               >
                 <svg
-                  width="16"
-                  height="16"
+                  width="14"
+                  height="14"
                   viewBox="0 0 24 24"
                   fill="none"
                   stroke="currentColor"
@@ -820,21 +820,21 @@ export default function StyleGuidePage() {
                   <path d="M12 2L2 7v10c0 5.55 3.84 10.74 9 12 5.16-1.26 9-6.45 9-12V7l-10-5z"/>
                   {uiAnimations && <path d="M9 12l2 2 4-4" strokeLinecap="round" strokeLinejoin="round"/>}
                 </svg>
-                <span className="text-xs">{uiAnimations ? 'UI FX On' : 'UI FX Off'}</span>
+                <span className="text-[10px]">{uiAnimations ? 'UI FX On' : 'UI FX Off'}</span>
               </button>
 
               {/* Pinned Styles Button */}
               <button
                 onClick={() => setShowPinnedPanel(!showPinnedPanel)}
-                className={`relative ${
+                className={`relative text-[10px] px-2 py-1 ${
                   showPinnedPanel || pinnedStyles.length > 0
-                    ? 'btn-primary btn-sm' 
-                    : 'btn-secondary btn-sm'
+                    ? 'btn-primary' 
+                    : 'btn-secondary'
                 }`}
               >
                 Pinned
                 {pinnedStyles.length > 0 && (
-                  <span className="absolute -top-1 -right-1 bg-destructive text-destructive-foreground text-xs rounded-full w-5 h-5 flex items-center justify-center">
+                  <span className="absolute -top-1 -right-1 bg-destructive text-destructive-foreground text-[10px] rounded-full w-4 h-4 flex items-center justify-center">
                     {pinnedStyles.length}
                   </span>
                 )}
@@ -842,14 +842,14 @@ export default function StyleGuidePage() {
 
               {/* Theme Selector */}
               <div className="flex items-center gap-3">
-                <label className="text-sm font-medium text-muted-foreground">Theme:</label>
+                <label className="text-xs font-medium text-muted-foreground">Theme:</label>
                 <select 
                   value={activeTheme}
                   onChange={(e) => {
                     setActiveTheme(e.target.value as ThemeName)
                     updateURL(activeSection, e.target.value as ThemeName)
                   }}
-                  className="bg-input border border-border rounded-md px-3 py-1 text-foreground text-sm focus:outline-none focus:ring-2 focus:ring-ring"
+                  className="bg-input border border-border rounded-md px-2 py-0.5 text-foreground text-xs focus:outline-none focus:ring-2 focus:ring-ring"
                 >
                   {getThemeIds().map((themeId) => (
                     <option key={themeId} value={themeId}>
