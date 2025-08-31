@@ -264,38 +264,166 @@ export const terminalTheme = {
       footer: 'px-4 py-2 text-left align-middle font-mono text-[10px] uppercase tracking-wide text-gray-500 bg-gray-900 border-t border-gray-800',
     },
     
-    // Status indicators - Military-grade status lights (backward compatible)
+    // Status indicators - Clean, modern structure for visual status communication
     status: {
-      // Legacy direct access (for backward compatibility)
-      online: 'h-2 w-2 rounded-full bg-emerald-500 shadow-[0_0_4px_rgba(0,245,160,0.6)]',
-      offline: 'h-2 w-2 rounded-full bg-gray-600',
-      error: 'h-2 w-2 rounded-full bg-red-500 shadow-[0_0_4px_rgba(255,68,68,0.6)]',
-      warning: 'h-2 w-2 rounded-full bg-amber-500 shadow-[0_0_4px_rgba(255,214,10,0.6)]',
-      pending: 'h-2 w-2 rounded-full bg-cyan-500 animate-pulse shadow-[0_0_4px_rgba(0,180,216,0.6)]',
-      
-      // Modern nested structure
-      dot: {
-        online: 'h-2 w-2 rounded-full bg-emerald-500 shadow-[0_0_4px_rgba(0,245,160,0.6)]',
-        offline: 'h-2 w-2 rounded-full bg-gray-600',
-        error: 'h-2 w-2 rounded-full bg-red-500 shadow-[0_0_4px_rgba(255,68,68,0.6)]',
-        warning: 'h-2 w-2 rounded-full bg-amber-500 shadow-[0_0_4px_rgba(255,214,10,0.6)]',
-        pending: 'h-2 w-2 rounded-full bg-cyan-500 animate-pulse shadow-[0_0_4px_rgba(0,180,216,0.6)]',
+      // Status definitions with semantic meaning and visual properties
+      states: {
+        online: {
+          label: 'Online',
+          description: 'Active and operational',
+          semantics: 'success',
+          color: {
+            hex: '#10b981',           // emerald-500
+            rgb: '16, 185, 129',      
+            tailwind: 'emerald-500'
+          },
+          glow: {
+            color: 'rgba(16, 185, 129, 0.6)',
+            spread: '4px'
+          },
+          animation: null
+        },
+        
+        offline: {
+          label: 'Offline',
+          description: 'Inactive or disconnected',
+          semantics: 'neutral',
+          color: {
+            hex: '#4b5563',           // gray-600
+            rgb: '75, 85, 99',
+            tailwind: 'gray-600'
+          },
+          glow: null,
+          animation: null
+        },
+        
+        error: {
+          label: 'Error',
+          description: 'Error or critical state',
+          semantics: 'danger',
+          color: {
+            hex: '#ef4444',           // red-500
+            rgb: '239, 68, 68',
+            tailwind: 'red-500'
+          },
+          glow: {
+            color: 'rgba(239, 68, 68, 0.6)',
+            spread: '4px'
+          },
+          animation: null
+        },
+        
+        warning: {
+          label: 'Warning',
+          description: 'Warning or caution needed',
+          semantics: 'caution',
+          color: {
+            hex: '#f59e0b',           // amber-500
+            rgb: '245, 158, 11',
+            tailwind: 'amber-500'
+          },
+          glow: {
+            color: 'rgba(245, 158, 11, 0.6)',
+            spread: '4px'
+          },
+          animation: null
+        },
+        
+        pending: {
+          label: 'Pending',
+          description: 'Processing or loading',
+          semantics: 'info',
+          color: {
+            hex: '#06b6d4',           // cyan-500
+            rgb: '6, 182, 212',
+            tailwind: 'cyan-500'
+          },
+          glow: {
+            color: 'rgba(6, 182, 212, 0.6)',
+            spread: '4px'
+          },
+          animation: 'pulse'          // animate-pulse in Tailwind
+        }
       },
       
-      bar: {
-        online: 'h-0.5 w-full bg-gradient-to-r from-emerald-600 to-emerald-400',
-        offline: 'h-0.5 w-full bg-gray-700',
-        error: 'h-0.5 w-full bg-gradient-to-r from-red-600 to-red-400',
-        warning: 'h-0.5 w-full bg-gradient-to-r from-amber-600 to-amber-400',
-        pending: 'h-0.5 w-full bg-gradient-to-r from-cyan-600 to-cyan-400 animate-pulse',
+      // Visual variants - how status is displayed
+      variants: {
+        dot: {
+          name: 'Dot Indicator',
+          description: '8x8px circular status light',
+          size: {
+            width: '0.5rem',          // 8px - w-2
+            height: '0.5rem',         // 8px - h-2
+            tailwind: 'w-2 h-2'
+          },
+          shape: 'rounded-full',
+          usage: 'Inline status indicators, compact UI elements'
+        },
+        
+        bar: {
+          name: 'Bar Indicator',
+          description: 'Full-width horizontal status bar',
+          size: {
+            width: '100%',            // w-full
+            height: '0.125rem',       // 2px - h-0.5
+            tailwind: 'w-full h-0.5'
+          },
+          shape: null,
+          usage: 'Progress bars, section dividers, loading states',
+          gradient: true              // Uses gradient for bar variant
+        },
+        
+        text: {
+          name: 'Text Indicator',
+          description: 'Text-only status label',
+          size: {
+            fontSize: '0.625rem',     // 10px - text-[10px]
+            tailwind: 'text-[10px]'
+          },
+          shape: null,
+          textTransform: 'uppercase',
+          fontWeight: 'bold',
+          letterSpacing: '0.1em',     // tracking-wider
+          usage: 'Status labels, badges, tags'
+        },
+        
+        ring: {
+          name: 'Ring Indicator',
+          description: 'Hollow circular status ring',
+          size: {
+            width: '0.75rem',         // 12px - w-3
+            height: '0.75rem',        // 12px - h-3
+            tailwind: 'w-3 h-3'
+          },
+          shape: 'rounded-full',
+          borderWidth: '2px',
+          usage: 'Radio buttons, selection states'
+        }
       },
       
-      text: {
-        online: 'text-[10px] font-bold uppercase tracking-wider text-emerald-400',
-        offline: 'text-[10px] font-medium uppercase tracking-wider text-gray-500',
-        error: 'text-[10px] font-bold uppercase tracking-wider text-red-400',
-        warning: 'text-[10px] font-bold uppercase tracking-wider text-amber-400',
-        pending: 'text-[10px] font-bold uppercase tracking-wider text-cyan-400 animate-pulse',
+      // Precompiled class strings for immediate use (Tailwind JIT compatible)
+      // These ensure Tailwind picks up the classes during build
+      classes: {
+        // Dot indicators - most common
+        'dot-online': 'h-2 w-2 rounded-full bg-emerald-500',
+        'dot-offline': 'h-2 w-2 rounded-full bg-gray-600',
+        'dot-error': 'h-2 w-2 rounded-full bg-red-500',
+        'dot-warning': 'h-2 w-2 rounded-full bg-amber-500',
+        'dot-pending': 'h-2 w-2 rounded-full bg-cyan-500 animate-pulse',
+        
+        // Bar indicators
+        'bar-online': 'h-0.5 w-full bg-emerald-500',
+        'bar-offline': 'h-0.5 w-full bg-gray-600',
+        'bar-error': 'h-0.5 w-full bg-red-500',
+        'bar-warning': 'h-0.5 w-full bg-amber-500',
+        'bar-pending': 'h-0.5 w-full bg-cyan-500 animate-pulse',
+        
+        // Text indicators
+        'text-online': 'text-[10px] font-bold uppercase tracking-wider text-emerald-400',
+        'text-offline': 'text-[10px] font-medium uppercase tracking-wider text-gray-500',
+        'text-error': 'text-[10px] font-bold uppercase tracking-wider text-red-400',
+        'text-warning': 'text-[10px] font-bold uppercase tracking-wider text-amber-400',
+        'text-pending': 'text-[10px] font-bold uppercase tracking-wider text-cyan-400 animate-pulse'
       }
     },
     
@@ -528,11 +656,11 @@ export const themeAliases = {
   btnDanger: terminalTheme.components.button.danger,
   btnIcon: terminalTheme.components.button.icon,
   
-  // Status (using legacy direct access for compatibility)
-  statusOk: terminalTheme.components.status.online,
-  statusError: terminalTheme.components.status.error,
-  statusWarning: terminalTheme.components.status.warning,
-  statusPending: terminalTheme.components.status.pending,
+  // Status (using new classes structure)
+  statusOk: terminalTheme.components.status.classes['dot-online'],
+  statusError: terminalTheme.components.status.classes['dot-error'],
+  statusWarning: terminalTheme.components.status.classes['dot-warning'],
+  statusPending: terminalTheme.components.status.classes['dot-pending'],
   
   // Containers
   pageContainer: terminalTheme.layout.container,

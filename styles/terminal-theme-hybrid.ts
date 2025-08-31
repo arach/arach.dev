@@ -137,6 +137,16 @@ export const terminalThemeHybrid = {
     },
   },
   
+  // Status indicators - Using CSS variables for dynamic theming
+  status: {
+    // Simple structure for testing CSS variable approach
+    online: 'h-2 w-2 rounded-full bg-[var(--color-success)]',
+    offline: 'h-2 w-2 rounded-full bg-[var(--color-gray-600)]',
+    error: 'h-2 w-2 rounded-full bg-[var(--color-error)]',
+    warning: 'h-2 w-2 rounded-full bg-[var(--color-warning)]',
+    pending: 'h-2 w-2 rounded-full bg-[var(--color-info)] animate-pulse',
+  },
+
   // Typography - Using CSS variables
   typography: {
     h1: 'text-xl font-bold text-white tracking-tight uppercase',

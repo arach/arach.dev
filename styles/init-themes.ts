@@ -2,6 +2,7 @@
 import { registerTheme } from './theme-registry'
 import { adaptTerminalTheme } from '@/lib/theme-adapter'
 import { terminalTheme } from './terminal-theme'
+import { terminalThemeHybrid } from './terminal-theme-hybrid'
 import { directoryTheme } from './directory-theme'
 // import { cyberpunkTheme } from './cyberpunk-theme'
 // import { minimalTheme } from './minimal-theme'
@@ -10,6 +11,8 @@ import { directoryTheme } from './directory-theme'
 // Register all built-in themes
 // Terminal theme needs adaptation from the old format
 registerTheme('terminal', adaptTerminalTheme(terminalTheme))
+// Terminal Hybrid - CSS variables version for testing
+registerTheme('terminal-hybrid', adaptTerminalTheme(terminalThemeHybrid))
 // Directory theme is already in the new format
 registerTheme('directory', directoryTheme)
 // registerTheme('cyberpunk', cyberpunkTheme)  // Temporarily disabled due to type mismatch
