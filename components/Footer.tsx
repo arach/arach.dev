@@ -5,8 +5,8 @@ import GithubIcon from '@/components/icons/GithubIcon';
 
 export default function Footer() {
     return (
-        <footer className="bg-black text-white sticky bottom-0 w-full z-10">
-            <div className="container mx-auto px-4 py-2 flex flex-row items-center justify-between text-xs font-mono">
+        <footer className="bg-black text-white sticky bottom-0 w-full z-10 font-mono">
+            <div className="container mx-auto px-4 py-1.5 flex flex-row items-center justify-between text-[10px]">
                 <div>© {new Date().getFullYear()} Arach Tchoupani · All projects handcrafted with 💙 in Montreal, NY or SF 🛠</div>
                 <div className="flex space-x-4">
                     <Link href="https://github.com/arach">
