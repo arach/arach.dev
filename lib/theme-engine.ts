@@ -48,27 +48,30 @@ export class ThemeEngine {
     return `
       [data-theme="${theme.id}"] {
         /* Colors */
-        --theme-bg: ${theme.colors.bg};
-        --theme-text: ${theme.colors.text};
-        --theme-accent: ${theme.colors.accent};
-        --theme-muted: ${theme.colors.muted};
-        --theme-border: ${theme.colors.border};
-        --theme-card: ${theme.colors.card};
-        --theme-shadow: ${theme.colors.shadow};
+        --theme-bg-color: ${theme.colors.bg};
+        --theme-text-color: ${theme.colors.text};
+        --theme-accent-color: ${theme.colors.accent};
+        --theme-muted-color: ${theme.colors.muted};
+        --theme-border-color: ${theme.colors.border};
+        --theme-card-bg: ${theme.colors.card};
+        --theme-shadow-color: ${theme.colors.shadow};
         
         /* Header */
         --theme-header-bg: ${theme.header.bg};
-        --theme-header-text: ${theme.header.text};
+        --theme-header-text-color: ${theme.header.text};
         --theme-header-font: ${theme.header.font};
         
         /* Typography */
-        --theme-heading: ${theme.typography.heading};
-        --theme-body: ${theme.typography.body};
+        --theme-heading-color: ${theme.typography.heading};
+        --theme-body-color: ${theme.typography.body};
         --theme-code-font: ${theme.typography.code};
         
         /* Effects */
         --theme-dot-opacity: ${theme.effects.dotOpacity};
         --theme-blur: ${theme.effects.blur};
+        
+        /* ASCII art color - use accent for visual consistency */
+        --theme-ascii-color: ${theme.colors.accent};
       }
     `.trim();
   }

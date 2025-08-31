@@ -41,8 +41,8 @@
   /* Legacy theme definitions removed - now handled by theme-engine.ts */
 
   body {
-    background: var(--theme-bg);
-    color: var(--theme-text);
+    background: var(--theme-bg-color);
+    color: var(--theme-text-color-color);
     transition: background-color 0.3s ease, color 0.3s ease;
   }
 
@@ -52,7 +52,7 @@
   h4,
   h5,
   h6 {
-    color: var(--theme-heading);
+    color: var(--theme-heading-color-color);
     font-family: var(--theme-header-font);
     font-weight: 600;
     letter-spacing: -0.02em;
@@ -60,19 +60,19 @@
   
   /* Ensure good readability for h2, h3, h4 specifically */
   h2 {
-    color: var(--theme-heading-color);
+    color: var(--theme-heading-color-color);
     font-size: 1.5rem;
     font-weight: 700;
   }
   
   h3 {
-    color: var(--theme-heading-color);
+    color: var(--theme-heading-color-color);
     font-size: 1.25rem;
     font-weight: 600;
   }
   
   h4 {
-    color: var(--theme-heading-color);
+    color: var(--theme-heading-color-color);
     font-size: 1.125rem;
     font-weight: 600;
   }
@@ -81,12 +81,12 @@
   main > p:not([class*="text-"]),
   main article p:not([class*="text-"]),
   main section > p:not([class*="text-"]) {
-    color: var(--theme-text);
+    color: var(--theme-text-color);
   }
   
   /* Theme-aware borders */
   .theme-border {
-    border-color: var(--theme-border);
+    border-color: var(--theme-border-color);
   }
   
   /* Theme-aware shadows */
@@ -101,23 +101,23 @@
   
   /* Theme-aware cards */
   .theme-card {
-    background: var(--theme-card);
-    border: 1px solid var(--theme-border);
+    background: var(--theme-card-bg);
+    border: 1px solid var(--theme-border-color);
     box-shadow: 0 1px 3px 0 var(--theme-shadow-color);
   }
   
   /* Theme-aware muted text */
   .theme-muted {
-    color: var(--theme-muted);
+    color: var(--theme-muted-color);
   }
   
   /* Theme-aware accent elements */
   .theme-accent {
-    color: var(--theme-accent);
+    color: var(--theme-accent-color);
   }
   
   .theme-accent-bg {
-    background-color: var(--theme-accent);
+    background-color: var(--theme-accent-color);
   }
   
   /* Theme-aware code blocks */
