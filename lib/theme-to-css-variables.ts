@@ -46,7 +46,16 @@ export function themeToCSSVariables(theme: Theme): Record<string, string> {
   }
   
   // Secondary colors (use accent as fallback)
-  variables['--secondary'] = theme.colors.secondary || theme.colors.accent || theme.colors.muted || variables['--muted']
+  let secondaryFallback = theme.colors.muted || variables['--muted']
+  if (theme.colors.accent) {
+    if (typeof theme.colors.accent === 'object') {
+      const firstAccent = Object.values(theme.colors.accent)[0]
+      if (firstAccent) secondaryFallback = firstAccent
+    } else {
+      secondaryFallback = theme.colors.accent
+    }
+  }
+  variables['--secondary'] = theme.colors.secondary || secondaryFallback
   variables['--secondary-foreground'] = theme.colors.secondaryForeground || variables['--foreground']
   
   // Muted colors
@@ -78,7 +87,13 @@ export function themeToCSSVariables(theme: Theme): Record<string, string> {
   // UI elements
   variables['--border'] = theme.colors.border || theme.colors.borderDark || variables['--muted']
   variables['--input'] = theme.colors.input || variables['--border']
-  variables['--ring'] = theme.colors.ring || theme.colors.accent || variables['--primary']
+  
+  // Ring color with proper accent fallback
+  let ringFallback = variables['--primary']
+  if (theme.colors.accent && typeof theme.colors.accent === 'string') {
+    ringFallback = theme.colors.accent
+  }
+  variables['--ring'] = theme.colors.ring || ringFallback
   
   // Chart colors (if available in accent colors)
   if (typeof theme.colors.accent === 'object') {
@@ -153,25 +168,28 @@ export function generateDarkModeCSS(theme: Theme): string {
 /**
  * Extract color value for display in styleguide
  */
-export function extractColorValue(value: string): string {
+export function extractColorValue(value: any): string {
+  // Ensure value is a string
+  const stringValue = String(value || '')
+  
   // If it's an oklch value, return as-is
-  if (value.startsWith('oklch(')) {
-    return value
+  if (stringValue.startsWith('oklch(')) {
+    return stringValue
   }
   // If it's a hex value, return as-is
-  if (value.startsWith('#')) {
-    return value
+  if (stringValue.startsWith('#')) {
+    return stringValue
   }
   // If it's an hsl value, return as-is
-  if (value.startsWith('hsl(')) {
-    return value
+  if (stringValue.startsWith('hsl(')) {
+    return stringValue
   }
   // If it's a CSS variable reference, indicate that
-  if (value.startsWith('var(--')) {
-    return value
+  if (stringValue.startsWith('var(--')) {
+    return stringValue
   }
   // Otherwise return the raw value
-  return value
+  return stringValue
 }
 
 /**

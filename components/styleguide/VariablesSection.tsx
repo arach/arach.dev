@@ -39,11 +39,12 @@ export function VariablesSection({ theme }: VariablesSectionProps) {
   }
 
   // Check if the color value appears to be a color (oklch, hex, hsl, etc.)
-  const isColorValue = (value: string): boolean => {
-    return value.startsWith('oklch(') || 
-           value.startsWith('#') || 
-           value.startsWith('hsl(') || 
-           value.startsWith('rgb(')
+  const isColorValue = (value: any): boolean => {
+    const stringValue = String(value || '')
+    return stringValue.startsWith('oklch(') || 
+           stringValue.startsWith('#') || 
+           stringValue.startsWith('hsl(') || 
+           stringValue.startsWith('rgb(')
   }
 
   return (
