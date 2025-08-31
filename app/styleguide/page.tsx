@@ -22,16 +22,6 @@ import {
 
 
 
-// Get available themes from the registry
-const getThemes = () => {
-  const ids = getThemeIds()
-  const themeMap: Record<string, string> = {}
-  ids.forEach(id => {
-    themeMap[id] = `theme-${id}`
-  })
-  return themeMap
-}
-
 type ThemeName = string // Dynamic based on registry
 
 // Centralized element enhancement system
@@ -574,7 +564,7 @@ export default function StyleGuidePage() {
     const theme = searchParams.get('theme') as ThemeName
     
     if (section) setActiveSection(section)
-    if (theme && themes[theme]) setActiveTheme(theme)
+    if (theme && getThemeIds().includes(theme)) setActiveTheme(theme)
   }, [searchParams])
 
   // Update URL when section/theme changes
@@ -585,9 +575,6 @@ export default function StyleGuidePage() {
     router.push(`?${params.toString()}`)
   }
   
-  const themes = getThemes()
-  const currentThemeClass = themes[activeTheme] || 'theme-terminal'
-
   // Use the centralized element enhancer for automatic element inspection
   const containerRef = useElementEnhancer((element) => {
     setSelectedElement(element)
@@ -595,10 +582,13 @@ export default function StyleGuidePage() {
     setShowRightSidebar(true) // Auto-expand preview on element click
   })
 
-  // Apply theme to document body
+  // Apply base UI theme (terminal) to body for consistent chrome
+  // Component themes are passed via props and don't affect global styles
   useEffect(() => {
-    document.body.className = currentThemeClass
-  }, [currentThemeClass])
+    // Always use theme-terminal for the UI chrome to maintain dark mode
+    // The actual component theme is passed as props to each section
+    document.body.className = 'theme-terminal'
+  }, [])
 
   // Save UI animations preference (only after hydration)
   useEffect(() => {
