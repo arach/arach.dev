@@ -890,9 +890,9 @@ export default function StyleGuidePage() {
                         updateURL(section.id)
                         setSelectedElement(null)
                       }}
-                      className={`w-full text-left px-6 py-2 text-sm transition-colors border-l-2 -ml-6 pl-6 ${
+                      className={`w-full text-left px-6 py-2 text-sm transition-colors ${
                         activeSection === section.id
-                          ? 'bg-primary/10 text-primary border-l-2 border-primary'
+                          ? 'bg-primary/10 text-primary border-l-2 border-primary -ml-6 pl-6'
                           : 'text-muted-foreground hover:text-foreground hover:bg-accent/50'
                       }`}
                     >
