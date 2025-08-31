@@ -327,7 +327,7 @@ function TacticalHeader({
   return (
     <>
       {/* Sticky Status Bar */}
-      <div className="sticky top-[53px] z-30 bg-muted/20 border-b border-border/30 backdrop-blur-md" role="status" aria-label="System status">
+      <div className="sticky top-[45px] z-30 bg-muted/20 border-b border-border/30 backdrop-blur-md" role="status" aria-label="System status">
         <div className="flex items-center">
           <div className="w-1 mr-4" style={{ height: '20px', backgroundColor: accentColor }} aria-hidden="true"></div>
           <div className="flex items-center gap-3 mr-6">
@@ -752,13 +752,13 @@ export default function StyleGuidePage() {
   return (
     <main className="min-h-screen bg-background text-foreground">
       {/* Header */}
-      <header className={`border-b border-border bg-background/95 backdrop-blur-md sticky top-0 z-30 py-2 px-6 ${uiAnimations ? 'transition-all duration-300' : ''}`}>
+      <header className={`border-b border-border bg-background/95 backdrop-blur-md sticky top-0 z-30 py-1 px-6 ${uiAnimations ? 'transition-all duration-300' : ''}`}>
           <div className="flex items-center justify-between">
             <div className="flex items-center gap-2">
               {/* Back to Home Link */}
               <a
                 href="/"
-                className="flex items-center gap-1.5 px-3 py-1.5 text-sm text-muted-foreground hover:text-foreground bg-card/50 hover:bg-card border border-border rounded-md transition-all duration-200"
+                className="flex items-center gap-1.5 px-2.5 py-1 text-sm text-muted-foreground hover:text-foreground bg-card/50 hover:bg-card border border-border rounded-md transition-all duration-200"
                 title="Back to arach.dev"
               >
                 <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
@@ -864,7 +864,7 @@ export default function StyleGuidePage() {
 
       <div className="max-w-full mx-auto flex relative">
         {/* Sidebar Navigation - Fixed position */}
-        <nav className={`${showLeftSidebar ? 'w-64' : 'w-12'} fixed left-0 top-[57px] h-[calc(100vh-57px)] border-r border-white/10 bg-card/20 backdrop-blur-md shadow-xl shadow-black/10 ${uiAnimations ? 'transition-all duration-200' : ''} overflow-y-auto z-20`}>
+        <nav className={`${showLeftSidebar ? 'w-64' : 'w-12'} fixed left-0 top-[45px] h-[calc(100vh-45px)] border-r border-white/10 bg-card/20 backdrop-blur-md shadow-xl shadow-black/10 ${uiAnimations ? 'transition-all duration-200' : ''} overflow-y-auto z-20`}>
           {showLeftSidebar ? (
             <div>
               <div className="flex items-center justify-between mb-4 px-6 pt-6">
@@ -963,7 +963,7 @@ export default function StyleGuidePage() {
 
         {/* Right Panel - Style Details or Pinned Styles - Fixed position */}
         {(selectedElement || showPinnedPanel) && showRightSidebar && (
-          <aside className="w-96 fixed right-0 top-[57px] h-[calc(100vh-57px)] border-l border-white/10 bg-card/80 backdrop-blur-md overflow-y-auto transition-all duration-200 shadow-xl shadow-black/20 z-20">
+          <aside className="w-96 fixed right-0 top-[45px] h-[calc(100vh-45px)] border-l border-white/10 bg-card/80 backdrop-blur-md overflow-y-auto transition-all duration-200 shadow-xl shadow-black/20 z-20">
             <div className="p-6 h-full overflow-y-auto">
               <div className="flex items-center justify-between mb-4 sticky top-0 bg-card/95 backdrop-blur-sm pb-4 border-b border-border">
                 <h2 className="text-sm font-semibold text-muted-foreground uppercase tracking-wider">
