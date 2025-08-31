@@ -12,11 +12,6 @@ export default function Header() {
     const [lastScrollY, setLastScrollY] = useState(0);
     const pathname = usePathname();
     
-    // Don't render header on styleguide pages
-    if (pathname?.startsWith('/styleguide')) {
-        return null;
-    }
-
     useEffect(() => {
         const handleScroll = () => {
             const currentScrollY = window.scrollY;
@@ -34,6 +29,11 @@ export default function Header() {
         window.addEventListener('scroll', handleScroll, { passive: true });
         return () => window.removeEventListener('scroll', handleScroll);
     }, [lastScrollY]);
+
+    // Don't render header on styleguide pages
+    if (pathname?.startsWith('/styleguide')) {
+        return null;
+    }
 
     return (
         <header className={`fixed top-0 left-0 right-0 py-1 shadow-sm h-10 text-xs z-50 border-thin border-gray-800 transition-transform duration-300 ${
