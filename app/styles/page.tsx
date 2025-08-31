@@ -1,7 +1,7 @@
 'use client'
 
 import { useState, useRef, useEffect } from 'react'
-import { themes, type ThemeName, cx } from '@/styles'
+import { getAllThemes, getTheme, getThemeIds, cx } from '@/styles'
 import type { Theme } from '@/styles'
 
 // Helper to get nested value from theme using dot notation
@@ -222,15 +222,19 @@ function StylePreview({
 }
 
 export default function StylesPage() {
-  const [selectedTheme, setSelectedTheme] = useState<ThemeName>('terminal')
+  const themes = getAllThemes()
+  const themeIds = getThemeIds()
+  const [selectedThemeId, setSelectedThemeId] = useState<string>('terminal')
   const [searchQuery, setSearchQuery] = useState('')
   const [selectedCategory, setSelectedCategory] = useState<string>('all')
   
-  const theme = themes[selectedTheme]
+  const theme = getTheme(selectedThemeId)
   
   // Get all style paths from theme
   const getAllPaths = (obj: any, prefix = ''): Array<{ path: string, label: string }> => {
     const paths: Array<{ path: string, label: string }> = []
+    
+    if (!obj) return paths
     
     Object.entries(obj).forEach(([key, value]) => {
       const currentPath = prefix ? `${prefix}.${key}` : key
@@ -251,7 +255,7 @@ export default function StylesPage() {
     return paths
   }
   
-  const allStyles = getAllPaths(theme)
+  const allStyles = theme ? getAllPaths(theme) : []
   
   // Filter styles based on search and category
   const filteredStyles = allStyles.filter(({ path, label }) => {
@@ -292,15 +296,18 @@ export default function StylesPage() {
             <div className="flex items-center gap-4">
               <label className="text-sm text-gray-400">Theme:</label>
               <select
-                value={selectedTheme}
-                onChange={(e) => setSelectedTheme(e.target.value as ThemeName)}
+                value={selectedThemeId}
+                onChange={(e) => setSelectedThemeId(e.target.value)}
                 className="bg-gray-900 border border-gray-700 text-gray-100 px-3 py-1.5 rounded text-sm focus:border-gray-500 focus:outline-none"
               >
-                {Object.entries(themes).map(([key, theme]) => (
-                  <option key={key} value={key}>
-                    {theme.name}
-                  </option>
-                ))}
+                {themeIds.map((id) => {
+                  const themeOption = getTheme(id)
+                  return themeOption ? (
+                    <option key={id} value={id}>
+                      {themeOption.name}
+                    </option>
+                  ) : null
+                })}
               </select>
             </div>
           </div>
@@ -335,13 +342,13 @@ export default function StylesPage() {
       {/* Theme Description */}
       <div className="container mx-auto px-4 py-6">
         <div className="bg-gray-900 border border-gray-800 rounded p-4 mb-8">
-          <h2 className="text-lg font-medium mb-2">{theme.name} Theme</h2>
-          <p className="text-sm text-gray-400">{theme.description}</p>
+          <h2 className="text-lg font-medium mb-2">{theme?.name} Theme</h2>
+          <p className="text-sm text-gray-400">{theme?.description}</p>
         </div>
         
         {/* Style Grid */}
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
-          {filteredStyles.map(({ path, label }) => (
+          {theme && filteredStyles.map(({ path, label }) => (
             <StylePreview
               key={path}
               theme={theme}
