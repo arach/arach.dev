@@ -944,7 +944,7 @@ export default function StyleGuidePage() {
           />
 
             {/* Content based on active section */}
-            <div className="space-y-12 px-6 pt-2 pb-12">
+            <div className="space-y-12 px-6 pt-4 pb-12">
               {activeSection === 'all' ? (
                 <>
                   {themeSections.map((sectionId) => (
