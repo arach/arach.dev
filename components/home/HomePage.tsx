@@ -252,6 +252,40 @@ export function HomePage({ projects }: { projects: Project[] }) {
           projectStats={projectStats}
         />
 
+        {/* Developer Tools Section */}
+        <Section title="Developer Tools">
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-3 sm:gap-4">
+            <motion.a
+              href="/styleguide"
+              className="block p-4 bg-gray-900/50 hover:bg-gray-800/70 rounded-lg border border-gray-700 hover:border-gray-600 transition-all cursor-pointer"
+              whileHover={{ scale: 1.02 }}
+              whileTap={{ scale: 0.98 }}
+            >
+              <h3 className="text-lg font-semibold mb-2">Style Guide</h3>
+              <p className="text-sm text-gray-400">Interactive design system showcase with live theme switching and component previews</p>
+            </motion.a>
+            
+            <motion.a
+              href="/styles" 
+              className="block p-4 bg-gray-900/50 hover:bg-gray-800/70 rounded-lg border border-gray-700 hover:border-gray-600 transition-all cursor-pointer"
+              whileHover={{ scale: 1.02 }}
+              whileTap={{ scale: 0.98 }}
+            >
+              <h3 className="text-lg font-semibold mb-2">Theme Registry</h3>
+              <p className="text-sm text-gray-400">Explore and test all available themes with real-time style inspection</p>
+            </motion.a>
+            
+            <motion.div
+              className="block p-4 bg-gray-900/50 hover:bg-gray-800/70 rounded-lg border border-gray-700 hover:border-gray-600 transition-all cursor-pointer opacity-75"
+              whileHover={{ scale: 1.02 }}
+              whileTap={{ scale: 0.98 }}
+            >
+              <h3 className="text-lg font-semibold mb-2">Agents <span className="text-xs text-gray-500">(Coming Soon)</span></h3>
+              <p className="text-sm text-gray-400">Coding agents and agentic system definitions for AI-powered development</p>
+            </motion.div>
+          </div>
+        </Section>
+
         <Section title="Projects" headerAction={
           <HeaderActions
             audioEnabled={audioEnabled}
