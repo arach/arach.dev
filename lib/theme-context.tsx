@@ -1,6 +1,7 @@
 'use client';
 
 import React, { createContext, useContext, useState, useEffect } from 'react';
+import { usePathname } from 'next/navigation';
 
 export interface Theme {
   name: string;
@@ -171,6 +172,29 @@ const ThemeContext = createContext<ThemeContextType | undefined>(undefined);
 
 export function ThemeProvider({ children }: { children: React.ReactNode }) {
   const [currentTheme, setCurrentTheme] = useState<Theme>(themes[0]);
+  const pathname = usePathname();
+
+  // Function to apply theme CSS variables
+  const applyThemeVariables = (theme: Theme) => {
+    const root = document.documentElement;
+    console.log('[ThemeContext] Applying theme CSS vars - bg:', theme.bgColor, 'text:', theme.textColor);
+    root.style.setProperty('--theme-bg-color', theme.bgColor);
+    root.style.setProperty('--theme-text-color', theme.textColor);
+    root.style.setProperty('--theme-header-bg', theme.headerBg);
+    root.style.setProperty('--theme-header-text', theme.headerText);
+    root.style.setProperty('--theme-header-font', theme.headerFont || 'inherit');
+    root.style.setProperty('--theme-border-color', theme.borderColor || '#e5e7eb');
+    root.style.setProperty('--theme-accent-color', theme.accentColor || '#3b82f6');
+    root.style.setProperty('--theme-shadow-color', theme.shadowColor || 'rgba(0, 0, 0, 0.1)');
+    root.style.setProperty('--theme-muted-text', theme.mutedTextColor || '#6b7280');
+    root.style.setProperty('--theme-card-bg', theme.cardBg || '#f9fafb');
+    root.style.setProperty('--theme-code-font', theme.codeFont || 'inherit');
+    root.style.setProperty('--theme-ascii-color', theme.asciiColor || '#000000');
+    root.style.setProperty('--theme-project-card-text', theme.projectCardText || '#111827');
+    root.style.setProperty('--theme-project-card-bg', theme.projectCardBg || '#ffffff');
+    root.style.setProperty('--theme-dot-opacity', theme.dotOpacity?.toString() || '0.15');
+    root.style.setProperty('--theme-heading-color', theme.headingColor || '#111827');
+  };
 
   useEffect(() => {
     // Load saved theme from localStorage
@@ -197,54 +221,27 @@ export function ThemeProvider({ children }: { children: React.ReactNode }) {
       document.body.classList.add(`theme-${theme.name}`);
     }
     
-    // Also update CSS variables directly for immediate effect
-    const root = document.documentElement;
-    console.log('[ThemeContext] Setting CSS vars - bg:', theme.bgColor, 'text:', theme.textColor);
-    root.style.setProperty('--theme-bg-color', theme.bgColor);
-    root.style.setProperty('--theme-text-color', theme.textColor);
-    root.style.setProperty('--theme-header-bg', theme.headerBg);
-    root.style.setProperty('--theme-header-text', theme.headerText);
-    root.style.setProperty('--theme-header-font', theme.headerFont || 'inherit');
-    root.style.setProperty('--theme-border-color', theme.borderColor || '#e5e7eb');
-    root.style.setProperty('--theme-accent-color', theme.accentColor || '#3b82f6');
-    root.style.setProperty('--theme-shadow-color', theme.shadowColor || 'rgba(0, 0, 0, 0.1)');
-    root.style.setProperty('--theme-muted-text', theme.mutedTextColor || '#6b7280');
-    root.style.setProperty('--theme-card-bg', theme.cardBg || '#f9fafb');
-    root.style.setProperty('--theme-code-font', theme.codeFont || 'inherit');
-    root.style.setProperty('--theme-ascii-color', theme.asciiColor || '#000000');
-    root.style.setProperty('--theme-project-card-text', theme.projectCardText || '#111827');
-    root.style.setProperty('--theme-project-card-bg', theme.projectCardBg || '#ffffff');
-    root.style.setProperty('--theme-dot-opacity', theme.dotOpacity?.toString() || '0.15');
-    root.style.setProperty('--theme-heading-color', theme.headingColor || '#111827');
+    // Apply CSS variables for immediate effect
+    applyThemeVariables(theme);
   };
 
   useEffect(() => {
-    // Apply initial theme
-    console.log('[ThemeContext] Applying initial theme:', currentTheme.name, currentTheme);
+    // Apply theme when it changes
+    console.log('[ThemeContext] Theme changed:', currentTheme.name, currentTheme);
     if (currentTheme.name !== 'default') {
       document.body.classList.add(`theme-${currentTheme.name}`);
     }
-    
-    // Set initial CSS variables
-    const root = document.documentElement;
-    console.log('[ThemeContext] Initial CSS vars - bg:', currentTheme.bgColor, 'text:', currentTheme.textColor);
-    root.style.setProperty('--theme-bg-color', currentTheme.bgColor);
-    root.style.setProperty('--theme-text-color', currentTheme.textColor);
-    root.style.setProperty('--theme-header-bg', currentTheme.headerBg);
-    root.style.setProperty('--theme-header-text', currentTheme.headerText);
-    root.style.setProperty('--theme-header-font', currentTheme.headerFont || 'inherit');
-    root.style.setProperty('--theme-border-color', currentTheme.borderColor || '#e5e7eb');
-    root.style.setProperty('--theme-accent-color', currentTheme.accentColor || '#3b82f6');
-    root.style.setProperty('--theme-shadow-color', currentTheme.shadowColor || 'rgba(0, 0, 0, 0.1)');
-    root.style.setProperty('--theme-muted-text', currentTheme.mutedTextColor || '#6b7280');
-    root.style.setProperty('--theme-card-bg', currentTheme.cardBg || '#f9fafb');
-    root.style.setProperty('--theme-code-font', currentTheme.codeFont || 'inherit');
-    root.style.setProperty('--theme-ascii-color', currentTheme.asciiColor || '#000000');
-    root.style.setProperty('--theme-project-card-text', currentTheme.projectCardText || '#111827');
-    root.style.setProperty('--theme-project-card-bg', currentTheme.projectCardBg || '#ffffff');
-    root.style.setProperty('--theme-dot-opacity', currentTheme.dotOpacity?.toString() || '0.15');
-    root.style.setProperty('--theme-heading-color', currentTheme.headingColor || '#111827');
+    applyThemeVariables(currentTheme);
   }, [currentTheme]);
+
+  useEffect(() => {
+    // Reapply theme when navigating away from styleguide
+    // This ensures any CSS variables modified by the styleguide are reset
+    if (!pathname?.startsWith('/styleguide')) {
+      console.log('[ThemeContext] Navigated away from styleguide, reapplying theme');
+      applyThemeVariables(currentTheme);
+    }
+  }, [pathname, currentTheme]);
 
   return (
     <ThemeContext.Provider value={{ currentTheme, setTheme }}>

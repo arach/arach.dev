@@ -510,9 +510,7 @@
     --theme-font-sans: ui-monospace, SFMono-Regular, "SF Mono", Monaco, Inconsolata, "Roboto Mono", monospace;
     --theme-font-mono: ui-monospace, SFMono-Regular, "SF Mono", Monaco, Inconsolata, "Roboto Mono", monospace;
     
-    /* Theme-specific variables - DISABLED to prevent conflicts with main site 
-     * The styleguide uses shadcn/ui variables instead (--background, --foreground, etc)
-     * 
+    /* Theme-specific variables - Re-enabled since main site now reapplies theme on navigation */
     --theme-bg-color: #ffffff;
     --theme-text-color: #111827;
     --theme-header-bg: rgba(0, 0, 0, 1);
@@ -529,7 +527,6 @@
     --theme-project-card-bg: #ffffff;
     --theme-dot-opacity: 0.15;
     --theme-heading-color: #111827;
-    */
     
     /* Light theme colors using OKLCH-inspired values converted to HSL */
     --background: 0 0% 100%;        /* Pure white */
@@ -579,13 +576,12 @@
   
   /* Directory Dark Mode Variant */
   .theme-directory.dark {
-    /* Dark theme-specific variables - DISABLED to prevent conflicts 
+    /* Dark theme-specific variables - Re-enabled since main site now reapplies theme on navigation */
     --theme-bg-color: #0a0a0a;
     --theme-text-color: #e5e5e5;
     --theme-header-bg: rgba(17, 17, 17, 0.95);
     --theme-header-text: #ffffff;
     --theme-header-font: ui-monospace, SFMono-Regular, "SF Mono", Monaco, Inconsolata, "Roboto Mono", monospace;
-    */
     --theme-heading-color: #ffffff;
     
     --background: 0 0% 14.5%;       /* Deep neutral */
