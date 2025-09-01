@@ -60,8 +60,8 @@ export function HomePage({ projects }: { projects: Project[] }) {
     {
       title: "Style Guide",
       description: "Interactive design system showcase with live theme switching and component previews",
-      link: "/styleguide",
-      github: "https://github.com/arach/arach.dev/tree/main/app/styleguide",
+      link: "/gallery/application",
+      github: "https://github.com/arach/arach.dev/tree/main/app/gallery/application",
       tags: ["Design System", "UI/UX", "Theming"]
     },
     {

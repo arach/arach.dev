@@ -460,6 +460,37 @@ export function DebugToolbar({}: DebugToolbarProps) {
                         styling to ensure readability.
                       </div>
                     </div>
+
+                    {/* Gallery Links */}
+                    <div className="p-3 rounded-lg bg-purple-500/10 border border-purple-500/20">
+                      <div className="text-xs text-purple-400 mb-2">🎨 Theme Galleries</div>
+                      <div className="space-y-2">
+                        <a
+                          href="/gallery/site"
+                          target="_blank"
+                          rel="noopener noreferrer"
+                          className="block px-3 py-2 rounded-lg text-xs
+                                   bg-gray-800/50 hover:bg-gray-800
+                                   border border-gray-700/50 hover:border-gray-600
+                                   text-gray-300 hover:text-white
+                                   transition-all duration-200"
+                        >
+                          View Site Theme Gallery →
+                        </a>
+                        <a
+                          href="/gallery/application"
+                          target="_blank"
+                          rel="noopener noreferrer"
+                          className="block px-3 py-2 rounded-lg text-xs
+                                   bg-gray-800/50 hover:bg-gray-800
+                                   border border-gray-700/50 hover:border-gray-600
+                                   text-gray-300 hover:text-white
+                                   transition-all duration-200"
+                        >
+                          View Application Theme Gallery →
+                        </a>
+                      </div>
+                    </div>
                   </motion.div>
                 )}
 
