@@ -242,6 +242,19 @@ export function HomePage({ projects }: { projects: Project[] }) {
 
   return (
     <TooltipProvider>
+      <style jsx global>{`
+        /* Homepage-specific ASCII color mapping */
+        :root {
+          --ascii-display-color: var(--theme-heading-color);
+        }
+        /* Dark/vibrant themes use accent for visual pop */
+        [data-theme="dark"],
+        [data-theme="terminal"],
+        [data-theme="ocean"],
+        [data-theme="cyberpunk"] {
+          --ascii-display-color: var(--theme-accent-color);
+        }
+      `}</style>
       <div ref={containerRef} className="max-w-4xl mx-auto py-4 sm:py-8 text-xs relative z-45" style={{ color: 'var(--theme-text)' }}>
         {/* Optimized Hero for LCP - renders immediately without animation */}
         <HeroASCIIBanner />

@@ -20,7 +20,7 @@ export function HeroASCIIBanner() {
           transform: translateZ(0);
           will-change: auto;
           contain: layout style paint;
-          color: var(--theme-ascii-color, #000);
+          color: var(--ascii-display-color, var(--theme-text-color, #000));
         }
         @media (min-width: 475px) {
           .hero-ascii { font-size: 5px; }
