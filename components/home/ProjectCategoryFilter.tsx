@@ -1,7 +1,7 @@
 'use client'
 
 import { motion } from 'framer-motion'
-import { useTheme } from '@/lib/theme-context'
+import { useTheme } from '@/lib/theme-provider-clean'
 import { GitHubContributions } from './'
 
 interface Project {

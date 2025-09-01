@@ -1,0 +1,34 @@
+/* 
+ * Theme System Entry Point
+ * Each theme is a separate, readable file
+ * Only the active theme gets loaded via JavaScript
+ */
+
+/* Base structure all themes inherit */
+@layer base {
+  :root {
+    /* Structure only - values come from theme files */
+    --theme-bg: initial;
+    --theme-text: initial;
+    --theme-accent: initial;
+    --theme-muted: initial;
+    --theme-border: initial;
+    --theme-card: initial;
+    --theme-header-bg: initial;
+    --theme-header-text: initial;
+    --theme-header-font: initial;
+    --theme-shadow: initial;
+    --theme-heading: initial;
+  }
+}
+
+/* Transition system */
+@layer utilities {
+  .theme-transition * {
+    @apply transition-colors duration-300 ease-in-out;
+  }
+  
+  .no-transitions * {
+    @apply transition-none;
+  }
+}

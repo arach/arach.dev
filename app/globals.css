@@ -7,23 +7,8 @@
     --background: 0 0% 100%;
     --foreground: 222.2 84% 4.9%;
 
-    /* Theme-specific variables - only these change with themes */
-    --theme-bg-color: #ffffff;
-    --theme-text-color: #111827; /* gray-900 */
-    --theme-header-bg: rgba(0, 0, 0, 1);
-    --theme-header-text: #ffffff;
-    --theme-header-font: inherit; /* Can be changed per theme */
-    --theme-border-color: #e5e7eb;
-    --theme-accent-color: #3b82f6;
-    --theme-shadow-color: rgba(0, 0, 0, 0.1);
-    --theme-muted-text: #6b7280;
-    --theme-card-bg: #f9fafb;
-    --theme-code-font: inherit;
-    --theme-ascii-color: #000000;
-    --theme-project-card-text: #111827;
-    --theme-project-card-bg: #ffffff;
-    --theme-dot-opacity: 0.15;
-    --theme-heading-color: #111827;
+    /* Theme variables are now set dynamically by theme-engine.ts */
+    /* Fallback values for development */
 
     --card: 0 0% 100%;
     --card-foreground: 222.2 84% 4.9%;
@@ -53,61 +38,11 @@
     --radius: 0.5rem;
   }
 
-  /* Theme definitions - only change the specific properties */
-  .theme-dark {
-    --theme-bg-color: #0a0a0a;
-    --theme-text-color: #e5e5e5;
-    --theme-header-bg: rgba(17, 17, 17, 0.95);
-    --theme-header-text: #ffffff;
-    --theme-header-font: inherit;
-  }
-
-  .theme-ocean {
-    --theme-bg-color: #0f172a;
-    --theme-text-color: #cbd5e1;
-    --theme-header-bg: rgba(30, 58, 138, 0.9);
-    --theme-header-text: #e0f2fe;
-    --theme-header-font: inherit;
-  }
-
-  .theme-forest {
-    --theme-bg-color: #14532d;
-    --theme-text-color: #dcfce7;
-    --theme-header-bg: rgba(20, 83, 45, 0.95);
-    --theme-header-text: #f0fdf4;
-    --theme-header-font: inherit;
-  }
-
-  .theme-sunset {
-    --theme-bg-color: #fef3c7;
-    --theme-text-color: #7c2d12;
-    --theme-header-bg: rgba(251, 146, 60, 0.9);
-    --theme-header-text: #ffffff;
-    --theme-header-font: inherit;
-  }
-
-  .theme-terminal {
-    --theme-bg-color: #0a0a0b;
-    --theme-text-color: #ffffff;
-    --theme-header-bg: rgba(39, 39, 42, 0.95);
-    --theme-header-text: #ffffff;
-    --theme-header-font: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace;
-    --theme-border-color: #27272a;
-    --theme-accent-color: #00b4d8;
-    --theme-shadow-color: rgba(0, 0, 0, 0.5);
-    --theme-muted-text: #a1a1aa;
-    --theme-card-bg: #27272a;
-    --theme-code-font: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace;
-    --theme-ascii-color: #00b4d8;
-    --theme-project-card-text: #ffffff;
-    --theme-project-card-bg: #18181b;
-    --theme-dot-opacity: 0.08;
-    --theme-heading-color: #ffffff;
-  }
+  /* Legacy theme definitions removed - now handled by theme-engine.ts */
 
   body {
     background: var(--theme-bg-color);
-    color: var(--theme-text-color);
+    color: var(--theme-text-color-color);
     transition: background-color 0.3s ease, color 0.3s ease;
   }
 
@@ -117,7 +52,7 @@
   h4,
   h5,
   h6 {
-    color: var(--theme-heading-color);
+    color: var(--theme-heading-color-color);
     font-family: var(--theme-header-font);
     font-weight: 600;
     letter-spacing: -0.02em;
@@ -125,19 +60,19 @@
   
   /* Ensure good readability for h2, h3, h4 specifically */
   h2 {
-    color: var(--theme-heading-color);
+    color: var(--theme-heading-color-color);
     font-size: 1.5rem;
     font-weight: 700;
   }
   
   h3 {
-    color: var(--theme-heading-color);
+    color: var(--theme-heading-color-color);
     font-size: 1.25rem;
     font-weight: 600;
   }
   
   h4 {
-    color: var(--theme-heading-color);
+    color: var(--theme-heading-color-color);
     font-size: 1.125rem;
     font-weight: 600;
   }
@@ -173,7 +108,7 @@
   
   /* Theme-aware muted text */
   .theme-muted {
-    color: var(--theme-muted-text);
+    color: var(--theme-muted-color);
   }
   
   /* Theme-aware accent elements */

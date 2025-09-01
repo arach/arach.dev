@@ -3,7 +3,7 @@
 import React from 'react';
 import { motion } from 'framer-motion';
 import { ExternalLink, Github } from 'lucide-react';
-import { useTheme } from '@/lib/theme-context';
+import { useTheme } from '@/lib/theme-provider-clean';
 
 interface Project {
   title: string;

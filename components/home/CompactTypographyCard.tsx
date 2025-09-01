@@ -3,7 +3,7 @@
 import React from 'react';
 import { motion } from 'framer-motion';
 import { ArrowRight, Github } from 'lucide-react';
-import { useTheme } from '@/lib/theme-context';
+import { useTheme } from '@/lib/theme-provider-clean';
 
 interface Project {
   title: string;
@@ -32,7 +32,8 @@ export function CompactTypographyCard({
   cardRef,
 }: CompactTypographyCardProps) {
   const projectNumber = String(index + 1).padStart(2, '0');
-  const { currentTheme: theme } = useTheme();
+  const { currentTheme, themes } = useTheme();
+  const theme = themes[currentTheme];
   
   // Helper to convert hex to rgba
   const hexToRgba = (hex: string, alpha: number) => {
@@ -47,28 +48,28 @@ export function CompactTypographyCard({
     if (isKeyboardFocused) {
       // When focused, use accent color
       return {
-        bg: theme?.accentColor ? hexToRgba(theme.accentColor, 0.1) : 'rgb(219 234 254)',
-        text: theme?.accentColor || 'rgb(37 99 235)',
-        border: theme?.accentColor ? hexToRgba(theme.accentColor, 0.2) : 'rgb(191 219 254)',
+        bg: theme?.colors?.accent ? hexToRgba(theme.colors.accent, 0.1) : 'rgb(219 234 254)',
+        text: theme?.colors?.accent || 'rgb(37 99 235)',
+        border: theme?.colors?.accent ? hexToRgba(theme.colors.accent, 0.2) : 'rgb(191 219 254)',
       };
     }
     
     // Use theme colors with subtle opacity
-    if (theme?.name === 'dark' || theme?.name === 'terminal' || theme?.name === 'cyberpunk') {
+    if (currentTheme === 'dark' || currentTheme === 'terminal' || currentTheme === 'cyberpunk') {
       return {
-        bg: theme?.accentColor ? hexToRgba(theme.accentColor, 0.05) : 'rgba(255, 255, 255, 0.03)',
-        text: theme?.mutedTextColor || 'rgba(255, 255, 255, 0.5)',
-        border: theme?.borderColor || 'rgba(255, 255, 255, 0.1)',
-        hoverBorder: theme?.accentColor ? hexToRgba(theme.accentColor, 0.15) : 'rgba(255, 255, 255, 0.15)',
+        bg: theme?.colors?.accent ? hexToRgba(theme.colors.accent, 0.05) : 'rgba(255, 255, 255, 0.03)',
+        text: theme?.colors?.muted || 'rgba(255, 255, 255, 0.5)',
+        border: theme?.colors?.border || 'rgba(255, 255, 255, 0.1)',
+        hoverBorder: theme?.colors?.accent ? hexToRgba(theme.colors.accent, 0.15) : 'rgba(255, 255, 255, 0.15)',
       };
     }
     
     // For light themes, use subtle tinted backgrounds
     return {
-      bg: theme?.cardBg || 'rgb(255, 255, 255)',
-      text: theme?.mutedTextColor || 'rgb(75, 85, 99)',
-      border: theme?.borderColor || 'rgb(229, 231, 235)',
-      hoverBorder: theme?.accentColor ? hexToRgba(theme.accentColor, 0.15) : 'rgb(209, 213, 219)',
+      bg: theme?.colors?.card || 'rgb(255, 255, 255)',
+      text: theme?.colors?.muted || 'rgb(75, 85, 99)',
+      border: theme?.colors?.border || 'rgb(229, 231, 235)',
+      hoverBorder: theme?.colors?.accent ? hexToRgba(theme.colors.accent, 0.15) : 'rgb(209, 213, 219)',
     };
   };
   
@@ -101,7 +102,7 @@ export function CompactTypographyCard({
           : 'opacity-20 group-hover:opacity-40'}
       `}
       style={{
-        color: isKeyboardFocused ? undefined : 'var(--theme-muted-text)'
+        color: isKeyboardFocused ? undefined : 'var(--theme-muted)'
       }}>
         {projectNumber}
       </span>
@@ -118,7 +119,7 @@ export function CompactTypographyCard({
             : ''}
         `}
         style={{
-          color: isKeyboardFocused ? undefined : 'var(--theme-heading-color, var(--theme-text-color))'
+          color: isKeyboardFocused ? undefined : 'var(--theme-heading, var(--theme-text))'
         }}>
           {project.title}
         </h3>
@@ -133,7 +134,7 @@ export function CompactTypographyCard({
         style={{
           fontSize: '0.75rem',
           fontWeight: 300,
-          color: 'var(--theme-muted-text)',
+          color: 'var(--theme-muted)',
           opacity: isKeyboardFocused ? 1 : 0.9
         }}>
           {project.description}
