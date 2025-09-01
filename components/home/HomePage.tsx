@@ -255,12 +255,12 @@ export function HomePage({ projects }: { projects: Project[] }) {
           --ascii-display-color: var(--theme-accent-color);
         }
       `}</style>
-      <div ref={containerRef} className="max-w-4xl mx-auto py-4 sm:py-8 text-xs relative z-45" style={{ color: 'var(--theme-text)' }}>
+      <div ref={containerRef} className="max-w-4xl mx-auto py-4 sm:py-8 text-xs relative z-45" style={{ color: 'var(--theme-text-color)' }}>
         {/* Optimized Hero for LCP - renders immediately without animation */}
         <HeroASCIIBanner />
         
         <motion.div className="mb-4 sm:mb-8" {...fadeInUp}>
-          <div className="border-l-2 pl-2 sm:pl-4 text-[10px] sm:text-xs mb-4 relative z-10 flex flex-col sm:flex-row sm:items-center sm:justify-between gap-2" style={{ borderColor: 'var(--theme-border)', color: 'var(--theme-muted)' }}>
+          <div className="border-l-2 pl-2 sm:pl-4 text-[10px] sm:text-xs mb-4 relative z-10 flex flex-col sm:flex-row sm:items-center sm:justify-between gap-2" style={{ borderColor: 'var(--theme-border-color)', color: 'var(--theme-muted-color)' }}>
             <div>
               <span className="text-[10px] sm:text-xs">4x ex-CTO, 2x ex-founder, ex-Meta Engineering</span>{" "}
               <a
@@ -268,7 +268,7 @@ export function HomePage({ projects }: { projects: Project[] }) {
                 target="_blank"
                 rel="noopener noreferrer"
                 className="transition-colors text-[10px] sm:text-xs underline cursor-pointer relative z-20 hover:opacity-80"
-                style={{ color: 'var(--theme-muted)' }}
+                style={{ color: 'var(--theme-muted-color)' }}
               >
                 → more info
               </a>

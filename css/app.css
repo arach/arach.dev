@@ -1,0 +1,5 @@
+/* Tailwind CSS v4 Main Entry */
+@import "tailwindcss";
+
+/* V4 uses automatic content detection from the project root */
+/* No need for @source or @config directives */

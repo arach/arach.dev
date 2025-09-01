@@ -1,115 +1,76 @@
 'use client';
 
-import React, { useState } from 'react';
-import { motion, AnimatePresence } from 'framer-motion';
-import { Palette, Check } from 'lucide-react';
-import { useTheme } from '@/lib/theme/site/provider';
+import { useState } from 'react';
 import { usePathname } from 'next/navigation';
+import { useTheme } from '@/hooks/useTheme';
+import { Button } from '@/components/ui/button';
+import { 
+  DropdownMenu, 
+  DropdownMenuContent, 
+  DropdownMenuItem, 
+  DropdownMenuTrigger 
+} from '@/components/ui/dropdown-menu';
+import { Palette } from 'lucide-react';
 
-export default function ThemePicker() {
-  const { currentTheme, setTheme, themes } = useTheme();
-  const [isOpen, setIsOpen] = useState(false);
+export function ThemePicker() {
   const pathname = usePathname();
-  
+  const { currentTheme, themes, themeIds, switchTheme, isLoading } = useTheme();
+  const [isOpen, setIsOpen] = useState(false);
+
   // Don't render on gallery pages - they have their own theme system
   if (pathname?.startsWith('/gallery')) {
     return null;
   }
-  
-  // Convert themes object to array for display
-  const themeList = Object.values(themes)
+
+  const handleThemeSwitch = async (themeId: string) => {
+    await switchTheme(themeId);
+    setIsOpen(false);
+  };
 
   return (
-    <div className="fixed bottom-4 right-4 z-50">
-      <AnimatePresence>
-        {isOpen && (
-          <motion.div
-            initial={{ opacity: 0, y: 10, scale: 0.95 }}
-            animate={{ opacity: 1, y: 0, scale: 1 }}
-            exit={{ opacity: 0, y: 10, scale: 0.95 }}
-            transition={{ duration: 0.2 }}
-            className="absolute bottom-12 right-0 backdrop-blur-xl rounded-lg shadow-2xl border border-gray-500/20 p-1.5 min-w-[160px]"
-            style={{
-              backgroundColor: 'var(--theme-bg)',
-              borderColor: 'var(--theme-border)',
-            }}
+    <DropdownMenu open={isOpen} onOpenChange={setIsOpen}>
+      <DropdownMenuTrigger asChild>
+        <Button 
+          variant="ghost" 
+          size="sm" 
+          className="h-8 w-8 p-0"
+          disabled={isLoading}
+        >
+          <Palette className="h-4 w-4" />
+          <span className="sr-only">Toggle theme</span>
+        </Button>
+      </DropdownMenuTrigger>
+      <DropdownMenuContent align="end" className="w-48">
+        {themes.map((theme) => (
+          <DropdownMenuItem
+            key={theme.id}
+            onClick={() => handleThemeSwitch(theme.id)}
+            className="flex items-center justify-between cursor-pointer"
           >
-            <div className="space-y-1">
-              {themeList.map((theme) => (
-                <button
-                  key={theme.id}
-                  onClick={() => {
-                    setTheme(theme.id as any);
-                    setIsOpen(false);
-                  }}
-                  className={`
-                    w-full flex items-center gap-2 px-2.5 py-1.5 rounded-md
-                    transition-all duration-200 text-left
-                    ${currentTheme === theme.id 
-                      ? 'bg-gray-500/10' 
-                      : 'hover:bg-gray-500/5'}
-                  `}
-                >
-                  <div className="flex items-center gap-2 flex-1">
-                    {/* Color preview - use actual theme colors */}
-                    <div className="flex gap-0.5">
-                      <span 
-                        className="w-1.5 h-1.5 rounded-full border border-gray-600/30"
-                        style={{ backgroundColor: theme.colors.bg }}
-                      />
-                      <span 
-                        className="w-1.5 h-1.5 rounded-full"
-                        style={{ backgroundColor: theme.colors.accent }}
-                      />
-                      <span 
-                        className="w-1.5 h-1.5 rounded-full"
-                        style={{ backgroundColor: theme.colors.text }}
-                      />
-                    </div>
-                    <span className="text-[11px] font-light" style={{ color: 'var(--theme-text-color)' }}>
-                      {theme.name}
-                    </span>
-                  </div>
-                  {currentTheme === theme.id && (
-                    <span className="w-1 h-1 rounded-full bg-blue-400" />
-                  )}
-                </button>
-              ))}
+            <div className="flex items-center gap-2 flex-1">
+              {/* Color preview - use actual theme colors */}
+              <div className="flex gap-0.5">
+                <span 
+                  className="w-1.5 h-1.5 rounded-full border border-gray-600/30"
+                  style={{ backgroundColor: theme.colors.bg }}
+                />
+                <span 
+                  className="w-1.5 h-1.5 rounded-full"
+                  style={{ backgroundColor: theme.colors.accent }}
+                />
+                <span 
+                  className="w-1.5 h-1.5 rounded-full"
+                  style={{ backgroundColor: theme.colors.text }}
+                />
+              </div>
+              <span className="text-sm">{theme.name}</span>
             </div>
-          </motion.div>
-        )}
-      </AnimatePresence>
-
-      {/* Theme toggle button - super subtle */}
-      <motion.button
-        whileTap={{ scale: 0.95 }}
-        onClick={() => setIsOpen(!isOpen)}
-        className={`
-          relative p-2.5 rounded-full
-          backdrop-blur-md
-          transition-all duration-500
-          group
-          ${isOpen 
-            ? 'bg-gray-900/90 border-gray-600/50' 
-            : 'bg-gray-500/10 hover:bg-gray-500/20 border-gray-500/10 hover:border-gray-500/20'}
-          border
-        `}
-        style={{
-          backgroundColor: isOpen ? undefined : 'var(--theme-bg)',
-          opacity: isOpen ? 1 : 0.7,
-        }}
-        aria-label="Change theme"
-      >
-        <Palette 
-          className={`
-            w-3.5 h-3.5 transition-all duration-300
-            ${isOpen ? 'text-blue-400' : ''}
-          `}
-          style={{
-            color: isOpen ? undefined : 'var(--theme-muted)'
-          }}
-        />
-      </motion.button>
-    </div>
+            {currentTheme === theme.id && (
+              <span className="text-xs text-muted-foreground">✓</span>
+            )}
+          </DropdownMenuItem>
+        ))}
+      </DropdownMenuContent>
+    </DropdownMenu>
   );
 }

@@ -1,14 +1,30 @@
-@tailwind base;
-@tailwind components;
-@tailwind utilities;
+@import "tailwindcss";
+@reference "tailwindcss";
 
 @layer base {
   :root {
     --background: 0 0% 100%;
     --foreground: 222.2 84% 4.9%;
 
-    /* Theme variables are now set dynamically by theme-engine.ts */
-    /* Fallback values for development */
+    /* Default theme variables - fallback when no theme is set */
+    --theme-bg-color: #ffffff;
+    --theme-text-color: #111827;
+    --theme-accent-color: #3b82f6;
+    --theme-muted-color: #6b7280;
+    --theme-border-color: #e5e7eb;
+    --theme-card-bg: #f9fafb;
+    --theme-shadow-color: rgba(0, 0, 0, 0.1);
+    --theme-header-bg: rgba(0, 0, 0, 1);
+    --theme-header-text-color: #ffffff;
+    --theme-heading-color: #111827;
+    --theme-dot-opacity: 0.15;
+    --theme-blur: 12px;
+    --theme-font-sans: var(--font-geist-sans);
+    --theme-font-mono: var(--font-ibm-plex-mono);
+    --theme-header-font: var(--font-geist-sans);
+    --theme-heading-font: var(--font-geist-sans);
+    --theme-body-font: var(--font-geist-sans);
+    --theme-code-font: var(--font-ibm-plex-mono);
 
     --card: 0 0% 100%;
     --card-foreground: 222.2 84% 4.9%;
@@ -38,7 +54,27 @@
     --radius: 0.5rem;
   }
 
-  /* Legacy theme definitions removed - now handled by theme-engine.ts */
+  /* Default theme values - exact match from default.theme.ts */
+  [data-theme="default"] {
+    --theme-bg-color: #ffffff;
+    --theme-text-color: #111827;
+    --theme-accent-color: #3b82f6;
+    --theme-muted-color: #6b7280;
+    --theme-border-color: #e5e7eb;
+    --theme-card-bg: #f9fafb;
+    --theme-shadow-color: rgba(0, 0, 0, 0.1);
+    --theme-header-bg: rgba(0, 0, 0, 1);
+    --theme-header-text-color: #ffffff;
+    --theme-heading-color: #111827;
+    --theme-dot-opacity: 0.15;
+    --theme-blur: 12px;
+    --theme-font-sans: var(--font-geist-sans);
+    --theme-font-mono: var(--font-ibm-plex-mono);
+    --theme-header-font: var(--font-geist-sans);
+    --theme-heading-font: var(--font-geist-sans);
+    --theme-body-font: var(--font-geist-sans);
+    --theme-code-font: var(--font-ibm-plex-mono);
+  }
 
   body {
     background: var(--theme-bg-color);

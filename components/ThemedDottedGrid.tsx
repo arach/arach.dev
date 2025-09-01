@@ -23,10 +23,12 @@ export default function ThemedDottedGrid() {
       const root = document.documentElement;
       const computedStyle = getComputedStyle(root);
       
-      // Get dot color from CSS variable (accent color)
-      const accentColor = computedStyle.getPropertyValue('--theme-accent').trim() || '#3b82f6';
+      // Get dot color from CSS variable (accent color) with fallback
+      const accentColor = computedStyle.getPropertyValue('--theme-accent-color').trim() || 
+                         computedStyle.getPropertyValue('--theme-accent').trim() || 
+                         '#3b82f6';
       
-      // Get dot opacity from CSS variable
+      // Get dot opacity from CSS variable with fallback
       const dotOpacity = computedStyle.getPropertyValue('--theme-dot-opacity').trim();
       const opacity = dotOpacity ? parseFloat(dotOpacity) : 0.15;
       

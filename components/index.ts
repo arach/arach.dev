@@ -26,7 +26,7 @@ export { default as ThemedDottedGrid } from './ThemedDottedGrid'
 export { default as StaticPathBackground } from './StaticPathBackground'
 
 // Theme components
-export { default as ThemePicker } from './ThemePicker'
+export { ThemePicker } from './ThemePicker'
 
 // Command line component
 export { default as CommandLine } from './CommandLine'

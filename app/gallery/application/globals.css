@@ -375,9 +375,33 @@
 }
 
 @layer base {
+  /* Modern Dark Theme Base */
+  :root {
+    --background: 0 0% 3.9%;
+    --foreground: 0 0% 98%;
+    --card: 0 0% 7%;
+    --card-foreground: 0 0% 98%;
+    --popover: 0 0% 7%;
+    --popover-foreground: 0 0% 98%;
+    --primary: 217 91% 60%;
+    --primary-foreground: 0 0% 98%;
+    --secondary: 0 0% 14.9%;
+    --secondary-foreground: 0 0% 98%;
+    --muted: 0 0% 14.9%;
+    --muted-foreground: 0 0% 63.9%;
+    --accent: 217 91% 60%;
+    --accent-foreground: 0 0% 98%;
+    --destructive: 0 62.8% 50.6%;
+    --destructive-foreground: 0 0% 98%;
+    --border: 0 0% 14.9%;
+    --input: 0 0% 14.9%;
+    --ring: 217 91% 60%;
+    --radius: 0.5rem;
+  }
+  
   .styleguide-container {
     /* Styleguide UI layer - independent font system */
-    font-family: var(--font-geist), system-ui, -apple-system, sans-serif;
+    font-family: var(--font-geist-sans), system-ui, -apple-system, sans-serif;
     
     /* Ensure all UI chrome uses Geist regardless of theme */
   }
@@ -392,35 +416,36 @@
   }
   
   
-  /* Terminal Theme */
+  /* Terminal Theme - Enhanced with better contrast */
   .theme-terminal {
     /* Terminal Typography - Heavy monospace usage */
-    --theme-font-sans: var(--font-jetbrains-mono), 'SF Mono', monospace;
-    --theme-font-mono: var(--font-jetbrains-mono), 'Fira Code', monospace;
+    --theme-font-sans: var(--font-geist-sans), system-ui, -apple-system, sans-serif;
+    --theme-font-mono: var(--font-geist-mono), 'JetBrains Mono', 'SF Mono', monospace;
     
-    --background: 220 13% 5%;
-    --foreground: 0 0% 100%;
-    --card: 217 33% 7%;
-    --card-foreground: 0 0% 100%;
-    --popover: 217 33% 7%;
-    --popover-foreground: 0 0% 100%;
-    --primary: 200 96% 43%;
+    --background: 220 15% 3%;
+    --foreground: 0 0% 95%;
+    --card: 220 15% 8%;
+    --card-foreground: 0 0% 95%;
+    --popover: 220 15% 8%;
+    --popover-foreground: 0 0% 95%;
+    --primary: 197 97% 46%;
     --primary-foreground: 0 0% 100%;
-    --secondary: 217 32% 15%;
+    --secondary: 217 20% 18%;
     --secondary-foreground: 210 40% 90%;
-    --muted: 217 32% 15%;
+    --muted: 217 20% 25%;
     --muted-foreground: 215 20% 65%;
-    --accent: 200 96% 43%;
+    --accent: 197 97% 46%;
     --accent-foreground: 0 0% 100%;
-    --destructive: 0 75% 55%;
+    --destructive: 0 75% 50%;
     --destructive-foreground: 0 0% 100%;
-    --success: 142 76% 55%;
+    --success: 142 76% 45%;
     --success-foreground: 0 0% 100%;
-    --warning: 45 93% 60%;
+    --warning: 45 93% 55%;
     --warning-foreground: 220 13% 5%;
-    --border: 217 32% 15%;
-    --input: 217 32% 15%;
-    --ring: 200 96% 43%;
+    --border: 217 20% 18%;
+    --input: 217 20% 13%;
+    --ring: 197 97% 46%;
+    --radius: 0.375rem;
   }
   
   /* Cyberpunk Theme */
@@ -608,6 +633,21 @@
   body {
     background-color: hsl(var(--background));
     color: hsl(var(--foreground));
+    font-feature-settings: "liga" 1, "calt" 1;
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+  }
+  
+  /* Ensure dark background for the application gallery */
+  body.theme-terminal {
+    background-color: hsl(220 15% 3%);
+    color: hsl(0 0% 95%);
+  }
+  
+  body.theme-terminal.dark,
+  .dark body.theme-terminal {
+    background-color: hsl(220 15% 3%);
+    color: hsl(0 0% 95%);
   }
 
   /* Tactical Section Headers - Command Center Interface */

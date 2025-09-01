@@ -318,7 +318,7 @@ function TacticalHeader({
   theme = null,
   status = 'active',
   statusColor = 'success',
-  accentColor = 'var(--theme-accent-color)',
+  accentColor = 'hsl(var(--primary))',
   revision = '2.0.1',
   showMetrics = true
 }: TacticalHeaderProps) {
@@ -332,8 +332,8 @@ function TacticalHeader({
            style={{ top: 'var(--header-height, 39px)' }}
            role="status" 
            aria-label="System status">
-        <div className="flex items-center">
-          <div className="w-1 mr-4" style={{ height: '20px', backgroundColor: accentColor }} aria-hidden="true"></div>
+        <div className="flex items-center py-0.5">
+          <div className="w-0.5 mr-3" style={{ height: '16px', backgroundColor: accentColor }} aria-hidden="true"></div>
           <div className="flex items-center gap-3 mr-6">
             {/* Status indicators */}
             <div className="flex items-center gap-1" role="status" aria-label={`${status} status`}>
@@ -587,9 +587,12 @@ function StyleGuideContent() {
   // Apply base UI theme (terminal) to body for consistent chrome
   // Component themes are passed via props and don't affect global styles
   useEffect(() => {
-    // Always use theme-terminal for the UI chrome to maintain dark mode
-    // The actual component theme is passed as props to each section
-    document.body.className = 'theme-terminal'
+    // Add theme-terminal class to body without overwriting existing classes
+    document.body.classList.add('theme-terminal')
+    if (darkMode) {
+      document.documentElement.classList.add('dark')
+      document.body.classList.add('dark')
+    }
     
     // Set CSS variables for layout measurements
     document.documentElement.style.setProperty('--header-height', '39px')
@@ -613,8 +616,10 @@ function StyleGuideContent() {
       localStorage.setItem('dark-mode', String(darkMode))
       if (darkMode) {
         document.documentElement.classList.add('dark')
+        document.body.classList.add('dark')
       } else {
         document.documentElement.classList.remove('dark')
+        document.body.classList.remove('dark')
       }
     }
   }, [darkMode, isHydrated])
@@ -760,7 +765,7 @@ function StyleGuideContent() {
   ]
 
   return (
-    <main className="min-h-screen bg-background text-foreground">
+    <main className="min-h-screen bg-[hsl(220_15%_3%)] text-[hsl(0_0%_95%)]">
       {/* Header */}
       <header className={`border-b border-border bg-background/95 backdrop-blur-md sticky top-0 z-30 py-1 px-6 ${uiAnimations ? 'transition-all duration-300' : ''}`}>
           <div className="flex items-center justify-between">

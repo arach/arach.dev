@@ -1,0 +1,35 @@
+/* Gallery-specific overrides to remove main site elements */
+
+/* Hide the main site header on gallery pages */
+body:has(.styleguide-container) > div > header:first-of-type,
+body:has(.styleguide-container) header:has(nav) {
+  display: none !important;
+}
+
+/* Hide the main site footer on gallery pages */
+body:has(.styleguide-container) > footer,
+body:has(.styleguide-container) footer {
+  display: none !important;
+}
+
+/* Hide console art and theme picker from main layout */
+body:has(.styleguide-container) > div > div[hidden] {
+  display: none !important;
+}
+
+/* Remove main layout padding */
+body:has(.styleguide-container) > div > main {
+  padding-top: 0 !important;
+}
+
+/* Ensure dark background for gallery pages */
+body:has(.styleguide-container) {
+  background-color: hsl(220 15% 3%) !important;
+  color: hsl(0 0% 95%) !important;
+  min-height: 100vh;
+}
+
+/* Make sure the gallery container takes full height */
+.styleguide-container {
+  min-height: 100vh;
+}

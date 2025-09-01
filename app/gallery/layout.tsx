@@ -1,14 +1,12 @@
 import type { Metadata } from 'next'
 import './application/globals.css'
+import './gallery-overrides.css'
 import { JetBrains_Mono, Manrope } from 'next/font/google'
-import { Geist } from 'next/font/google'
+import { GeistSans, GeistMono } from 'geist/font'
 
-// Style Guide UI Font
-const geist = Geist({ 
-  subsets: ['latin'],
-  variable: '--font-geist',
-  display: 'swap',
-})
+// Style Guide UI Fonts
+const geistSans = GeistSans
+const geistMono = GeistMono
 
 // Theme Demonstration Fonts
 const manrope = Manrope({ 
@@ -34,7 +32,7 @@ export default function StyleGuideLayout({
   children: React.ReactNode
 }) {
   return (
-    <div className={`styleguide-container ${geist.variable} ${manrope.variable} ${jetbrainsMono.variable} font-geist antialiased`}>
+    <div className={`styleguide-container ${geistSans.variable} ${geistMono.variable} ${manrope.variable} ${jetbrainsMono.variable} antialiased`}>
       {children}
     </div>
   )

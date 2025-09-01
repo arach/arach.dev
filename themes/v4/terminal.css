@@ -1,0 +1,20 @@
+/* Terminal Theme for Tailwind v4 */
+@layer theme {
+  [data-theme="terminal"] {
+    /* Core colors */
+    --color-background: 10 10 11;     /* #0a0a0b */
+    --color-foreground: 255 255 255;  /* #ffffff */
+    --color-primary: 0 180 216;       /* #00b4d8 */
+    --color-muted: 161 161 170;       /* #a1a1aa */
+    --color-border: 39 39 42;         /* #27272a */
+    --color-card: 39 39 42;           /* #27272a */
+    
+    /* Typography */
+    --font-family-base: var(--font-ibm-plex-mono), ui-monospace, monospace;
+    --font-family-heading: var(--font-ibm-plex-mono), ui-monospace, monospace;
+    
+    /* Effects */
+    --opacity-dots: 0.08;
+    --blur-amount: 8px;
+  }
+}
