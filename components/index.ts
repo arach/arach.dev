@@ -27,7 +27,6 @@ export { default as StaticPathBackground } from './StaticPathBackground'
 
 // Theme components
 export { default as ThemePicker } from './ThemePicker'
-export { default as FontLoader } from './FontLoader'
 
 // Command line component
 export { default as CommandLine } from './CommandLine'

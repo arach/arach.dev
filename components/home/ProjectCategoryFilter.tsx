@@ -1,7 +1,6 @@
 'use client'
 
 import { motion } from 'framer-motion'
-import { useTheme } from '@/lib/theme-provider-clean'
 import { GitHubContributions } from './'
 
 interface Project {
@@ -37,15 +36,6 @@ export function ProjectCategoryFilter({
   onButtonClick,
   headerActions,
 }: ProjectCategoryFilterProps) {
-  const { currentTheme: theme } = useTheme()
-
-  // Helper to convert hex to rgba
-  const hexToRgba = (hex: string, alpha: number) => {
-    const r = parseInt(hex.slice(1, 3), 16);
-    const g = parseInt(hex.slice(3, 5), 16);
-    const b = parseInt(hex.slice(5, 7), 16);
-    return `rgba(${r}, ${g}, ${b}, ${alpha})`;
-  };
 
   return (
     <div className="mb-4 sm:mb-6 relative z-45">
@@ -63,31 +53,11 @@ export function ProjectCategoryFilter({
       {/* Desktop category buttons */}
       <div className="hidden sm:flex flex-wrap gap-1.5 mb-4">
         <button
-          className="text-[10px] uppercase tracking-wide px-2 py-1 rounded-sm transition-all duration-500 backdrop-blur-md border"
-          style={{
-            backgroundColor: selectedCategory === "all" 
-              ? (theme?.accentColor ? hexToRgba(theme.accentColor, 0.1) : 'rgba(59, 130, 246, 0.1)') 
-              : (theme?.accentColor ? hexToRgba(theme.accentColor, 0.03) : 'rgba(255, 255, 255, 0.02)'),
-            borderColor: selectedCategory === "all"
-              ? (theme?.accentColor ? hexToRgba(theme.accentColor, 0.2) : 'rgba(59, 130, 246, 0.2)')
-              : 'rgba(107, 114, 128, 0.05)',
-            color: selectedCategory === "all" 
-              ? (theme?.accentColor || 'rgb(59, 130, 246)') 
-              : (theme?.mutedTextColor || 'rgb(156, 163, 175)'),
-            fontWeight: 400
-          }}
-          onMouseEnter={(e) => {
-            if (selectedCategory !== "all") {
-              e.currentTarget.style.backgroundColor = theme?.accentColor ? hexToRgba(theme.accentColor, 0.05) : 'rgba(255, 255, 255, 0.04)';
-              e.currentTarget.style.borderColor = 'rgba(107, 114, 128, 0.1)';
-            }
-          }}
-          onMouseLeave={(e) => {
-            if (selectedCategory !== "all") {
-              e.currentTarget.style.backgroundColor = theme?.accentColor ? hexToRgba(theme.accentColor, 0.03) : 'rgba(255, 255, 255, 0.02)';
-              e.currentTarget.style.borderColor = 'rgba(107, 114, 128, 0.05)';
-            }
-          }}
+          className={`text-[10px] uppercase tracking-wide px-2 py-1 rounded-sm transition-all duration-500 backdrop-blur-md border ${
+            selectedCategory === "all"
+              ? 'bg-blue-500/10 border-blue-500/20 text-blue-500'
+              : 'bg-white/[0.02] border-gray-500/5 text-gray-400 hover:bg-white/[0.04] hover:border-gray-500/10'
+          }`}
           onClick={() => {
             onButtonClick()
             onCategoryChange("all")
@@ -98,31 +68,11 @@ export function ProjectCategoryFilter({
         {categories.map((category, index) => (
           <button
             key={category.name}
-            className="text-[10px] uppercase tracking-wide px-2 py-1 rounded-sm transition-all duration-500 backdrop-blur-md border"
-            style={{
-              backgroundColor: selectedCategory === category.name 
-                ? (theme?.accentColor ? hexToRgba(theme.accentColor, 0.1) : 'rgba(59, 130, 246, 0.1)') 
-                : (theme?.accentColor ? hexToRgba(theme.accentColor, 0.03) : 'rgba(255, 255, 255, 0.02)'),
-              borderColor: selectedCategory === category.name
-                ? (theme?.accentColor ? hexToRgba(theme.accentColor, 0.2) : 'rgba(59, 130, 246, 0.2)')
-                : 'rgba(107, 114, 128, 0.05)',
-              color: selectedCategory === category.name 
-                ? (theme?.accentColor || 'rgb(59, 130, 246)') 
-                : (theme?.mutedTextColor || 'rgb(156, 163, 175)'),
-              fontWeight: 400
-            }}
-            onMouseEnter={(e) => {
-              if (selectedCategory !== category.name) {
-                e.currentTarget.style.backgroundColor = theme?.accentColor ? hexToRgba(theme.accentColor, 0.05) : 'rgba(255, 255, 255, 0.04)';
-                e.currentTarget.style.borderColor = 'rgba(107, 114, 128, 0.1)';
-              }
-            }}
-            onMouseLeave={(e) => {
-              if (selectedCategory !== category.name) {
-                e.currentTarget.style.backgroundColor = theme?.accentColor ? hexToRgba(theme.accentColor, 0.03) : 'rgba(255, 255, 255, 0.02)';
-                e.currentTarget.style.borderColor = 'rgba(107, 114, 128, 0.05)';
-              }
-            }}
+            className={`text-[10px] uppercase tracking-wide px-2 py-1 rounded-sm transition-all duration-500 backdrop-blur-md border ${
+              selectedCategory === category.name
+                ? 'bg-blue-500/10 border-blue-500/20 text-blue-500'
+                : 'bg-white/[0.02] border-gray-500/5 text-gray-400 hover:bg-white/[0.04] hover:border-gray-500/10'
+            }`}
             onClick={() => {
               onButtonClick()
               onCategoryChange(category.name)

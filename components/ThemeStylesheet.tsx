@@ -4,7 +4,7 @@ import { cookies } from 'next/headers';
 // Server component that only includes the active theme's CSS
 export async function ThemeStylesheet() {
   // Get theme from cookie (set by client)
-  const cookieStore = cookies();
+  const cookieStore = await cookies();
   const theme = cookieStore.get('site-theme')?.value || 'default';
   
   // Map of theme IDs to their CSS imports

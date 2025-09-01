@@ -17,10 +17,7 @@ export default function ThemePicker() {
   }
   
   // Convert themes object to array for display
-  const themeList = Object.entries(themes).map(([id, theme]) => ({
-    id,
-    ...theme
-  }))
+  const themeList = Object.values(themes)
 
   return (
     <div className="fixed bottom-4 right-4 z-50">
