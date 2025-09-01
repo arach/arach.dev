@@ -18,7 +18,7 @@ import {
   SpacingSection,
   TablesSection,
   VariablesSection
-} from '@/components/styleguide'
+} from '@/components/gallery/application'
 
 
 
