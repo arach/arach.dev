@@ -2,13 +2,13 @@
 
 import React, { createContext, useContext, useState, useEffect } from 'react';
 import { ThemeEngine } from './theme-engine';
-import { defaultTheme } from './themes/default.theme';
-import { darkTheme } from './themes/dark.theme';
-import { terminalTheme } from './themes/terminal.theme';
-import { oceanTheme } from './themes/ocean.theme';
-import { sunsetTheme } from './themes/sunset.theme';
-import { cyberpunkTheme } from './themes/cyberpunk.theme';
-import { paperTheme } from './themes/paper.theme';
+import { defaultTheme } from '@/themes/site/default.theme';
+import { darkTheme } from '@/themes/site/dark.theme';
+import { terminalTheme } from '@/themes/site/terminal.theme';
+import { oceanTheme } from '@/themes/site/ocean.theme';
+import { sunsetTheme } from '@/themes/site/sunset.theme';
+import { cyberpunkTheme } from '@/themes/site/cyberpunk.theme';
+import { paperTheme } from '@/themes/site/paper.theme';
 
 // All available themes
 const themes = {

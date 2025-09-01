@@ -23,13 +23,13 @@ export const themes = getAllThemes()
 export type ThemeName = keyof typeof themes
 
 // HOW TO ADD A NEW THEME:
-// 1. Create a new file: styles/your-theme.ts
-// 2. Use createTheme() helper or copy theme-template.ts
+// 1. Create a new file: themes/application/your-theme.ts
+// 2. Use createTheme() helper or copy an existing theme
 // 3. Import and register it here or in your component
 // 4. It will automatically appear in all theme selectors
 
 // Example of adding a theme at runtime:
-// import { registerTheme, createTheme } from '@/styles'
+// import { registerTheme, createTheme } from '@/themes/application'
 // 
 // const myTheme = createTheme({
 //   name: 'My Theme',
