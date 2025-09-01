@@ -10,6 +10,13 @@
 type Theme = {
   name: string;
   id: string;
+  // Font definitions - define once, use everywhere
+  fonts: {
+    sans: string;
+    mono: string;
+    serif?: string;
+    display?: string;
+  };
   colors: {
     bg: string;
     text: string;
@@ -22,19 +29,23 @@ type Theme = {
   header: {
     bg: string;
     text: string;
-    font: string;
+    font?: string; // Optional override, defaults to fonts.sans
   };
   typography: {
-    heading: string;
-    body: string;
-    code: string;
+    headingColor: string;
+    headingFont?: string; // Optional override, defaults to fonts.sans
+    bodyColor: string;
+    bodyFont?: string; // Optional override, defaults to fonts.sans
+    codeColor?: string;
+    codeFont?: string; // Optional override, defaults to fonts.mono
   };
   effects: {
     dotOpacity: string;
     blur: string;
     [key: string]: any;
   };
-  fonts?: readonly string[];
+  // Google Fonts or other external fonts to load
+  fontImports?: readonly string[];
 };
 
 export class ThemeEngine {
@@ -45,8 +56,34 @@ export class ThemeEngine {
    * Generates CSS from theme object
    */
   static generateCSS(theme: Theme): string {
+    // Default font fallbacks
+    const defaultSans = 'var(--font-geist-sans), -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif';
+    const defaultMono = 'var(--font-ibm-plex-mono), ui-monospace, SFMono-Regular, monospace';
+    const defaultSerif = 'Georgia, "Times New Roman", serif';
+    
+    // Get font definitions with fallbacks
+    const fonts = {
+      sans: theme.fonts.sans,
+      mono: theme.fonts.mono,
+      serif: theme.fonts.serif || defaultSerif,
+      display: theme.fonts.display || theme.fonts.sans,
+    };
+    
+    // Get typography settings with fallbacks to font definitions
+    const headerFont = theme.header.font || fonts.sans;
+    const headingFont = theme.typography.headingFont || fonts.sans;
+    const bodyFont = theme.typography.bodyFont || fonts.sans;
+    const codeFont = theme.typography.codeFont || fonts.mono;
+    const codeColor = theme.typography.codeColor || theme.colors.text;
+    
     return `
       [data-theme="${theme.id}"] {
+        /* Font Definitions */
+        --theme-font-sans: ${fonts.sans};
+        --theme-font-serif: ${fonts.serif};
+        --theme-font-mono: ${fonts.mono};
+        --theme-font-display: ${fonts.display};
+        
         /* Colors */
         --theme-bg-color: ${theme.colors.bg};
         --theme-text-color: ${theme.colors.text};
@@ -59,12 +96,15 @@ export class ThemeEngine {
         /* Header */
         --theme-header-bg: ${theme.header.bg};
         --theme-header-text-color: ${theme.header.text};
-        --theme-header-font: ${theme.header.font};
+        --theme-header-font: ${headerFont};
         
         /* Typography */
-        --theme-heading-color: ${theme.typography.heading};
-        --theme-body-color: ${theme.typography.body};
-        --theme-code-font: ${theme.typography.code};
+        --theme-heading-color: ${theme.typography.headingColor};
+        --theme-heading-font: ${headingFont};
+        --theme-body-color: ${theme.typography.bodyColor};
+        --theme-body-font: ${bodyFont};
+        --theme-code-color: ${theme.typography.codeColor || theme.colors.text};
+        --theme-code-font: ${codeFont};
         
         /* Effects */
         --theme-dot-opacity: ${theme.effects.dotOpacity};
@@ -88,9 +128,9 @@ export class ThemeEngine {
     this.styleElement.textContent = this.generateCSS(theme);
     document.head.appendChild(this.styleElement);
 
-    // Load theme fonts if specified
-    if (theme.fonts) {
-      this.loadFonts(theme.fonts);
+    // Load external font imports if specified
+    if (theme.fontImports) {
+      this.loadFonts(theme.fontImports);
     }
 
     // Set data attribute

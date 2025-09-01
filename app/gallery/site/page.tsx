@@ -107,9 +107,11 @@ export default function SiteThemeGallery() {
               <div className="mt-4 pt-4 border-t" style={{ borderColor: theme.colors.border }}>
                 <p className="text-xs mb-2" style={{ color: theme.colors.muted }}>Typography:</p>
                 <div className="text-xs space-y-1">
-                  <div style={{ fontFamily: theme.header.font }}>Header: {theme.header.font.split(',')[0]}</div>
-                  <div style={{ fontFamily: theme.typography.body }}>Body: {theme.typography.body.split(',')[0]}</div>
-                  <div style={{ fontFamily: theme.typography.code }}>Code: {theme.typography.code.split(',')[0]}</div>
+                  {'display' in theme.fonts && theme.fonts.display && (
+                    <div style={{ fontFamily: theme.fonts.display }}>Display: {theme.fonts.display.split(',')[0]}</div>
+                  )}
+                  <div style={{ fontFamily: theme.fonts.sans }}>Sans: {theme.fonts.sans.split(',')[0]}</div>
+                  <div style={{ fontFamily: theme.fonts.mono }}>Mono: {theme.fonts.mono.split(',')[0]}</div>
                 </div>
               </div>
 

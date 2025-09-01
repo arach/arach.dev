@@ -337,7 +337,7 @@ export function initConsoleArt() {
       
       matrixInterval = setInterval(() => {
         const line = generateMatrixLine();
-        const styles = [];
+        const styles: string[] = [];
         const matches = line.match(/%c./g) || [];
         matches.forEach(() => {
           const brightness = Math.random();

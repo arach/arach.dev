@@ -11,8 +11,8 @@ export default function ThemePicker() {
   const [isOpen, setIsOpen] = useState(false);
   const pathname = usePathname();
   
-  // Don't render on styleguide pages - they have their own theme system
-  if (pathname?.startsWith('/styleguide')) {
+  // Don't render on gallery pages - they have their own theme system
+  if (pathname?.startsWith('/gallery')) {
     return null;
   }
   
@@ -51,18 +51,19 @@ export default function ThemePicker() {
                   `}
                 >
                   <div className="flex items-center gap-2 flex-1">
-                    {/* Color preview - create a mini container with theme's data attribute */}
-                    <div 
-                      className="flex gap-0.5"
-                      data-theme={theme.id}
-                    >
+                    {/* Color preview - use actual theme colors */}
+                    <div className="flex gap-0.5">
                       <span 
-                        className="w-1.5 h-1.5 rounded-full"
-                        style={{ backgroundColor: 'var(--theme-bg-color)' }}
+                        className="w-1.5 h-1.5 rounded-full border border-gray-600/30"
+                        style={{ backgroundColor: theme.colors.bg }}
                       />
                       <span 
                         className="w-1.5 h-1.5 rounded-full"
-                        style={{ backgroundColor: 'var(--theme-accent-color)' }}
+                        style={{ backgroundColor: theme.colors.accent }}
+                      />
+                      <span 
+                        className="w-1.5 h-1.5 rounded-full"
+                        style={{ backgroundColor: theme.colors.text }}
                       />
                     </div>
                     <span className="text-[11px] font-light" style={{ color: 'var(--theme-text-color)' }}>

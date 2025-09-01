@@ -1,5 +1,6 @@
 import { IBM_Plex_Mono } from "next/font/google";
 import { GeistMono } from "geist/font/mono";
+import { GeistSans } from "geist/font/sans";
 import type { Metadata } from 'next'
 import "./globals.css";
 import Footer from "@/components/Footer";
@@ -60,7 +61,7 @@ export default function RootLayout({
   children: React.ReactNode;
 }>) {
   return (
-    <html lang="en" className={`h-full ${GeistMono.variable}`}>
+    <html lang="en" className={`h-full ${GeistMono.variable} ${GeistSans.variable}`}>
       <head>
         {/* Inline critical CSS for immediate render */}
         <style dangerouslySetInnerHTML={{ __html: criticalCSS }} />

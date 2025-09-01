@@ -1,6 +1,12 @@
 export const darkTheme = {
   name: 'Midnight',
   id: 'dark',
+  // Define fonts - dark theme uses modern sans fonts
+  fonts: {
+    sans: '"Space Grotesk", "Inter", var(--font-geist-sans)',
+    mono: 'var(--font-ibm-plex-mono)',
+    display: '"Space Grotesk"',
+  },
   colors: {
     bg: '#0a0a0a',
     text: '#e5e5e5',
@@ -13,19 +19,20 @@ export const darkTheme = {
   header: {
     bg: 'rgba(17, 17, 17, 0.95)',
     text: '#ffffff',
-    font: '"Space Grotesk", "Inter", system-ui, sans-serif',
+    // font defaults to fonts.sans (Space Grotesk)
   },
   typography: {
-    heading: '#60a5fa',
-    body: '#e5e5e5',
-    code: 'ui-monospace, SFMono-Regular, monospace',
+    headingColor: '#60a5fa',
+    bodyColor: '#e5e5e5',
+    // headingFont defaults to fonts.sans
+    // bodyFont defaults to fonts.sans
+    // codeFont defaults to fonts.mono
   },
   effects: {
     dotOpacity: '0.25',
     blur: '16px',
   },
-  // Theme can include custom fonts to load
-  fonts: [
+  fontImports: [
     'https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;600;700&display=swap',
     'https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&display=swap',
   ],
