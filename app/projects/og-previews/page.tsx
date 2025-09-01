@@ -56,6 +56,7 @@ export default function AllProjectOgPreviewsPage() {
                 onMouseOut={(e) => {
                   e.currentTarget.style.borderColor = '#333';
                 }}>
+                  {/* eslint-disable-next-line @next/next/no-img-element */}
                   <img 
                     src={`/projects/${project.slug}/og.png`}
                     alt={`OG image for ${project.title}`}

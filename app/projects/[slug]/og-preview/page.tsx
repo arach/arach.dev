@@ -49,6 +49,7 @@ export default async function ProjectOgPreviewPage({
         height: '630px',
         position: 'relative',
       }}>
+        {/* eslint-disable-next-line @next/next/no-img-element */}
         <img 
           src={`/projects/${resolvedParams.slug}/og.png`}
           alt={`OG image for ${project.title}`}
