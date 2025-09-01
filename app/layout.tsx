@@ -1,6 +1,3 @@
-import { IBM_Plex_Mono } from "next/font/google";
-import { GeistMono } from "geist/font/mono";
-import { GeistSans } from "geist/font/sans";
 import type { Metadata } from 'next'
 import "./globals.css";
 import Footer from "@/components/Footer";
@@ -8,16 +5,10 @@ import Header from "@/components/Header";
 import { ThemeProvider } from "@/lib/theme/site/provider";
 import Script from "next/script";
 import { SpeedInsights } from "@vercel/speed-insights/next";
-import ThemePicker from "@/components/ThemePicker";
+import { ThemePicker } from "@/components/ThemePicker";
 import { ConsoleArt } from "@/components/ConsoleArt";
-import fs from 'fs';
-import path from 'path';
-
-// Read critical CSS at build time
-const criticalCSS = fs.readFileSync(
-  path.join(process.cwd(), 'app', 'critical.css'),
-  'utf8'
-);
+import { IBM_Plex_Mono } from "next/font/google";
+import { GeistMono, GeistSans } from "geist/font";
 
 const ibmPlexMono = IBM_Plex_Mono({ 
   subsets: ["latin"], 
@@ -62,19 +53,35 @@ export default function RootLayout({
 }>) {
   return (
     <html lang="en" className={`h-full ${GeistMono.variable} ${GeistSans.variable}`}>
-      <head>
-        {/* Inline critical CSS for immediate render */}
-        <style dangerouslySetInnerHTML={{ __html: criticalCSS }} />
-      </head>
       <body className={`${ibmPlexMono.variable} ${GeistMono.className} font-mono flex flex-col min-h-screen`}>
         <ThemeProvider>
+          <div hidden>
+            <ConsoleArt />
+          </div>
+          
           <Header />
+          
           <main className="flex-grow pt-0">
             {children}
           </main>
+          
           <Footer />
+          
           <ThemePicker />
-          <ConsoleArt />
+          
+          <Script
+            src="https://www.googletagmanager.com/gtag/js?id=G-XXXXXXXXXX"
+            strategy="afterInteractive"
+          />
+          <Script id="google-analytics" strategy="afterInteractive">
+            {`
+              window.dataLayer = window.dataLayer || [];
+              function gtag(){dataLayer.push(arguments);}
+              gtag('js', new Date());
+              gtag('config', 'G-XXXXXXXXXX');
+            `}
+          </Script>
+          
           <SpeedInsights />
         </ThemeProvider>
       </body>
