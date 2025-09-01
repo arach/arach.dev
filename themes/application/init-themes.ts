@@ -1,6 +1,6 @@
 // Initialize built-in themes
 import { registerTheme } from './theme-registry'
-import { adaptTerminalTheme } from '@/lib/theme-adapter'
+import { adaptTerminalTheme } from './theme-adapter'
 import { terminalTheme } from './terminal-theme'
 import { terminalThemeHybrid } from './terminal-theme-hybrid'
 import { directoryTheme } from './directory-theme'
