@@ -9,6 +9,7 @@ export const defaultTheme = {
     border: '#e5e7eb',
     card: '#f9fafb',
     shadow: 'rgba(0, 0, 0, 0.1)',
+    ascii: '#111827', // Use text color for ASCII in default theme
   },
   header: {
     bg: 'rgba(0, 0, 0, 1)',

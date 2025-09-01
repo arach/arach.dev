@@ -9,6 +9,7 @@ export const paperTheme = {
     border: '#d4c5b0',
     card: '#f5f2eb',
     shadow: 'rgba(92, 79, 59, 0.15)',
+    ascii: '#451a03', // Deep brown for vintage feel
   },
   header: {
     bg: 'rgba(92, 79, 59, 0.95)',

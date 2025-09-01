@@ -70,8 +70,8 @@ export class ThemeEngine {
         --theme-dot-opacity: ${theme.effects.dotOpacity};
         --theme-blur: ${theme.effects.blur};
         
-        /* ASCII art color - use accent for visual consistency */
-        --theme-ascii-color: ${theme.colors.accent};
+        /* ASCII art color - use dedicated ascii color or fall back to accent */
+        --theme-ascii-color: ${(theme.colors as any).ascii || theme.colors.accent};
       }
     `.trim();
   }
