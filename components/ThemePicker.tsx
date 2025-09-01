@@ -51,18 +51,21 @@ export default function ThemePicker() {
                   `}
                 >
                   <div className="flex items-center gap-2 flex-1">
-                    {/* Color preview */}
-                    <div className="flex gap-0.5">
+                    {/* Color preview - create a mini container with theme's data attribute */}
+                    <div 
+                      className="flex gap-0.5"
+                      data-theme={theme.id}
+                    >
                       <span 
                         className="w-1.5 h-1.5 rounded-full"
-                        style={{ backgroundColor: theme.colors.bg }}
+                        style={{ backgroundColor: 'var(--theme-bg-color)' }}
                       />
                       <span 
                         className="w-1.5 h-1.5 rounded-full"
-                        style={{ backgroundColor: theme.colors.accent }}
+                        style={{ backgroundColor: 'var(--theme-accent-color)' }}
                       />
                     </div>
-                    <span className="text-[11px] font-light" style={{ color: 'var(--theme-text)' }}>
+                    <span className="text-[11px] font-light" style={{ color: 'var(--theme-text-color)' }}>
                       {theme.name}
                     </span>
                   </div>

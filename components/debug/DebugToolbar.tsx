@@ -419,14 +419,18 @@ export function DebugToolbar({}: DebugToolbarProps) {
                                         : 'bg-gray-800/50 border-gray-700/50 text-gray-300 hover:bg-gray-800 hover:border-gray-600'}`}
                           >
                             <div className="flex items-center gap-2">
-                              <div className="flex gap-0.5">
+                              {/* Color preview - use data-theme attribute to show theme colors */}
+                              <div 
+                                className="flex gap-0.5"
+                                data-theme={id}
+                              >
                                 <span 
                                   className="inline-block w-2 h-2 rounded-sm border border-gray-600"
-                                  style={{ backgroundColor: theme.colors.bg }}
+                                  style={{ backgroundColor: 'var(--theme-bg-color)' }}
                                 />
                                 <span 
                                   className="inline-block w-2 h-2 rounded-sm border border-gray-600"
-                                  style={{ backgroundColor: theme.colors.accent }}
+                                  style={{ backgroundColor: 'var(--theme-accent-color)' }}
                                 />
                               </div>
                               <span className="text-[10px] font-medium">{theme.name}</span>
