@@ -6,7 +6,6 @@ import Footer from "@/components/Footer";
 import Header from "@/components/Header";
 import { ThemeProvider } from "@/lib/theme-provider-clean";
 import Script from "next/script";
-import FontLoader from "@/components/FontLoader";
 import { SpeedInsights } from "@vercel/speed-insights/next";
 import ThemePicker from "@/components/ThemePicker";
 import fs from 'fs';
@@ -72,7 +71,6 @@ export default function RootLayout({
             {children}
           </main>
           <Footer />
-          <FontLoader />
           <ThemePicker />
           <SpeedInsights />
         </ThemeProvider>

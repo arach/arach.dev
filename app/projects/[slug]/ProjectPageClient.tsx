@@ -14,7 +14,8 @@ interface ProjectPageClientProps {
 }
 
 export default function ProjectPageClient({ project, projectNumber }: ProjectPageClientProps) {
-  const { currentTheme: theme } = useTheme();
+  const { currentTheme, themes } = useTheme();
+  const theme = themes[currentTheme];
   const [mounted, setMounted] = useState(false);
 
   useEffect(() => {
@@ -47,8 +48,6 @@ export default function ProjectPageClient({ project, projectNumber }: ProjectPag
             style={{
               right: 'calc(50% + 24rem)',
               top: '8rem',
-              color: theme?.textColor || 'rgb(17, 24, 39)',
-              fontFamily: theme?.headerFont || 'inherit',
             }}
           >
             {projectNumber}
@@ -65,11 +64,7 @@ export default function ProjectPageClient({ project, projectNumber }: ProjectPag
             {/* Back Link */}
             <Link 
               href="/" 
-              className="inline-flex items-center gap-1.5 text-xs mb-8 opacity-60 hover:opacity-100 transition-opacity"
-              style={{
-                color: theme?.mutedTextColor || 'rgb(107, 114, 128)',
-                fontFamily: 'inherit',
-              }}
+              className="inline-flex items-center gap-1.5 text-xs mb-8 opacity-60 hover:opacity-100 transition-opacity text-muted-foreground"
             >
               <ArrowLeft className="w-3 h-3" />
               <span>Back to projects</span>
@@ -77,22 +72,10 @@ export default function ProjectPageClient({ project, projectNumber }: ProjectPag
 
             {/* Project Header */}
             <div className="mb-8">
-              <h1 
-                className="text-2xl font-bold mb-2"
-                style={{
-                  color: theme?.headingColor || theme?.textColor || 'rgb(17, 24, 39)',
-                  fontFamily: theme?.headerFont || 'inherit',
-                }}
-              >
+              <h1 className="text-2xl font-bold mb-2 text-foreground">
                 {project.title}
               </h1>
-              <p 
-                className="text-sm opacity-70"
-                style={{
-                  color: theme?.mutedTextColor || 'rgb(107, 114, 128)',
-                  fontFamily: 'inherit',
-                }}
-              >
+              <p className="text-sm opacity-70 text-muted-foreground">
                 {project.description}
               </p>
             </div>
@@ -103,15 +86,15 @@ export default function ProjectPageClient({ project, projectNumber }: ProjectPag
                 className="inline-flex items-center px-3 py-1 rounded text-[11px] font-medium"
                 style={{
                   backgroundColor: project.status === 'active'
-                    ? hexToRgba(theme?.accentColor || '#10b981', 0.1)
+                    ? hexToRgba(project.color, 0.1)
                     : project.status === 'maintained'
                     ? hexToRgba('#f59e0b', 0.1)
-                    : hexToRgba(theme?.mutedTextColor || '#6b7280', 0.1),
+                    : 'rgba(107, 114, 128, 0.1)',
                   color: project.status === 'active'
-                    ? theme?.accentColor || '#10b981'
+                    ? project.color
                     : project.status === 'maintained'
                     ? '#f59e0b'
-                    : theme?.mutedTextColor || '#6b7280',
+                    : '#6b7280',
                 }}
               >
                 {project.status === 'active' ? 'Active' : project.status === 'maintained' ? 'Maintained' : 'Archived'}
@@ -122,11 +105,7 @@ export default function ProjectPageClient({ project, projectNumber }: ProjectPag
                   href={project.links.github}
                   target="_blank"
                   rel="noopener noreferrer"
-                  className="inline-flex items-center gap-1.5 text-[11px] opacity-60 hover:opacity-100 transition-opacity"
-                  style={{
-                    color: theme?.mutedTextColor || 'rgb(107, 114, 128)',
-                    fontFamily: 'inherit',
-                  }}
+                  className="inline-flex items-center gap-1.5 text-[11px] opacity-60 hover:opacity-100 transition-opacity text-muted-foreground"
                 >
                   <Github className="w-3 h-3" />
                   <span>View Source</span>
@@ -138,11 +117,7 @@ export default function ProjectPageClient({ project, projectNumber }: ProjectPag
                   href={project.links.website}
                   target="_blank"
                   rel="noopener noreferrer"
-                  className="inline-flex items-center gap-1.5 text-[11px] opacity-60 hover:opacity-100 transition-opacity"
-                  style={{
-                    color: theme?.mutedTextColor || 'rgb(107, 114, 128)',
-                    fontFamily: 'inherit',
-                  }}
+                  className="inline-flex items-center gap-1.5 text-[11px] opacity-60 hover:opacity-100 transition-opacity text-muted-foreground"
                 >
                   <Globe className="w-3 h-3" />
                   <span>Live Demo</span>
@@ -152,14 +127,7 @@ export default function ProjectPageClient({ project, projectNumber }: ProjectPag
 
             {/* Long Description */}
             <section className="mb-12">
-              <p 
-                className="text-sm leading-relaxed opacity-90"
-                style={{
-                  color: theme?.textColor || 'rgb(55, 65, 81)',
-                  fontFamily: 'inherit',
-                  lineHeight: '1.75',
-                }}
-              >
+              <p className="text-sm leading-relaxed opacity-90 text-foreground">
                 {project.longDescription}
               </p>
             </section>
@@ -167,35 +135,20 @@ export default function ProjectPageClient({ project, projectNumber }: ProjectPag
             {/* Features */}
             {project.features && project.features.length > 0 && (
               <section className="mb-12">
-                <h2 
-                  className="text-xs font-medium uppercase tracking-wider opacity-50 mb-4"
-                  style={{
-                    color: theme?.mutedTextColor || 'rgb(107, 114, 128)',
-                    fontFamily: theme?.headerFont || 'inherit',
-                  }}
-                >
+                <h2 className="text-xs font-medium uppercase tracking-wider opacity-50 mb-4 text-muted-foreground">
                   Features
                 </h2>
                 <div className="space-y-2">
                   {project.features.map((feature, index) => (
                     <div
                       key={index}
-                      className="flex items-start gap-3 p-3 rounded-md transition-colors hover:bg-gray-500/5"
-                      style={{
-                        backgroundColor: theme?.cardBg || 'transparent',
-                      }}
+                      className="flex items-start gap-3 p-3 rounded-md transition-colors hover:bg-muted/20"
                     >
                       <span
                         className="w-1 h-1 rounded-full mt-1.5 flex-shrink-0"
-                        style={{ backgroundColor: theme?.accentColor || project.color }}
+                        style={{ backgroundColor: project.color }}
                       />
-                      <span 
-                        className="text-xs leading-relaxed"
-                        style={{
-                          color: theme?.textColor || 'rgb(55, 65, 81)',
-                          fontFamily: 'inherit',
-                        }}
-                      >
+                      <span className="text-xs leading-relaxed text-foreground">
                         {feature}
                       </span>
                     </div>
@@ -207,13 +160,7 @@ export default function ProjectPageClient({ project, projectNumber }: ProjectPag
             {/* Tech Stack */}
             {project.tech && project.tech.length > 0 && (
               <section className="mb-12">
-                <h2 
-                  className="text-xs font-medium uppercase tracking-wider opacity-50 mb-4"
-                  style={{
-                    color: theme?.mutedTextColor || 'rgb(107, 114, 128)',
-                    fontFamily: theme?.headerFont || 'inherit',
-                  }}
-                >
+                <h2 className="text-xs font-medium uppercase tracking-wider opacity-50 mb-4 text-muted-foreground">
                   Built With
                 </h2>
                 <div className="flex flex-wrap gap-2">
@@ -222,10 +169,9 @@ export default function ProjectPageClient({ project, projectNumber }: ProjectPag
                       key={tech}
                       className="px-3 py-1 rounded-full text-[10px] font-medium"
                       style={{
-                        backgroundColor: hexToRgba(theme?.accentColor || project.color, 0.08),
-                        color: theme?.accentColor || project.color,
-                        border: `1px solid ${hexToRgba(theme?.accentColor || project.color, 0.2)}`,
-                        fontFamily: 'inherit',
+                        backgroundColor: hexToRgba(project.color, 0.08),
+                        color: project.color,
+                        border: `1px solid ${hexToRgba(project.color, 0.2)}`,
                       }}
                     >
                       {tech}
@@ -237,16 +183,12 @@ export default function ProjectPageClient({ project, projectNumber }: ProjectPag
 
             {/* Tags */}
             {project.tags && project.tags.length > 0 && (
-              <section className="pt-8 border-t" style={{ borderColor: theme?.borderColor || 'rgba(0, 0, 0, 0.06)' }}>
+              <section className="pt-8 border-t border-border">
                 <div className="flex flex-wrap gap-2">
                   {project.tags.map((tag) => (
                     <span
                       key={tag}
-                      className="text-[10px] opacity-40"
-                      style={{
-                        color: theme?.mutedTextColor || 'rgb(107, 114, 128)',
-                        fontFamily: 'inherit',
-                      }}
+                      className="text-[10px] opacity-40 text-muted-foreground"
                     >
                       #{tag}
                     </span>

@@ -441,20 +441,8 @@ export function DebugToolbar({}: DebugToolbarProps) {
                       <div className="text-xs text-gray-400 mb-2">Current Theme Settings</div>
                       <div className="space-y-1.5 text-[10px] font-mono">
                         <div className="flex justify-between">
-                          <span className="text-gray-500">Background:</span>
-                          <span className="text-gray-300">{siteTheme.bgColor}</span>
-                        </div>
-                        <div className="flex justify-between">
-                          <span className="text-gray-500">Text Color:</span>
-                          <span className="text-gray-300">{siteTheme.textColor}</span>
-                        </div>
-                        <div className="flex justify-between">
-                          <span className="text-gray-500">Header BG:</span>
-                          <span className="text-gray-300">{siteTheme.headerBg}</span>
-                        </div>
-                        <div className="flex justify-between">
-                          <span className="text-gray-500">Header Text:</span>
-                          <span className="text-gray-300">{siteTheme.headerText}</span>
+                          <span className="text-gray-500">Current Theme:</span>
+                          <span className="text-gray-300">{siteTheme}</span>
                         </div>
                       </div>
                     </div>
