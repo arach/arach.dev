@@ -70,10 +70,23 @@ export class ThemeEngine {
         --theme-dot-opacity: ${theme.effects.dotOpacity};
         --theme-blur: ${theme.effects.blur};
         
-        /* ASCII art color - use dedicated ascii color or fall back to accent */
-        --theme-ascii-color: ${(theme.colors as any).ascii || theme.colors.accent};
+        /* ASCII art color - intelligently choose based on theme */
+        --theme-ascii-color: ${this.getASCIIColor(theme)};
       }
     `.trim();
+  }
+
+  /**
+   * Intelligently choose ASCII color based on theme characteristics
+   */
+  private static getASCIIColor(theme: Theme): string {
+    // For light themes with white/light backgrounds, use text color for contrast
+    if (theme.id === 'default' || theme.id === 'paper' || theme.id === 'sunset') {
+      return theme.typography.heading; // Use heading color for emphasis
+    }
+    
+    // For dark/vibrant themes, use accent color for visual pop
+    return theme.colors.accent;
   }
 
   /**

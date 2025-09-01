@@ -8,8 +8,7 @@ export const sunsetTheme = {
     muted: '#92400e',
     border: '#fcd34d',
     card: '#fffbeb',
-    shadow: 'rgba(251, 146, 60, 0.2)',
-    ascii: '#92400e', // Deep amber for warm feel
+    shadow: 'rgba(251, 146, 60, 0.2)'
   },
   header: {
     bg: 'linear-gradient(135deg, rgba(251, 146, 60, 0.95), rgba(245, 101, 101, 0.95))',
