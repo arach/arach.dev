@@ -42,7 +42,7 @@
 
   body {
     background: var(--theme-bg-color);
-    color: var(--theme-text-color-color);
+    color: var(--theme-text-color);
     transition: background-color 0.3s ease, color 0.3s ease;
   }
 
@@ -52,7 +52,7 @@
   h4,
   h5,
   h6 {
-    color: var(--theme-heading-color-color);
+    color: var(--theme-heading-color);
     font-family: var(--theme-header-font);
     font-weight: 600;
     letter-spacing: -0.02em;
@@ -60,19 +60,19 @@
   
   /* Ensure good readability for h2, h3, h4 specifically */
   h2 {
-    color: var(--theme-heading-color-color);
+    color: var(--theme-heading-color);
     font-size: 1.5rem;
     font-weight: 700;
   }
   
   h3 {
-    color: var(--theme-heading-color-color);
+    color: var(--theme-heading-color);
     font-size: 1.25rem;
     font-weight: 600;
   }
   
   h4 {
-    color: var(--theme-heading-color-color);
+    color: var(--theme-heading-color);
     font-size: 1.125rem;
     font-weight: 600;
   }
