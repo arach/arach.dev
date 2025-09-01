@@ -137,6 +137,7 @@ export async function GET(
             }}
           >
             {/* ASCII Art Image */}
+            {/* eslint-disable-next-line @next/next/no-img-element */}
             <img
               src={getImageUrl('arach-ascii.png')}
               alt="ARACH.DEV ASCII Art"

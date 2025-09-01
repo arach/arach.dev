@@ -29,6 +29,7 @@ export default function OgShowcasePage() {
           width: '1200px',
           marginBottom: '10px',
         }}>
+          {/* eslint-disable-next-line @next/next/no-img-element */}
           <img 
             src="/api/og"
             alt="Main site OG image"
@@ -59,7 +60,8 @@ export default function OgShowcasePage() {
               borderRadius: '8px',
               overflow: 'hidden',
             }}>
-              <img 
+              {/* eslint-disable-next-line @next/next/no-img-element */}
+          <img 
                 src="/projects/scout/og.png"
                 alt="Scout project OG"
                 width={600}
@@ -79,7 +81,8 @@ export default function OgShowcasePage() {
               borderRadius: '8px',
               overflow: 'hidden',
             }}>
-              <img 
+              {/* eslint-disable-next-line @next/next/no-img-element */}
+          <img 
                 src="/projects/blink/og.png"
                 alt="Blink project OG"
                 width={600}

@@ -1,6 +1,6 @@
 'use client';
 
-import { useTheme } from '@/lib/theme-provider-clean';
+import { useTheme } from '@/lib/theme/site/provider';
 
 export default function ThemeDemoPage() {
   const { currentTheme, setTheme, themes } = useTheme();

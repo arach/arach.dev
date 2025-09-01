@@ -279,6 +279,7 @@ export function OgComponent({
               }}
             >
               {/* ASCII Art Image */}
+              {/* eslint-disable-next-line @next/next/no-img-element */}
               <img
                 src={getImageUrl(isDark ? 'arach-ascii.png' : 'arach-ascii-light.png')}
                 alt="ARACH.DEV ASCII Art"

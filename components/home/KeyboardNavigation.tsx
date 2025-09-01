@@ -1,6 +1,6 @@
 'use client'
 
-import { useState, useEffect, useRef, useCallback } from 'react'
+import { useState, useEffect, useRef, useCallback, useMemo } from 'react'
 import { useAudioFeedback } from '@/hooks/useAudioFeedback'
 
 interface Project {
@@ -59,9 +59,11 @@ export function useKeyboardNavigation({
   })
 
   // Get filtered projects based on selected category
-  const filteredProjects = selectedCategory === "all" 
-    ? projects 
-    : categories.find((cat) => cat.name === selectedCategory)?.projects || []
+  const filteredProjects = useMemo(() => {
+    return selectedCategory === "all" 
+      ? projects 
+      : categories.find((cat) => cat.name === selectedCategory)?.projects || []
+  }, [selectedCategory, projects, categories])
 
   const scrollToCard = useCallback((index: number) => {
     const card = cardRefs.current[index]

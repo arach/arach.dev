@@ -1,7 +1,7 @@
 'use client'
 
 import { useState, useRef, useEffect } from 'react'
-import { getAllThemes, getTheme, getThemeIds, cx } from '@/styles'
+import { getAllThemes, getTheme, getThemeIds, cx } from '@/lib/theme/application'
 import type { Theme } from '@/types/theme'
 
 // Helper to get nested value from theme using dot notation

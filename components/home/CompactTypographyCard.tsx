@@ -3,7 +3,6 @@
 import React from 'react';
 import { motion } from 'framer-motion';
 import { ArrowRight, Github } from 'lucide-react';
-import { useTheme } from '@/lib/theme-provider-clean';
 
 interface Project {
   title: string;
@@ -32,48 +31,6 @@ export function CompactTypographyCard({
   cardRef,
 }: CompactTypographyCardProps) {
   const projectNumber = String(index + 1).padStart(2, '0');
-  const { currentTheme, themes } = useTheme();
-  const theme = themes[currentTheme];
-  
-  // Helper to convert hex to rgba
-  const hexToRgba = (hex: string, alpha: number) => {
-    const r = parseInt(hex.slice(1, 3), 16);
-    const g = parseInt(hex.slice(3, 5), 16);
-    const b = parseInt(hex.slice(5, 7), 16);
-    return `rgba(${r}, ${g}, ${b}, ${alpha})`;
-  };
-  
-  // Generate theme-aware tag colors
-  const getTagColors = () => {
-    if (isKeyboardFocused) {
-      // When focused, use accent color
-      return {
-        bg: theme?.colors?.accent ? hexToRgba(theme.colors.accent, 0.1) : 'rgb(219 234 254)',
-        text: theme?.colors?.accent || 'rgb(37 99 235)',
-        border: theme?.colors?.accent ? hexToRgba(theme.colors.accent, 0.2) : 'rgb(191 219 254)',
-      };
-    }
-    
-    // Use theme colors with subtle opacity
-    if (currentTheme === 'dark' || currentTheme === 'terminal' || currentTheme === 'cyberpunk') {
-      return {
-        bg: theme?.colors?.accent ? hexToRgba(theme.colors.accent, 0.05) : 'rgba(255, 255, 255, 0.03)',
-        text: theme?.colors?.muted || 'rgba(255, 255, 255, 0.5)',
-        border: theme?.colors?.border || 'rgba(255, 255, 255, 0.1)',
-        hoverBorder: theme?.colors?.accent ? hexToRgba(theme.colors.accent, 0.15) : 'rgba(255, 255, 255, 0.15)',
-      };
-    }
-    
-    // For light themes, use subtle tinted backgrounds
-    return {
-      bg: theme?.colors?.card || 'rgb(255, 255, 255)',
-      text: theme?.colors?.muted || 'rgb(75, 85, 99)',
-      border: theme?.colors?.border || 'rgb(229, 231, 235)',
-      hoverBorder: theme?.colors?.accent ? hexToRgba(theme.colors.accent, 0.15) : 'rgb(209, 213, 219)',
-    };
-  };
-  
-  const tagColors = getTagColors();
 
   return (
     <motion.article
@@ -102,7 +59,7 @@ export function CompactTypographyCard({
           : 'opacity-20 group-hover:opacity-40'}
       `}
       style={{
-        color: isKeyboardFocused ? undefined : 'var(--theme-muted)'
+        color: isKeyboardFocused ? undefined : 'var(--theme-muted-color)'
       }}>
         {projectNumber}
       </span>
@@ -119,7 +76,7 @@ export function CompactTypographyCard({
             : ''}
         `}
         style={{
-          color: isKeyboardFocused ? undefined : 'var(--theme-heading, var(--theme-text))'
+          color: isKeyboardFocused ? undefined : 'var(--theme-heading-color, var(--theme-text-color))'
         }}>
           {project.title}
         </h3>
@@ -134,7 +91,7 @@ export function CompactTypographyCard({
         style={{
           fontSize: '0.75rem',
           fontWeight: 300,
-          color: 'var(--theme-muted)',
+          color: 'var(--theme-muted-color)',
           opacity: isKeyboardFocused ? 1 : 0.9
         }}>
           {project.description}
@@ -145,21 +102,17 @@ export function CompactTypographyCard({
           {project.tags.slice(0, 3).map((tag) => (
             <span
               key={tag}
-              className="text-[10px] uppercase tracking-wide px-1 py-0.5 rounded-sm transition-all duration-300 font-normal border"
+              className={`
+                text-[10px] uppercase tracking-wide px-1 py-0.5 rounded-sm 
+                transition-all duration-300 font-normal border
+                ${isKeyboardFocused 
+                  ? 'bg-blue-500/10 text-blue-500 border-blue-500/20' 
+                  : 'bg-opacity-5 hover:bg-opacity-10'}
+              `}
               style={{
-                backgroundColor: tagColors.bg,
-                color: tagColors.text,
-                borderColor: tagColors.border,
-              }}
-              onMouseEnter={(e) => {
-                if (!isKeyboardFocused && tagColors.hoverBorder) {
-                  e.currentTarget.style.borderColor = tagColors.hoverBorder;
-                }
-              }}
-              onMouseLeave={(e) => {
-                if (!isKeyboardFocused) {
-                  e.currentTarget.style.borderColor = tagColors.border;
-                }
+                backgroundColor: isKeyboardFocused ? undefined : 'var(--theme-card-bg)',
+                color: isKeyboardFocused ? undefined : 'var(--theme-muted-color)',
+                borderColor: isKeyboardFocused ? undefined : 'var(--theme-border-color)',
               }}
             >
               {tag}

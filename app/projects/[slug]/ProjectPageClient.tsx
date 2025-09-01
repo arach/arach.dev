@@ -2,7 +2,6 @@
 
 import Link from 'next/link';
 import { ArrowLeft, Github, Globe } from 'lucide-react';
-import { useTheme } from '@/lib/theme-provider-clean';
 import ThemedDottedGrid from '@/components/ThemedDottedGrid';
 import type { Project } from '@/lib/projects';
 import { motion } from 'framer-motion';
@@ -14,8 +13,6 @@ interface ProjectPageClientProps {
 }
 
 export default function ProjectPageClient({ project, projectNumber }: ProjectPageClientProps) {
-  const { currentTheme, themes } = useTheme();
-  const theme = themes[currentTheme];
   const [mounted, setMounted] = useState(false);
 
   useEffect(() => {

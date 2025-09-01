@@ -4,7 +4,7 @@ import { useState, useRef, memo } from "react"
 import { Button } from "@/components/ui/button"
 import { Github, AlertCircle, RefreshCw, TrendingUp, Zap } from "lucide-react"
 import type { GitHubContributionsProps, ContributionDay } from "@/types/github"
-import { useTheme } from "@/lib/theme-provider-clean"
+import { useTheme } from "@/lib/theme/site/provider"
 import { useGitHub } from "@/lib/github-context"
 
 const GitHubContributions = memo(function GitHubContributions({
