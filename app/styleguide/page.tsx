@@ -3,8 +3,8 @@
 import React, { useState, useEffect, useRef, Suspense } from 'react'
 import { useSearchParams, useRouter } from 'next/navigation'
 import Link from 'next/link'
-import { getThemeIds, getTheme } from '@/themes/application/theme-registry'
-import '@/themes/application/init-themes'
+import { getThemeIds, getTheme } from '@/lib/theme/application/registry'
+import '@/lib/theme/application/init'
 import type { Theme } from '@/types/theme'
 import {
   TypographySection,

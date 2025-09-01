@@ -7,7 +7,7 @@ import {
   variableDisplayNames, 
   groupVariablesByCategory,
   extractColorValue 
-} from '@/themes/application/theme-to-css-variables'
+} from '@/lib/theme/application/css-generator'
 
 interface VariablesSectionProps {
   theme?: Theme | null

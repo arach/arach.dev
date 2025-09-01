@@ -4,7 +4,7 @@
  */
 
 import type { Theme, ThemeRegistry } from '@/types/theme'
-import { validateAndNormalize, validateTheme } from './theme-adapter'
+import { validateAndNormalize, validateTheme } from './factory'
 
 // Registry of all available themes - starts empty and gets populated by init-themes.ts
 const themeRegistry: ThemeRegistry = {}

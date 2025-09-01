@@ -1,4 +1,4 @@
-import { ThemeProvider } from '@/lib/theme-provider-clean';
+import { ThemeProvider } from '@/lib/theme/site/provider';
 
 export default function ThemeDemoLayout({
   children,

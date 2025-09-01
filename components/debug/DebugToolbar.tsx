@@ -3,7 +3,7 @@
 import { useState, useEffect } from 'react';
 import { Bug, Database, Activity, X, ChevronRight, ChevronDown, RefreshCw, Trash2, Copy, Check, Maximize2, Minimize2, Palette } from 'lucide-react';
 import { motion, AnimatePresence } from 'framer-motion';
-import { useTheme } from '@/lib/theme-provider-clean';
+import { useTheme } from '@/lib/theme/site/provider';
 import './debug-animations.css';
 
 interface CacheStats {

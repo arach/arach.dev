@@ -1,9 +1,9 @@
 // Theme System - Easy theme loading and management
-export type { Theme } from './terminal-theme'
-export { cx } from './terminal-theme'
+export type { Theme } from '@/types/theme'
+export { cx } from '@/themes/application/terminal'
 
 // Initialize built-in themes
-import './init-themes'
+import './init'
 
 // Export theme registry functions
 export {
@@ -12,13 +12,13 @@ export {
   getAllThemes,
   getThemeIds,
   hasTheme
-} from './theme-registry'
+} from './registry'
 
 // Export theme creation utility
-export { createTheme, validateAndNormalize } from './theme-adapter'
+export { createTheme, validateAndNormalize } from './factory'
 
 // For backward compatibility and convenience
-import { getAllThemes } from './theme-registry'
+import { getAllThemes } from './registry'
 export const themes = getAllThemes()
 export type ThemeName = keyof typeof themes
 
@@ -29,7 +29,7 @@ export type ThemeName = keyof typeof themes
 // 4. It will automatically appear in all theme selectors
 
 // Example of adding a theme at runtime:
-// import { registerTheme, createTheme } from '@/themes/application'
+// import { registerTheme, createTheme } from '@/lib/theme/application'
 // 
 // const myTheme = createTheme({
 //   name: 'My Theme',

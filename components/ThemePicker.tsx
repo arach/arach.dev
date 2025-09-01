@@ -3,7 +3,7 @@
 import React, { useState } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { Palette, Check } from 'lucide-react';
-import { useTheme } from '@/lib/theme-provider-clean';
+import { useTheme } from '@/lib/theme/site/provider';
 import { usePathname } from 'next/navigation';
 
 export default function ThemePicker() {

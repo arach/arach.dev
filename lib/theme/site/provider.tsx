@@ -1,7 +1,7 @@
 'use client';
 
 import React, { createContext, useContext, useState, useEffect } from 'react';
-import { ThemeEngine } from './theme-engine';
+import { ThemeEngine } from './engine';
 import { defaultTheme } from '@/themes/site/default.theme';
 import { darkTheme } from '@/themes/site/dark.theme';
 import { terminalTheme } from '@/themes/site/terminal.theme';

@@ -4,7 +4,7 @@ import type { Metadata } from 'next'
 import "./globals.css";
 import Footer from "@/components/Footer";
 import Header from "@/components/Header";
-import { ThemeProvider } from "@/lib/theme-provider-clean";
+import { ThemeProvider } from "@/lib/theme/site/provider";
 import Script from "next/script";
 import { SpeedInsights } from "@vercel/speed-insights/next";
 import ThemePicker from "@/components/ThemePicker";
