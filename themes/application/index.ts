@@ -15,7 +15,7 @@ export {
 } from './theme-registry'
 
 // Export theme creation utility
-export { createTheme } from './theme-adapter'
+export { createTheme, validateAndNormalize } from './theme-adapter'
 
 // For backward compatibility and convenience
 import { getAllThemes } from './theme-registry'

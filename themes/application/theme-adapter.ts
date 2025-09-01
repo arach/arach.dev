@@ -5,19 +5,42 @@
 
 import type { Theme, ThemeFonts, ThemeColors, ThemeComponents, ThemeTypography } from '@/types/theme'
 
-// Adapter for terminal theme format to generic format
-export function adaptTerminalTheme(terminalTheme: any): Theme {
+/**
+ * Validates and normalizes theme data to ensure it conforms to the Theme interface.
+ * - Validates required fields (name, description)
+ * - Provides sensible defaults for missing optional fields
+ * - Ensures consistent structure across all themes
+ * 
+ * This allows themes to be minimal - e.g., a theme could define only colors
+ * and ignore typography, components, etc. The function ensures the theme
+ * will still work with any code expecting a full Theme object.
+ */
+export function validateAndNormalize(themeData: any): Theme {
+  // Validate required fields
+  if (!themeData) {
+    throw new Error('Theme data is required');
+  }
+  
+  if (!themeData.name || typeof themeData.name !== 'string') {
+    console.warn('Theme missing required "name" field, using default');
+  }
+  
+  if (!themeData.description || typeof themeData.description !== 'string') {
+    console.warn('Theme missing required "description" field, using default');
+  }
+  
   return {
-    name: terminalTheme.name || 'Unknown Theme',
-    description: terminalTheme.description || 'Theme description not available',
-    colors: adaptColors(terminalTheme.colors),
-    fonts: adaptFonts(terminalTheme.fonts),
-    typography: adaptTypography(terminalTheme.typography),
-    components: adaptComponents(terminalTheme.components),
-    layout: terminalTheme.layout,
-    effects: terminalTheme.effects,
-    animations: terminalTheme.animations,
-    utilities: terminalTheme.utilities,
+    // Required fields with defaults if missing
+    name: themeData.name || 'Unknown Theme',
+    description: themeData.description || 'Theme description not available',
+    colors: adaptColors(themeData.colors),
+    fonts: adaptFonts(themeData.fonts),
+    typography: adaptTypography(themeData.typography),
+    components: adaptComponents(themeData.components),
+    layout: themeData.layout,
+    effects: themeData.effects,
+    animations: themeData.animations,
+    utilities: themeData.utilities,
   }
 }
 
