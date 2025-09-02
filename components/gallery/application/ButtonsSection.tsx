@@ -111,8 +111,9 @@ export function ButtonsSection({ theme }: ButtonsSectionProps) {
   return (
     <section className="space-y-6">
       {/* Button Variants */}
-      <div className="p-6 glass-panel">
-        <h3 className="text-lg font-semibold text-foreground mb-6">Button Variants</h3>
+      <div className="p-6 glass-panel border-l-2 border-l-primary/30">
+        <h3 className="text-lg font-semibold text-foreground mb-1">Button Variants</h3>
+        <p className="text-xs text-muted-foreground/80 mb-6">Interactive button components with multiple states and styles</p>
         <div className="flex flex-wrap gap-4 mb-6">
           {buttonVariants.map((btn) => (
             <button 
@@ -133,8 +134,8 @@ export function ButtonsSection({ theme }: ButtonsSectionProps) {
         
         {/* Button States Demo */}
         {activeDemo && (
-          <div className="mt-6 p-4 bg-background/50 rounded-lg border border-border">
-            <h4 className="text-sm font-semibold text-muted-foreground mb-3">Button States</h4>
+          <div className="mt-6 p-4 bg-gradient-to-br from-muted/20 to-muted/10 rounded-lg border border-border/50 shadow-inner">
+            <h4 className="text-sm font-semibold text-foreground/90 mb-3">Button States - {buttonVariants.find(b => b.variant === activeDemo)?.name}</h4>
             <div className="flex flex-wrap gap-3">
               {buttonVariants
                 .filter(btn => btn.variant === activeDemo)
@@ -154,8 +155,9 @@ export function ButtonsSection({ theme }: ButtonsSectionProps) {
       
       {/* Button Sizes */}
       {buttonVariants.length > 0 && (
-        <div className="p-6 glass-panel">
-          <h3 className="text-lg font-semibold text-foreground mb-6">Button Sizes</h3>
+        <div className="p-6 glass-panel border-l-2 border-l-secondary/30">
+          <h3 className="text-lg font-semibold text-foreground mb-1">Button Sizes</h3>
+          <p className="text-xs text-muted-foreground/80 mb-6">Size variations for different contexts and hierarchies</p>
           <div className="space-y-4">
             {/* Using primary button as example */}
             {buttonVariants.slice(0, 1).map(btn => (
@@ -172,13 +174,14 @@ export function ButtonsSection({ theme }: ButtonsSectionProps) {
       )}
       
       {/* Button Groups */}
-      <div className="p-6 glass-panel">
-        <h3 className="text-lg font-semibold text-foreground mb-6">Button Groups</h3>
+      <div className="p-6 glass-panel border-l-2 border-l-accent/30">
+        <h3 className="text-lg font-semibold text-foreground mb-1">Button Groups</h3>
+        <p className="text-xs text-muted-foreground/80 mb-6">Combined button layouts for related actions</p>
         <div className="space-y-4">
           {/* Segmented Control */}
           <div>
-            <h4 className="text-sm font-semibold text-muted-foreground mb-2">Segmented Control</h4>
-            <div className="inline-flex rounded-lg border border-border">
+            <h4 className="text-sm font-semibold text-foreground/80 mb-3">Segmented Control</h4>
+            <div className="inline-flex rounded-lg border border-border/50 shadow-sm bg-card/30">
               {['Left', 'Center', 'Right'].map((label, i) => (
                 <button
                   key={label}
@@ -196,7 +199,7 @@ export function ButtonsSection({ theme }: ButtonsSectionProps) {
           
           {/* Action Group */}
           <div>
-            <h4 className="text-sm font-semibold text-muted-foreground mb-2">Action Group</h4>
+            <h4 className="text-sm font-semibold text-foreground/80 mb-3">Action Group</h4>
             <div className="flex gap-2">
               {buttonVariants.slice(0, 3).map(btn => (
                 <button key={`group-${btn.variant}`} className={btn.classes}>

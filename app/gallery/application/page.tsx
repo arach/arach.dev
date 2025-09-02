@@ -358,12 +358,14 @@ function TacticalHeader({
       </div>
       
       {/* Tactical Section Header */}
-      <header className="z-20 relative bg-background/95 backdrop-blur-md" role="banner" aria-label="Section header">
+      <header className="z-20 relative bg-background/95 backdrop-blur-md border-b border-border/30" role="banner" aria-label="Section header">
         {/* Background scan line effect */}
         <div className="absolute inset-0 bg-gradient-to-r from-primary/5 via-transparent to-transparent" aria-hidden="true" />
         
         {/* Main header container with tactical frame */}
-        <div className="relative bg-card/30 backdrop-blur-sm overflow-hidden section-header-tactical mr-6" role="region" aria-label="Tactical header frame">
+        <div className="relative bg-card/30 backdrop-blur-sm overflow-hidden section-header-tactical mr-6 border-l-2 border-primary/40" role="region" aria-label="Tactical header frame">
+          {/* Top accent line */}
+          <div className="absolute top-0 left-0 right-0 h-px bg-gradient-to-r from-transparent via-primary/50 to-transparent" aria-hidden="true" />
           
           {/* Main content area with left accent */}
           <div className="flex" role="region" aria-label="Header content">
@@ -374,41 +376,41 @@ function TacticalHeader({
             <div className="flex-1 px-6 py-3" role="main">
               {/* Section identifier */}
               <nav className="flex items-center gap-2 mb-1.5" aria-label="Breadcrumb navigation">
-                <div className="px-2 py-0.5 bg-primary/10 border border-primary/30 rounded-sm">
-                  <span className="text-[10px] font-mono text-primary uppercase tracking-wider">
+                <div className="px-2 py-0.5 bg-primary/10 border border-primary/30 rounded-sm shadow-sm shadow-primary/20">
+                  <span className="text-[10px] font-mono text-primary uppercase tracking-wider font-semibold">
                     {getSectionId(activeSection)}
                   </span>
                 </div>
-                <div className="flex items-center gap-1 text-[10px] font-mono text-muted-foreground">
-                  <span>/</span>
+                <div className="flex items-center gap-1 text-[10px] font-mono text-muted-foreground/80">
+                  <span className="text-primary/60">/</span>
                   <span>STYLEGUIDE</span>
-                  <span>/</span>
+                  <span className="text-primary/60">/</span>
                   <span>COMPONENTS</span>
                 </div>
               </nav>
               
               {/* Section title */}
-              <h1 className="text-lg font-bold text-foreground uppercase tracking-tight mb-0.5">
+              <h1 className="text-xl font-bold text-foreground uppercase tracking-tight mb-0.5 bg-gradient-to-r from-foreground to-foreground/80 bg-clip-text text-transparent">
                 {getSectionTitle(activeSection)}
               </h1>
               
               {/* Section description */}
-              <p className="text-xs text-muted-foreground font-mono">
+              <p className="text-xs text-muted-foreground/90 font-mono leading-relaxed">
                 {getSectionDescription(activeSection, theme)}
               </p>
             </div>
             
             {/* Right side metrics */}
             {showMetrics && (
-              <aside className="px-4 py-3 border-l border-border/30 bg-muted/5" role="complementary" aria-label="Section metrics">
+              <aside className="px-6 py-3 border-l border-border/30 bg-gradient-to-br from-muted/10 to-muted/5" role="complementary" aria-label="Section metrics">
                 <div className="space-y-2">
                   <div>
-                    <div className="text-[10px] font-mono text-muted-foreground uppercase">Components</div>
-                    <div className="text-sm font-mono text-foreground">{getSectionComponentCount(activeSection, theme)}</div>
+                    <div className="text-[10px] font-mono text-muted-foreground/70 uppercase tracking-wider">Components</div>
+                    <div className="text-lg font-mono font-bold text-primary">{getSectionComponentCount(activeSection, theme)}</div>
                   </div>
                   <div>
-                    <div className="text-[10px] font-mono text-muted-foreground uppercase">Variants</div>
-                    <div className="text-sm font-mono text-foreground">{getSectionVariantCount(activeSection, theme)}</div>
+                    <div className="text-[10px] font-mono text-muted-foreground/70 uppercase tracking-wider">Variants</div>
+                    <div className="text-lg font-mono font-bold text-foreground">{getSectionVariantCount(activeSection, theme)}</div>
                   </div>
                 </div>
               </aside>
@@ -416,7 +418,7 @@ function TacticalHeader({
           </div>
           
           {/* Bottom telemetry bar */}
-          <div className="h-px bg-gradient-to-r from-transparent via-primary/30 to-transparent" aria-hidden="true" />
+          <div className="h-px bg-gradient-to-r from-transparent via-primary/30 to-transparent telemetry-bar" aria-hidden="true" />
         </div>
       </header>
     </>
@@ -434,47 +436,47 @@ interface SectionHeaderProps {
 
 function SectionHeader({ title, id, status, componentCount, variantCount }: SectionHeaderProps) {
   return (
-    <div className="mb-4 relative">
+    <div className="mb-6 relative">
       {/* Background scan effect */}
-      <div className="absolute inset-0 bg-gradient-to-r from-primary/3 via-transparent to-transparent rounded-sm" />
+      <div className="absolute inset-0 bg-gradient-to-r from-primary/5 via-transparent to-transparent rounded-sm" />
       
       {/* Main header container */}
-      <div className="relative border border-border/40 bg-card/20 backdrop-blur-sm rounded-sm overflow-hidden section-header-tactical">
+      <div className="relative border border-border/30 bg-gradient-to-br from-card/40 to-card/20 backdrop-blur-sm rounded-sm overflow-hidden section-header-tactical shadow-sm">
         {/* Top telemetry bar */}
-        <div className="h-px telemetry-bar" />
+        <div className="h-px bg-gradient-to-r from-transparent via-primary/40 to-transparent telemetry-bar" />
         
         {/* Header content */}
         <div className="flex items-center">
           {/* Left accent */}
-          <div className="w-0.5 self-stretch" />
+          <div className="w-1 self-stretch bg-gradient-to-b from-primary/60 via-primary/30 to-transparent" />
           
           {/* Main content */}
-          <div className="flex-1 px-6 py-2">
+          <div className="flex-1 px-6 py-3">
             <div className="flex items-center justify-between">
               <div className="flex items-center gap-3">
                 {/* Section ID badge */}
-                <div className="px-2 py-0.5 bg-primary/10 border border-primary/20 rounded-sm">
-                  <span className="text-[10px] font-mono text-primary/90 uppercase tracking-wider">
+                <div className="px-2.5 py-1 bg-primary/15 border border-primary/30 rounded-sm shadow-sm shadow-primary/10">
+                  <span className="text-[10px] font-mono text-primary uppercase tracking-wider font-semibold">
                     {id}
                   </span>
                 </div>
                 
                 {/* Section title */}
-                <h3 className="text-base font-bold text-foreground uppercase tracking-tight">
+                <h3 className="text-lg font-bold text-foreground uppercase tracking-tight">
                   {title}
                 </h3>
               </div>
               
               {/* Right side metrics */}
-              <div className="flex items-center gap-4">
+              <div className="flex items-center gap-4 px-4 py-1.5 bg-muted/10 rounded-sm border border-border/20">
                 <div className="flex items-center gap-2">
-                  <span className="text-[10px] font-mono text-muted-foreground uppercase">Components:</span>
-                  <span className="text-xs font-mono text-foreground">{componentCount}</span>
+                  <span className="text-[10px] font-mono text-muted-foreground/70 uppercase tracking-wider">Components:</span>
+                  <span className="text-sm font-mono font-semibold text-primary">{componentCount}</span>
                 </div>
-                <div className="h-3 w-px bg-border/50" />
+                <div className="h-4 w-px bg-border/30" />
                 <div className="flex items-center gap-2">
-                  <span className="text-[10px] font-mono text-muted-foreground uppercase">Variants:</span>
-                  <span className="text-xs font-mono text-foreground">{variantCount}</span>
+                  <span className="text-[10px] font-mono text-muted-foreground/70 uppercase tracking-wider">Variants:</span>
+                  <span className="text-sm font-mono font-semibold text-foreground">{variantCount}</span>
                 </div>
               </div>
             </div>
@@ -482,7 +484,7 @@ function SectionHeader({ title, id, status, componentCount, variantCount }: Sect
         </div>
         
         {/* Bottom telemetry bar */}
-        <div className="h-px bg-gradient-to-r from-transparent via-primary/10 to-transparent telemetry-bar" />
+        <div className="h-px bg-gradient-to-r from-transparent via-primary/20 to-transparent telemetry-bar" />
       </div>
     </div>
   )
@@ -1010,7 +1012,7 @@ function StyleGuideContent() {
 
         {/* Right Panel - Style Details or Pinned Styles - Fixed position */}
         {(selectedElement || showPinnedPanel) && showRightSidebar && (
-          <aside className="w-96 fixed right-0 border-l border-white/10 bg-card/80 backdrop-blur-md overflow-y-auto transition-all duration-200 shadow-xl shadow-black/20 z-20"
+          <aside className="w-96 fixed right-0 border-l border-border/30 bg-card/80 backdrop-blur-md overflow-y-auto transition-all duration-200 shadow-xl shadow-black/20 z-20"
                  style={{ 
                top: 'var(--header-height, 39px)', 
                height: 'calc(100vh - var(--header-height, 39px))' 

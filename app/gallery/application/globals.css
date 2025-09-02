@@ -9,9 +9,26 @@
   /* Premium Button System - Enhanced Depth & Micro-interactions */
   .btn {
     @apply relative inline-flex items-center justify-center whitespace-nowrap font-mono text-xs uppercase tracking-wider;
-    @apply transition-all duration-150 focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-primary/50;
+    @apply transition-all duration-150 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary/50;
     @apply disabled:pointer-events-none disabled:opacity-50 disabled:transform-none;
     border-radius: 4px;
+    position: relative;
+    overflow: hidden;
+  }
+  
+  .btn::after {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: -100%;
+    width: 100%;
+    height: 100%;
+    background: linear-gradient(90deg, transparent, rgba(255,255,255,0.2), transparent);
+    transition: left 0.5s;
+  }
+  
+  .btn:hover::after {
+    left: 100%;
   }
   
   .btn-primary {
@@ -131,9 +148,15 @@
   /* Enhanced Badge System - Darker, More Refined */
   .badge {
     @apply inline-flex items-center px-3 py-1.5 text-xs font-medium focus:outline-none focus:ring-2 focus:ring-ring focus:ring-offset-2;
-    @apply backdrop-blur-sm border border-white/10 shadow-sm;
+    @apply backdrop-blur-sm border border-border/30 shadow-sm;
     border-radius: 6px;
     position: relative;
+    transition: all 0.2s ease;
+  }
+  
+  .badge:hover {
+    @apply shadow-md border-border/40;
+    transform: translateY(-1px);
   }
   
   .badge::before {
@@ -196,7 +219,7 @@
   }
   
   .badge-outline {
-    @apply badge bg-white/5 text-foreground border-white/20 hover:bg-white/10 hover:border-white/30 hover:shadow-lg;
+    @apply badge bg-muted/10 text-foreground border-border/30 hover:bg-muted/20 hover:border-border/50 hover:shadow-lg;
   }
 
   /* Label System - Inspired by Peal */
@@ -215,20 +238,21 @@
 
   /* Enhanced Input System - Glass + Peal Best Practices */
   .input {
-    @apply w-full backdrop-blur-sm border border-white/15 rounded-lg px-3 py-2 text-sm;
-    @apply focus:ring-2 focus:ring-primary/50 focus:border-primary/30 transition-all;
-    @apply shadow-md shadow-black/10;
+    @apply w-full backdrop-blur-sm border border-border/30 rounded-lg px-3 py-2 text-sm;
+    @apply focus:ring-2 focus:ring-primary/50 focus:border-primary/40 transition-all;
+    @apply shadow-sm shadow-black/10;
     position: relative;
+    background: linear-gradient(to bottom, transparent, rgba(0,0,0,0.02));
   }
   
   .input-default {
     @apply input bg-card/70 text-card-foreground;
-    @apply hover:border-white/20 hover:shadow-lg;
+    @apply hover:border-border/30 hover:shadow-lg;
   }
   
   .input-mono {
     @apply input bg-card/70 text-card-foreground font-mono;
-    @apply hover:border-white/20 hover:shadow-lg;
+    @apply hover:border-border/30 hover:shadow-lg;
   }
   
   .input-dark {
@@ -238,28 +262,28 @@
   }
   
   .input-transparent {
-    @apply w-full bg-transparent border-0 border-b border-white/20 text-foreground px-1 py-2 text-sm;
+    @apply w-full bg-transparent border-0 border-b border-border/30 text-foreground px-1 py-2 text-sm;
     @apply focus:border-primary/70 transition-all;
-    @apply hover:border-white/30;
+    @apply hover:border-border/40;
     border-radius: 0;
     box-shadow: none;
   }
 
   /* Enhanced Textarea */
   .textarea {
-    @apply w-full backdrop-blur-sm border border-white/15 rounded-lg px-3 py-2 text-sm resize-none;
+    @apply w-full backdrop-blur-sm border border-border/20 rounded-lg px-3 py-2 text-sm resize-none;
     @apply focus:ring-2 focus:ring-primary/50 focus:border-primary/30 transition-all;
     @apply shadow-md shadow-black/10;
   }
   
   .textarea-default {
     @apply textarea bg-card/70 text-card-foreground;
-    @apply hover:border-white/20 hover:shadow-lg;
+    @apply hover:border-border/30 hover:shadow-lg;
   }
   
   .textarea-mono {
     @apply textarea bg-card/70 text-card-foreground font-mono;
-    @apply hover:border-white/20 hover:shadow-lg;
+    @apply hover:border-border/30 hover:shadow-lg;
   }
   
   .textarea-dark {
@@ -270,9 +294,15 @@
 
   /* Enhanced Card System */
   .card {
-    @apply backdrop-blur-sm bg-card/70 border border-white/10 shadow-lg shadow-black/15;
+    @apply backdrop-blur-sm bg-card/60 border border-border/30 shadow-lg shadow-black/15;
     border-radius: 8px;
     position: relative;
+    transition: all 0.2s ease;
+  }
+  
+  .card:hover {
+    @apply shadow-xl shadow-black/20 border-border/40;
+    transform: translateY(-2px);
   }
   
   .card::before {
@@ -283,7 +313,7 @@
     right: 0;
     bottom: 0;
     border-radius: inherit;
-    background: linear-gradient(135deg, rgba(255,255,255,0.08) 0%, rgba(255,255,255,0.02) 100%);
+    background: linear-gradient(135deg, rgba(255,255,255,0.06) 0%, rgba(255,255,255,0.02) 100%);
     pointer-events: none;
   }
 
@@ -309,9 +339,14 @@
 
   /* Glass Panel - For larger sections */
   .glass-panel {
-    @apply backdrop-blur-md bg-card/70 border border-white/10 shadow-xl shadow-black/20;
+    @apply backdrop-blur-md bg-card/50 border border-border/30 shadow-xl shadow-black/20;
     border-radius: 12px;
     position: relative;
+    transition: all 0.3s ease;
+  }
+  
+  .glass-panel:hover {
+    @apply shadow-2xl shadow-black/25 border-border/40;
   }
   
   .glass-panel::before {
@@ -322,8 +357,31 @@
     right: 0;
     bottom: 0;
     border-radius: inherit;
-    background: linear-gradient(135deg, rgba(255,255,255,0.1) 0%, rgba(255,255,255,0.02) 50%, rgba(255,255,255,0) 100%);
+    background: linear-gradient(135deg, rgba(255,255,255,0.08) 0%, rgba(255,255,255,0.02) 50%, rgba(255,255,255,0) 100%);
     pointer-events: none;
+  }
+  
+  .glass-panel::after {
+    content: '';
+    position: absolute;
+    top: -1px;
+    left: -1px;
+    right: -1px;
+    bottom: -1px;
+    border-radius: inherit;
+    background: linear-gradient(135deg, 
+      hsl(var(--primary) / 0.1) 0%, 
+      transparent 40%,
+      transparent 60%,
+      hsl(var(--accent) / 0.05) 100%);
+    pointer-events: none;
+    opacity: 0;
+    transition: opacity 0.3s ease;
+    z-index: -1;
+  }
+  
+  .glass-panel:hover::after {
+    opacity: 1;
   }
 
   /* Card variants */
@@ -653,13 +711,13 @@
   /* Tactical Section Headers - Command Center Interface */
   @keyframes scanline {
     0% { transform: translateX(-100%); opacity: 0; }
-    50% { opacity: 0.5; }
+    50% { opacity: 0.8; }
     100% { transform: translateX(100%); opacity: 0; }
   }
 
   @keyframes telemetry-pulse {
-    0%, 100% { opacity: 0.1; }
-    50% { opacity: 0.3; }
+    0%, 100% { opacity: 0.2; }
+    50% { opacity: 0.6; }
   }
 
   @keyframes status-blink {
@@ -667,9 +725,19 @@
     50% { opacity: 0.5; }
   }
 
+  @keyframes accent-glow {
+    0%, 100% { opacity: 0.4; }
+    50% { opacity: 0.8; }
+  }
+
   .section-header-tactical {
     position: relative;
     overflow: hidden;
+    transition: all 0.3s ease;
+  }
+
+  .section-header-tactical:hover {
+    box-shadow: 0 2px 8px rgba(var(--primary), 0.1);
   }
 
   .section-header-tactical::before {
@@ -678,13 +746,30 @@
     top: 0;
     left: 0;
     right: 0;
+    height: 2px;
+    background: linear-gradient(90deg, transparent, hsl(var(--primary)), transparent);
+    animation: scanline 6s ease-in-out infinite;
+  }
+
+  .section-header-tactical::after {
+    content: '';
+    position: absolute;
+    bottom: 0;
+    left: 0;
+    right: 0;
     height: 1px;
-    background: linear-gradient(90deg, transparent, var(--primary), transparent);
-    animation: scanline 8s ease-in-out infinite;
+    background: linear-gradient(90deg, transparent, hsl(var(--primary) / 0.3), transparent);
+    animation: scanline 8s ease-in-out infinite reverse;
   }
 
   .section-header-tactical .telemetry-bar {
-    animation: telemetry-pulse 4s ease-in-out infinite;
+    background: linear-gradient(90deg, 
+      transparent, 
+      hsl(var(--primary) / 0.3), 
+      hsl(var(--primary) / 0.5), 
+      hsl(var(--primary) / 0.3), 
+      transparent);
+    animation: telemetry-pulse 3s ease-in-out infinite;
   }
 
   .section-header-tactical .status-indicator {
@@ -693,8 +778,32 @@
 
   /* Prevent animations when UI animations are disabled */
   [data-ui-animations="false"] .section-header-tactical::before,
+  [data-ui-animations="false"] .section-header-tactical::after,
   [data-ui-animations="false"] .telemetry-bar,
-  [data-ui-animations="false"] .status-indicator {
+  [data-ui-animations="false"] .status-indicator,
+  [data-ui-animations="false"] .btn::after {
     animation: none !important;
+  }
+  
+  /* Section content animations */
+  @keyframes fadeInUp {
+    from {
+      opacity: 0;
+      transform: translateY(10px);
+    }
+    to {
+      opacity: 1;
+      transform: translateY(0);
+    }
+  }
+  
+  .glass-panel,
+  .card {
+    animation: fadeInUp 0.5s ease-out;
+  }
+  
+  [data-ui-animations="false"] .glass-panel,
+  [data-ui-animations="false"] .card {
+    animation: none;
   }
 }

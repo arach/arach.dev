@@ -67,16 +67,20 @@ export function InputsSection({ theme }: InputsSectionProps) {
   return (
     <section className="space-y-6">
       <div className="grid gap-6">
-        <div className="p-6 glass-panel">
-          <h3 className="text-lg font-semibold text-foreground mb-4">Input Fields</h3>
-          <div className="grid md:grid-cols-2 gap-4">
+        <div className="p-6 glass-panel border-l-2 border-l-primary/30">
+          <h3 className="text-lg font-semibold text-foreground mb-1">Input Fields</h3>
+          <p className="text-xs text-muted-foreground/80 mb-6">Form input components with various styles and states</p>
+          <div className="grid md:grid-cols-2 gap-6">
             {inputVariants.map((input) => (
-              <div key={input.variant}>
-                <label className={input.labelClass}>{input.name}</label>
+              <div key={input.variant} className="group">
+                <label className={`${input.labelClass} flex items-center justify-between`}>
+                  <span>{input.name}</span>
+                  <span className="text-[10px] text-muted-foreground/60 font-mono">{input.variant}</span>
+                </label>
                 <input 
                   type="text" 
                   placeholder={input.placeholder}
-                  className={input.inputClass}
+                  className={`${input.inputClass} group-hover:border-primary/50 transition-colors`}
                   data-style-element="input"
                   data-element-name={input.name}
                   data-description={input.description}
@@ -85,14 +89,16 @@ export function InputsSection({ theme }: InputsSectionProps) {
                   data-variant={input.variant}
                   data-usage={`<input type='text' className='${input.inputClass}' placeholder='${input.placeholder}' />`}
                 />
+                <p className="text-[10px] text-muted-foreground/60 mt-1">{input.description}</p>
               </div>
             ))}
           </div>
         </div>
 
-        <div className="p-6 glass-panel">
-          <h3 className="text-lg font-semibold text-foreground mb-4">Textareas</h3>
-          <div className="grid md:grid-cols-2 gap-4">
+        <div className="p-6 glass-panel border-l-2 border-l-secondary/30">
+          <h3 className="text-lg font-semibold text-foreground mb-1">Textareas</h3>
+          <p className="text-xs text-muted-foreground/80 mb-6">Multi-line text input components</p>
+          <div className="grid md:grid-cols-2 gap-6">
             <div>
               <label className="label-default">Default Textarea</label>
               <textarea 

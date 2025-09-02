@@ -205,10 +205,10 @@ export function TypographySection({ theme }: TypographySectionProps) {
           <button
             key={tab.id}
             onClick={() => setActiveTab(tab.id as any)}
-            className={`flex-1 flex items-center justify-center gap-2 px-4 py-2 rounded-md text-sm font-medium transition-all ${
+            className={`flex-1 flex items-center justify-center gap-2 px-4 py-2.5 rounded-md text-sm font-medium transition-all ${
               activeTab === tab.id
-                ? 'bg-background text-foreground shadow-sm'
-                : 'text-muted-foreground hover:text-foreground'
+                ? 'bg-gradient-to-br from-primary/20 to-primary/10 text-primary border border-primary/30 shadow-sm shadow-primary/10'
+                : 'text-muted-foreground hover:text-foreground hover:bg-muted/20 border border-transparent'
             }`}
           >
             <span className="opacity-60">{tab.icon}</span>
@@ -223,7 +223,7 @@ export function TypographySection({ theme }: TypographySectionProps) {
           {themeFonts.map((font) => (
             <div 
               key={font.key}
-              className="p-6 glass-panel hover:shadow-lg transition-shadow cursor-pointer"
+              className="p-6 glass-panel hover:shadow-xl hover:border-primary/30 transition-all cursor-pointer border-l-2 border-l-primary/20"
               onClick={() => setSelectedFont(selectedFont === font.key ? null : font.key)}
               data-style-element="font"
               data-element-name={`${font.name} Font`}
@@ -236,7 +236,7 @@ export function TypographySection({ theme }: TypographySectionProps) {
                 <div>
                   <div className="flex items-center gap-3 mb-2">
                     <h4 className="text-xl font-semibold text-foreground">{font.name}</h4>
-                    <span className="px-2 py-1 text-xs font-medium bg-primary/10 text-primary rounded-md">
+                    <span className="px-2.5 py-1 text-xs font-medium bg-primary/15 text-primary rounded-md border border-primary/20 shadow-sm">
                       {font.type}
                     </span>
                   </div>
@@ -257,9 +257,9 @@ export function TypographySection({ theme }: TypographySectionProps) {
               {/* Font Preview */}
               <div className="space-y-4" style={{ fontFamily: font.family }}>
                 {/* Large preview */}
-                <div className="pb-4 border-b border-border">
-                  <div className="text-6xl font-bold tracking-tight mb-2">Aa</div>
-                  <div className="text-2xl text-muted-foreground">
+                <div className="pb-4 border-b border-border/50">
+                  <div className="text-6xl font-bold tracking-tight mb-2 bg-gradient-to-r from-foreground to-foreground/70 bg-clip-text text-transparent">Aa</div>
+                  <div className="text-2xl text-muted-foreground/90">
                     The quick brown fox jumps over the lazy dog
                   </div>
                 </div>

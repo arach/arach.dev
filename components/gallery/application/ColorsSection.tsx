@@ -79,13 +79,14 @@ export function ColorsSection({ theme }: ColorsSectionProps) {
     <section className="space-y-6">
       {/* Accent Colors */}
       {accentColors.length > 0 && (
-        <div className="p-6 glass-panel">
-          <h3 className="text-lg font-semibold text-foreground mb-4">Accent Colors</h3>
+        <div className="p-6 glass-panel border-l-2 border-l-primary/30">
+          <h3 className="text-lg font-semibold text-foreground mb-1">Accent Colors</h3>
+          <p className="text-xs text-muted-foreground/80 mb-6">Primary brand and accent colors for interactive elements</p>
           <div className="grid grid-cols-2 md:grid-cols-4 lg:grid-cols-6 gap-4">
             {accentColors.map((color) => (
               <div 
                 key={color.key}
-                className="flex flex-col"
+                className="flex flex-col group cursor-pointer"
                 data-style-element="color"
                 data-element-name={`${color.name} Color`}
                 data-description={color.description}
@@ -94,13 +95,13 @@ export function ColorsSection({ theme }: ColorsSectionProps) {
                 data-usage={color.usage}
               >
                 <div 
-                  className="w-full h-16 rounded-lg border border-border"
+                  className="w-full h-20 rounded-lg border border-border/50 shadow-sm group-hover:shadow-lg group-hover:scale-105 transition-all"
                   style={{ backgroundColor: color.value }}
                   title={`${color.name}: ${color.value}`}
                 />
-                <div className="mt-2">
+                <div className="mt-2 text-center">
                   <div className="font-medium text-foreground text-xs">{color.name}</div>
-                  <div className="font-mono text-xs text-muted-foreground">{color.value}</div>
+                  <div className="font-mono text-[10px] text-muted-foreground/70 uppercase">{color.value}</div>
                 </div>
               </div>
             ))}
@@ -110,13 +111,14 @@ export function ColorsSection({ theme }: ColorsSectionProps) {
 
       {/* Gray Scale */}
       {grayColors.length > 0 && (
-        <div className="p-6 glass-panel">
-          <h3 className="text-lg font-semibold text-foreground mb-4">Gray Scale</h3>
-          <div className="grid grid-cols-4 md:grid-cols-8 lg:grid-cols-12 gap-2">
+        <div className="p-6 glass-panel border-l-2 border-l-muted-foreground/30">
+          <h3 className="text-lg font-semibold text-foreground mb-1">Gray Scale</h3>
+          <p className="text-xs text-muted-foreground/80 mb-6">Neutral colors for text, backgrounds, and UI elements</p>
+          <div className="grid grid-cols-4 md:grid-cols-8 lg:grid-cols-12 gap-3">
             {grayColors.map((color) => (
               <div 
                 key={color.key}
-                className="flex flex-col"
+                className="flex flex-col group cursor-pointer"
                 data-style-element="color"
                 data-element-name={`${color.name} Color`}
                 data-description={color.description}
@@ -125,12 +127,12 @@ export function ColorsSection({ theme }: ColorsSectionProps) {
                 data-usage={color.usage}
               >
                 <div 
-                  className="w-full h-12 rounded border border-border"
+                  className="w-full h-14 rounded-md border border-border/30 shadow-sm group-hover:shadow-md group-hover:scale-105 transition-all"
                   style={{ backgroundColor: color.value }}
                   title={`${color.name}: ${color.value}`}
                 />
-                <div className="mt-1 text-center">
-                  <div className="font-mono text-xs text-muted-foreground">{color.key}</div>
+                <div className="mt-1.5 text-center">
+                  <div className="font-mono text-[10px] text-muted-foreground/70 font-semibold">{color.key}</div>
                 </div>
               </div>
             ))}
