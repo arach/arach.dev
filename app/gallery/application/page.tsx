@@ -327,59 +327,78 @@ function TacticalHeader({
   
   return (
     <>
-      {/* Sticky Status Bar */}
-      <div className="sticky z-30 bg-muted/10 border-b border-border/20 backdrop-blur-xl backdrop-saturate-150" 
-           style={{ top: 'var(--header-height, 39px)' }}
+      {/* Sticky Status Bar - Terminal Theme */}
+      <div className="sticky z-30 border-b" 
+           style={{ 
+             top: 'var(--header-height, 39px)',
+             backgroundColor: 'hsl(var(--background))',
+             borderBottomColor: 'hsl(var(--border))'
+           }}
            role="status" 
            aria-label="System status">
-        <div className="flex items-center py-0.5">
-          <div className="w-0.5 mr-3" style={{ height: '16px', backgroundColor: accentColor }} aria-hidden="true"></div>
+        <div className="flex items-center py-1">
+          <div className="w-0.5 mr-3" style={{ height: '16px', backgroundColor: 'hsl(var(--primary))' }} aria-hidden="true"></div>
           <div className="flex items-center gap-3 mr-6">
             {/* Status indicators */}
-            <div className="flex items-center gap-1" role="status" aria-label={`${status} status`}>
-              <div className={`w-2 h-2 rounded-full ${statusColorClass} ${status === 'active' ? 'animate-pulse' : ''}`} aria-hidden="true" />
-              <span className={`text-[10px] font-mono text-${statusColor} uppercase`}>{status.toUpperCase()}</span>
+            <div className="flex items-center gap-1.5" role="status" aria-label={`${status} status`}>
+              <div className={`w-2 h-2 rounded-full ${status === 'active' ? 'animate-pulse' : ''}`} 
+                   style={{ backgroundColor: status === 'active' ? 'hsl(var(--success))' : 'hsl(var(--muted))' }}
+                   aria-hidden="true" />
+              <span className="text-[10px] font-mono font-semibold uppercase tracking-wider" 
+                    style={{ color: status === 'active' ? 'hsl(var(--success))' : 'hsl(var(--muted-foreground))' }}>
+                {status.toUpperCase()}
+              </span>
             </div>
-            <div className="h-3 w-px bg-border/50" aria-hidden="true" />
-            <span className="text-[10px] font-mono text-muted-foreground uppercase tracking-wider">
+            <div className="h-3 w-px" style={{ backgroundColor: 'hsl(var(--border))' }} aria-hidden="true" />
+            <span className="text-[10px] font-mono uppercase tracking-wider" style={{ color: 'hsl(var(--muted-foreground))' }}>
               SECTION: {activeSection.toUpperCase()}
             </span>
           </div>
           <div className="flex items-center gap-2 ml-auto mr-6" role="status" aria-label="System information">
-            <span className="text-[10px] font-mono text-muted-foreground">
+            <span className="text-[10px] font-mono" style={{ color: 'hsl(var(--muted-foreground))' }}>
               THEME: {activeTheme.toUpperCase()}
             </span>
-            <div className="h-3 w-px bg-border/50" aria-hidden="true" />
-            <span className="text-[10px] font-mono text-muted-foreground">
+            <div className="h-3 w-px" style={{ backgroundColor: 'hsl(var(--border))' }} aria-hidden="true" />
+            <span className="text-[10px] font-mono" style={{ color: 'hsl(var(--muted-foreground))' }}>
               REV: {revision}
             </span>
           </div>
         </div>
       </div>
       
-      {/* Tactical Section Header */}
-      <header className="z-20 relative bg-background/95 backdrop-blur-md" role="banner" aria-label="Section header">
-        {/* Background scan line effect */}
-        <div className="absolute inset-0 bg-gradient-to-r from-primary/5 via-transparent to-transparent" aria-hidden="true" />
+      {/* Tactical Section Header - Terminal Theme */}
+      <header className="z-20 relative" 
+              style={{ backgroundColor: 'hsl(var(--background))' }}
+              role="banner" 
+              aria-label="Section header">
         
-        {/* Main header container with tactical frame */}
-        <div className="relative bg-card/30 backdrop-blur-sm overflow-hidden section-header-tactical mr-6" role="region" aria-label="Tactical header frame">
+        {/* Main header container */}
+        <div className="relative overflow-hidden mr-6" 
+             style={{ backgroundColor: 'hsl(var(--card))' }}
+             role="region" 
+             aria-label="Tactical header frame">
           
           {/* Main content area with left accent */}
           <div className="flex" role="region" aria-label="Header content">
             {/* Tactical accent bar */}
-            <div className="w-1 bg-gradient-to-b from-primary via-primary/50 to-transparent" aria-hidden="true" />
+            <div className="w-1" style={{ backgroundColor: 'hsl(var(--primary))' }} aria-hidden="true" />
             
             {/* Content */}
-            <div className="flex-1 px-6 py-3" role="main">
+            <div className="flex-1 px-6 py-4" role="main">
               {/* Section identifier */}
-              <nav className="flex items-center gap-2 mb-1.5" aria-label="Breadcrumb navigation">
-                <div className="px-2 py-0.5 bg-primary/10 border border-primary/30 rounded-sm">
-                  <span className="text-[10px] font-mono text-primary uppercase tracking-wider">
+              <nav className="flex items-center gap-2 mb-2" aria-label="Breadcrumb navigation">
+                <div className="px-2 py-0.5 rounded-sm" 
+                     style={{ 
+                       backgroundColor: 'hsl(var(--primary) / 0.1)', 
+                       border: '1px solid hsl(var(--primary) / 0.3)' 
+                     }}>
+                  <span className="text-[10px] font-mono font-semibold uppercase tracking-wider" 
+                        style={{ color: 'hsl(var(--primary))' }}>
                     {getSectionId(activeSection)}
                   </span>
                 </div>
-                <div className="flex items-center gap-1 text-[10px] font-mono text-muted-foreground">
+                <div className="flex items-center gap-1 text-[10px] font-mono" 
+                     style={{ color: 'hsl(var(--muted-foreground))' }}>
                   <span>/</span>
                   <span>STYLEGUIDE</span>
                   <span>/</span>
@@ -388,27 +407,46 @@ function TacticalHeader({
               </nav>
               
               {/* Section title */}
-              <h1 className="text-lg font-bold text-foreground uppercase tracking-tight mb-0.5">
+              <h1 className="text-xl font-mono font-bold uppercase tracking-tight mb-1" 
+                  style={{ color: 'hsl(var(--foreground))' }}>
                 {getSectionTitle(activeSection)}
               </h1>
               
               {/* Section description */}
-              <p className="text-xs text-muted-foreground font-mono">
+              <p className="text-xs font-mono" style={{ color: 'hsl(var(--muted-foreground))' }}>
                 {getSectionDescription(activeSection, theme)}
               </p>
             </div>
             
             {/* Right side metrics */}
             {showMetrics && (
-              <aside className="px-4 py-3 border-l border-border/30 bg-muted/5" role="complementary" aria-label="Section metrics">
+              <aside className="px-4 py-4 border-l" 
+                     style={{ 
+                       borderLeftColor: 'hsl(var(--border))',
+                       backgroundColor: 'hsl(var(--muted) / 0.05)'
+                     }}
+                     role="complementary" 
+                     aria-label="Section metrics">
                 <div className="space-y-2">
                   <div>
-                    <div className="text-[10px] font-mono text-muted-foreground uppercase">Components</div>
-                    <div className="text-sm font-mono text-foreground">{getSectionComponentCount(activeSection, theme)}</div>
+                    <div className="text-[10px] font-mono uppercase tracking-wider" 
+                         style={{ color: 'hsl(var(--muted-foreground))' }}>
+                      Components
+                    </div>
+                    <div className="text-sm font-mono font-semibold" 
+                         style={{ color: 'hsl(var(--foreground))' }}>
+                      {getSectionComponentCount(activeSection, theme)}
+                    </div>
                   </div>
                   <div>
-                    <div className="text-[10px] font-mono text-muted-foreground uppercase">Variants</div>
-                    <div className="text-sm font-mono text-foreground">{getSectionVariantCount(activeSection, theme)}</div>
+                    <div className="text-[10px] font-mono uppercase tracking-wider" 
+                         style={{ color: 'hsl(var(--muted-foreground))' }}>
+                      Variants
+                    </div>
+                    <div className="text-sm font-mono font-semibold" 
+                         style={{ color: 'hsl(var(--foreground))' }}>
+                      {getSectionVariantCount(activeSection, theme)}
+                    </div>
                   </div>
                 </div>
               </aside>
@@ -879,18 +917,25 @@ function StyleGuideContent() {
 
       <div className="max-w-full mx-auto flex relative">
         {/* Sidebar Navigation - Fixed position */}
-        <nav className={`${showLeftSidebar ? 'w-64' : 'w-12'} fixed left-0 border-r border-white/10 bg-card/20 backdrop-blur-md shadow-xl shadow-black/10 ${uiAnimations ? 'transition-all duration-200' : ''} overflow-y-auto z-20`}
+        <nav className={`${showLeftSidebar ? 'w-64' : 'w-12'} fixed left-0 border-r ${uiAnimations ? 'transition-all duration-200' : ''} overflow-y-auto z-20`}
              style={{ 
                top: 'var(--header-height, 39px)', 
-               height: 'calc(100vh - var(--header-height, 39px))' 
+               height: 'calc(100vh - var(--header-height, 39px))',
+               backgroundColor: 'hsl(217 33% 7% / 0.2)',
+               borderRightColor: 'hsl(217 32% 15% / 0.4)',
+               backdropFilter: 'blur(12px)',
+               boxShadow: '0 10px 40px rgba(0, 0, 0, 0.1)'
              }}>
           {showLeftSidebar ? (
             <div>
               <div className="flex items-center justify-between mb-4 px-6 pt-6">
-                <h2 className="text-sm font-semibold text-muted-foreground uppercase tracking-wider">Sections</h2>
+                <h2 className="text-sm font-semibold uppercase tracking-wider" style={{ color: 'hsl(215 20% 65%)' }}>Sections</h2>
                 <button
                   onClick={() => setShowLeftSidebar(false)}
-                  className="p-1 rounded text-muted-foreground hover:text-foreground hover:bg-accent transition-colors"
+                  className="p-1 rounded transition-colors"
+                  style={{ color: 'hsl(215 20% 65%)' }}
+                  onMouseEnter={(e) => { e.currentTarget.style.color = 'hsl(0 0% 100%)'; e.currentTarget.style.backgroundColor = 'hsl(200 96% 43% / 0.5)' }}
+                  onMouseLeave={(e) => { e.currentTarget.style.color = 'hsl(215 20% 65%)'; e.currentTarget.style.backgroundColor = 'transparent' }}
                   title="Collapse sidebar"
                 >
                   <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
@@ -909,9 +954,26 @@ function StyleGuideContent() {
                       }}
                       className={`w-full text-left px-6 py-2.5 text-sm transition-colors ${
                         activeSection === section.id
-                          ? 'bg-primary/10 text-primary border-l-2 border-primary'
-                          : 'text-muted-foreground hover:text-foreground hover:bg-accent/50'
+                          ? 'border-l-2'
+                          : ''
                       }`}
+                      style={{
+                        backgroundColor: activeSection === section.id ? 'hsl(200 96% 43% / 0.1)' : 'transparent',
+                        color: activeSection === section.id ? 'hsl(200 96% 43%)' : 'hsl(215 20% 65%)',
+                        borderLeftColor: activeSection === section.id ? 'hsl(200 96% 43%)' : 'transparent'
+                      }}
+                      onMouseEnter={(e) => {
+                        if (activeSection !== section.id) {
+                          e.currentTarget.style.color = 'hsl(0 0% 100%)';
+                          e.currentTarget.style.backgroundColor = 'hsl(200 96% 43% / 0.05)';
+                        }
+                      }}
+                      onMouseLeave={(e) => {
+                        if (activeSection !== section.id) {
+                          e.currentTarget.style.color = 'hsl(215 20% 65%)';
+                          e.currentTarget.style.backgroundColor = 'transparent';
+                        }
+                      }}
                     >
                       {section.label}
                     </button>
@@ -924,7 +986,10 @@ function StyleGuideContent() {
               <div className="p-6 flex justify-center">
                 <button
                   onClick={() => setShowLeftSidebar(true)}
-                  className="p-2 rounded text-muted-foreground hover:text-foreground hover:bg-accent transition-colors"
+                  className="p-2 rounded transition-colors"
+                  style={{ color: 'hsl(215 20% 65%)' }}
+                  onMouseEnter={(e) => { e.currentTarget.style.color = 'hsl(0 0% 100%)'; e.currentTarget.style.backgroundColor = 'hsl(200 96% 43% / 0.5)' }}
+                  onMouseLeave={(e) => { e.currentTarget.style.color = 'hsl(215 20% 65%)'; e.currentTarget.style.backgroundColor = 'transparent' }}
                   title="Expand navigation sidebar"
                 >
                   <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
