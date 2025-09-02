@@ -1,6 +1,6 @@
 // Theme System - Easy theme loading and management
 export type { Theme } from '@/types/theme'
-export { cx } from '@/themes/application/terminal'
+export { cx } from '@/lib/utils/cx'
 
 // Initialize built-in themes
 import './init'

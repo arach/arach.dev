@@ -1,0 +1,378 @@
+/**
+ * Terminal Theme - Tailwind v4 CSS-first Configuration
+ * Precision-focused design with sophisticated UI patterns and tactical aesthetics
+ */
+
+@import "tailwindcss";
+
+@theme {
+  /* === COLOR SYSTEM === */
+  
+  /* Enhanced grayscale foundation with better contrast steps */
+  --color-gray-0: #ffffff;
+  --color-gray-25: #fcfcfc;
+  --color-gray-50: #fafafa;
+  --color-gray-75: #f7f7f7;
+  --color-gray-100: #f4f4f5;
+  --color-gray-150: #ededef;
+  --color-gray-200: #e4e4e7;
+  --color-gray-250: #d9d9dd;
+  --color-gray-300: #d1d1d6;
+  --color-gray-350: #b8b8bf;
+  --color-gray-400: #a1a1aa;
+  --color-gray-450: #8d8d96;
+  --color-gray-500: #71717a;
+  --color-gray-550: #5e5e66;
+  --color-gray-600: #52525b;
+  --color-gray-650: #46464f;
+  --color-gray-700: #3f3f46;
+  --color-gray-750: #38383f;
+  --color-gray-800: #27272a;
+  --color-gray-825: #202023;
+  --color-gray-850: #1a1a1d;
+  --color-gray-875: #151517;
+  --color-gray-900: #121214;
+  --color-gray-925: #0e0e10;
+  --color-gray-950: #09090b;
+  --color-gray-975: #050506;
+  --color-gray-1000: #000000;
+
+  /* Tactical accent colors - precise and purposeful */
+  --color-primary: #00b4d8;
+  --color-primary-foreground: #ffffff;
+  --color-primary-50: rgba(0, 180, 216, 0.05);
+  --color-primary-100: rgba(0, 180, 216, 0.1);
+  --color-primary-200: rgba(0, 180, 216, 0.2);
+  --color-primary-300: rgba(0, 180, 216, 0.3);
+  --color-primary-400: rgba(0, 180, 216, 0.4);
+  --color-primary-500: #00b4d8;
+  --color-primary-600: #0096c7;
+  --color-primary-700: #0077b6;
+  --color-primary-800: #005577;
+  --color-primary-900: #003344;
+
+  --color-secondary: var(--color-gray-700);
+  --color-secondary-foreground: var(--color-gray-100);
+
+  /* Success state - operational green */
+  --color-success: #00f5a0;
+  --color-success-foreground: #000000;
+  --color-success-50: rgba(0, 245, 160, 0.05);
+  --color-success-100: rgba(0, 245, 160, 0.1);
+  --color-success-200: rgba(0, 245, 160, 0.2);
+  --color-success-300: rgba(0, 245, 160, 0.3);
+  --color-success-400: rgba(0, 245, 160, 0.4);
+  --color-success-500: #00f5a0;
+  --color-success-600: #00d97e;
+  --color-success-700: #00bd6f;
+  --color-success-800: #009955;
+  --color-success-900: #006633;
+
+  /* Warning state - tactical amber */
+  --color-warning: #ffd60a;
+  --color-warning-foreground: #000000;
+  --color-warning-50: rgba(255, 214, 10, 0.05);
+  --color-warning-100: rgba(255, 214, 10, 0.1);
+  --color-warning-200: rgba(255, 214, 10, 0.2);
+  --color-warning-300: rgba(255, 214, 10, 0.3);
+  --color-warning-400: rgba(255, 214, 10, 0.4);
+  --color-warning-500: #ffd60a;
+  --color-warning-600: #ffc300;
+  --color-warning-700: #ffb700;
+  --color-warning-800: #cc9900;
+  --color-warning-900: #997700;
+
+  /* Error state - critical red */
+  --color-destructive: #ff4444;
+  --color-destructive-foreground: #ffffff;
+  --color-error: #ff4444;
+  --color-error-foreground: #ffffff;
+  --color-error-50: rgba(255, 68, 68, 0.05);
+  --color-error-100: rgba(255, 68, 68, 0.1);
+  --color-error-200: rgba(255, 68, 68, 0.2);
+  --color-error-300: rgba(255, 68, 68, 0.3);
+  --color-error-400: rgba(255, 68, 68, 0.4);
+  --color-error-500: #ff4444;
+  --color-error-600: #dc2626;
+  --color-error-700: #b91c1c;
+  --color-error-800: #991b1b;
+  --color-error-900: #771d1d;
+
+  /* Info state - intelligence blue */
+  --color-info: #0ea5e9;
+  --color-info-foreground: #ffffff;
+  --color-info-50: rgba(14, 165, 233, 0.05);
+  --color-info-100: rgba(14, 165, 233, 0.1);
+  --color-info-200: rgba(14, 165, 233, 0.2);
+  --color-info-300: rgba(14, 165, 233, 0.3);
+  --color-info-400: rgba(14, 165, 233, 0.4);
+  --color-info-500: #0ea5e9;
+  --color-info-600: #0284c7;
+  --color-info-700: #0369a1;
+  --color-info-800: #075985;
+  --color-info-900: #0c4a6e;
+
+  /* Semantic color aliases for common UI elements */
+  --color-background: var(--color-gray-950);
+  --color-foreground: var(--color-gray-100);
+  --color-card: var(--color-gray-900);
+  --color-card-foreground: var(--color-gray-100);
+  --color-popover: var(--color-gray-900);
+  --color-popover-foreground: var(--color-gray-100);
+  --color-muted: var(--color-gray-800);
+  --color-muted-foreground: var(--color-gray-400);
+  --color-accent: var(--color-gray-800);
+  --color-accent-foreground: var(--color-gray-100);
+  --color-border: var(--color-gray-800);
+  --color-input: var(--color-gray-900);
+  --color-ring: var(--color-primary-300);
+
+  /* === TYPOGRAPHY === */
+  
+  /* Font families - Military-grade typography */
+  --font-family-sans: "Geist Sans", -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+  --font-family-mono: "JetBrains Mono", "Fira Code", "SF Mono", Monaco, "Cascadia Code", "Roboto Mono", Consolas, "Courier New", monospace;
+  --font-family-display: var(--font-family-sans);
+
+  /* Font weights */
+  --font-weight-thin: 100;
+  --font-weight-light: 300;
+  --font-weight-normal: 400;
+  --font-weight-medium: 500;
+  --font-weight-semibold: 600;
+  --font-weight-bold: 700;
+  --font-weight-black: 900;
+
+  /* Font sizes with tactical precision */
+  --font-size-xs: 0.75rem;      /* 12px */
+  --font-size-sm: 0.875rem;     /* 14px */
+  --font-size-base: 1rem;       /* 16px */
+  --font-size-lg: 1.125rem;     /* 18px */
+  --font-size-xl: 1.25rem;      /* 20px */
+  --font-size-2xl: 1.5rem;      /* 24px */
+  --font-size-3xl: 1.875rem;    /* 30px */
+  --font-size-4xl: 2.25rem;     /* 36px */
+  --font-size-5xl: 3rem;        /* 48px */
+  --font-size-6xl: 3.75rem;     /* 60px */
+
+  /* Line heights */
+  --line-height-none: 1;
+  --line-height-tight: 1.25;
+  --line-height-snug: 1.375;
+  --line-height-normal: 1.5;
+  --line-height-relaxed: 1.625;
+  --line-height-loose: 2;
+
+  /* Letter spacing */
+  --letter-spacing-tighter: -0.05em;
+  --letter-spacing-tight: -0.025em;
+  --letter-spacing-normal: 0em;
+  --letter-spacing-wide: 0.025em;
+  --letter-spacing-wider: 0.05em;
+  --letter-spacing-widest: 0.1em;
+  --letter-spacing-tactical: 0.15em; /* For tactical headers */
+
+  /* === LAYOUT & SPACING === */
+  
+  /* Border radius - Tactical sharp edges */
+  --border-radius-none: 0px;
+  --border-radius-sm: 0.125rem;  /* 2px */
+  --border-radius-default: 0.25rem; /* 4px */
+  --border-radius-md: 0.375rem;  /* 6px */
+  --border-radius-lg: 0.5rem;    /* 8px */
+  --border-radius-xl: 0.75rem;   /* 12px */
+  --border-radius-2xl: 1rem;     /* 16px */
+  --border-radius-3xl: 1.5rem;   /* 24px */
+  --border-radius-full: 9999px;
+
+  /* Default radius for tactical UI */
+  --radius: var(--border-radius-sm);
+
+  /* Spacing scale for tactical layouts */
+  --spacing-px: 1px;
+  --spacing-0: 0px;
+  --spacing-0-5: 0.125rem; /* 2px */
+  --spacing-1: 0.25rem;    /* 4px */
+  --spacing-1-5: 0.375rem; /* 6px */
+  --spacing-2: 0.5rem;     /* 8px */
+  --spacing-2-5: 0.625rem; /* 10px */
+  --spacing-3: 0.75rem;    /* 12px - tactical standard */
+  --spacing-3-5: 0.875rem; /* 14px */
+  --spacing-4: 1rem;       /* 16px */
+  --spacing-5: 1.25rem;    /* 20px */
+  --spacing-6: 1.5rem;     /* 24px - section spacing */
+  --spacing-7: 1.75rem;    /* 28px */
+  --spacing-8: 2rem;       /* 32px - panel spacing */
+  --spacing-9: 2.25rem;    /* 36px */
+  --spacing-10: 2.5rem;    /* 40px */
+  --spacing-11: 2.75rem;   /* 44px */
+  --spacing-12: 3rem;      /* 48px */
+  --spacing-14: 3.5rem;    /* 56px */
+  --spacing-16: 4rem;      /* 64px */
+  --spacing-20: 5rem;      /* 80px */
+  --spacing-24: 6rem;      /* 96px */
+  --spacing-28: 7rem;      /* 112px */
+  --spacing-32: 8rem;      /* 128px */
+  --spacing-36: 9rem;      /* 144px */
+  --spacing-40: 10rem;     /* 160px */
+  --spacing-44: 11rem;     /* 176px */
+  --spacing-48: 12rem;     /* 192px */
+  --spacing-52: 13rem;     /* 208px */
+  --spacing-56: 14rem;     /* 224px */
+  --spacing-60: 15rem;     /* 240px */
+  --spacing-64: 16rem;     /* 256px */
+  --spacing-72: 18rem;     /* 288px */
+  --spacing-80: 20rem;     /* 320px */
+  --spacing-96: 24rem;     /* 384px */
+
+  /* Semantic spacing aliases */
+  --space-tactical: var(--spacing-3);   /* 12px */
+  --space-section: var(--spacing-6);    /* 24px */
+  --space-panel: var(--spacing-8);      /* 32px */
+
+  /* === SHADOWS & EFFECTS === */
+  
+  /* Box shadows for tactical depth */
+  --box-shadow-sm: 0 1px 2px 0 rgba(0, 0, 0, 0.05);
+  --box-shadow: 0 1px 3px 0 rgba(0, 0, 0, 0.1), 0 1px 2px -1px rgba(0, 0, 0, 0.1);
+  --box-shadow-md: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -2px rgba(0, 0, 0, 0.1);
+  --box-shadow-lg: 0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -4px rgba(0, 0, 0, 0.1);
+  --box-shadow-xl: 0 20px 25px -5px rgba(0, 0, 0, 0.1), 0 8px 10px -6px rgba(0, 0, 0, 0.1);
+  --box-shadow-2xl: 0 25px 50px -12px rgba(0, 0, 0, 0.25);
+  --box-shadow-inner: inset 0 2px 4px 0 rgba(0, 0, 0, 0.05);
+  --box-shadow-none: 0 0 #0000;
+
+  /* Tactical shadows with more depth */
+  --shadow-tactical: 0 1px 3px rgba(0, 0, 0, 0.3);
+  --shadow-tactical-md: 0 4px 6px rgba(0, 0, 0, 0.3);
+  --shadow-tactical-lg: 0 10px 15px rgba(0, 0, 0, 0.4);
+  --shadow-tactical-xl: 0 20px 25px rgba(0, 0, 0, 0.5);
+  --shadow-tactical-2xl: 0 25px 50px rgba(0, 0, 0, 0.6);
+
+  /* Glow effects for focus and active states */
+  --glow-primary: 0 0 20px rgba(0, 180, 216, 0.15);
+  --glow-success: 0 0 20px rgba(0, 245, 160, 0.12);
+  --glow-error: 0 0 20px rgba(255, 68, 68, 0.12);
+  --glow-warning: 0 0 20px rgba(255, 214, 10, 0.12);
+  --glow-info: 0 0 20px rgba(14, 165, 233, 0.12);
+
+  /* === ANIMATIONS === */
+  
+  /* Animation durations */
+  --duration-75: 75ms;
+  --duration-100: 100ms;
+  --duration-150: 150ms;
+  --duration-200: 200ms;
+  --duration-300: 300ms;
+  --duration-500: 500ms;
+  --duration-700: 700ms;
+  --duration-1000: 1000ms;
+
+  /* Semantic duration aliases */
+  --duration-fast: var(--duration-150);
+  --duration-normal: var(--duration-200);
+  --duration-slow: var(--duration-300);
+
+  /* Animation timing functions */
+  --ease-linear: linear;
+  --ease-in: cubic-bezier(0.4, 0, 1, 1);
+  --ease-out: cubic-bezier(0, 0, 0.2, 1);
+  --ease-in-out: cubic-bezier(0.4, 0, 0.2, 1);
+
+  /* === Z-INDEX SCALE === */
+  
+  --z-auto: auto;
+  --z-0: 0;
+  --z-10: 10;
+  --z-20: 20;
+  --z-30: 30;
+  --z-40: 40;
+  --z-50: 50;
+
+  /* Semantic z-index values */
+  --z-dropdown: 1000;
+  --z-sticky: 1020;
+  --z-modal: 1030;
+  --z-popover: 1040;
+  --z-tooltip: 1050;
+
+  /* === BREAKPOINTS === */
+  
+  --breakpoint-sm: 640px;
+  --breakpoint-md: 768px;
+  --breakpoint-lg: 1024px;
+  --breakpoint-xl: 1280px;
+  --breakpoint-2xl: 1536px;
+}
+
+/* === COMPONENT LAYER === */
+
+@layer components {
+  /* Base tactical container */
+  .tactical-container {
+    @apply bg-gray-950 text-gray-100 min-h-screen antialiased;
+  }
+
+  .tactical-grid {
+    @apply bg-gray-950 text-gray-100 min-h-screen antialiased;
+    background-image: 
+      linear-gradient(rgba(255,255,255,0.015) 1px, transparent 1px),
+      linear-gradient(90deg, rgba(255,255,255,0.015) 1px, transparent 1px);
+    background-size: 32px 32px;
+  }
+
+  /* Selection styling */
+  .tactical-selection {
+    @apply selection:bg-primary/30 selection:text-primary-foreground;
+  }
+
+  /* Custom scrollbar */
+  .tactical-scrollbar {
+    scrollbar-width: thin;
+    scrollbar-color: theme(colors.gray.700) theme(colors.gray.900);
+  }
+
+  .tactical-scrollbar::-webkit-scrollbar {
+    width: 6px;
+    height: 6px;
+  }
+
+  .tactical-scrollbar::-webkit-scrollbar-track {
+    @apply bg-gray-900;
+  }
+
+  .tactical-scrollbar::-webkit-scrollbar-thumb {
+    @apply bg-gray-700 rounded-sm;
+  }
+
+  .tactical-scrollbar::-webkit-scrollbar-thumb:hover {
+    @apply bg-gray-600;
+  }
+
+  /* Focus ring utility */
+  .tactical-focus {
+    @apply focus:outline-none focus:ring-2 focus:ring-primary/30 focus:ring-offset-2 focus:ring-offset-gray-950;
+  }
+
+  /* Glow effects */
+  .glow-primary {
+    box-shadow: var(--glow-primary);
+  }
+
+  .glow-success {
+    box-shadow: var(--glow-success);
+  }
+
+  .glow-error {
+    box-shadow: var(--glow-error);
+  }
+
+  .glow-warning {
+    box-shadow: var(--glow-warning);
+  }
+
+  .glow-info {
+    box-shadow: var(--glow-info);
+  }
+
+}
