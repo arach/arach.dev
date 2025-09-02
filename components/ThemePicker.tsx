@@ -2,7 +2,7 @@
 
 import { useState } from 'react';
 import { usePathname } from 'next/navigation';
-import { useTheme } from '@/hooks/useTheme';
+import { useTheme } from '@/lib/theme/site/provider';
 import { Button } from '@/components/ui/button';
 import { 
   DropdownMenu, 
@@ -14,7 +14,7 @@ import { Palette } from 'lucide-react';
 
 export function ThemePicker() {
   const pathname = usePathname();
-  const { currentTheme, themes, themeIds, switchTheme, isLoading } = useTheme();
+  const { currentTheme, themes, setTheme } = useTheme();
   const [isOpen, setIsOpen] = useState(false);
 
   // Don't render on gallery pages - they have their own theme system
@@ -23,7 +23,7 @@ export function ThemePicker() {
   }
 
   const handleThemeSwitch = async (themeId: string) => {
-    await switchTheme(themeId);
+    setTheme(themeId as any);
     setIsOpen(false);
   };
 
@@ -34,17 +34,16 @@ export function ThemePicker() {
           variant="ghost" 
           size="sm" 
           className="h-8 w-8 p-0"
-          disabled={isLoading}
         >
           <Palette className="h-4 w-4" />
           <span className="sr-only">Toggle theme</span>
         </Button>
       </DropdownMenuTrigger>
       <DropdownMenuContent align="end" className="w-48">
-        {themes.map((theme) => (
+        {Object.entries(themes).map(([id, theme]) => (
           <DropdownMenuItem
-            key={theme.id}
-            onClick={() => handleThemeSwitch(theme.id)}
+            key={id}
+            onClick={() => handleThemeSwitch(id)}
             className="flex items-center justify-between cursor-pointer"
           >
             <div className="flex items-center gap-2 flex-1">
@@ -65,7 +64,7 @@ export function ThemePicker() {
               </div>
               <span className="text-sm">{theme.name}</span>
             </div>
-            {currentTheme === theme.id && (
+            {currentTheme === id && (
               <span className="text-xs text-muted-foreground">✓</span>
             )}
           </DropdownMenuItem>
