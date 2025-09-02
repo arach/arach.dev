@@ -6,29 +6,13 @@
   /* UI Chrome Animation Control
      Component design transitions (buttons, inputs, etc.) are always enabled
      UI chrome transitions (navigation, panels, etc.) are controlled by data-ui-animations attribute */
+  
   /* Premium Button System - Enhanced Depth & Micro-interactions */
   .btn {
     @apply relative inline-flex items-center justify-center whitespace-nowrap font-mono text-xs uppercase tracking-wider;
-    @apply transition-all duration-150 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary/50;
+    @apply transition-all duration-150 focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-primary/50;
     @apply disabled:pointer-events-none disabled:opacity-50 disabled:transform-none;
     border-radius: 4px;
-    position: relative;
-    overflow: hidden;
-  }
-  
-  .btn::after {
-    content: '';
-    position: absolute;
-    top: 0;
-    left: -100%;
-    width: 100%;
-    height: 100%;
-    background: linear-gradient(90deg, transparent, rgba(255,255,255,0.2), transparent);
-    transition: left 0.5s;
-  }
-  
-  .btn:hover::after {
-    left: 100%;
   }
   
   .btn-primary {
@@ -148,15 +132,9 @@
   /* Enhanced Badge System - Darker, More Refined */
   .badge {
     @apply inline-flex items-center px-3 py-1.5 text-xs font-medium focus:outline-none focus:ring-2 focus:ring-ring focus:ring-offset-2;
-    @apply backdrop-blur-sm border border-border/30 shadow-sm;
+    @apply backdrop-blur-sm border border-border/20 shadow-sm;
     border-radius: 6px;
     position: relative;
-    transition: all 0.2s ease;
-  }
-  
-  .badge:hover {
-    @apply shadow-md border-border/40;
-    transform: translateY(-1px);
   }
   
   .badge::before {
@@ -219,7 +197,7 @@
   }
   
   .badge-outline {
-    @apply badge bg-muted/10 text-foreground border-border/30 hover:bg-muted/20 hover:border-border/50 hover:shadow-lg;
+    @apply badge bg-muted/10 text-foreground border-border/30 hover:bg-muted/20 hover:border-border/40 hover:shadow-lg;
   }
 
   /* Label System - Inspired by Peal */
@@ -238,11 +216,10 @@
 
   /* Enhanced Input System - Glass + Peal Best Practices */
   .input {
-    @apply w-full backdrop-blur-sm border border-border/30 rounded-lg px-3 py-2 text-sm;
-    @apply focus:ring-2 focus:ring-primary/50 focus:border-primary/40 transition-all;
-    @apply shadow-sm shadow-black/10;
+    @apply w-full backdrop-blur-sm border border-border/20 rounded-lg px-3 py-2 text-sm;
+    @apply focus:ring-2 focus:ring-primary/50 focus:border-primary/30 transition-all;
+    @apply shadow-md shadow-black/10;
     position: relative;
-    background: linear-gradient(to bottom, transparent, rgba(0,0,0,0.02));
   }
   
   .input-default {
@@ -294,15 +271,9 @@
 
   /* Enhanced Card System */
   .card {
-    @apply backdrop-blur-sm bg-card/60 border border-border/30 shadow-lg shadow-black/15;
+    @apply backdrop-blur-sm bg-card/70 border border-border/20 shadow-lg shadow-black/15;
     border-radius: 8px;
     position: relative;
-    transition: all 0.2s ease;
-  }
-  
-  .card:hover {
-    @apply shadow-xl shadow-black/20 border-border/40;
-    transform: translateY(-2px);
   }
   
   .card::before {
@@ -313,7 +284,7 @@
     right: 0;
     bottom: 0;
     border-radius: inherit;
-    background: linear-gradient(135deg, rgba(255,255,255,0.06) 0%, rgba(255,255,255,0.02) 100%);
+    background: linear-gradient(135deg, rgba(255,255,255,0.08) 0%, rgba(255,255,255,0.02) 100%);
     pointer-events: none;
   }
 
@@ -339,14 +310,9 @@
 
   /* Glass Panel - For larger sections */
   .glass-panel {
-    @apply backdrop-blur-md bg-card/50 border border-border/30 shadow-xl shadow-black/20;
+    @apply backdrop-blur-md bg-card/70 border border-border/20 shadow-xl shadow-black/20;
     border-radius: 12px;
     position: relative;
-    transition: all 0.3s ease;
-  }
-  
-  .glass-panel:hover {
-    @apply shadow-2xl shadow-black/25 border-border/40;
   }
   
   .glass-panel::before {
@@ -357,31 +323,8 @@
     right: 0;
     bottom: 0;
     border-radius: inherit;
-    background: linear-gradient(135deg, rgba(255,255,255,0.08) 0%, rgba(255,255,255,0.02) 50%, rgba(255,255,255,0) 100%);
+    background: linear-gradient(135deg, rgba(255,255,255,0.1) 0%, rgba(255,255,255,0.02) 50%, rgba(255,255,255,0) 100%);
     pointer-events: none;
-  }
-  
-  .glass-panel::after {
-    content: '';
-    position: absolute;
-    top: -1px;
-    left: -1px;
-    right: -1px;
-    bottom: -1px;
-    border-radius: inherit;
-    background: linear-gradient(135deg, 
-      hsl(var(--primary) / 0.1) 0%, 
-      transparent 40%,
-      transparent 60%,
-      hsl(var(--accent) / 0.05) 100%);
-    pointer-events: none;
-    opacity: 0;
-    transition: opacity 0.3s ease;
-    z-index: -1;
-  }
-  
-  .glass-panel:hover::after {
-    opacity: 1;
   }
 
   /* Card variants */
@@ -429,381 +372,5 @@
 
   .table-striped tbody tr:nth-child(even) {
     @apply bg-muted/10;
-  }
-}
-
-@layer base {
-  /* Modern Dark Theme Base */
-  :root {
-    --background: 0 0% 3.9%;
-    --foreground: 0 0% 98%;
-    --card: 0 0% 7%;
-    --card-foreground: 0 0% 98%;
-    --popover: 0 0% 7%;
-    --popover-foreground: 0 0% 98%;
-    --primary: 217 91% 60%;
-    --primary-foreground: 0 0% 98%;
-    --secondary: 0 0% 14.9%;
-    --secondary-foreground: 0 0% 98%;
-    --muted: 0 0% 14.9%;
-    --muted-foreground: 0 0% 63.9%;
-    --accent: 217 91% 60%;
-    --accent-foreground: 0 0% 98%;
-    --destructive: 0 62.8% 50.6%;
-    --destructive-foreground: 0 0% 98%;
-    --border: 0 0% 14.9%;
-    --input: 0 0% 14.9%;
-    --ring: 217 91% 60%;
-    --radius: 0.5rem;
-  }
-  
-  .styleguide-container {
-    /* Styleguide UI layer - independent font system */
-    font-family: var(--font-geist-sans), system-ui, -apple-system, sans-serif;
-    
-    /* Ensure all UI chrome uses Geist regardless of theme */
-  }
-  
-  .styleguide-container * {
-    font-family: inherit;
-  }
-  
-  /* Theme showcase content should use theme fonts */
-  .styleguide-container .theme-content * {
-    font-family: revert;
-  }
-  
-  
-  /* Terminal Theme - Enhanced with better contrast */
-  .theme-terminal {
-    /* Terminal Typography - Heavy monospace usage */
-    --theme-font-sans: var(--font-geist-sans), system-ui, -apple-system, sans-serif;
-    --theme-font-mono: var(--font-geist-mono), 'JetBrains Mono', 'SF Mono', monospace;
-    
-    --background: 220 15% 3%;
-    --foreground: 0 0% 95%;
-    --card: 220 15% 8%;
-    --card-foreground: 0 0% 95%;
-    --popover: 220 15% 8%;
-    --popover-foreground: 0 0% 95%;
-    --primary: 197 97% 46%;
-    --primary-foreground: 0 0% 100%;
-    --secondary: 217 20% 18%;
-    --secondary-foreground: 210 40% 90%;
-    --muted: 217 20% 25%;
-    --muted-foreground: 215 20% 65%;
-    --accent: 197 97% 46%;
-    --accent-foreground: 0 0% 100%;
-    --destructive: 0 75% 50%;
-    --destructive-foreground: 0 0% 100%;
-    --success: 142 76% 45%;
-    --success-foreground: 0 0% 100%;
-    --warning: 45 93% 55%;
-    --warning-foreground: 220 13% 5%;
-    --border: 217 20% 18%;
-    --input: 217 20% 13%;
-    --ring: 197 97% 46%;
-    --radius: 0.375rem;
-  }
-  
-  /* Cyberpunk Theme */
-  .theme-cyberpunk {
-    --background: 260 30% 5%;
-    --foreground: 200 50% 95%;
-    --card: 260 30% 8%;
-    --card-foreground: 200 50% 95%;
-    --popover: 260 30% 8%;
-    --popover-foreground: 200 50% 95%;
-    --primary: 316 73% 69%;
-    --primary-foreground: 0 0% 100%;
-    --secondary: 260 30% 15%;
-    --secondary-foreground: 200 50% 80%;
-    --muted: 260 30% 15%;
-    --muted-foreground: 200 20% 65%;
-    --accent: 45 93% 58%;
-    --accent-foreground: 260 30% 5%;
-    --destructive: 0 75% 60%;
-    --destructive-foreground: 0 0% 100%;
-    --success: 120 73% 60%;
-    --success-foreground: 0 0% 100%;
-    --warning: 45 93% 58%;
-    --warning-foreground: 260 30% 5%;
-    --border: 260 30% 15%;
-    --input: 260 30% 15%;
-    --ring: 316 73% 69%;
-  }
-  
-  /* Minimal Theme */
-  .theme-minimal {
-    --background: 0 0% 100%;
-    --foreground: 222.2 84% 4.9%;
-    --card: 0 0% 100%;
-    --card-foreground: 222.2 84% 4.9%;
-    --popover: 0 0% 100%;
-    --popover-foreground: 222.2 84% 4.9%;
-    --primary: 221.2 83.2% 53.3%;
-    --primary-foreground: 210 40% 98%;
-    --secondary: 210 40% 96.1%;
-    --secondary-foreground: 222.2 47.4% 11.2%;
-    --muted: 210 40% 96.1%;
-    --muted-foreground: 215.4 16.3% 46.9%;
-    --accent: 210 40% 96.1%;
-    --accent-foreground: 222.2 47.4% 11.2%;
-    --destructive: 0 84.2% 60.2%;
-    --destructive-foreground: 210 40% 98%;
-    --success: 142 76% 36%;
-    --success-foreground: 210 40% 98%;
-    --warning: 45 93% 47%;
-    --warning-foreground: 222.2 84% 4.9%;
-    --border: 214.3 31.8% 91.4%;
-    --input: 214.3 31.8% 91.4%;
-    --ring: 221.2 83.2% 53.3%;
-  }
-  
-  /* Retro Theme */
-  .theme-retro {
-    --background: 45 29% 8%;
-    --foreground: 45 78% 85%;
-    --card: 45 29% 12%;
-    --card-foreground: 45 78% 85%;
-    --popover: 45 29% 12%;
-    --popover-foreground: 45 78% 85%;
-    --primary: 45 93% 58%;
-    --primary-foreground: 45 29% 8%;
-    --secondary: 45 29% 20%;
-    --secondary-foreground: 45 78% 75%;
-    --muted: 45 29% 20%;
-    --muted-foreground: 45 40% 55%;
-    --accent: 120 100% 50%;
-    --accent-foreground: 45 29% 8%;
-    --destructive: 340 75% 55%;
-    --destructive-foreground: 0 0% 100%;
-    --success: 120 100% 50%;
-    --success-foreground: 45 29% 8%;
-    --warning: 45 93% 58%;
-    --warning-foreground: 45 29% 8%;
-    --border: 45 29% 20%;
-    --input: 45 29% 20%;
-    --ring: 45 93% 58%;
-  }
-  
-  /* Directory Theme - Professional directory-focused design with clean neutrals */
-  .theme-directory {
-    /* Directory Typography - Monospace-first approach */
-    --theme-font-sans: ui-monospace, SFMono-Regular, "SF Mono", Monaco, Inconsolata, "Roboto Mono", monospace;
-    --theme-font-mono: ui-monospace, SFMono-Regular, "SF Mono", Monaco, Inconsolata, "Roboto Mono", monospace;
-    
-    /* Theme-specific variables - Re-enabled since main site now reapplies theme on navigation */
-    --theme-bg-color: #ffffff;
-    --theme-text-color: #111827;
-    --theme-header-bg: rgba(0, 0, 0, 1);
-    --theme-header-text: #ffffff;
-    --theme-header-font: ui-monospace, SFMono-Regular, "SF Mono", Monaco, Inconsolata, "Roboto Mono", monospace;
-    --theme-border-color: #e5e7eb;
-    --theme-accent-color: #3b82f6;
-    --theme-shadow-color: rgba(0, 0, 0, 0.1);
-    --theme-muted-text: #6b7280;
-    --theme-card-bg: #f9fafb;
-    --theme-code-font: ui-monospace, SFMono-Regular, "SF Mono", Monaco, Inconsolata, "Roboto Mono", monospace;
-    --theme-ascii-color: #000000;
-    --theme-project-card-text: #111827;
-    --theme-project-card-bg: #ffffff;
-    --theme-dot-opacity: 0.15;
-    --theme-heading-color: #111827;
-    
-    /* Light theme colors using OKLCH-inspired values converted to HSL */
-    --background: 0 0% 100%;        /* Pure white */
-    --foreground: 0 0% 14.5%;       /* Near black */
-    --card: 0 0% 97%;               /* Light neutral */
-    --card-foreground: 0 0% 14.5%;
-    --popover: 0 0% 100%;
-    --popover-foreground: 0 0% 14.5%;
-    --primary: 0 0% 20.5%;          /* Dark neutral */
-    --primary-foreground: 0 0% 98.5%;
-    --secondary: 0 0% 97%;          /* Very light neutral */
-    --secondary-foreground: 0 0% 20.5%;
-    --muted: 0 0% 97%;
-    --muted-foreground: 0 0% 55.6%;  /* Mid gray */
-    --accent: 0 0% 97%;
-    --accent-foreground: 0 0% 20.5%;
-    --destructive: 27 245% 57.7%;   /* Subtle red */
-    --destructive-foreground: 0 0% 100%;
-    --success: 141 222% 64.6%;      /* Subtle green */
-    --success-foreground: 0 0% 100%;
-    --warning: 84 189% 82.8%;       /* Subtle amber */
-    --warning-foreground: 0 0% 14.5%;
-    --border: 0 0% 92.2%;           /* Light border */
-    --input: 0 0% 92.2%;
-    --ring: 0 0% 70.8%;             /* Ring color */
-    
-    /* Directory-specific CSS variables */
-    --radius-xs: 0.125rem;          /* 2px */
-    --radius-sm: 0.25rem;           /* 4px */
-    --radius-md: 0.625rem;          /* 10px - signature radius */
-    --radius-lg: 0.75rem;           /* 12px */
-    --radius-xl: 1rem;              /* 16px */
-    
-    /* Effects and transparency */
-    --backdrop-blur-sm: blur(4px);
-    --backdrop-blur-md: blur(8px);
-    --opacity-subtle: 0.4;
-    --opacity-medium: 0.8;
-    --opacity-overlay: 0.12;
-    
-    /* Shadow system - inset-first approach */
-    --shadow-card-inset: inset 0 0 0 1px rgba(255,255,255,0.02), 0 6px 20px rgba(0,0,0,0.30);
-    --shadow-button-inset: inset 0 1px 0 rgba(255,255,255,0.08), inset 0 -1px 0 rgba(0,0,0,0.55);
-    --shadow-surface-inset: inset 0 1px 0 rgba(255,255,255,0.04);
-    --shadow-premium-inset: inset 0 1px 0 rgba(255,255,255,0.10), inset 0 -1px 0 rgba(0,0,0,0.55), inset 0 0 0 1px rgba(255,255,255,0.03);
-  }
-  
-  /* Directory Dark Mode Variant */
-  .theme-directory.dark {
-    /* Dark theme-specific variables - Re-enabled since main site now reapplies theme on navigation */
-    --theme-bg-color: #0a0a0a;
-    --theme-text-color: #e5e5e5;
-    --theme-header-bg: rgba(17, 17, 17, 0.95);
-    --theme-header-text: #ffffff;
-    --theme-header-font: ui-monospace, SFMono-Regular, "SF Mono", Monaco, Inconsolata, "Roboto Mono", monospace;
-    --theme-heading-color: #ffffff;
-    
-    --background: 0 0% 14.5%;       /* Deep neutral */
-    --foreground: 0 0% 98.5%;       /* Near white */
-    --card: 0 0% 14.5%;
-    --card-foreground: 0 0% 98.5%;
-    --popover: 0 0% 14.5%;
-    --popover-foreground: 0 0% 98.5%;
-    --primary: 0 0% 98.5%;          /* Light neutral in dark */
-    --primary-foreground: 0 0% 20.5%;
-    --secondary: 0 0% 26.9%;        /* Medium dark neutral */
-    --secondary-foreground: 0 0% 98.5%;
-    --muted: 0 0% 26.9%;
-    --muted-foreground: 0 0% 70.8%; /* Light gray in dark */
-    --accent: 0 0% 26.9%;
-    --accent-foreground: 0 0% 98.5%;
-    --destructive: 25 141% 39.6%;   /* Darker red for dark mode */
-    --destructive-foreground: 25 237% 63.7%;
-    --border: 0 0% 26.9%;           /* Dark border */
-    --input: 0 0% 26.9%;
-    --ring: 0 0% 43.9%;             /* Dark mode ring */
-  }
-  
-  body {
-    background-color: hsl(var(--background));
-    color: hsl(var(--foreground));
-    font-feature-settings: "liga" 1, "calt" 1;
-    -webkit-font-smoothing: antialiased;
-    -moz-osx-font-smoothing: grayscale;
-  }
-  
-  /* Ensure dark background for the application gallery */
-  body.theme-terminal {
-    background-color: hsl(220 15% 3%);
-    color: hsl(0 0% 95%);
-  }
-  
-  body.theme-terminal.dark,
-  .dark body.theme-terminal {
-    background-color: hsl(220 15% 3%);
-    color: hsl(0 0% 95%);
-  }
-
-  /* Tactical Section Headers - Command Center Interface */
-  @keyframes scanline {
-    0% { transform: translateX(-100%); opacity: 0; }
-    50% { opacity: 0.8; }
-    100% { transform: translateX(100%); opacity: 0; }
-  }
-
-  @keyframes telemetry-pulse {
-    0%, 100% { opacity: 0.2; }
-    50% { opacity: 0.6; }
-  }
-
-  @keyframes status-blink {
-    0%, 100% { opacity: 1; }
-    50% { opacity: 0.5; }
-  }
-
-  @keyframes accent-glow {
-    0%, 100% { opacity: 0.4; }
-    50% { opacity: 0.8; }
-  }
-
-  .section-header-tactical {
-    position: relative;
-    overflow: hidden;
-    transition: all 0.3s ease;
-  }
-
-  .section-header-tactical:hover {
-    box-shadow: 0 2px 8px rgba(var(--primary), 0.1);
-  }
-
-  .section-header-tactical::before {
-    content: '';
-    position: absolute;
-    top: 0;
-    left: 0;
-    right: 0;
-    height: 2px;
-    background: linear-gradient(90deg, transparent, hsl(var(--primary)), transparent);
-    animation: scanline 6s ease-in-out infinite;
-  }
-
-  .section-header-tactical::after {
-    content: '';
-    position: absolute;
-    bottom: 0;
-    left: 0;
-    right: 0;
-    height: 1px;
-    background: linear-gradient(90deg, transparent, hsl(var(--primary) / 0.3), transparent);
-    animation: scanline 8s ease-in-out infinite reverse;
-  }
-
-  .section-header-tactical .telemetry-bar {
-    background: linear-gradient(90deg, 
-      transparent, 
-      hsl(var(--primary) / 0.3), 
-      hsl(var(--primary) / 0.5), 
-      hsl(var(--primary) / 0.3), 
-      transparent);
-    animation: telemetry-pulse 3s ease-in-out infinite;
-  }
-
-  .section-header-tactical .status-indicator {
-    animation: status-blink 2s ease-in-out infinite;
-  }
-
-  /* Prevent animations when UI animations are disabled */
-  [data-ui-animations="false"] .section-header-tactical::before,
-  [data-ui-animations="false"] .section-header-tactical::after,
-  [data-ui-animations="false"] .telemetry-bar,
-  [data-ui-animations="false"] .status-indicator,
-  [data-ui-animations="false"] .btn::after {
-    animation: none !important;
-  }
-  
-  /* Section content animations */
-  @keyframes fadeInUp {
-    from {
-      opacity: 0;
-      transform: translateY(10px);
-    }
-    to {
-      opacity: 1;
-      transform: translateY(0);
-    }
-  }
-  
-  .glass-panel,
-  .card {
-    animation: fadeInUp 0.5s ease-out;
-  }
-  
-  [data-ui-animations="false"] .glass-panel,
-  [data-ui-animations="false"] .card {
-    animation: none;
   }
 }

@@ -13,7 +13,7 @@ const config: Config = {
     extend: {
       fontFamily: {
         sans: ['var(--font-geist-sans)', 'system-ui', 'sans-serif'],
-        mono: ['var(--font-ibm-plex-mono)', 'ui-monospace', 'monospace'],
+        mono: ['var(--font-jetbrains-mono)', 'ui-monospace', 'monospace'],
         serif: ['Georgia', 'serif'],
       },
     },
