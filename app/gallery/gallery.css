@@ -1,0 +1,92 @@
+/* Clean Gallery CSS - Focus on layout fundamentals */
+
+.gallery-main {
+  min-height: 100vh;
+  background: var(--theme-bg-color);
+  color: var(--theme-text-color);
+  font-family: var(--theme-font-sans, var(--font-geist-sans, -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif));
+  display: flex;
+  flex-direction: column;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+.gallery-header {
+  position: sticky;
+  top: 0;
+  z-index: 50;
+  background: var(--theme-header-bg);
+  backdrop-filter: blur(12px);
+  border-bottom: 1px solid var(--theme-border-color);
+  padding: 1rem 2rem;
+  height: 72px; /* Fixed header height */
+  display: flex;
+  align-items: center;
+}
+
+.gallery-layout {
+  flex: 1;
+  display: flex;
+  position: relative;
+}
+
+.gallery-sidebar {
+  position: fixed;
+  left: 0;
+  top: 72px; /* Start below header */
+  height: calc(100vh - 72px); /* Account for header height */
+  background: var(--theme-card-bg);
+  border-right: 1px solid var(--theme-border-color);
+  transition: width 200ms cubic-bezier(0.4, 0, 0.2, 1);
+  overflow-y: auto;
+  z-index: 30; /* Below header */
+}
+
+.gallery-sidebar.expanded {
+  width: 280px; /* Slightly wider for better UX */
+}
+
+.gallery-sidebar.collapsed {
+  width: 56px; /* Better proportions */
+}
+
+.gallery-content {
+  flex: 1;
+  min-height: calc(100vh - 72px);
+  transition: margin-left 200ms cubic-bezier(0.4, 0, 0.2, 1);
+  background: var(--theme-bg-color);
+  padding-top: 0;
+}
+
+.gallery-content.with-left-sidebar {
+  margin-left: 280px;
+}
+
+.gallery-content.with-collapsed-sidebar {
+  margin-left: 56px;
+}
+
+/* Typography improvements */
+.gallery-main h1 {
+  font-family: var(--font-geist-sans);
+  font-weight: 700;
+  letter-spacing: -0.025em;
+}
+
+.gallery-main h2 {
+  font-family: var(--font-geist-sans);
+  font-weight: 600;
+  letter-spacing: -0.025em;
+}
+
+/* Better button styling */
+.gallery-main button {
+  font-family: var(--font-geist-sans);
+  font-weight: 500;
+}
+
+/* Monospace elements */
+.gallery-main .font-mono,
+.gallery-main code {
+  font-family: var(--font-geist-mono, 'SF Mono', Monaco, monospace);
+}

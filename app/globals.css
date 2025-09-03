@@ -2,6 +2,12 @@
 @reference "tailwindcss";
 
 @layer base {
+  html {
+    /* Always reserve vertical scrollbar to prevent layout shifts */
+    overflow-y: scroll;
+    /* Keep gutter stable on browsers that support it */
+    scrollbar-gutter: stable both-edges;
+  }
   :root {
     --background: 0 0% 100%;
     --foreground: 222.2 84% 4.9%;
@@ -11,10 +17,12 @@
     --theme-text-color: #111827;
     --theme-accent-color: #3b82f6;
     --theme-muted-color: #6b7280;
-    --theme-border-color: #e5e7eb;
-    --theme-card-bg: #f9fafb;
-    --theme-shadow-color: rgba(0, 0, 0, 0.1);
+    --theme-border-color: #eef2f7;
+    --theme-card-bg: #fbfdff;
+    --theme-shadow-color: rgba(0, 0, 0, 0.06);
     --theme-header-bg: rgba(0, 0, 0, 1);
+    /* Provide both names to prevent FOUC before ThemeEngine initializes */
+    --theme-header-text: #ffffff;
     --theme-header-text-color: #ffffff;
     --theme-heading-color: #111827;
     --theme-dot-opacity: 0.15;
@@ -47,7 +55,8 @@
     --destructive: 0 84.2% 60.2%;
     --destructive-foreground: 210 40% 98%;
 
-    --border: 214.3 31.8% 91.4%;
+    /* Slightly softer default border for light theme */
+    --border: 214.3 31.8% 94.5%;
     --input: 214.3 31.8% 91.4%;
     --ring: 221.2 83.2% 53.3%;
 
@@ -60,10 +69,11 @@
     --theme-text-color: #111827;
     --theme-accent-color: #3b82f6;
     --theme-muted-color: #6b7280;
-    --theme-border-color: #e5e7eb;
-    --theme-card-bg: #f9fafb;
-    --theme-shadow-color: rgba(0, 0, 0, 0.1);
+    --theme-border-color: #eef2f7;
+    --theme-card-bg: #fbfdff;
+    --theme-shadow-color: rgba(0, 0, 0, 0.06);
     --theme-header-bg: rgba(0, 0, 0, 1);
+    --theme-header-text: #ffffff;
     --theme-header-text-color: #ffffff;
     --theme-heading-color: #111827;
     --theme-dot-opacity: 0.15;
@@ -199,5 +209,41 @@
     font-weight: 400;
     letter-spacing: 0.02em;
     font-size: 10px;
+  }
+}
+
+@layer components {
+  /* Floating circular control that adapts to theme text color */
+  .floating-theme-button {
+    /* Subtle, theme-aware neutral background derived from bg/text */
+    background-color: color-mix(in srgb, var(--theme-bg-color) 92%, var(--theme-text-color) 8%);
+    border: 1px solid color-mix(in srgb, var(--theme-text-color) 18%, transparent);
+    border-width: 1px;
+    color: var(--theme-text-color);
+    backdrop-filter: blur(4px);
+    -webkit-backdrop-filter: blur(4px);
+    transform: scale(1);
+    will-change: transform;
+    transition: background-color 140ms ease, border-color 140ms ease, border-width 140ms ease, box-shadow 140ms ease, backdrop-filter 140ms ease, transform 140ms ease;
+    cursor: pointer;
+  }
+
+  .floating-theme-button:hover {
+    /* Minimal change on hover to avoid drastic shifts */
+    background-color: color-mix(in srgb, var(--theme-bg-color) 96%, var(--theme-text-color) 4%) !important;
+    border-color: color-mix(in srgb, var(--theme-text-color) 20%, transparent) !important;
+    border-width: 1px;
+    backdrop-filter: blur(1px);
+    -webkit-backdrop-filter: blur(1px);
+    transform: scale(1.005);
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    .floating-theme-button {
+      transition: background-color 140ms ease, border-color 140ms ease, border-width 140ms ease, box-shadow 140ms ease, backdrop-filter 140ms ease;
+    }
+    .floating-theme-button:hover {
+      transform: none;
+    }
   }
 }

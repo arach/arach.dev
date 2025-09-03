@@ -1,0 +1,52 @@
+/**
+ * Terminal Dark Theme - Tailwind v4 CSS-first Configuration
+ * A darker variant of the terminal theme
+ */
+
+@import "tailwindcss";
+
+/* Dark variant with data-theme selector */
+[data-theme="terminal-dark"] {
+  --color-background: #000000;
+  --color-foreground: #e5e5e5;
+  --color-card: #0a0a0a;
+  --color-card-foreground: #e5e5e5;
+  --color-popover: #0a0a0a;
+  --color-popover-foreground: #e5e5e5;
+  --color-primary: #0ea5e9;
+  --color-primary-foreground: #ffffff;
+  --color-secondary: #27272a;
+  --color-secondary-foreground: #fafafa;
+  --color-muted: #18181b;
+  --color-muted-foreground: #a1a1aa;
+  --color-accent: #06b6d4;
+  --color-accent-foreground: #ffffff;
+  --color-destructive: #ef4444;
+  --color-destructive-foreground: #ffffff;
+  --color-border: #27272a;
+  --color-input: #27272a;
+  --color-ring: #0ea5e9;
+  
+  /* Status colors */
+  --color-success: #10b981;
+  --color-warning: #f59e0b;
+  --color-error: #ef4444;
+  --color-info: #3b82f6;
+}
+
+@theme {
+  /* Inherit all values from terminal.css @theme block */
+  /* Only override what's needed for the dark variant */
+  
+  /* Override specific colors for darker theme */
+  --color-gray-950: #000000;
+  --color-gray-900: #0a0a0a;
+  --color-gray-800: #18181b;
+  --color-gray-700: #27272a;
+  
+  /* Keep same primary colors */
+  --color-primary: #0ea5e9;
+  --color-success: #10b981;
+  --color-warning: #f59e0b;
+  --color-destructive: #ef4444;
+}

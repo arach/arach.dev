@@ -1,0 +1,71 @@
+/**
+ * Theme Loader - Imports all standalone theme CSS files
+ * Each theme is a complete, standalone CSS file with @theme directive
+ */
+
+/* Import all theme files */
+@import "./default.css";
+@import "./terminal.css";
+
+/* Terminal Dark - Pure black variant */
+[data-theme="terminal-dark"] {
+  --color-background: #000000;
+  --color-foreground: #e5e5e5;
+  --color-card: #0a0a0a;
+  --color-card-foreground: #e5e5e5;
+  --color-muted: #18181b;
+  --color-muted-foreground: #a1a1aa;
+  --color-border: #27272a;
+}
+
+/* Terminal Light - Light mode variant */
+[data-theme="terminal-light"] {
+  --color-background: #ffffff;
+  --color-foreground: #0f172a;
+  --color-card: #f8fafc;
+  --color-card-foreground: #0f172a;
+  --color-primary: #0284c7;
+  --color-secondary: #f1f5f9;
+  --color-secondary-foreground: #0f172a;
+  --color-muted: #f1f5f9;
+  --color-muted-foreground: #64748b;
+  --color-accent: #0891b2;
+  --color-destructive: #dc2626;
+  --color-border: #e2e8f0;
+  --color-input: #e2e8f0;
+  --color-success: #059669;
+  --color-warning: #d97706;
+  --color-error: #dc2626;
+}
+
+/* Terminal Hybrid - Alternative color scheme */
+[data-theme="terminal-hybrid"] {
+  --color-background: #0a0f14;
+  --color-foreground: #c9d1d9;
+  --color-card: #161b22;
+  --color-card-foreground: #c9d1d9;
+  --color-primary: #58a6ff;
+  --color-primary-foreground: #ffffff;
+  --color-muted: #21262d;
+  --color-muted-foreground: #8b949e;
+  --color-border: #30363d;
+  --color-success: #3fb950;
+  --color-warning: #d29922;
+  --color-error: #f85149;
+}
+
+/* Directory Theme - File system inspired */
+[data-theme="directory"] {
+  --color-background: #011627;
+  --color-foreground: #d6deeb;
+  --color-card: #01111d;
+  --color-card-foreground: #d6deeb;
+  --color-primary: #82aaff;
+  --color-primary-foreground: #ffffff;
+  --color-muted: #011e3a;
+  --color-muted-foreground: #7e8e9e;
+  --color-border: #1d3b53;
+  --color-success: #22da6e;
+  --color-warning: #ffeb95;
+  --color-error: #ef5350;
+}

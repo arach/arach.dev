@@ -1,0 +1,64 @@
+/**
+ * Terminal Light Theme - Tailwind v4 CSS-first Configuration
+ * A light variant of the terminal theme
+ */
+
+@import "tailwindcss";
+
+/* Light variant with data-theme selector */
+[data-theme="terminal-light"] {
+  --color-background: #ffffff;
+  --color-foreground: #0f172a;
+  --color-card: #f8fafc;
+  --color-card-foreground: #0f172a;
+  --color-popover: #ffffff;
+  --color-popover-foreground: #0f172a;
+  --color-primary: #0284c7;
+  --color-primary-foreground: #ffffff;
+  --color-secondary: #f1f5f9;
+  --color-secondary-foreground: #0f172a;
+  --color-muted: #f1f5f9;
+  --color-muted-foreground: #64748b;
+  --color-accent: #0891b2;
+  --color-accent-foreground: #ffffff;
+  --color-destructive: #dc2626;
+  --color-destructive-foreground: #ffffff;
+  --color-border: #e2e8f0;
+  --color-input: #e2e8f0;
+  --color-ring: #0284c7;
+  
+  /* Status colors */
+  --color-success: #059669;
+  --color-warning: #d97706;
+  --color-error: #dc2626;
+  --color-info: #2563eb;
+}
+
+@theme {
+  /* Light theme overrides */
+  --color-gray-50: #ffffff;
+  --color-gray-100: #f8fafc;
+  --color-gray-200: #f1f5f9;
+  --color-gray-300: #e2e8f0;
+  --color-gray-400: #cbd5e1;
+  --color-gray-500: #94a3b8;
+  --color-gray-600: #64748b;
+  --color-gray-700: #475569;
+  --color-gray-800: #334155;
+  --color-gray-900: #1e293b;
+  --color-gray-950: #0f172a;
+  
+  /* Adjusted colors for light theme */
+  --color-primary: #0284c7;
+  --color-success: #059669;
+  --color-warning: #d97706;
+  --color-destructive: #dc2626;
+  
+  /* Light theme shadows */
+  --shadow-tactical-xs: 0 1px 3px rgba(0, 0, 0, 0.1);
+  --shadow-tactical-sm: 0 2px 6px rgba(0, 0, 0, 0.1);
+  --shadow-tactical: 0 4px 12px rgba(0, 0, 0, 0.1);
+  --shadow-tactical-md: 0 8px 20px rgba(0, 0, 0, 0.12);
+  --shadow-tactical-lg: 0 16px 32px rgba(0, 0, 0, 0.12);
+  --shadow-tactical-xl: 0 24px 48px rgba(0, 0, 0, 0.15);
+}

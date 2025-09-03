@@ -3,10 +3,10 @@ export const paperTheme = {
   id: 'paper',
   // Define fonts - paper uses classic serif fonts
   fonts: {
-    sans: '"Crimson Text", var(--font-geist-sans)',
-    serif: '"Libre Baskerville", Georgia, serif',
-    mono: '"Courier Prime", "Courier New", var(--font-ibm-plex-mono)',
-    display: '"Libre Baskerville"', // Classic serif for headings
+    sans: 'var(--font-geist-sans)',
+    serif: 'var(--font-geist-sans)',
+    mono: 'var(--font-ibm-plex-mono)',
+    display: 'var(--font-geist-sans)',
   },
   colors: {
     bg: '#faf8f3',
@@ -34,9 +34,5 @@ export const paperTheme = {
     blur: '8px',
     texture: 'paper',
   },
-  fontImports: [
-    'https://fonts.googleapis.com/css2?family=Libre+Baskerville:wght@400;700&display=swap',
-    'https://fonts.googleapis.com/css2?family=Crimson+Text:wght@400;600;700&display=swap',
-    'https://fonts.googleapis.com/css2?family=Courier+Prime:wght@400;700&display=swap',
-  ],
+  // No external font imports; use site fonts for performance
 } as const;

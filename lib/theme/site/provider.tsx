@@ -61,6 +61,9 @@ export function ThemeProvider({ children }: { children: React.ReactNode }) {
     // Load new theme
     ThemeEngine.loadTheme(theme).then(() => {
       setCurrentTheme(id);
+      try {
+        localStorage.setItem('site-theme', id);
+      } catch {}
     });
   };
 

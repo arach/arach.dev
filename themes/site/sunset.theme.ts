@@ -3,10 +3,10 @@ export const sunsetTheme = {
   id: 'sunset',
   // Define fonts - sunset uses elegant serif fonts
   fonts: {
-    sans: '"Lora", var(--font-geist-sans)',
-    serif: '"Playfair Display", Georgia, serif',
-    mono: '"JetBrains Mono", "Fira Code", var(--font-ibm-plex-mono)',
-    display: '"Playfair Display"', // Elegant serif for headings
+    sans: 'var(--font-geist-sans)',
+    serif: 'var(--font-geist-sans)',
+    mono: 'var(--font-ibm-plex-mono)',
+    display: 'var(--font-geist-sans)',
   },
   colors: {
     bg: '#fef3c7',
@@ -34,9 +34,5 @@ export const sunsetTheme = {
     dotOpacity: '0.4',
     blur: '16px',
   },
-  fontImports: [
-    'https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;500;600;700&display=swap',
-    'https://fonts.googleapis.com/css2?family=Lora:wght@400;500;600&display=swap',
-    'https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;500&display=swap',
-  ],
+  // No external font imports; use site fonts for performance
 } as const;

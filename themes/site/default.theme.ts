@@ -11,9 +11,9 @@ export const defaultTheme = {
     text: '#111827',
     accent: '#3b82f6',
     muted: '#6b7280',
-    border: '#e5e7eb',
-    card: '#f9fafb',
-    shadow: 'rgba(0, 0, 0, 0.1)'
+    border: '#eef2f7',
+    card: '#fbfdff',
+    shadow: 'rgba(0, 0, 0, 0.06)'
   },
   header: {
     bg: 'rgba(0, 0, 0, 1)',
