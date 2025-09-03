@@ -5,8 +5,9 @@
   html {
     /* Always reserve vertical scrollbar to prevent layout shifts */
     overflow-y: scroll;
-    /* Keep gutter stable on browsers that support it */
-    scrollbar-gutter: stable both-edges;
+    /* Reserve gutter only on the scrollbar side (right),
+       avoiding extra inset on the left */
+    scrollbar-gutter: stable;
   }
   :root {
     --background: 0 0% 100%;

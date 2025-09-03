@@ -144,6 +144,15 @@ export class ThemeEngine {
    * Loads font stylesheets
    */
   private static loadFonts(fonts: readonly string[]): void {
+    // Capture any pre-injected theme font links (e.g., added in <head> before interactive)
+    // so we don't duplicate them.
+    document.querySelectorAll<HTMLLinkElement>('link[rel="stylesheet"][href][data-theme-fonts]').forEach(link => {
+      const url = link.getAttribute('href') || '';
+      if (url && !this.fontElements.has(url)) {
+        this.fontElements.set(url, link);
+      }
+    });
+
     // Remove old font links not in new theme
     this.fontElements.forEach((element, url) => {
       if (!fonts.includes(url)) {
@@ -158,6 +167,7 @@ export class ThemeEngine {
         const link = document.createElement('link');
         link.rel = 'stylesheet';
         link.href = fontUrl;
+        link.setAttribute('data-theme-fonts', 'true');
         document.head.appendChild(link);
         this.fontElements.set(fontUrl, link);
       }
