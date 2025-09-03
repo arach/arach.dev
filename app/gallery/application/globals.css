@@ -1,5 +1,4 @@
 @import "tailwindcss";
-@import "../../../themes/application/terminal.css";
 
 @layer components {
   /* Frame variables for gallery application. These override Tailwind theme
@@ -19,7 +18,7 @@
     --color-accent-foreground: 0 0% 96%;
     --color-border: 228 20% 18%;
     --color-input: 228 20% 16%;
-    --color-ring: 268 83% 62%;          /* Distinctive violet accent */
+    --color-ring: 200 96% 43%;          /* Prod-like cyan accent */
 
     /* Tailwind v4 aliases used by utilities (e.g., bg-background) */
     --background: var(--color-background);
@@ -36,6 +35,7 @@
     --input: var(--color-input);
     --ring: var(--color-ring);
     --primary: var(--color-ring);
+    --color-primary: var(--color-ring);
     --primary-foreground: var(--color-foreground);
 
     /* Neutralize site-level heading variables inside the frame */
@@ -44,6 +44,8 @@
 
     /* Frame nav accent (active left border, text) */
     --frame-nav-accent: 200 96% 53%; /* light blue */
+    /* Frame subheading color (decoupled from theme) */
+    --frame-subheading-color: var(--frame-nav-accent);
   }
 
   /* Light mode for frame chrome */
@@ -60,7 +62,7 @@
     --color-accent-foreground: 228 24% 12%;
     --color-border: 228 16% 85%;
     --color-input: 228 18% 92%;
-    --color-ring: 268 70% 58%;
+    --color-ring: 200 92% 50%;
 
     --background: var(--color-background);
     --foreground: var(--color-foreground);
@@ -76,12 +78,14 @@
     --input: var(--color-input);
     --ring: var(--color-ring);
     --primary: var(--color-ring);
+    --color-primary: var(--color-ring);
     --primary-foreground: var(--color-foreground);
 
     --theme-heading-color: hsl(var(--color-foreground));
     --theme-header-text-color: hsl(var(--color-foreground));
 
     --frame-nav-accent: 205 92% 50%;
+    --frame-subheading-color: var(--frame-nav-accent);
   }
 
   /* Chrome: header and sidebars use fixed palette and borders */
@@ -111,6 +115,48 @@
     font-family: var(--font-geist-sans), system-ui, sans-serif;
   }
 
+  /* Sidebar – fully independent of theme variables */
+  .sidebar-frame {
+    /* Base palette for dark frame */
+    --sb-bg: hsl(228 24% 10% / 0.20);
+    --sb-fg: hsl(220 12% 70%);
+    --sb-fg-hover: hsl(0 0% 98%);
+    --sb-border: rgba(255, 255, 255, 0.10);
+    --sb-accent: hsl(200 96% 53%);
+
+    background-color: var(--sb-bg);
+    border-right-color: var(--sb-border);
+    color: var(--sb-fg);
+  }
+
+  .gallery-frame.gallery-light .sidebar-frame {
+    /* Light frame palette */
+    --sb-bg: hsl(0 0% 100% / 0.75);
+    --sb-fg: hsl(228 24% 20%);
+    --sb-fg-hover: hsl(228 24% 12%);
+    --sb-border: rgba(0, 0, 0, 0.10);
+    --sb-accent: hsl(200 92% 50%);
+  }
+
+  .sidebar-heading {
+    color: var(--sb-fg) !important;
+  }
+
+  .sidebar-item {
+    color: var(--sb-fg);
+  }
+
+  .sidebar-item:hover {
+    color: var(--sb-fg-hover);
+    background-color: color-mix(in srgb, var(--sb-accent) 8%, transparent);
+  }
+
+  .sidebar-item--active {
+    color: var(--sb-accent);
+    background-color: color-mix(in srgb, var(--sb-accent) 14%, transparent);
+    border-left: 2px solid var(--sb-accent);
+  }
+
   .frame-border-accent {
     border-color: color-mix(in srgb, hsl(var(--color-border)) 40%, transparent) !important;
   }
@@ -130,7 +176,7 @@
     letter-spacing: 0.08em;
     font-weight: 600;
     font-size: 0.80rem;
-    color: color-mix(in srgb, hsl(var(--color-ring)) 60%, hsl(var(--color-foreground)) 40%) !important;
+    color: hsl(var(--frame-subheading-color)) !important;
   }
 
   /* Utilities for occasional system text in mono */
@@ -141,10 +187,21 @@
   /* Ensure high-contrast headings inside the gallery frame */
   .gallery-frame h1,
   .gallery-frame h2,
-  .gallery-frame h3 {
-    color: hsl(var(--color-foreground));
-    font-family: var(--font-geist-sans), system-ui, -apple-system, sans-serif;
+  .gallery-frame h3,
+  .gallery-frame h4 {
+    color: hsl(var(--color-foreground)) !important;
+    font-family: var(--font-geist-sans), system-ui, -apple-system, sans-serif !important;
   }
+
+  .gallery-frame .sidebar-heading {
+    color: hsl(var(--muted-foreground)) !important;
+  }
+
+  /* Utilities to avoid inline styles in frame */
+  .gallery-top-offset { top: var(--header-height, 39px); }
+  .gallery-panel-height { height: calc(100vh - var(--header-height, 39px)); }
+  .bg-frame-ring { background-color: hsl(var(--color-ring)); }
+  .bg-frame-backdrop { background-color: color-mix(in srgb, hsl(var(--color-background)) 95%, transparent); }
   /* UI Chrome Animation Control
      Component design transitions (buttons, inputs, etc.) are always enabled
      UI chrome transitions (navigation, panels, etc.) are controlled by data-ui-animations attribute */
@@ -152,19 +209,19 @@
   /* Premium Button System - Enhanced Depth & Micro-interactions */
   .btn {
     @apply relative inline-flex items-center justify-center whitespace-nowrap font-mono text-xs uppercase tracking-wider;
-    @apply transition-all duration-150 focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-primary/50;
+    @apply transition-all duration-150 focus-visible:outline-none focus-visible:ring-1;
     @apply disabled:pointer-events-none disabled:opacity-50 disabled:transform-none;
     border-radius: 4px;
   }
   
   .btn-primary {
     @apply btn bg-gradient-to-b from-primary to-primary/90 text-primary-foreground;
-    box-shadow: 0 1px 3px rgba(0,0,0,0.3), 0 0 0 1px rgba(0,0,0,0.2);
+    box-shadow: inset 0 1px 0 rgba(255,255,255,0.2), 0 1px 3px rgba(0,0,0,0.3), 0 0 0 1px rgba(0,0,0,0.2);
   }
   
   .btn-primary:hover {
     @apply from-primary/90 to-primary/80 -translate-y-[1px];
-    box-shadow: 0 2px 4px rgba(0,0,0,0.3), 0 0 0 1px rgba(0,0,0,0.2);
+    box-shadow: inset 0 1px 0 rgba(255,255,255,0.3), 0 2px 4px rgba(0,0,0,0.3), 0 0 0 1px rgba(0,0,0,0.2);
   }
   
   .btn-primary:active {
@@ -174,12 +231,12 @@
   
   .btn-destructive {
     @apply btn bg-gradient-to-b from-red-600 to-red-700 text-white;
-    box-shadow: 0 1px 3px rgba(0,0,0,0.3), 0 0 0 1px rgba(0,0,0,0.2);
+    box-shadow: inset 0 1px 0 rgba(255,255,255,0.2), 0 1px 3px rgba(0,0,0,0.3), 0 0 0 1px rgba(0,0,0,0.2);
   }
   
   .btn-destructive:hover {
     @apply from-red-500 to-red-600 -translate-y-[1px];
-    box-shadow: 0 2px 4px rgba(0,0,0,0.3), 0 0 0 1px rgba(0,0,0,0.2);
+    box-shadow: inset 0 1px 0 rgba(255,255,255,0.3), 0 2px 4px rgba(0,0,0,0.3), 0 0 0 1px rgba(0,0,0,0.2);
   }
   
   .btn-destructive:active {
@@ -204,12 +261,12 @@
   
   .btn-secondary {
     @apply btn bg-gradient-to-b from-gray-800 to-gray-900 text-gray-300 border border-gray-700;
-    box-shadow: 0 1px 3px rgba(0,0,0,0.3);
+    box-shadow: inset 0 1px 0 rgba(255,255,255,0.03), 0 1px 3px rgba(0,0,0,0.3);
   }
   
   .btn-secondary:hover {
     @apply from-gray-700 to-gray-800 text-gray-100 border-gray-600 -translate-y-[1px];
-    box-shadow: 0 2px 4px rgba(0,0,0,0.3);
+    box-shadow: inset 0 1px 0 rgba(255,255,255,0.05), 0 2px 4px rgba(0,0,0,0.3);
   }
   
   .btn-secondary:active {
@@ -515,4 +572,8 @@
   .table-striped tbody tr:nth-child(even) {
     @apply bg-muted/10;
   }
+}
+
+@utility btn {
+  @apply inline-flex items-center justify-center text-sm;
 }

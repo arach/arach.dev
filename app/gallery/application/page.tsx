@@ -2,7 +2,6 @@
 
 import React, { useState, useEffect, useRef, Suspense } from 'react'
 import { useSearchParams, useRouter } from 'next/navigation'
-import Link from 'next/link'
 import { getThemeIds, getTheme } from '@/lib/theme/application/registry'
 import '@/lib/theme/application/init'
 import type { Theme } from '@/types/theme'
@@ -19,9 +18,11 @@ import {
   TablesSection,
   VariablesSection
 } from '@/components/gallery/application'
-
-
-
+import {
+  GalleryHeader,
+  SidebarNavigation,
+  RightPanel
+} from './components'
 
 type ThemeName = string // Dynamic based on registry
 
@@ -328,12 +329,11 @@ function TacticalHeader({
   return (
     <>
       {/* Sticky Status Bar */}
-      <div className="sticky z-30 bg-muted/10 border-b border-border/20 backdrop-blur-xl backdrop-saturate-150" 
-           style={{ top: 'var(--header-height, 39px)' }}
+      <div className="sticky z-30 bg-muted/10 border-b border-border/20 backdrop-blur-xl backdrop-saturate-150 gallery-top-offset"
            role="status" 
            aria-label="System status">
         <div className="flex items-center">
-          <div className="w-1 mr-4" style={{ height: '20px', backgroundColor: accentColor }} aria-hidden="true"></div>
+          <div className="w-1 h-5 mr-4 bg-frame-ring" aria-hidden="true"></div>
           <div className="flex items-center gap-3 mr-6">
             {/* Status indicators */}
             <div className="flex items-center gap-1" role="status" aria-label={`${status} status`}>
@@ -383,7 +383,7 @@ function TacticalHeader({
                 </div>
                 <div className="flex items-center gap-1 text-[10px] font-mono text-muted-foreground/80">
                   <span className="text-primary/60">/</span>
-                  <span>STYLEGUIDE</span>
+                  <span>GALLERY</span>
                   <span className="text-primary/60">/</span>
                   <span>COMPONENTS</span>
                 </div>
@@ -530,7 +530,7 @@ function DynamicSection({ sectionId, theme, activeTheme }: DynamicSectionProps) 
   }
 }
 
-function StyleGuideContent() {
+function GalleryContent() {
   const searchParams = useSearchParams()
   const router = useRouter()
   
@@ -755,202 +755,37 @@ function StyleGuideContent() {
   ]
 
   return (
-    <main className={`min-h-screen gallery-frame ${darkMode ? '' : 'gallery-light'} bg-background text-foreground`}>
+    <main id="gallery-container" className={`min-h-screen gallery-frame ${darkMode ? '' : 'gallery-light'} bg-background text-foreground`}>
       {/* Header */}
-      <header className={`gallery-header font-sans sticky top-0 z-30 py-1 px-6 ${uiAnimations ? 'transition-all duration-300' : ''}`}>
-          <div className="flex items-center justify-between">
-            <div className="flex items-center gap-2">
-              {/* Back to Home Link */}
-              <Link
-                href="/"
-                className="flex items-center gap-1.5 px-2.5 py-1 text-sm text-muted-foreground hover:text-foreground bg-card/50 hover:bg-card border border-border rounded-md transition-all duration-200"
-                title="Back to arach.dev"
-              >
-                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
-                  <path d="m15 18-6-6 6-6"/>
-                </svg>
-                arach.dev
-              </Link>
-              
-              <div className={`${uiAnimations ? 'transition-all duration-300' : ''}`}>
-                <h1 className="frame-heading">
-                  Style Guide
-                </h1>
-              </div>
-            </div>
-            
-            {/* Actions */}
-            <div className="flex items-center gap-4">
-              {/* Dark Mode Toggle */}
-              <button
-                onClick={() => setDarkMode(!darkMode)}
-                className="btn-ghost btn-sm flex items-center gap-2"
-                title={darkMode ? 'Switch to Light Mode' : 'Switch to Dark Mode'}
-              >
-                <svg
-                  width="14"
-                  height="14"
-                  viewBox="0 0 24 24"
-                  fill="none"
-                  stroke="currentColor"
-                  strokeWidth="2"
-                >
-                  {darkMode ? (
-                    <path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"/>
-                  ) : (
-                    <>
-                      <circle cx="12" cy="12" r="5"/>
-                      <path d="M12 1v2M12 21v2M4.22 4.22l1.42 1.42M18.36 18.36l1.42 1.42M1 12h2M21 12h2M4.22 19.78l1.42-1.42M18.36 5.64l1.42-1.42"/>
-                    </>
-                  )}
-                </svg>
-                <span className="text-[10px]">{darkMode ? 'Dark' : 'Light'}</span>
-              </button>
-
-              {/* UI Animations Toggle */}
-              <button
-                onClick={() => setUiAnimations(!uiAnimations)}
-                className={`btn-ghost btn-sm flex items-center gap-2`}
-                title={uiAnimations ? 'Disable UI Chrome animations' : 'Enable UI Chrome animations'}
-              >
-                <svg
-                  width="14"
-                  height="14"
-                  viewBox="0 0 24 24"
-                  fill="none"
-                  stroke="currentColor"
-                  strokeWidth="2"
-                  className={uiAnimations ? '' : 'opacity-50'}
-                >
-                  <path d="M12 2L2 7v10c0 5.55 3.84 10.74 9 12 5.16-1.26 9-6.45 9-12V7l-10-5z"/>
-                  {uiAnimations && <path d="M9 12l2 2 4-4" strokeLinecap="round" strokeLinejoin="round"/>}
-                </svg>
-                <span className="text-[10px]">{uiAnimations ? 'UI FX On' : 'UI FX Off'}</span>
-              </button>
-
-              {/* Pinned Styles Button */}
-              <button
-                onClick={() => setShowPinnedPanel(!showPinnedPanel)}
-                className={`relative text-[10px] px-2 py-1 ${
-                  showPinnedPanel || pinnedStyles.length > 0
-                    ? 'btn-primary' 
-                    : 'btn-secondary'
-                }`}
-              >
-                Pinned
-                {pinnedStyles.length > 0 && (
-                  <span className="absolute -top-1 -right-1 bg-destructive text-destructive-foreground text-[10px] rounded-full w-4 h-4 flex items-center justify-center">
-                    {pinnedStyles.length}
-                  </span>
-                )}
-              </button>
-
-              {/* Theme Selector */}
-              <div className="flex items-center gap-3">
-                <label className="text-xs font-medium text-muted-foreground">Theme:</label>
-                <select 
-                  value={activeTheme}
-                  onChange={(e) => {
-                    setActiveTheme(e.target.value as ThemeName)
-                    updateURL(activeSection, e.target.value as ThemeName)
-                  }}
-                  className="bg-input border border-border rounded-md px-2 py-0.5 text-foreground text-xs focus:outline-none focus:ring-2 focus:ring-ring"
-                >
-                  {getThemeIds().map((themeId) => (
-                    <option key={themeId} value={themeId}>
-                      {themeId.charAt(0).toUpperCase() + themeId.slice(1)}
-                    </option>
-                  ))}
-                </select>
-              </div>
-            </div>
-          </div>
-      </header>
+      <GalleryHeader 
+        darkMode={darkMode}
+        setDarkMode={setDarkMode}
+        uiAnimations={uiAnimations}
+        setUiAnimations={setUiAnimations}
+        pinnedStyles={pinnedStyles}
+        showPinnedPanel={showPinnedPanel}
+        setShowPinnedPanel={setShowPinnedPanel}
+        activeTheme={activeTheme}
+        setActiveTheme={setActiveTheme}
+        activeSection={activeSection}
+        updateURL={updateURL}
+      />
 
       <div className="max-w-full mx-auto flex relative">
         {/* Sidebar Navigation - Fixed position */}
-        <nav className={`${showLeftSidebar ? 'w-64' : 'w-12'} fixed left-0 border-r gallery-sidebar-left font-sans ${uiAnimations ? 'transition-all duration-200' : ''} overflow-y-auto z-20`}
-             style={{ 
-               top: 'var(--header-height, 39px)', 
-               height: 'calc(100vh - var(--header-height, 39px))'
-             }}>
-          {showLeftSidebar ? (
-            <div>
-              <div className="flex items-center justify-between mb-4 px-6 pt-6">
-                <h2 className="frame-subheading">Sections</h2>
-                <button
-                  onClick={() => setShowLeftSidebar(false)}
-                  className="p-1 rounded transition-colors"
-                  style={{ color: 'hsl(var(--color-muted-foreground))' }}
-                  onMouseEnter={(e) => { e.currentTarget.style.color = 'hsl(0 0% 100%)'; e.currentTarget.style.backgroundColor = 'hsl(200 96% 43% / 0.5)' }}
-                  onMouseLeave={(e) => { e.currentTarget.style.color = 'hsl(215 20% 65%)'; e.currentTarget.style.backgroundColor = 'transparent' }}
-                  title="Collapse sidebar"
-                >
-                  <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
-                    <path d="m15 18-6-6 6-6"/>
-                  </svg>
-                </button>
-              </div>
-              <ul className="space-y-1">
-                {sections.map((section) => (
-                  <li key={section.id}>
-                    <button
-                      onClick={() => {
-                        setActiveSection(section.id)
-                        updateURL(section.id)
-                        setSelectedElement(null)
-                      }}
-                      className={`w-full text-left px-6 py-2.5 text-sm transition-colors ${
-                        activeSection === section.id
-                          ? 'border-l-2'
-                          : ''
-                      }`}
-                      style={{
-                        backgroundColor: activeSection === section.id ? 'hsl(var(--frame-nav-accent) / 0.12)' : 'transparent',
-                        color: activeSection === section.id ? 'hsl(var(--frame-nav-accent))' : 'hsl(var(--color-muted-foreground))',
-                        borderLeftColor: activeSection === section.id ? 'hsl(var(--frame-nav-accent))' : 'transparent'
-                      }}
-                      onMouseEnter={(e) => {
-                        if (activeSection !== section.id) {
-                          e.currentTarget.style.color = 'hsl(var(--color-foreground))';
-                          e.currentTarget.style.backgroundColor = 'hsl(var(--frame-nav-accent) / 0.07)';
-                        }
-                      }}
-                      onMouseLeave={(e) => {
-                        if (activeSection !== section.id) {
-                          e.currentTarget.style.color = 'hsl(var(--color-muted-foreground))';
-                          e.currentTarget.style.backgroundColor = 'transparent';
-                        }
-                      }}
-                    >
-                      {section.label}
-                    </button>
-                  </li>
-                ))}
-              </ul>
-            </div>
-          ) : (
-            <div className="flex flex-col h-full">
-              <div className="p-6 flex justify-center">
-                <button
-                  onClick={() => setShowLeftSidebar(true)}
-                  className="p-2 rounded transition-colors"
-                  style={{ color: 'hsl(var(--color-muted-foreground))' }}
-                  onMouseEnter={(e) => { e.currentTarget.style.color = 'hsl(var(--color-foreground))'; e.currentTarget.style.backgroundColor = 'hsl(var(--color-ring) / 0.5)' }}
-                  onMouseLeave={(e) => { e.currentTarget.style.color = 'hsl(var(--color-muted-foreground))'; e.currentTarget.style.backgroundColor = 'transparent' }}
-                  title="Expand navigation sidebar"
-                >
-                  <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
-                    <path d="m9 18 6-6-6-6"/>
-                  </svg>
-                </button>
-              </div>
-            </div>
-          )}
-        </nav>
+        <SidebarNavigation 
+          showLeftSidebar={showLeftSidebar}
+          setShowLeftSidebar={setShowLeftSidebar}
+          sections={sections}
+          activeSection={activeSection}
+          setActiveSection={setActiveSection}
+          updateURL={updateURL}
+          setSelectedElement={setSelectedElement}
+          uiAnimations={uiAnimations}
+        />
 
         {/* Main Content - with containerRef for element enhancement */}
-        <main ref={containerRef} className={`flex-1 relative ${showLeftSidebar ? 'ml-64' : 'ml-12'} ${(selectedElement || showPinnedPanel) && showRightSidebar ? 'mr-96' : ''} ${uiAnimations ? 'transition-all duration-200' : ''}`} onClick={handleElementClick} role="main" aria-label="Style guide content">
+        <main id="gallery-main-content" ref={containerRef} className={`flex-1 relative ${showLeftSidebar ? 'ml-64' : 'ml-12'} ${(selectedElement || showPinnedPanel) && showRightSidebar ? 'mr-96' : ''} ${uiAnimations ? 'transition-all duration-200' : ''}`} onClick={handleElementClick} role="main" aria-label="Gallery content">
           {/* Tactical Header with Sticky Status Bar */}
           <TacticalHeader 
             activeSection={activeSection}
@@ -993,191 +828,32 @@ function StyleGuideContent() {
             </div>
         </main>
 
-        {/* Right Panel - Style Details or Pinned Styles - Fixed position */}
-        {(selectedElement || showPinnedPanel) && showRightSidebar && (
-          <aside className="w-96 fixed right-0 border-l gallery-rightbar font-sans overflow-y-auto transition-all duration-200 z-20"
-                 style={{ 
-               top: 'var(--header-height, 39px)', 
-               height: 'calc(100vh - var(--header-height, 39px))' 
-             }}>
-            <div className="p-6 h-full overflow-y-auto">
-              <div className="flex items-center justify-between mb-4 sticky top-0 pb-4 border-b frame-border-accent" style={{ backgroundColor: 'color-mix(in srgb, hsl(var(--color-background)) 95%, transparent)' }}>
-                <h2 className="frame-subheading">
-                  {showPinnedPanel ? 'Pinned Styles' : 'Style Details'}
-                </h2>
-                <div className="flex items-center gap-2">
-                  {showPinnedPanel && pinnedStyles.length > 0 && (
-                    <button
-                      onClick={clearAllPinned}
-                      className={`text-xs text-destructive hover:text-destructive/80 px-2 py-1 rounded hover:bg-destructive/10 ${uiAnimations ? 'transition-colors' : ''}`}
-                    >
-                      Clear All
-                    </button>
-                  )}
-                  <button
-                    onClick={() => setShowRightSidebar(false)}
-                    className="p-1 rounded text-muted-foreground hover:text-foreground hover:bg-accent transition-colors"
-                    title="Collapse sidebar"
-                  >
-                    <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
-                      <path d="m9 18 6-6-6-6"/>
-                    </svg>
-                  </button>
-                </div>
-              </div>
-              
-              {showPinnedPanel ? (
-                /* Pinned Styles Collection */
-                <div className="space-y-4">
-                  {pinnedStyles.length === 0 ? (
-                    <div className="text-center py-8">
-                      <div className="text-4xl mb-4">📋</div>
-                      <p className="text-muted-foreground text-sm">No styles pinned yet</p>
-                      <p className="text-muted-foreground text-xs mt-2">Click on components to inspect and pin them</p>
-                    </div>
-                  ) : (
-                    pinnedStyles.map((pinnedStyle) => (
-                      <div key={pinnedStyle.id} className="border border-border rounded-lg p-4 bg-muted/30">
-                        <div className="flex items-start justify-between mb-3">
-                          <div>
-                            <h4 className="frame-subheading">{pinnedStyle.name}</h4>
-                            <p className="text-xs text-muted-foreground mt-1">{pinnedStyle.description}</p>
-                          </div>
-                          <button
-                            onClick={() => unpinStyle(pinnedStyle.id)}
-                            className="text-muted-foreground hover:text-destructive transition-colors p-1 hover:bg-destructive/10 rounded"
-                          >
-                            ✕
-                          </button>
-                        </div>
-                        
-                        {pinnedStyle.classes && (
-                          <div className="mb-3">
-                            <div className="bg-background rounded p-2 font-mono text-xs text-foreground overflow-x-auto">
-                              <code>{pinnedStyle.classes}</code>
-                            </div>
-                            <button
-                              onClick={() => navigator.clipboard.writeText(pinnedStyle.classes)}
-                              className="mt-1 text-xs text-primary hover:text-primary/80 transition-colors"
-                            >
-                              Copy
-                            </button>
-                          </div>
-                        )}
-
-                        {pinnedStyle.usage && (
-                          <details className="group">
-                            <summary className="text-xs text-muted-foreground cursor-pointer hover:text-foreground transition-colors">
-                              View Usage
-                            </summary>
-                            <div className="mt-2 glass-card p-3 font-mono text-xs text-foreground">
-                              <pre className="whitespace-pre-wrap break-all leading-relaxed">{pinnedStyle.usage}</pre>
-                            </div>
-                          </details>
-                        )}
-                      </div>
-                    ))
-                  )}
-                </div>
-              ) : selectedElement && (
-                /* Selected Element Details */
-                <div className="space-y-6">
-                  {/* Element Info */}
-                  <div>
-                    <div className="flex items-start justify-between mb-2">
-                      <h3 className="frame-subheading">{selectedElement.name}</h3>
-                      <button
-                        onClick={() => pinStyle(selectedElement)}
-                        disabled={isStylePinned(selectedElement)}
-                        className={`text-xs px-2 py-1 rounded transition-colors ${
-                          isStylePinned(selectedElement)
-                            ? 'text-muted-foreground bg-muted cursor-not-allowed'
-                            : 'text-primary bg-primary/10 hover:bg-primary/20'
-                        }`}
-                      >
-                        {isStylePinned(selectedElement) ? 'Pinned' : 'Pin'}
-                      </button>
-                    </div>
-                    <p className="text-sm text-muted-foreground mb-4">{selectedElement.description}</p>
-                  </div>
-
-                  {/* CSS Classes */}
-                  {selectedElement.classes && (
-                    <div>
-                      <h4 className="frame-subheading mb-2">CSS Classes</h4>
-                      <div className="bg-muted rounded-md p-3 font-mono text-xs text-foreground overflow-x-auto">
-                        <code>{selectedElement.classes}</code>
-                      </div>
-                      <button
-                        onClick={() => navigator.clipboard.writeText(selectedElement.classes)}
-                        className="mt-2 text-xs text-primary hover:text-primary/80 transition-colors"
-                      >
-                        Copy classes
-                      </button>
-                    </div>
-                  )}
-
-                  {/* Color Info */}
-                  {selectedElement.color && (
-                    <div>
-                      <h4 className="frame-subheading mb-2">Color</h4>
-                      <div className="flex items-center gap-3">
-                        <div 
-                          className="w-8 h-8 rounded-md border border-border"
-                          style={{ backgroundColor: selectedElement.color }}
-                        />
-                        <div>
-                          <div className="text-sm text-foreground font-mono">{selectedElement.color}</div>
-                          <div className="text-xs text-muted-foreground">{selectedElement.colorName}</div>
-                        </div>
-                      </div>
-                    </div>
-                  )}
-
-                  {/* Usage Examples */}
-                  {selectedElement.usage && (
-                    <div>
-                      <h4 className="frame-subheading mb-2">Usage</h4>
-                      <div className="glass-card p-3 font-mono text-xs text-foreground">
-                        <pre className="whitespace-pre-wrap break-all leading-relaxed">{selectedElement.usage}</pre>
-                      </div>
-                    </div>
-                  )}
-                </div>
-              )}
-            </div>
-          </aside>
-        )}
-
-        {/* Right Sidebar Expand Button */}
-        {(selectedElement || showPinnedPanel) && !showRightSidebar && (
-          <div className="flex items-start pt-6">
-            <button
-              onClick={() => setShowRightSidebar(true)}
-              className="p-2 border-l frame-border-accent bg-card/95 text-muted-foreground hover:text-foreground hover:bg-card transition-all duration-200 rounded-l-md"
-              title="Expand details sidebar"
-            >
-              <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
-                <path d="m15 18-6-6 6-6"/>
-              </svg>
-            </button>
-          </div>
-        )}
+        {/* Right Panel */}
+        <RightPanel 
+          selectedElement={selectedElement}
+          showPinnedPanel={showPinnedPanel}
+          showRightSidebar={showRightSidebar}
+          setShowRightSidebar={setShowRightSidebar}
+          pinnedStyles={pinnedStyles}
+          clearAllPinned={clearAllPinned}
+          pinStyle={pinStyle}
+          isStylePinned={isStylePinned}
+          unpinStyle={unpinStyle}
+          uiAnimations={uiAnimations}
+        />
       </div>
     </main>
   )
 }
 
-export default function StyleGuidePage() {
+export default function GalleryPage() {
   return (
     <Suspense fallback={
       <div className="flex items-center justify-center min-h-screen bg-background text-foreground">
-        <div className="text-lg">Loading styleguide...</div>
+        <div className="text-lg">Loading gallery...</div>
       </div>
     }>
-      <StyleGuideContent />
+      <GalleryContent />
     </Suspense>
   )
 }
-
-// All duplicate component definitions removed - now imported from @/components/styleguide
