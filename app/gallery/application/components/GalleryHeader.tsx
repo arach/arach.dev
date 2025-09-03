@@ -88,14 +88,14 @@ export function GalleryHeader({
             <svg
               width="24"
               height="24"
-              viewBox="0 0 30 30"
+              viewBox="0 0 24 24"
               fill="none"
               stroke="currentColor"
               strokeWidth="2"
               className={uiAnimations ? '' : 'opacity-50'}
             >
-              <path d="M12 2L2 7v10c0 5.55 3.84 10.74 9 12 5.16-1.26 9-6.45 9-12V7l-10-5z"/>
-              {uiAnimations && <path d="M9 12l2 2 4-4" strokeLinecap="round" strokeLinejoin="round"/>}
+              <path d="M12 2l-8 4v7c0 2.5 2 5 8 8 6-3 8-5.5 8-8V6l-8-4z"/>
+              {uiAnimations && <path d="m9 11 2 2 4-4" strokeLinecap="round" strokeLinejoin="round"/>}
             </svg>
             <span className="text-[10px]">{uiAnimations ? 'UI FX On' : 'UI FX Off'}</span>
           </button>
