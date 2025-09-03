@@ -32,7 +32,7 @@ export default function StyleGuideLayout({
   children: React.ReactNode
 }) {
   return (
-    <div className={`styleguide-container ${geistSans.variable} ${geistMono.variable} ${manrope.variable} ${jetbrainsMono.variable} antialiased`}>
+    <div className={`styleguide-container ${geistSans.className} ${geistSans.variable} ${geistMono.variable} ${manrope.variable} ${jetbrainsMono.variable} antialiased`}>
       {children}
     </div>
   )

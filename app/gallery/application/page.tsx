@@ -462,7 +462,7 @@ function SectionHeader({ title, id, status, componentCount, variantCount }: Sect
                 </div>
                 
                 {/* Section title */}
-                <h3 className="text-lg font-bold text-foreground uppercase tracking-tight">
+                <h3 className="frame-heading text-lg tracking-tight">
                   {title}
                 </h3>
               </div>
@@ -586,15 +586,9 @@ function StyleGuideContent() {
     setShowRightSidebar(true) // Auto-expand preview on element click
   })
 
-  // Apply base UI theme (terminal) to body for consistent chrome
-  // Component themes are passed via props and don't affect global styles
+  // Keep gallery chrome independent from global site/theme
   useEffect(() => {
-    // Add theme-terminal class to body without overwriting existing classes
-    document.body.classList.add('theme-terminal')
-    if (darkMode) {
-      document.documentElement.classList.add('dark')
-      document.body.classList.add('dark')
-    }
+    // Do not toggle global theme classes here
     
     // Set CSS variables for layout measurements
     document.documentElement.style.setProperty('--header-height', '39px')
@@ -612,17 +606,11 @@ function StyleGuideContent() {
     }
   }, [uiAnimations, isHydrated])
 
-  // Handle dark mode
+  // Handle dark mode (scoped to preview only; avoid global class toggles)
   useEffect(() => {
     if (isHydrated) {
       localStorage.setItem('dark-mode', String(darkMode))
-      if (darkMode) {
-        document.documentElement.classList.add('dark')
-        document.body.classList.add('dark')
-      } else {
-        document.documentElement.classList.remove('dark')
-        document.body.classList.remove('dark')
-      }
+      // No global class changes
     }
   }, [darkMode, isHydrated])
 
@@ -767,9 +755,9 @@ function StyleGuideContent() {
   ]
 
   return (
-    <main className="min-h-screen bg-[hsl(220_15%_3%)] text-[hsl(0_0%_95%)]">
+    <main className={`min-h-screen gallery-frame ${darkMode ? '' : 'gallery-light'} bg-background text-foreground`}>
       {/* Header */}
-      <header className={`border-b border-border bg-background/95 backdrop-blur-md sticky top-0 z-30 py-1 px-6 ${uiAnimations ? 'transition-all duration-300' : ''}`}>
+      <header className={`gallery-header font-sans sticky top-0 z-30 py-1 px-6 ${uiAnimations ? 'transition-all duration-300' : ''}`}>
           <div className="flex items-center justify-between">
             <div className="flex items-center gap-2">
               {/* Back to Home Link */}
@@ -785,7 +773,7 @@ function StyleGuideContent() {
               </Link>
               
               <div className={`${uiAnimations ? 'transition-all duration-300' : ''}`}>
-                <h1 className="font-mono text-lg font-bold text-foreground uppercase tracking-wide">
+                <h1 className="frame-heading">
                   Style Guide
                 </h1>
               </div>
@@ -881,24 +869,19 @@ function StyleGuideContent() {
 
       <div className="max-w-full mx-auto flex relative">
         {/* Sidebar Navigation - Fixed position */}
-        <nav className={`${showLeftSidebar ? 'w-64' : 'w-12'} fixed left-0 border-r ${uiAnimations ? 'transition-all duration-200' : ''} overflow-y-auto z-20`}
+        <nav className={`${showLeftSidebar ? 'w-64' : 'w-12'} fixed left-0 border-r gallery-sidebar-left font-sans ${uiAnimations ? 'transition-all duration-200' : ''} overflow-y-auto z-20`}
              style={{ 
                top: 'var(--header-height, 39px)', 
-               height: 'calc(100vh - var(--header-height, 39px))',
-               backgroundColor: 'hsl(217 33% 7% / 0.2)',
-               borderRightColor: 'hsl(217 32% 15% / 0.4)',
-               backdropFilter: 'blur(12px)',
-               boxShadow: '0 10px 40px rgba(0, 0, 0, 0.1)',
-               fontFamily: 'var(--font-geist-sans), system-ui, sans-serif'
+               height: 'calc(100vh - var(--header-height, 39px))'
              }}>
           {showLeftSidebar ? (
             <div>
               <div className="flex items-center justify-between mb-4 px-6 pt-6">
-                <h2 className="text-sm font-semibold uppercase tracking-wider" style={{ color: 'hsl(215 20% 65%)' }}>Sections</h2>
+                <h2 className="frame-subheading">Sections</h2>
                 <button
                   onClick={() => setShowLeftSidebar(false)}
                   className="p-1 rounded transition-colors"
-                  style={{ color: 'hsl(215 20% 65%)' }}
+                  style={{ color: 'hsl(var(--color-muted-foreground))' }}
                   onMouseEnter={(e) => { e.currentTarget.style.color = 'hsl(0 0% 100%)'; e.currentTarget.style.backgroundColor = 'hsl(200 96% 43% / 0.5)' }}
                   onMouseLeave={(e) => { e.currentTarget.style.color = 'hsl(215 20% 65%)'; e.currentTarget.style.backgroundColor = 'transparent' }}
                   title="Collapse sidebar"
@@ -923,19 +906,19 @@ function StyleGuideContent() {
                           : ''
                       }`}
                       style={{
-                        backgroundColor: activeSection === section.id ? 'hsl(200 96% 43% / 0.1)' : 'transparent',
-                        color: activeSection === section.id ? 'hsl(200 96% 43%)' : 'hsl(215 20% 65%)',
-                        borderLeftColor: activeSection === section.id ? 'hsl(200 96% 43%)' : 'transparent'
+                        backgroundColor: activeSection === section.id ? 'hsl(var(--frame-nav-accent) / 0.12)' : 'transparent',
+                        color: activeSection === section.id ? 'hsl(var(--frame-nav-accent))' : 'hsl(var(--color-muted-foreground))',
+                        borderLeftColor: activeSection === section.id ? 'hsl(var(--frame-nav-accent))' : 'transparent'
                       }}
                       onMouseEnter={(e) => {
                         if (activeSection !== section.id) {
-                          e.currentTarget.style.color = 'hsl(0 0% 100%)';
-                          e.currentTarget.style.backgroundColor = 'hsl(200 96% 43% / 0.05)';
+                          e.currentTarget.style.color = 'hsl(var(--color-foreground))';
+                          e.currentTarget.style.backgroundColor = 'hsl(var(--frame-nav-accent) / 0.07)';
                         }
                       }}
                       onMouseLeave={(e) => {
                         if (activeSection !== section.id) {
-                          e.currentTarget.style.color = 'hsl(215 20% 65%)';
+                          e.currentTarget.style.color = 'hsl(var(--color-muted-foreground))';
                           e.currentTarget.style.backgroundColor = 'transparent';
                         }
                       }}
@@ -952,9 +935,9 @@ function StyleGuideContent() {
                 <button
                   onClick={() => setShowLeftSidebar(true)}
                   className="p-2 rounded transition-colors"
-                  style={{ color: 'hsl(215 20% 65%)' }}
-                  onMouseEnter={(e) => { e.currentTarget.style.color = 'hsl(0 0% 100%)'; e.currentTarget.style.backgroundColor = 'hsl(200 96% 43% / 0.5)' }}
-                  onMouseLeave={(e) => { e.currentTarget.style.color = 'hsl(215 20% 65%)'; e.currentTarget.style.backgroundColor = 'transparent' }}
+                  style={{ color: 'hsl(var(--color-muted-foreground))' }}
+                  onMouseEnter={(e) => { e.currentTarget.style.color = 'hsl(var(--color-foreground))'; e.currentTarget.style.backgroundColor = 'hsl(var(--color-ring) / 0.5)' }}
+                  onMouseLeave={(e) => { e.currentTarget.style.color = 'hsl(var(--color-muted-foreground))'; e.currentTarget.style.backgroundColor = 'transparent' }}
                   title="Expand navigation sidebar"
                 >
                   <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
@@ -1012,14 +995,14 @@ function StyleGuideContent() {
 
         {/* Right Panel - Style Details or Pinned Styles - Fixed position */}
         {(selectedElement || showPinnedPanel) && showRightSidebar && (
-          <aside className="w-96 fixed right-0 border-l border-border/30 bg-card/80 backdrop-blur-md overflow-y-auto transition-all duration-200 shadow-xl shadow-black/20 z-20"
+          <aside className="w-96 fixed right-0 border-l gallery-rightbar font-sans overflow-y-auto transition-all duration-200 z-20"
                  style={{ 
                top: 'var(--header-height, 39px)', 
                height: 'calc(100vh - var(--header-height, 39px))' 
              }}>
             <div className="p-6 h-full overflow-y-auto">
-              <div className="flex items-center justify-between mb-4 sticky top-0 bg-card/95 backdrop-blur-sm pb-4 border-b border-border">
-                <h2 className="text-sm font-semibold text-muted-foreground uppercase tracking-wider">
+              <div className="flex items-center justify-between mb-4 sticky top-0 pb-4 border-b frame-border-accent" style={{ backgroundColor: 'color-mix(in srgb, hsl(var(--color-background)) 95%, transparent)' }}>
+                <h2 className="frame-subheading">
                   {showPinnedPanel ? 'Pinned Styles' : 'Style Details'}
                 </h2>
                 <div className="flex items-center gap-2">
@@ -1057,7 +1040,7 @@ function StyleGuideContent() {
                       <div key={pinnedStyle.id} className="border border-border rounded-lg p-4 bg-muted/30">
                         <div className="flex items-start justify-between mb-3">
                           <div>
-                            <h4 className="text-foreground font-medium text-sm">{pinnedStyle.name}</h4>
+                            <h4 className="frame-subheading">{pinnedStyle.name}</h4>
                             <p className="text-xs text-muted-foreground mt-1">{pinnedStyle.description}</p>
                           </div>
                           <button
@@ -1102,7 +1085,7 @@ function StyleGuideContent() {
                   {/* Element Info */}
                   <div>
                     <div className="flex items-start justify-between mb-2">
-                      <h3 className="text-foreground font-medium">{selectedElement.name}</h3>
+                      <h3 className="frame-subheading">{selectedElement.name}</h3>
                       <button
                         onClick={() => pinStyle(selectedElement)}
                         disabled={isStylePinned(selectedElement)}
@@ -1121,7 +1104,7 @@ function StyleGuideContent() {
                   {/* CSS Classes */}
                   {selectedElement.classes && (
                     <div>
-                      <h4 className="text-sm font-medium text-muted-foreground mb-2">CSS Classes</h4>
+                      <h4 className="frame-subheading mb-2">CSS Classes</h4>
                       <div className="bg-muted rounded-md p-3 font-mono text-xs text-foreground overflow-x-auto">
                         <code>{selectedElement.classes}</code>
                       </div>
@@ -1137,7 +1120,7 @@ function StyleGuideContent() {
                   {/* Color Info */}
                   {selectedElement.color && (
                     <div>
-                      <h4 className="text-sm font-medium text-muted-foreground mb-2">Color</h4>
+                      <h4 className="frame-subheading mb-2">Color</h4>
                       <div className="flex items-center gap-3">
                         <div 
                           className="w-8 h-8 rounded-md border border-border"
@@ -1154,7 +1137,7 @@ function StyleGuideContent() {
                   {/* Usage Examples */}
                   {selectedElement.usage && (
                     <div>
-                      <h4 className="text-sm font-medium text-muted-foreground mb-2">Usage</h4>
+                      <h4 className="frame-subheading mb-2">Usage</h4>
                       <div className="glass-card p-3 font-mono text-xs text-foreground">
                         <pre className="whitespace-pre-wrap break-all leading-relaxed">{selectedElement.usage}</pre>
                       </div>
@@ -1171,7 +1154,7 @@ function StyleGuideContent() {
           <div className="flex items-start pt-6">
             <button
               onClick={() => setShowRightSidebar(true)}
-              className="p-2 border-l border-border bg-card/95 text-muted-foreground hover:text-foreground hover:bg-card transition-all duration-200 rounded-l-md"
+              className="p-2 border-l frame-border-accent bg-card/95 text-muted-foreground hover:text-foreground hover:bg-card transition-all duration-200 rounded-l-md"
               title="Expand details sidebar"
             >
               <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">

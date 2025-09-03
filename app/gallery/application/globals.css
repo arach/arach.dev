@@ -2,6 +2,149 @@
 @import "../../../themes/application/terminal.css";
 
 @layer components {
+  /* Frame variables for gallery application. These override Tailwind theme
+     variables within the gallery frame only, keeping the chrome stable and
+     independent of the selected preview theme. */
+  .gallery-frame {
+    /* Neutral, stable chrome palette */
+    --color-background: 228 24% 6%;     /* Deep slate */
+    --color-foreground: 0 0% 96%;       /* Near-white */
+    --color-card: 228 24% 10%;
+    --color-card-foreground: 0 0% 96%;
+    --color-popover: 228 24% 10%;
+    --color-popover-foreground: 0 0% 96%;
+    --color-muted: 228 20% 14%;
+    --color-muted-foreground: 220 12% 70%;
+    --color-accent: 228 20% 12%;
+    --color-accent-foreground: 0 0% 96%;
+    --color-border: 228 20% 18%;
+    --color-input: 228 20% 16%;
+    --color-ring: 268 83% 62%;          /* Distinctive violet accent */
+
+    /* Tailwind v4 aliases used by utilities (e.g., bg-background) */
+    --background: var(--color-background);
+    --foreground: var(--color-foreground);
+    --card: var(--color-card);
+    --card-foreground: var(--color-card-foreground);
+    --popover: var(--color-popover);
+    --popover-foreground: var(--color-popover-foreground);
+    --muted: var(--color-muted);
+    --muted-foreground: var(--color-muted-foreground);
+    --accent: var(--color-accent);
+    --accent-foreground: var(--color-accent-foreground);
+    --border: var(--color-border);
+    --input: var(--color-input);
+    --ring: var(--color-ring);
+    --primary: var(--color-ring);
+    --primary-foreground: var(--color-foreground);
+
+    /* Neutralize site-level heading variables inside the frame */
+    --theme-heading-color: hsl(var(--color-foreground));
+    --theme-header-text-color: hsl(var(--color-foreground));
+
+    /* Frame nav accent (active left border, text) */
+    --frame-nav-accent: 200 96% 53%; /* light blue */
+  }
+
+  /* Light mode for frame chrome */
+  .gallery-frame.gallery-light {
+    --color-background: 0 0% 99%;
+    --color-foreground: 228 24% 12%;
+    --color-card: 0 0% 100%;
+    --color-card-foreground: 228 24% 12%;
+    --color-popover: 0 0% 100%;
+    --color-popover-foreground: 228 24% 12%;
+    --color-muted: 228 26% 97%;
+    --color-muted-foreground: 228 15% 36%;
+    --color-accent: 228 26% 97%;
+    --color-accent-foreground: 228 24% 12%;
+    --color-border: 228 16% 85%;
+    --color-input: 228 18% 92%;
+    --color-ring: 268 70% 58%;
+
+    --background: var(--color-background);
+    --foreground: var(--color-foreground);
+    --card: var(--color-card);
+    --card-foreground: var(--color-card-foreground);
+    --popover: var(--color-popover);
+    --popover-foreground: var(--color-popover-foreground);
+    --muted: var(--color-muted);
+    --muted-foreground: var(--color-muted-foreground);
+    --accent: var(--color-accent);
+    --accent-foreground: var(--color-accent-foreground);
+    --border: var(--color-border);
+    --input: var(--color-input);
+    --ring: var(--color-ring);
+    --primary: var(--color-ring);
+    --primary-foreground: var(--color-foreground);
+
+    --theme-heading-color: hsl(var(--color-foreground));
+    --theme-header-text-color: hsl(var(--color-foreground));
+
+    --frame-nav-accent: 205 92% 50%;
+  }
+
+  /* Chrome: header and sidebars use fixed palette and borders */
+  .gallery-header {
+    background-color: color-mix(in srgb, hsl(var(--color-background)) 95%, transparent);
+    border-bottom: 1px solid color-mix(in srgb, hsl(var(--color-border)) 40%, transparent);
+    -webkit-backdrop-filter: blur(8px);
+    backdrop-filter: blur(8px);
+    font-family: var(--font-geist-sans), system-ui, sans-serif;
+  }
+
+  .gallery-sidebar-left {
+    background-color: color-mix(in srgb, hsl(var(--color-background)) 80%, transparent);
+    border-right: 1px solid color-mix(in srgb, hsl(var(--color-border)) 40%, transparent);
+    -webkit-backdrop-filter: blur(12px);
+    backdrop-filter: blur(12px);
+    box-shadow: 0 10px 40px rgba(0, 0, 0, 0.10);
+    font-family: var(--font-geist-sans), system-ui, sans-serif;
+  }
+
+  .gallery-rightbar {
+    background-color: color-mix(in srgb, hsl(var(--color-background)) 88%, transparent);
+    border-left: 1px solid color-mix(in srgb, hsl(var(--color-border)) 40%, transparent);
+    -webkit-backdrop-filter: blur(12px);
+    backdrop-filter: blur(12px);
+    box-shadow: 0 10px 40px rgba(0, 0, 0, 0.20);
+    font-family: var(--font-geist-sans), system-ui, sans-serif;
+  }
+
+  .frame-border-accent {
+    border-color: color-mix(in srgb, hsl(var(--color-border)) 40%, transparent) !important;
+  }
+
+  .frame-heading {
+    font-family: var(--font-geist-sans), system-ui, -apple-system, sans-serif;
+    text-transform: uppercase;
+    letter-spacing: 0.08em;
+    font-weight: 600;
+    font-size: 0.95rem;
+    color: hsl(var(--color-foreground));
+  }
+
+  .gallery-frame .frame-subheading {
+    font-family: var(--font-geist-sans), system-ui, -apple-system, sans-serif;
+    text-transform: uppercase;
+    letter-spacing: 0.08em;
+    font-weight: 600;
+    font-size: 0.80rem;
+    color: color-mix(in srgb, hsl(var(--color-ring)) 60%, hsl(var(--color-foreground)) 40%) !important;
+  }
+
+  /* Utilities for occasional system text in mono */
+  .frame-mono {
+    font-family: var(--font-geist-mono), ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", monospace;
+  }
+
+  /* Ensure high-contrast headings inside the gallery frame */
+  .gallery-frame h1,
+  .gallery-frame h2,
+  .gallery-frame h3 {
+    color: hsl(var(--color-foreground));
+    font-family: var(--font-geist-sans), system-ui, -apple-system, sans-serif;
+  }
   /* UI Chrome Animation Control
      Component design transitions (buttons, inputs, etc.) are always enabled
      UI chrome transitions (navigation, panels, etc.) are controlled by data-ui-animations attribute */
@@ -16,12 +159,12 @@
   
   .btn-primary {
     @apply btn bg-gradient-to-b from-primary to-primary/90 text-primary-foreground;
-    box-shadow: inset 0 1px 0 rgba(255,255,255,0.2), 0 1px 3px rgba(0,0,0,0.3), 0 0 0 1px rgba(0,0,0,0.2);
+    box-shadow: 0 1px 3px rgba(0,0,0,0.3), 0 0 0 1px rgba(0,0,0,0.2);
   }
   
   .btn-primary:hover {
     @apply from-primary/90 to-primary/80 -translate-y-[1px];
-    box-shadow: inset 0 1px 0 rgba(255,255,255,0.3), 0 2px 4px rgba(0,0,0,0.3), 0 0 0 1px rgba(0,0,0,0.2);
+    box-shadow: 0 2px 4px rgba(0,0,0,0.3), 0 0 0 1px rgba(0,0,0,0.2);
   }
   
   .btn-primary:active {
@@ -31,12 +174,12 @@
   
   .btn-destructive {
     @apply btn bg-gradient-to-b from-red-600 to-red-700 text-white;
-    box-shadow: inset 0 1px 0 rgba(255,255,255,0.2), 0 1px 3px rgba(0,0,0,0.3), 0 0 0 1px rgba(0,0,0,0.2);
+    box-shadow: 0 1px 3px rgba(0,0,0,0.3), 0 0 0 1px rgba(0,0,0,0.2);
   }
   
   .btn-destructive:hover {
     @apply from-red-500 to-red-600 -translate-y-[1px];
-    box-shadow: inset 0 1px 0 rgba(255,255,255,0.3), 0 2px 4px rgba(0,0,0,0.3), 0 0 0 1px rgba(0,0,0,0.2);
+    box-shadow: 0 2px 4px rgba(0,0,0,0.3), 0 0 0 1px rgba(0,0,0,0.2);
   }
   
   .btn-destructive:active {
@@ -61,12 +204,12 @@
   
   .btn-secondary {
     @apply btn bg-gradient-to-b from-gray-800 to-gray-900 text-gray-300 border border-gray-700;
-    box-shadow: inset 0 1px 0 rgba(255,255,255,0.03), 0 1px 3px rgba(0,0,0,0.3);
+    box-shadow: 0 1px 3px rgba(0,0,0,0.3);
   }
   
   .btn-secondary:hover {
     @apply from-gray-700 to-gray-800 text-gray-100 border-gray-600 -translate-y-[1px];
-    box-shadow: inset 0 1px 0 rgba(255,255,255,0.05), 0 2px 4px rgba(0,0,0,0.3);
+    box-shadow: 0 2px 4px rgba(0,0,0,0.3);
   }
   
   .btn-secondary:active {
@@ -144,7 +287,7 @@
     right: 0;
     bottom: 0;
     border-radius: inherit;
-    background: linear-gradient(135deg, rgba(255,255,255,0.08) 0%, rgba(255,255,255,0.02) 100%);
+    background: none;
     pointer-events: none;
   }
   
@@ -283,7 +426,7 @@
     right: 0;
     bottom: 0;
     border-radius: inherit;
-    background: linear-gradient(135deg, rgba(255,255,255,0.08) 0%, rgba(255,255,255,0.02) 100%);
+    background: none;
     pointer-events: none;
   }
 
@@ -322,7 +465,7 @@
     right: 0;
     bottom: 0;
     border-radius: inherit;
-    background: linear-gradient(135deg, rgba(255,255,255,0.1) 0%, rgba(255,255,255,0.02) 50%, rgba(255,255,255,0) 100%);
+    background: none;
     pointer-events: none;
   }
 
