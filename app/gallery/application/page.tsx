@@ -358,9 +358,9 @@ function TacticalHeader({
       </div>
       
       {/* Tactical Section Header */}
-      <header className="z-20 relative bg-background/95 backdrop-blur-md border-b border-border/30" role="banner" aria-label="Section header">
+              <header className="z-20 relative bg-slate-900/95 backdrop-blur-md border-b border-slate-700/30" role="banner" aria-label="Section header">
         {/* Background scan line effect */}
-        <div className="absolute inset-0 bg-gradient-to-r from-primary/5 via-transparent to-transparent" aria-hidden="true" />
+                  <div className="absolute inset-0 bg-gradient-to-r from-cyan-400/5 via-transparent to-transparent" aria-hidden="true" />
         
         {/* Main header container with tactical frame */}
         <div className="relative bg-card/30 backdrop-blur-sm overflow-hidden section-header-tactical mr-6 border-l-2 border-primary/40" role="region" aria-label="Tactical header frame">
@@ -370,7 +370,7 @@ function TacticalHeader({
           {/* Main content area with left accent */}
           <div className="flex" role="region" aria-label="Header content">
             {/* Tactical accent bar */}
-            <div className="w-1 bg-gradient-to-b from-primary via-primary/50 to-transparent" aria-hidden="true" />
+            <div className="w-1 bg-gradient-to-b from-cyan-400 via-cyan-400/50 to-transparent" aria-hidden="true" />
             
             {/* Content */}
             <div className="flex-1 px-6 py-3" role="main">
@@ -438,7 +438,7 @@ function SectionHeader({ title, id, status, componentCount, variantCount }: Sect
   return (
     <div className="mb-6 relative">
       {/* Background scan effect */}
-      <div className="absolute inset-0 bg-gradient-to-r from-primary/5 via-transparent to-transparent rounded-sm" />
+              <div className="absolute inset-0 bg-gradient-to-r from-cyan-400/5 via-transparent to-transparent rounded-sm" />
       
       {/* Main header container */}
       <div className="relative border border-border/30 bg-gradient-to-br from-card/40 to-card/20 backdrop-blur-sm rounded-sm overflow-hidden section-header-tactical shadow-sm">
@@ -448,7 +448,7 @@ function SectionHeader({ title, id, status, componentCount, variantCount }: Sect
         {/* Header content */}
         <div className="flex items-center">
           {/* Left accent */}
-          <div className="w-1 self-stretch bg-gradient-to-b from-primary/60 via-primary/30 to-transparent" />
+          <div className="w-1 self-stretch bg-gradient-to-b from-cyan-400/60 via-cyan-400/30 to-transparent" />
           
           {/* Main content */}
           <div className="flex-1 px-6 py-3">
@@ -544,7 +544,7 @@ function GalleryContent() {
   const [pinnedStyles, setPinnedStyles] = useState<any[]>([])
   const [showPinnedPanel, setShowPinnedPanel] = useState(false)
   const [showLeftSidebar, setShowLeftSidebar] = useState(true)
-  const [showRightSidebar, setShowRightSidebar] = useState(true)
+  const [showRightSidebar, setShowRightSidebar] = useState(false)
   const [uiAnimations, setUiAnimations] = useState(true)
   const [darkMode, setDarkMode] = useState(true)
   const [isHydrated, setIsHydrated] = useState(false)
@@ -755,7 +755,7 @@ function GalleryContent() {
   ]
 
   return (
-    <main id="gallery-container" className={`min-h-screen gallery-frame ${darkMode ? '' : 'gallery-light'} bg-background text-foreground`}>
+            <main id="gallery-container" className={`min-h-screen gallery-frame ${darkMode ? '' : 'gallery-light'} bg-slate-950 text-slate-100`}>
       {/* Header */}
       <GalleryHeader 
         darkMode={darkMode}
@@ -785,7 +785,7 @@ function GalleryContent() {
         />
 
         {/* Main Content - with containerRef for element enhancement */}
-        <main id="gallery-main-content" ref={containerRef} className={`flex-1 relative ${showLeftSidebar ? 'ml-64' : 'ml-12'} ${(selectedElement || showPinnedPanel) && showRightSidebar ? 'mr-96' : ''} ${uiAnimations ? 'transition-all duration-200' : ''}`} onClick={handleElementClick} role="main" aria-label="Gallery content">
+        <main id="gallery-main-content" ref={containerRef} className={`flex-1 relative ${showLeftSidebar ? 'ml-64' : 'ml-9'} ${showRightSidebar ? 'mr-96' : 'mr-9'} ${uiAnimations ? 'transition-all duration-200' : ''}`} onClick={handleElementClick} role="main" aria-label="Gallery content">
           {/* Tactical Header with Sticky Status Bar */}
           <TacticalHeader 
             activeSection={activeSection}
@@ -849,7 +849,7 @@ function GalleryContent() {
 export default function GalleryPage() {
   return (
     <Suspense fallback={
-      <div className="flex items-center justify-center min-h-screen bg-background text-foreground">
+      <div className="flex items-center justify-center min-h-screen bg-slate-950 text-slate-100">
         <div className="text-lg">Loading gallery...</div>
       </div>
     }>

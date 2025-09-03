@@ -1,0 +1,161 @@
+/* Gallery Components CSS
+   Component-specific styles for the gallery application */
+
+/* Right Sidebar Panel - matches gallery frame styling */
+.gallery-sidebar-right {
+  background-color: color-mix(in srgb, hsl(var(--color-background)) 88%, transparent);
+  border-left: 1px solid color-mix(in srgb, hsl(var(--color-border)) 40%, transparent);
+  backdrop-filter: blur(12px);
+  box-shadow: 0 10px 40px rgba(0, 0, 0, 0.20);
+}
+
+.gallery-sidebar-right-header {
+  background-color: color-mix(in srgb, hsl(var(--color-background)) 95%, transparent);
+  border-bottom: 1px solid color-mix(in srgb, hsl(var(--color-border)) 30%, transparent);
+  backdrop-filter: blur(8px);
+}
+
+.gallery-sidebar-right-title {
+  color: hsl(var(--color-foreground));
+  font-weight: 600;
+}
+
+.gallery-sidebar-right-button {
+  color: hsl(var(--color-muted-foreground));
+  background-color: transparent;
+  transition: all 0.2s ease;
+}
+
+.gallery-sidebar-right-button:hover {
+  color: hsl(var(--color-foreground));
+  background-color: color-mix(in srgb, hsl(var(--color-border)) 30%, transparent);
+}
+
+.gallery-sidebar-right-expand {
+  background-color: color-mix(in srgb, hsl(var(--color-background)) 90%, transparent);
+  border-left: 1px solid color-mix(in srgb, hsl(var(--color-border)) 40%, transparent);
+  color: hsl(var(--color-muted-foreground));
+  backdrop-filter: blur(8px);
+  transition: all 0.2s ease;
+}
+
+.gallery-sidebar-right-expand:hover {
+  color: hsl(var(--color-foreground));
+  background-color: color-mix(in srgb, hsl(var(--color-background)) 95%, transparent);
+}
+
+/* Content Cards */
+.gallery-content-card {
+  background-color: color-mix(in srgb, hsl(var(--color-card)) 90%, transparent);
+  border: 1px solid color-mix(in srgb, hsl(var(--color-border)) 50%, transparent);
+  border-radius: 0.5rem;
+  backdrop-filter: blur(4px);
+}
+
+.gallery-content-card-title {
+  color: hsl(var(--color-foreground));
+  font-weight: 600;
+}
+
+.gallery-content-card-description {
+  color: hsl(var(--color-muted-foreground));
+}
+
+.gallery-content-card-button {
+  color: hsl(var(--color-muted-foreground));
+  transition: color 0.2s ease;
+}
+
+.gallery-content-card-button:hover {
+  color: hsl(var(--frame-nav-accent));
+}
+
+/* Code Blocks */
+.gallery-code-block {
+  background-color: color-mix(in srgb, hsl(var(--color-muted)) 80%, transparent);
+  border: 1px solid color-mix(in srgb, hsl(var(--color-border)) 30%, transparent);
+  border-radius: 0.375rem;
+}
+
+.gallery-code-text {
+  color: hsl(var(--color-foreground));
+  font-family: var(--font-geist-mono), ui-monospace, SFMono-Regular, monospace;
+}
+
+/* Action Buttons */
+.gallery-action-button {
+  color: hsl(var(--frame-nav-accent));
+  background-color: color-mix(in srgb, hsl(var(--frame-nav-accent)) 15%, transparent);
+  border: 1px solid color-mix(in srgb, hsl(var(--frame-nav-accent)) 30%, transparent);
+  transition: all 0.2s ease;
+  border-radius: 0.25rem;
+  padding: 0.25rem 0.5rem;
+}
+
+.gallery-action-button:hover {
+  background-color: color-mix(in srgb, hsl(var(--frame-nav-accent)) 25%, transparent);
+  border-color: hsl(var(--frame-nav-accent));
+}
+
+.gallery-action-button:disabled {
+  color: hsl(var(--color-muted-foreground));
+  background-color: color-mix(in srgb, hsl(var(--color-muted)) 50%, transparent);
+  border-color: color-mix(in srgb, hsl(var(--color-border)) 30%, transparent);
+  cursor: not-allowed;
+}
+
+/* Clear All Button */
+.gallery-clear-button {
+  color: #ef4444;
+  background-color: color-mix(in srgb, #ef4444 10%, transparent);
+  border: 1px solid color-mix(in srgb, #ef4444 30%, transparent);
+  border-radius: 0.25rem;
+  padding: 0.25rem 0.5rem;
+  transition: all 0.2s ease;
+}
+
+.gallery-clear-button:hover {
+  color: #dc2626;
+  background-color: color-mix(in srgb, #ef4444 20%, transparent);
+  border-color: #ef4444;
+}
+
+/* Copy Button */
+.gallery-copy-button {
+  color: hsl(var(--frame-nav-accent));
+  background-color: color-mix(in srgb, hsl(var(--frame-nav-accent)) 10%, transparent);
+  border: 1px solid color-mix(in srgb, hsl(var(--frame-nav-accent)) 25%, transparent);
+  border-radius: 0.25rem;
+  padding: 0.25rem 0.5rem;
+  transition: all 0.2s ease;
+}
+
+.gallery-copy-button:hover {
+  background-color: color-mix(in srgb, hsl(var(--frame-nav-accent)) 20%, transparent);
+  border-color: hsl(var(--frame-nav-accent));
+}
+
+/* Panel Tokens for Custom Elements */
+.text-gallery-panel-text {
+  color: hsl(var(--color-foreground));
+}
+
+.text-gallery-panel-muted {
+  color: hsl(var(--color-muted-foreground));
+}
+
+.border-gallery-panel-border {
+  border-color: color-mix(in srgb, hsl(var(--color-border)) 50%, transparent);
+}
+
+.bg-gallery-panel-card {
+  background-color: color-mix(in srgb, hsl(var(--color-card)) 80%, transparent);
+}
+
+.bg-gallery-panel-code {
+  background-color: color-mix(in srgb, hsl(var(--color-muted)) 70%, transparent);
+}
+
+.text-gallery-panel-code-text {
+  color: hsl(var(--color-foreground));
+}

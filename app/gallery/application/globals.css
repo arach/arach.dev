@@ -577,3 +577,6 @@
 @utility btn {
   @apply inline-flex items-center justify-center text-sm;
 }
+
+  /* Import gallery component styles */
+  @import "./components/gallery-components.css";

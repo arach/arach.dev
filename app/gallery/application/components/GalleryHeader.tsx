@@ -29,13 +29,13 @@ export function GalleryHeader({
   updateURL
 }: GalleryHeaderProps) {
   return (
-    <header id="gallery-header" className={`border-b border-slate-700/40 bg-slate-900/95 backdrop-blur-md sticky top-0 z-30 py-1 px-6 ${uiAnimations ? 'transition-all duration-300' : ''}`}>
+    <header id="gallery-header" className={`h-12 border-b border-slate-700/40 bg-slate-900/95 backdrop-blur-md sticky top-0 z-30 py-1 px-6 ${uiAnimations ? 'transition-all duration-300' : ''}`}>
       <div className="flex items-center justify-between">
         <div className="flex items-center gap-2">
           {/* Back to Home Link */}
           <Link
             href="/"
-            className="flex items-center gap-1.5 px-2.5 py-1 text-sm text-primary hover:text-primary bg-card/20 hover:bg-card/30 border border-primary/30 hover:border-primary rounded-md transition-all duration-200"
+            className="flex items-center gap-1.5 px-2.5 py-1 text-sm text-cyan-400 hover:text-cyan-300 bg-slate-800/50 hover:bg-slate-800/70 border border-slate-600/50 hover:border-cyan-400/50 rounded-md transition-all duration-200"
             title="Back to arach.dev"
           >
             <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
@@ -45,7 +45,7 @@ export function GalleryHeader({
           </Link>
           
           <div className={`${uiAnimations ? 'transition-all duration-300' : ''}`}>
-            <h1 className="font-mono text-lg font-bold text-foreground uppercase tracking-wide">
+            <h1 className="font-sans text-lg font-bold text-slate-200 uppercase tracking-wide">
               Gallery
             </h1>
           </div>
@@ -56,12 +56,12 @@ export function GalleryHeader({
           {/* Dark Mode Toggle */}
           <button
             onClick={() => setDarkMode(!darkMode)}
-            className="btn-ghost btn-sm flex items-center gap-2"
+            className="flex items-center gap-2 text-slate-300 hover:text-slate-200 hover:bg-slate-800/50 h-8 px-3 py-1.5 rounded transition-colors"
             title={darkMode ? 'Switch to Light Mode' : 'Switch to Dark Mode'}
           >
             <svg
-              width="14"
-              height="14"
+              width="24"
+              height="24"
               viewBox="0 0 24 24"
               fill="none"
               stroke="currentColor"
@@ -82,13 +82,13 @@ export function GalleryHeader({
           {/* UI Animations Toggle */}
           <button
             onClick={() => setUiAnimations(!uiAnimations)}
-            className={`btn-ghost btn-sm flex items-center gap-2`}
+            className={`flex items-center gap-2 text-slate-300 hover:text-slate-200 hover:bg-slate-800/50 h-8 px-3 py-1.5 rounded transition-colors`}
             title={uiAnimations ? 'Disable UI Chrome animations' : 'Enable UI Chrome animations'}
           >
             <svg
-              width="14"
-              height="14"
-              viewBox="0 0 24 24"
+              width="24"
+              height="24"
+              viewBox="0 0 30 30"
               fill="none"
               stroke="currentColor"
               strokeWidth="2"
@@ -105,13 +105,13 @@ export function GalleryHeader({
             onClick={() => setShowPinnedPanel(!showPinnedPanel)}
             className={`relative text-[10px] px-2 py-1 ${
               showPinnedPanel || pinnedStyles.length > 0
-                ? 'btn-primary' 
-                : 'btn-secondary'
-            }`}
+                ? 'bg-cyan-500 text-white hover:bg-cyan-600' 
+                : 'bg-slate-700 text-slate-300 hover:bg-slate-600'
+            } rounded transition-colors`}
           >
             Pinned
             {pinnedStyles.length > 0 && (
-              <span className="absolute -top-1 -right-1 bg-destructive text-destructive-foreground text-[10px] rounded-full w-4 h-4 flex items-center justify-center">
+              <span className="absolute -top-1 -right-1 bg-red-500 text-white text-[10px] rounded-full w-4 h-4 flex items-center justify-center">
                 {pinnedStyles.length}
               </span>
             )}
@@ -119,14 +119,14 @@ export function GalleryHeader({
 
           {/* Theme Selector */}
           <div className="flex items-center gap-3">
-            <label className="text-xs font-medium text-muted-foreground">Theme:</label>
+            <label className="text-xs font-medium text-slate-400 font-sans">Theme:</label>
             <select 
               value={activeTheme}
               onChange={(e) => {
                 setActiveTheme(e.target.value)
                 updateURL(activeSection, e.target.value)
               }}
-              className="bg-input border border-border rounded-md px-2 py-0.5 text-foreground text-xs focus:outline-none focus:ring-2 focus:ring-ring"
+              className="bg-slate-800 border border-slate-600 rounded-md px-2 py-0.5 text-slate-200 text-xs focus:outline-none focus:ring-2 focus:ring-cyan-400/50 font-sans"
             >
               {getThemeIds().map((themeId) => (
                 <option key={themeId} value={themeId}>
