@@ -3,9 +3,9 @@ export const oceanTheme = {
   id: 'ocean',
   // Define fonts - ocean uses clean, modern sans fonts
   fonts: {
-    sans: 'var(--font-geist-sans)',
+    sans: '"DM Sans", var(--font-geist-sans)',
     mono: 'var(--font-ibm-plex-mono)',
-    display: 'var(--font-geist-sans)', // Use site display font
+    display: '"Outfit"', // Modern display font for headings
   },
   colors: {
     bg: '#0f172a',
@@ -32,5 +32,7 @@ export const oceanTheme = {
     dotOpacity: '0.2',
     blur: '12px',
   },
-  // No external font imports; use site fonts for performance
+  fontImports: [
+    'https://fonts.googleapis.com/css2?family=Outfit:wght@400;600;700&family=DM+Sans:wght@400;600&display=swap',
+  ],
 } as const;

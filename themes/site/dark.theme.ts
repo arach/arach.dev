@@ -3,9 +3,9 @@ export const darkTheme = {
   id: 'dark',
   // Define fonts - dark theme uses modern sans fonts
   fonts: {
-    sans: 'var(--font-geist-sans)',
+    sans: '"Space Grotesk", var(--font-geist-sans)',
     mono: 'var(--font-ibm-plex-mono)',
-    display: 'var(--font-geist-sans)',
+    display: '"Space Grotesk"',
   },
   colors: {
     bg: '#0a0a0a',
@@ -32,5 +32,7 @@ export const darkTheme = {
     dotOpacity: '0.25',
     blur: '16px',
   },
-  // No external font imports; use site fonts for performance
+  fontImports: [
+    'https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;600;700&display=swap',
+  ],
 } as const;

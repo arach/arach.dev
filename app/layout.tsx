@@ -53,6 +53,36 @@ export default function RootLayout({
 }>) {
   return (
     <html lang="en" className={`h-full ${GeistMono.variable} ${GeistSans.variable}`}>
+      <head>
+        <link rel="preconnect" href="https://fonts.googleapis.com" />
+        <link rel="preconnect" href="https://fonts.gstatic.com" crossOrigin="" />
+        <script
+          id="theme-font-preload"
+          dangerouslySetInnerHTML={{ __html: `
+            (function(){
+              try {
+                var saved = localStorage.getItem('site-theme') || 'default';
+                var urls = {
+                  dark: 'https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;600;700&display=swap',
+                  ocean: 'https://fonts.googleapis.com/css2?family=Outfit:wght@400;600;700&family=DM+Sans:wght@400;600&display=swap',
+                  cyberpunk: 'https://fonts.googleapis.com/css2?family=Orbitron:wght@400;500;700;900&family=Exo+2:wght@400;500;600&family=Fira+Code:wght@400;500&display=swap',
+                  paper: 'https://fonts.googleapis.com/css2?family=Libre+Baskerville:wght@400;700&family=Crimson+Text:wght@400;600;700&family=Courier+Prime:wght@400;700&display=swap',
+                  sunset: 'https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;600;700&family=Lora:wght@400;600&family=JetBrains+Mono:wght@400;500&display=swap'
+                };
+                var href = urls[saved];
+                if (!href) return;
+                var exists = document.querySelector('link[rel="stylesheet"][href="'+href+'"]');
+                if (exists) return;
+                var link = document.createElement('link');
+                link.rel = 'stylesheet';
+                link.href = href;
+                link.setAttribute('data-theme-fonts', 'true');
+                document.head.appendChild(link);
+              } catch(_){}
+            })();
+          ` }}
+        />
+      </head>
       <body className={`${ibmPlexMono.variable} ${GeistMono.className} font-mono flex flex-col min-h-screen`}>
         <ThemeProvider>
           <div hidden>

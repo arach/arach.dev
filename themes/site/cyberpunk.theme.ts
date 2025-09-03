@@ -3,9 +3,9 @@ export const cyberpunkTheme = {
   id: 'cyberpunk',
   // Define fonts once - cyberpunk uses special display fonts
   fonts: {
-    sans: 'var(--font-geist-sans)',
-    mono: 'var(--font-ibm-plex-mono)',
-    display: 'var(--font-geist-sans)',
+    sans: '"Exo 2", var(--font-geist-sans)',
+    mono: '"Fira Code", "Victor Mono", var(--font-ibm-plex-mono)',
+    display: '"Orbitron"', // Futuristic display font
   },
   colors: {
     bg: '#0a0014',
@@ -34,5 +34,7 @@ export const cyberpunkTheme = {
     glow: true,
     neon: true,
   },
-  // No external font imports; use site fonts for performance
+  fontImports: [
+    'https://fonts.googleapis.com/css2?family=Orbitron:wght@400;500;700;900&family=Exo+2:wght@400;500;600&family=Fira+Code:wght@400;500&display=swap',
+  ],
 } as const;
