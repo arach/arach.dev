@@ -1,5 +1,6 @@
 import type { Metadata } from 'next'
 import './application/globals.css'
+import '../../themes/application/terminal.css'
 
 export const metadata: Metadata = {
   title: 'Gallery',

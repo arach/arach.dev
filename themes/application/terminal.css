@@ -1,25 +1,49 @@
 /**
- * Terminal Theme - Tailwind v4 CSS-first Configuration
- * Precision-focused design with sophisticated UI patterns and tactical aesthetics
+ * Terminal Theme - LatticeOS Inspired
+ * Military-grade interface design with tactical aesthetics and precision-focused UI
+ * Aligned with Anduril's LatticeOS design language
  */
 
 @import "tailwindcss";
 
 @theme {
-  /* Core semantic tokens */
-  --color-background: #09090b;
-  --color-foreground: #fafafa;
+  /* LatticeOS-inspired color palette */
+  --color-background: #0a0a0a;        /* Deep tactical black */
+  --color-foreground: #e8e8e8;        /* High-contrast white */
 
-  --color-primary: #00b4d8;
+  /* Primary: Tactical blue (LatticeOS accent) */
+  --color-primary: #0066cc;           /* Military blue */
   --color-primary-foreground: #ffffff;
 
-  --color-secondary: #3f3f46;
-  --color-secondary-foreground: #e4e4e7;
+  /* Secondary: Neutral grays */
+  --color-secondary: #1a1a1a;         /* Dark panel background */
+  --color-secondary-foreground: #d0d0d0;
 
-  --color-muted: #27272a;
-  --color-muted-foreground: #a1a1aa;
+  /* Muted: Subtle grays for secondary content */
+  --color-muted: #1f1f1f;             /* Slightly lighter than secondary */
+  --color-muted-foreground: #888888;  /* Reduced contrast for secondary text */
 
-  --color-border: #27272a;
+  /* Border: Subtle separation */
+  --color-border: #333333;            /* Tactical gray borders */
+
+  /* Status colors - LatticeOS tactical palette */
+  --color-success: #00cc66;           /* Tactical green */
+  --color-success-foreground: #ffffff;
+  --color-warning: #ffaa00;           /* Tactical amber */
+  --color-warning-foreground: #000000;
+  --color-destructive: #cc0000;       /* Tactical red */
+  --color-destructive-foreground: #ffffff;
+  --color-info: #0066cc;              /* Same as primary blue */
+
+  /* Card and surface colors */
+  --color-card: #1a1a1a;              /* Dark panel background */
+  --color-card-foreground: #e8e8e8;
+  --color-popover: #1f1f1f;           /* Slightly lighter for popovers */
+  --color-popover-foreground: #e8e8e8;
+
+  /* Input and form elements */
+  --color-input: #2a2a2a;             /* Input background */
+  --color-ring: #0066cc;              /* Focus ring color */
 
   /* Tailwind v4 utility mappings */
   --primary: var(--color-primary);
@@ -31,9 +55,136 @@
   --background: var(--color-background);
   --foreground: var(--color-foreground);
   --border: var(--color-border);
+  --card: var(--color-card);
+  --card-foreground: var(--color-card-foreground);
+  --popover: var(--color-popover);
+  --popover-foreground: var(--color-popover-foreground);
+  --input: var(--color-input);
+  --ring: var(--color-ring);
+  --success: var(--color-success);
+  --success-foreground: var(--color-success-foreground);
+  --warning: var(--color-warning);
+  --warning-foreground: var(--color-warning-foreground);
+  --destructive: var(--color-destructive);
+  --destructive-foreground: var(--color-destructive-foreground);
 
-  /* Optional: keep a single radius and basic fonts */
-  --radius: 0.125rem;
-  --font-family-sans: "Geist Sans", ui-sans-serif, system-ui, sans-serif;
-  --font-family-mono: "JetBrains Mono", ui-monospace, SFMono-Regular, monospace;
+  /* LatticeOS typography - Clean, modern sans-serif */
+  --radius: 0.25rem;                  /* Slightly more rounded for modern feel */
+  --font-family-sans: "Inter", "Carlito", "Segoe UI", system-ui, sans-serif;
+  --font-family-mono: "JetBrains Mono", "Fira Code", "SF Mono", monospace;
+}
+
+@layer components {
+  /* LatticeOS-inspired tactical components */
+  
+  /* Tactical panels with military styling */
+  .tactical-panel {
+    @apply bg-card border border-border/50 rounded-md p-4;
+    background: linear-gradient(135deg, hsl(var(--color-card)) 0%, hsl(var(--color-muted)) 100%);
+    box-shadow: 
+      0 4px 12px rgba(0, 0, 0, 0.4),
+      0 0 20px hsl(var(--color-primary) / 0.1),
+      inset 0 0 20px hsl(var(--color-primary) / 0.05);
+    border: 2px solid hsl(var(--color-primary) / 0.3);
+    position: relative;
+  }
+  
+  .tactical-panel::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background: linear-gradient(45deg, transparent 48%, hsl(var(--color-primary) / 0.02) 49%, hsl(var(--color-primary) / 0.02) 51%, transparent 52%);
+    background-size: 20px 20px;
+    pointer-events: none;
+    border-radius: inherit;
+  }
+  
+  /* Status indicators with tactical colors */
+  .status-online {
+    @apply bg-success text-success-foreground px-2 py-1 rounded text-xs font-medium;
+    box-shadow: 0 0 8px hsl(var(--color-success) / 0.3);
+  }
+  
+  .status-warning {
+    @apply bg-warning text-warning-foreground px-2 py-1 rounded text-xs font-medium;
+    box-shadow: 0 0 8px hsl(var(--color-warning) / 0.3);
+  }
+  
+  .status-error {
+    @apply bg-destructive text-destructive-foreground px-2 py-1 rounded text-xs font-medium;
+    box-shadow: 0 0 8px hsl(var(--color-destructive) / 0.3);
+  }
+  
+  /* Tactical buttons with military styling */
+  .btn-tactical {
+    @apply bg-primary text-primary-foreground px-4 py-2 rounded font-medium transition-all;
+    border: 1px solid hsl(var(--color-primary) / 0.5);
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
+  }
+  
+  .btn-tactical:hover {
+    @apply bg-primary/90;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.3), 0 0 12px hsl(var(--color-primary) / 0.2);
+    transform: translateY(-1px);
+  }
+  
+  /* Data display with tactical grid */
+  .tactical-grid {
+    background-image: 
+      linear-gradient(hsl(var(--color-border) / 0.1) 1px, transparent 1px),
+      linear-gradient(90deg, hsl(var(--color-border) / 0.1) 1px, transparent 1px);
+    background-size: 20px 20px;
+  }
+  
+  /* Scanline effect for authentic terminal feel */
+  .scanlines {
+    position: relative;
+  }
+  
+  .scanlines::after {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background: linear-gradient(
+      transparent 50%,
+      hsl(var(--color-primary) / 0.03) 50%
+    );
+    background-size: 100% 4px;
+    pointer-events: none;
+    animation: scanlines 0.1s linear infinite;
+  }
+  
+  @keyframes scanlines {
+    0% { transform: translateY(0); }
+    100% { transform: translateY(4px); }
+  }
+  
+  /* Tactical focus ring */
+  .tactical-focus {
+    @apply focus:outline-none focus:ring-2 focus:ring-primary/50 focus:ring-offset-2 focus:ring-offset-background;
+  }
+  
+  /* Military-style data tables */
+  .tactical-table {
+    @apply w-full border-collapse;
+  }
+  
+  .tactical-table th {
+    @apply bg-muted text-muted-foreground px-4 py-2 text-left text-sm font-medium border-b border-border;
+    background: linear-gradient(135deg, hsl(var(--color-muted)) 0%, hsl(var(--color-secondary)) 100%);
+  }
+  
+  .tactical-table td {
+    @apply px-4 py-2 text-sm border-b border-border/30;
+  }
+  
+  .tactical-table tr:hover {
+    @apply bg-muted/20;
+  }
 }

@@ -5,6 +5,12 @@ import { useSearchParams, useRouter } from 'next/navigation'
 import { getThemeIds, getTheme } from '@/lib/theme/application/registry'
 import '@/lib/theme/application/init'
 import type { Theme } from '@/types/theme'
+import { usePreviewTheme } from '@/hooks/usePreviewTheme'
+
+// Import debug utilities in development
+if (process.env.NODE_ENV === 'development') {
+  import('@/lib/theme/application/debug-utils')
+}
 import {
   TypographySection,
   ColorsSection,
@@ -16,7 +22,8 @@ import {
   EffectsSection,
   SpacingSection,
   TablesSection,
-  VariablesSection
+  VariablesSection,
+  LatticeOSDemo
 } from '@/components/gallery/application'
 import {
   GalleryHeader,
@@ -203,6 +210,11 @@ function getThemeSections(theme: Theme | null): string[] {
   // Add spacing section if present
   if ((theme as any).spacing) sections.push('spacing')
   
+  // Add LatticeOS demo section for terminal theme
+  if (theme.id === 'terminal' || theme.name?.toLowerCase().includes('terminal')) {
+    sections.push('latticeos')
+  }
+  
   return sections
 }
 
@@ -219,6 +231,7 @@ function getSectionId(section: string): string {
     status: 'STS-008',
     effects: 'EFX-009',
     spacing: 'SPC-010',
+    latticeos: 'LAT-011',
     all: 'ALL-000'
   }
   return ids[section] || `${section.toUpperCase().slice(0, 3)}-999`
@@ -237,6 +250,7 @@ function getSectionTitle(section: string): string {
     status: 'Status Indicators',
     effects: 'Visual Effects',
     spacing: 'Spacing System',
+    latticeos: 'LatticeOS Demo',
     all: 'Complete System'
   }
   return titles[section] || section.charAt(0).toUpperCase() + section.slice(1).replace(/([A-Z])/g, ' $1').trim()
@@ -286,6 +300,8 @@ function getSectionComponentCount(section: string, theme: Theme | null): number 
       return theme.components.table ? Object.keys(theme.components.table).length : 0
     case 'status':
       return theme.components.status ? Object.keys(theme.components.status).length : 0
+    case 'latticeos':
+      return 8 // Fixed count for LatticeOS demo components
     case 'all':
       return getThemeSections(theme).reduce((sum, sec) => 
         sum + getSectionComponentCount(sec, theme), 0
@@ -329,7 +345,7 @@ function TacticalHeader({
   return (
     <>
       {/* Sticky Status Bar */}
-      <div className="sticky z-30 bg-muted/10 border-b border-border/20 backdrop-blur-xl backdrop-saturate-150 gallery-top-offset"
+      <div className="sticky z-30 bg-muted/10 backdrop-blur-xl backdrop-saturate-150 gallery-top-offset"
            role="status" 
            aria-label="System status">
         <div className="flex items-center">
@@ -358,9 +374,9 @@ function TacticalHeader({
       </div>
       
       {/* Tactical Section Header */}
-              <header className="z-20 relative bg-slate-900/95 backdrop-blur-md border-b border-slate-700/30" role="banner" aria-label="Section header">
+        <header className="z-20 relative bg-slate-900/95 backdrop-blur-md border-b border-slate-700/30" role="banner" aria-label="Section header">
         {/* Background scan line effect */}
-                  <div className="absolute inset-0 bg-gradient-to-r from-cyan-400/5 via-transparent to-transparent" aria-hidden="true" />
+          <div className="absolute inset-0 bg-gradient-to-r from-cyan-400/5 via-transparent to-transparent" aria-hidden="true" />
         
         {/* Main header container with tactical frame */}
         <div className="relative bg-card/30 backdrop-blur-sm overflow-hidden section-header-tactical mr-6 border-l-2 border-primary/40" role="region" aria-label="Tactical header frame">
@@ -498,36 +514,56 @@ interface DynamicSectionProps {
 }
 
 function DynamicSection({ sectionId, theme, activeTheme }: DynamicSectionProps) {
+  const { containerRef, updateTheme } = usePreviewTheme({ initialTheme: theme })
+  
+  // Update theme when it changes
+  useEffect(() => {
+    if (theme) {
+      updateTheme(theme)
+    }
+  }, [theme, updateTheme])
+
   if (!theme) {
     return <div className="p-6 text-muted-foreground">No theme data available</div>
   }
 
-  switch (sectionId) {
-    case 'typography':
-      return <TypographySection theme={theme} />
-    case 'colors':
-      return <ColorsSection theme={theme} />
-    case 'variables':
-      return <VariablesSection theme={theme} />
-    case 'buttons':
-      return <ButtonsSection theme={theme} />
-    case 'inputs':
-      return <InputsSection theme={theme} />
-    case 'cards':
-      return <CardsSection theme={theme} />
-    case 'badges':
-      return <BadgesSection theme={theme} />
-    case 'tables':
-      return <TablesSection theme={theme} />
-    case 'status':
-      return <StatusSection theme={theme} />
-    case 'effects':
-      return <EffectsSection theme={theme} />
-    case 'spacing':
-      return <SpacingSection theme={theme} />
-    default:
-      return <div className="p-6 text-muted-foreground">Section "{sectionId}" not implemented</div>
+  // Wrap all sections in preview container for theme isolation
+  const renderSection = () => {
+    switch (sectionId) {
+      case 'typography':
+        return <TypographySection theme={theme} />
+      case 'colors':
+        return <ColorsSection theme={theme} />
+      case 'variables':
+        return <VariablesSection theme={theme} />
+      case 'buttons':
+        return <ButtonsSection theme={theme} />
+      case 'inputs':
+        return <InputsSection theme={theme} />
+      case 'cards':
+        return <CardsSection theme={theme} />
+      case 'badges':
+        return <BadgesSection theme={theme} />
+      case 'tables':
+        return <TablesSection theme={theme} />
+      case 'status':
+        return <StatusSection theme={theme} />
+      case 'effects':
+        return <EffectsSection theme={theme} />
+      case 'spacing':
+        return <SpacingSection theme={theme} />
+      case 'latticeos':
+        return <LatticeOSDemo theme={theme} />
+      default:
+        return <div className="p-6 text-muted-foreground">Section "{sectionId}" not implemented</div>
+    }
   }
+
+  return (
+    <div ref={containerRef} className="preview-container">
+      {renderSection()}
+    </div>
+  )
 }
 
 function GalleryContent() {

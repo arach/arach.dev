@@ -33,7 +33,8 @@ The gallery has been decomposed into focused, reusable components:
 ### 4. Theme System Integration
 - **Tailwind v4 CSS-first**: Uses `@theme` directive for clean theme definitions
 - **Dynamic Loading**: Theme registry system with runtime switching
-- **Preview Isolation**: Themes apply only to preview areas, not gallery chrome
+- **Preview Isolation**: CSS variable isolation system prevents cascade conflicts
+- **Theme Injection**: Scoped theme injection using `.preview-container` class
 
 ### 5. Enhanced User Experience
 - **Tactical Interface**: Status bars, breadcrumbs, and system-like aesthetics
@@ -73,11 +74,45 @@ The `.gallery-frame` class creates a consistent environment:
 - **Component Classes**: Comprehensive button, card, badge, and form systems
 - **Utility Classes**: Frame-specific utilities (`.gallery-top-offset`, `.frame-heading`)
 
+### CSS Variable Isolation System
+The gallery uses a sophisticated CSS variable isolation system to prevent cascade conflicts:
+
+```css
+/* Gallery Frame - Fixed chrome colors */
+.gallery-frame {
+  --border: var(--color-border); /* Dark slate for chrome */
+  --background: var(--color-background);
+  /* ... other frame variables */
+}
+
+/* Preview Container - Isolated theme space */
+.preview-container {
+  --border: 214.3 31.8% 94.5%; /* Default light border */
+  --background: 0 0% 100%;
+  /* ... default theme variables */
+  position: relative;
+  isolation: isolate;
+}
+```
+
+**Key Benefits:**
+- **No Cascade Conflicts**: Preview themes don't affect gallery chrome
+- **Clear Debugging**: Easy to inspect which variables are active
+- **Performance**: No iframe overhead
+- **Maintainable**: Clear separation of concerns
+
+**How It Works:**
+1. Gallery frame maintains fixed color palette
+2. Preview containers get default/fallback CSS variables
+3. Theme injection overrides preview container variables only
+4. `border-border` class resolves to correct context automatically
+
 ### React Architecture
 - **Suspense Boundaries**: Proper loading states for dynamic content
-- **Custom Hooks**: `useElementEnhancer` for interactive element selection
+- **Custom Hooks**: `useElementEnhancer` for interactive element selection, `usePreviewTheme` for theme injection
 - **State Management**: URL-synchronized state with Next.js routing
 - **TypeScript**: Full type safety with proper interfaces
+- **Theme Injection**: React hooks manage CSS variable injection and cleanup
 
 ### Performance Features
 - **CSS Optimization**: Minimal runtime CSS injection

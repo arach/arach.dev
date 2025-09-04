@@ -88,6 +88,106 @@
     --frame-subheading-color: var(--frame-nav-accent);
   }
 
+  /* Preview Container - CSS Variable Isolation System
+     This creates a clean slate for theme injection, preventing cascade conflicts */
+  .preview-container {
+    /* Default/fallback values - these get overridden by theme injection */
+    --background: 0 0% 100%;
+    --foreground: 222.2 84% 4.9%;
+    --card: 0 0% 100%;
+    --card-foreground: 222.2 84% 4.9%;
+    --popover: 0 0% 100%;
+    --popover-foreground: 222.2 84% 4.9%;
+    --primary: 221.2 83.2% 53.3%;
+    --primary-foreground: 210 40% 98%;
+    --secondary: 210 40% 96.1%;
+    --secondary-foreground: 222.2 47.4% 11.2%;
+    --muted: 210 40% 96.1%;
+    --muted-foreground: 215.4 16.3% 46.9%;
+    --accent: 210 40% 96.1%;
+    --accent-foreground: 222.2 47.4% 11.2%;
+    --destructive: 0 84.2% 60.2%;
+    --destructive-foreground: 210 40% 98%;
+    --border: 214.3 31.8% 94.5%;
+    --input: 214.3 31.8% 91.4%;
+    --ring: 221.2 83.2% 53.3%;
+    --radius: 0.5rem;
+
+    /* Default font families - overridden by theme injection */
+    --font-family-sans: "Inter", "Carlito", "Segoe UI", system-ui, sans-serif;
+    --font-family-mono: "JetBrains Mono", "Fira Code", "SF Mono", monospace;
+    --font-family-serif: "Georgia", "Times New Roman", serif;
+    --font-family-heading: var(--font-family-sans);
+    --font-family-body: var(--font-family-sans);
+    --font-family-code: var(--font-family-mono);
+
+    /* Apply theme fonts to all elements in preview container */
+    font-family: var(--font-family-body);
+    
+    /* Ensure preview container has its own stacking context */
+    position: relative;
+    isolation: isolate;
+  }
+  
+  /* Apply theme fonts to specific elements */
+  .preview-container h1,
+  .preview-container h2,
+  .preview-container h3,
+  .preview-container h4,
+  .preview-container h5,
+  .preview-container h6 {
+    font-family: var(--font-family-heading);
+  }
+  
+  .preview-container code,
+  .preview-container pre,
+  .preview-container .font-mono {
+    font-family: var(--font-family-code);
+  }
+  
+  /* Terminal theme specific styling */
+  .preview-container[data-theme="terminal"] {
+    background: linear-gradient(135deg, hsl(var(--color-background)) 0%, hsl(var(--color-muted)) 100%);
+    background-attachment: fixed;
+  }
+  
+  .preview-container[data-theme="terminal"]::before {
+    content: '';
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background: 
+      radial-gradient(circle at 20% 50%, hsl(var(--color-primary) / 0.05) 0%, transparent 50%),
+      radial-gradient(circle at 80% 80%, hsl(var(--color-primary) / 0.03) 0%, transparent 50%);
+    pointer-events: none;
+    z-index: -1;
+  }
+
+  /* Dark mode defaults for preview container */
+  .preview-container.dark {
+    --background: 222.2 84% 4.9%;
+    --foreground: 210 40% 98%;
+    --card: 222.2 84% 4.9%;
+    --card-foreground: 210 40% 98%;
+    --popover: 222.2 84% 4.9%;
+    --popover-foreground: 210 40% 98%;
+    --primary: 210 40% 98%;
+    --primary-foreground: 222.2 47.4% 11.2%;
+    --secondary: 217.2 32.6% 17.5%;
+    --secondary-foreground: 210 40% 98%;
+    --muted: 217.2 32.6% 17.5%;
+    --muted-foreground: 215 20.2% 65.1%;
+    --accent: 217.2 32.6% 17.5%;
+    --accent-foreground: 210 40% 98%;
+    --destructive: 0 62.8% 30.6%;
+    --destructive-foreground: 210 40% 98%;
+    --border: 217.2 32.6% 17.5%;
+    --input: 217.2 32.6% 17.5%;
+    --ring: 212.7 26.8% 83.9%;
+  }
+
   /* Chrome: header and sidebars use fixed palette and borders */
   .gallery-header {
     background-color: color-mix(in srgb, hsl(var(--color-background)) 95%, transparent);

@@ -9,20 +9,25 @@ import { validateAndNormalize } from './factory'
 // Create comprehensive theme objects for backward compatibility with gallery application
 const terminalThemeCompat = {
   name: 'Terminal',
-  description: 'Terminal interface with precision and sophisticated data visualization (CSS-first)',
+  description: 'LatticeOS-inspired military-grade interface with tactical aesthetics and precision-focused UI',
   colors: { 
-    gray: { 950: '#09090b', 900: '#121214', 800: '#27272a' },
-    accent: { primary: '#00b4d8', success: '#00f5a0', warning: '#ffd60a', error: '#ff4444' }
+    gray: { 950: '#0a0a0a', 900: '#1a1a1a', 800: '#1f1f1f', 700: '#2a2a2a', 600: '#333333' },
+    accent: { 
+      primary: '#0066cc',    // Military blue
+      success: '#00cc66',    // Tactical green  
+      warning: '#ffaa00',    // Tactical amber
+      error: '#cc0000'       // Tactical red
+    }
   },
   fonts: { 
     mono: { name: 'JetBrains Mono', family: 'monospace' },
-    sans: { name: 'Geist Sans', family: 'sans-serif' }
+    sans: { name: 'Inter', family: 'sans-serif' }  // LatticeOS uses clean sans-serif
   },
   typography: {
-    h1: 'text-xl font-bold text-white tracking-tight uppercase',
-    h2: 'text-lg font-semibold text-white tracking-tight',
-    body: 'text-sm text-white leading-relaxed tracking-normal',
-    code: 'font-mono text-xs text-cyan-400 bg-gray-900/80 px-1.5 py-0.5 rounded border border-gray-800'
+    h1: 'text-xl font-bold text-foreground tracking-tight',
+    h2: 'text-lg font-semibold text-foreground tracking-tight', 
+    body: 'text-sm text-foreground leading-relaxed tracking-normal',
+    code: 'font-mono text-xs text-primary bg-muted px-1.5 py-0.5 rounded border border-border'
   },
   components: {
     button: {
@@ -83,24 +88,27 @@ const terminalThemeCompat = {
     }
   },
   effects: {
-    glowPrimary: 'glow-primary',
-    glowSuccess: 'glow-success',
-    glowError: 'glow-error',
-    glowWarning: 'glow-warning',
-    scanline: 'relative after:absolute after:inset-0 after:bg-[linear-gradient(transparent_50%,rgba(0,255,255,0.03)_50%)]',
-    grid: 'bg-[linear-gradient(rgba(0,180,216,0.03)_1px,transparent_1px),linear-gradient(90deg,rgba(0,180,216,0.03)_1px,transparent_1px)] bg-[size:20px_20px]',
-    glass: 'backdrop-blur-md bg-gray-900/30'
+    glowPrimary: 'shadow-[0_0_8px_hsl(var(--color-primary)/0.3)]',
+    glowSuccess: 'shadow-[0_0_8px_hsl(var(--color-success)/0.3)]',
+    glowError: 'shadow-[0_0_8px_hsl(var(--color-destructive)/0.3)]',
+    glowWarning: 'shadow-[0_0_8px_hsl(var(--color-warning)/0.3)]',
+    scanline: 'scanlines',
+    grid: 'tactical-grid',
+    glass: 'backdrop-blur-md bg-card/30',
+    tactical: 'tactical-panel',
+    focus: 'tactical-focus'
   },
   layout: {
-    container: 'tactical-container',
+    container: 'tactical-panel',
     containerGrid: 'tactical-grid',
-    panel: 'bg-gray-900 p-4 rounded-sm',
+    panel: 'tactical-panel',
     section: 'space-y-6'
   },
   utilities: {
-    selection: 'tactical-selection',
-    scrollbar: 'tactical-scrollbar',
-    focusRing: 'tactical-focus'
+    selection: 'selection:bg-primary/20 selection:text-primary-foreground',
+    scrollbar: 'scrollbar-thin scrollbar-track-muted scrollbar-thumb-border',
+    focusRing: 'tactical-focus',
+    table: 'tactical-table'
   }
 }
 

@@ -134,6 +134,32 @@ export function themeToCSSVariables(theme: Theme): Record<string, string> {
     variables['--radius'] = theme.borderRadius.DEFAULT || theme.borderRadius.md || '0.5rem'
   }
   
+  // Font families
+  if (theme.fonts) {
+    if (theme.fonts.sans) {
+      variables['--font-family-sans'] = theme.fonts.sans
+    }
+    if (theme.fonts.mono) {
+      variables['--font-family-mono'] = theme.fonts.mono
+    }
+    if (theme.fonts.serif) {
+      variables['--font-family-serif'] = theme.fonts.serif
+    }
+  }
+  
+  // Typography-specific font overrides
+  if (theme.typography) {
+    if (theme.typography.headingFont) {
+      variables['--font-family-heading'] = theme.typography.headingFont
+    }
+    if (theme.typography.bodyFont) {
+      variables['--font-family-body'] = theme.typography.bodyFont
+    }
+    if (theme.typography.codeFont) {
+      variables['--font-family-code'] = theme.typography.codeFont
+    }
+  }
+  
   return variables
 }
 
