@@ -715,5 +715,51 @@
   @apply inline-flex items-center justify-center text-sm;
 }
 
+  /* Typography Enhancement Styles */
+  .typography-specimen {
+    @apply font-sans text-foreground;
+  }
+  
+  /* Enhanced text rendering for typography showcase */
+  .typography-display {
+    text-rendering: optimizeLegibility;
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+    font-feature-settings: "kern" 1, "liga" 1, "calt" 1;
+  }
+  
+  /* Typography scale visual indicators */
+  .type-scale-item {
+    @apply relative transition-all duration-200;
+  }
+  
+  .type-scale-item:hover {
+    @apply bg-primary/5 -mx-2 px-2;
+  }
+  
+  /* Font specimen enhancements */
+  .font-specimen {
+    font-kerning: normal;
+    font-variant-ligatures: common-ligatures contextual;
+    font-variant-numeric: oldstyle-nums proportional-nums;
+  }
+  
+  /* Code block typography */
+  .code-specimen {
+    @apply font-mono;
+    font-variant-ligatures: none;
+    tab-size: 2;
+  }
+  
+  /* Typography hierarchy visual guides */
+  .hierarchy-item {
+    @apply relative pl-4;
+  }
+  
+  .hierarchy-item::before {
+    content: '';
+    @apply absolute left-0 top-0 bottom-0 w-0.5 bg-gradient-to-b from-primary/40 to-transparent;
+  }
+  
   /* Import gallery component styles */
   @import "./components/gallery-components.css";

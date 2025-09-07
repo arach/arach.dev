@@ -373,99 +373,292 @@ export function TypographySection({ theme }: TypographySectionProps) {
                 ))}
               </div>
             </div>
-          ))}
+          ))
+          )}
         </div>
       )}
 
-      {/* Specimens Tab */}
+      {/* Specimens Tab - Enhanced with more comprehensive examples */}
       {activeTab === 'specimens' && (
         <div className="space-y-6">
-          {/* Paragraph Specimen */}
-          <div className="p-6 glass-panel">
-            <h4 className="text-sm font-semibold text-muted-foreground uppercase tracking-wider mb-4">
-              Paragraph Specimen
-            </h4>
-            <div className="prose prose-sm max-w-none">
-              <p className="text-base leading-relaxed">
-                In the evolving landscape of digital design, typography serves as the foundation of user experience. 
-                Well-chosen typefaces not only convey information but also establish mood, hierarchy, and brand identity. 
-                The interplay between different font weights, sizes, and spacing creates a visual rhythm that guides users 
-                through content naturally and intuitively.
-              </p>
-              <p className="text-base leading-relaxed">
-                Modern design systems recognize that typography is more than aesthetic choice—it's a functional tool that 
-                impacts readability, accessibility, and user engagement. By establishing clear typographic scales and 
-                consistent application rules, teams can create cohesive experiences across diverse platforms and devices.
-              </p>
+          {/* Reading Experience */}
+          <div className="p-8 glass-panel">
+            <div className="flex items-center gap-3 mb-6">
+              <span className="text-2xl">📖</span>
+              <div>
+                <h4 className="text-lg font-bold text-foreground">
+                  Reading Experience
+                </h4>
+                <p className="text-xs text-muted-foreground">Optimized for long-form content</p>
+              </div>
+            </div>
+            <div className="max-w-3xl mx-auto space-y-6">
+              <div className="space-y-4">
+                <p className="text-lg leading-relaxed font-medium text-foreground">
+                  Typography is the craft of endowing human language with a durable visual form, and thus with an independent existence.
+                </p>
+                <p className="text-base leading-relaxed text-foreground/90">
+                  In the evolving landscape of digital design, typography serves as the foundation of user experience. 
+                  Well-chosen typefaces not only convey information but also establish mood, hierarchy, and brand identity. 
+                  The interplay between different font weights, sizes, and spacing creates a visual rhythm that guides users 
+                  through content naturally and intuitively.
+                </p>
+                <p className="text-base leading-relaxed text-foreground/90">
+                  Modern design systems recognize that typography is more than aesthetic choice—it's a functional tool that 
+                  impacts readability, accessibility, and user engagement. By establishing clear typographic scales and 
+                  consistent application rules, teams can create cohesive experiences across diverse platforms and devices.
+                </p>
+                <p className="text-sm text-muted-foreground leading-relaxed">
+                  The relationship between typography and user interface design continues to evolve with technological advancement. 
+                  Variable fonts, responsive type scales, and dynamic layouts present new opportunities for creating adaptive, 
+                  accessible typography systems that respond intelligently to context and user preferences.
+                </p>
+              </div>
             </div>
           </div>
 
-          {/* Mixed Content Specimen */}
-          <div className="p-6 glass-panel">
-            <h4 className="text-sm font-semibold text-muted-foreground uppercase tracking-wider mb-4">
-              Mixed Content
-            </h4>
-            <article className="space-y-4">
-              <header>
-                <h2 className="text-2xl font-bold mb-2">Understanding Type Systems</h2>
-                <p className="text-sm text-muted-foreground">Published December 15, 2024 • 8 min read</p>
+          {/* Article Structure */}
+          <div className="p-8 glass-panel">
+            <div className="flex items-center gap-3 mb-6">
+              <span className="text-2xl">📰</span>
+              <div>
+                <h4 className="text-lg font-bold text-foreground">
+                  Article Structure
+                </h4>
+                <p className="text-xs text-muted-foreground">Editorial content hierarchy</p>
+              </div>
+            </div>
+            <article className="max-w-3xl mx-auto space-y-6">
+              <header className="space-y-3">
+                <div className="text-xs font-semibold text-primary uppercase tracking-wider">DESIGN SYSTEMS</div>
+                <h2 className="text-4xl font-bold leading-tight">Building Scalable Typography Systems</h2>
+                <p className="text-xl text-muted-foreground">A comprehensive guide to creating flexible and maintainable type scales</p>
+                <div className="flex items-center gap-4 text-sm text-muted-foreground pt-2">
+                  <span>By Alex Rivera</span>
+                  <span>•</span>
+                  <span>December 15, 2024</span>
+                  <span>•</span>
+                  <span>12 min read</span>
+                </div>
               </header>
-              <div className="space-y-4">
-                <p className="text-base leading-relaxed">
-                  Typography in digital interfaces requires careful consideration of multiple factors:
-                </p>
-                <ul className="space-y-2 ml-6">
-                  <li className="text-base flex items-start">
-                    <span className="mr-2">•</span>
-                    <span><strong className="font-semibold">Readability:</strong> Ensuring text is easily consumable across different screen sizes</span>
-                  </li>
-                  <li className="text-base flex items-start">
-                    <span className="mr-2">•</span>
-                    <span><strong className="font-semibold">Hierarchy:</strong> Creating clear visual relationships between content elements</span>
-                  </li>
-                  <li className="text-base flex items-start">
-                    <span className="mr-2">•</span>
-                    <span><strong className="font-semibold">Consistency:</strong> Maintaining uniform treatment throughout the experience</span>
-                  </li>
-                </ul>
-                <blockquote className="border-l-4 border-primary pl-4 py-2 my-4">
-                  <p className="text-base italic text-muted-foreground">
-                    "Typography is the craft of endowing human language with a durable visual form."
+              
+              <div className="space-y-6">
+                <div className="text-lg leading-relaxed font-medium">
+                  A well-designed typography system is the foundation of any successful digital product. It ensures consistency, 
+                  improves readability, and enhances the overall user experience.
+                </div>
+                
+                <div className="space-y-4">
+                  <h3 className="text-2xl font-semibold mt-8 mb-3">Key Principles</h3>
+                  <p className="text-base leading-relaxed">
+                    When building a typography system, consider these fundamental principles:
                   </p>
-                  <cite className="text-sm text-muted-foreground not-italic">— Robert Bringhurst</cite>
+                  <ul className="space-y-3 ml-6">
+                    <li className="text-base flex items-start">
+                      <span className="text-primary mr-3 mt-1">→</span>
+                      <div>
+                        <strong className="font-semibold">Hierarchy:</strong>
+                        <span className="text-muted-foreground ml-1">Establish clear visual relationships between different text elements</span>
+                      </div>
+                    </li>
+                    <li className="text-base flex items-start">
+                      <span className="text-primary mr-3 mt-1">→</span>
+                      <div>
+                        <strong className="font-semibold">Consistency:</strong>
+                        <span className="text-muted-foreground ml-1">Maintain uniform treatment across all touchpoints</span>
+                      </div>
+                    </li>
+                    <li className="text-base flex items-start">
+                      <span className="text-primary mr-3 mt-1">→</span>
+                      <div>
+                        <strong className="font-semibold">Flexibility:</strong>
+                        <span className="text-muted-foreground ml-1">Design for various contexts and screen sizes</span>
+                      </div>
+                    </li>
+                  </ul>
+                </div>
+                
+                <blockquote className="border-l-4 border-primary/50 pl-6 py-4 my-8 bg-primary/5 rounded-r-lg">
+                  <p className="text-lg italic text-foreground/80 mb-2">
+                    "Typography is two-dimensional architecture, based on experience and imagination, and guided by rules and readability."
+                  </p>
+                  <cite className="text-sm text-muted-foreground not-italic">— Hermann Zapf</cite>
                 </blockquote>
               </div>
             </article>
           </div>
 
+          {/* Data Display */}
+          <div className="p-8 glass-panel">
+            <div className="flex items-center gap-3 mb-6">
+              <span className="text-2xl">📊</span>
+              <div>
+                <h4 className="text-lg font-bold text-foreground">
+                  Data & Tables
+                </h4>
+                <p className="text-xs text-muted-foreground">Tabular data presentation</p>
+              </div>
+            </div>
+            <div className="space-y-6">
+              <table className="w-full">
+                <thead>
+                  <tr className="border-b border-border">
+                    <th className="text-left text-xs font-semibold text-muted-foreground uppercase tracking-wider py-3">Type Scale</th>
+                    <th className="text-left text-xs font-semibold text-muted-foreground uppercase tracking-wider py-3">Size</th>
+                    <th className="text-left text-xs font-semibold text-muted-foreground uppercase tracking-wider py-3">Line Height</th>
+                    <th className="text-left text-xs font-semibold text-muted-foreground uppercase tracking-wider py-3">Usage</th>
+                  </tr>
+                </thead>
+                <tbody className="divide-y divide-border/50">
+                  <tr className="hover:bg-muted/10 transition-colors">
+                    <td className="py-3 font-medium">Display</td>
+                    <td className="py-3 font-mono text-sm text-muted-foreground">48-60px</td>
+                    <td className="py-3 font-mono text-sm text-muted-foreground">1.0-1.1</td>
+                    <td className="py-3 text-sm text-muted-foreground">Hero sections, marketing</td>
+                  </tr>
+                  <tr className="hover:bg-muted/10 transition-colors">
+                    <td className="py-3 font-medium">Heading</td>
+                    <td className="py-3 font-mono text-sm text-muted-foreground">18-30px</td>
+                    <td className="py-3 font-mono text-sm text-muted-foreground">1.2-1.5</td>
+                    <td className="py-3 text-sm text-muted-foreground">Section titles, navigation</td>
+                  </tr>
+                  <tr className="hover:bg-muted/10 transition-colors">
+                    <td className="py-3 font-medium">Body</td>
+                    <td className="py-3 font-mono text-sm text-muted-foreground">14-16px</td>
+                    <td className="py-3 font-mono text-sm text-muted-foreground">1.5-1.6</td>
+                    <td className="py-3 text-sm text-muted-foreground">Content, descriptions</td>
+                  </tr>
+                  <tr className="hover:bg-muted/10 transition-colors">
+                    <td className="py-3 font-medium">Caption</td>
+                    <td className="py-3 font-mono text-sm text-muted-foreground">10-12px</td>
+                    <td className="py-3 font-mono text-sm text-muted-foreground">1.4-1.5</td>
+                    <td className="py-3 text-sm text-muted-foreground">Labels, metadata</td>
+                  </tr>
+                </tbody>
+              </table>
+            </div>
+          </div>
+
           {/* Code Specimen */}
-          {themeFonts.some(f => f.type === 'Monospace') && (
-            <div className="p-6 glass-panel">
-              <h4 className="text-sm font-semibold text-muted-foreground uppercase tracking-wider mb-4">
-                Code Specimen
-              </h4>
-              <pre className="font-mono text-sm bg-muted/10 p-4 rounded-lg overflow-x-auto">
-                <code>{`// Typography configuration example
-const typeScale = {
+          {themeFonts.some(f => f.type === 'Monospace' || f.type === 'Display Monospace') && (
+            <div className="p-8 glass-panel">
+              <div className="flex items-center gap-3 mb-6">
+                <span className="text-2xl">💻</span>
+                <div>
+                  <h4 className="text-lg font-bold text-foreground">
+                    Code Display
+                  </h4>
+                  <p className="text-xs text-muted-foreground">Monospace font rendering</p>
+                </div>
+              </div>
+              <div className="space-y-4">
+                <pre className="font-mono text-sm bg-black/30 p-6 rounded-lg overflow-x-auto border border-border/20">
+                  <code className="text-foreground/90">{`// Typography System Configuration
+import { defineTypeScale } from '@design-system/core';
+
+export const typography = defineTypeScale({
+  // Display sizes for impact
   display: {
-    xl: { size: '60px', lineHeight: 1, tracking: '-0.02em' },
-    lg: { size: '48px', lineHeight: 1, tracking: '-0.02em' },
-    md: { size: '36px', lineHeight: 1.1, tracking: '-0.01em' }
+    xl: { 
+      fontSize: '3.75rem',   // 60px
+      lineHeight: 1,
+      letterSpacing: '-0.025em',
+      fontWeight: 700
+    },
+    lg: { 
+      fontSize: '3rem',      // 48px
+      lineHeight: 1.1,
+      letterSpacing: '-0.02em',
+      fontWeight: 700
+    }
   },
+  
+  // Heading sizes for structure
   heading: {
-    h1: { size: '30px', lineHeight: 1.2, weight: 700 },
-    h2: { size: '24px', lineHeight: 1.3, weight: 600 },
-    h3: { size: '20px', lineHeight: 1.4, weight: 600 }
+    h1: { fontSize: '1.875rem', lineHeight: 1.25, fontWeight: 600 },
+    h2: { fontSize: '1.5rem', lineHeight: 1.35, fontWeight: 600 },
+    h3: { fontSize: '1.25rem', lineHeight: 1.4, fontWeight: 500 },
+    h4: { fontSize: '1.125rem', lineHeight: 1.5, fontWeight: 500 }
   },
+  
+  // Body text for content
   body: {
-    lg: { size: '16px', lineHeight: 1.6 },
-    md: { size: '14px', lineHeight: 1.5 },
-    sm: { size: '12px', lineHeight: 1.5 }
+    large: { fontSize: '1rem', lineHeight: 1.625 },
+    regular: { fontSize: '0.875rem', lineHeight: 1.5 },
+    small: { fontSize: '0.75rem', lineHeight: 1.5 }
+  },
+  
+  // Utility sizes
+  meta: {
+    caption: { fontSize: '0.75rem', lineHeight: 1.4 },
+    overline: { 
+      fontSize: '0.625rem', 
+      lineHeight: 1.5,
+      letterSpacing: '0.1em',
+      textTransform: 'uppercase'
+    }
   }
-}`}</code>
-              </pre>
+});`}</code>
+                </pre>
+                
+                {/* Inline code examples */}
+                <div className="p-4 bg-muted/10 rounded-lg border border-border/20 space-y-2">
+                  <p className="text-sm">
+                    Inline code like <code className="font-mono text-sm bg-black/20 px-1.5 py-0.5 rounded text-primary">const value = 42;</code> uses 
+                    the monospace font family.
+                  </p>
+                  <p className="text-sm">
+                    Terminal commands: <code className="font-mono text-sm bg-black/20 px-1.5 py-0.5 rounded text-green-400">$ npm install typography</code>
+                  </p>
+                  <p className="text-sm">
+                    File paths: <code className="font-mono text-sm bg-black/20 px-1.5 py-0.5 rounded text-blue-400">/src/styles/typography.css</code>
+                  </p>
+                </div>
+              </div>
             </div>
           )}
+
+          {/* Typography Combinations */}
+          <div className="p-8 glass-panel">
+            <div className="flex items-center gap-3 mb-6">
+              <span className="text-2xl">🎨</span>
+              <div>
+                <h4 className="text-lg font-bold text-foreground">
+                  Style Combinations
+                </h4>
+                <p className="text-xs text-muted-foreground">Font weight and style variations</p>
+              </div>
+            </div>
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+              {/* Weights */}
+              <div className="space-y-3">
+                <h5 className="text-sm font-semibold text-muted-foreground uppercase tracking-wider mb-3">Weights</h5>
+                <div className="space-y-2">
+                  <p className="text-lg" style={{ fontWeight: 100 }}>Thin (100)</p>
+                  <p className="text-lg" style={{ fontWeight: 300 }}>Light (300)</p>
+                  <p className="text-lg" style={{ fontWeight: 400 }}>Regular (400)</p>
+                  <p className="text-lg" style={{ fontWeight: 500 }}>Medium (500)</p>
+                  <p className="text-lg" style={{ fontWeight: 600 }}>Semibold (600)</p>
+                  <p className="text-lg" style={{ fontWeight: 700 }}>Bold (700)</p>
+                  <p className="text-lg" style={{ fontWeight: 900 }}>Black (900)</p>
+                </div>
+              </div>
+              
+              {/* Styles */}
+              <div className="space-y-3">
+                <h5 className="text-sm font-semibold text-muted-foreground uppercase tracking-wider mb-3">Styles</h5>
+                <div className="space-y-2">
+                  <p className="text-lg">Regular Style</p>
+                  <p className="text-lg italic">Italic Style</p>
+                  <p className="text-lg underline">Underlined Text</p>
+                  <p className="text-lg line-through">Strikethrough Text</p>
+                  <p className="text-lg uppercase">Uppercase Text</p>
+                  <p className="text-lg lowercase">LOWERCASE TEXT</p>
+                  <p className="text-lg capitalize">capitalized text</p>
+                </div>
+              </div>
+            </div>
+          </div>
         </div>
       )}
     </section>
