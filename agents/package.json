@@ -19,6 +19,18 @@
     "vite-plugin-markdown": "^2.2.0"
   },
   "dependencies": {
-    "marked": "^11.1.1"
+    "@types/react": "^19.1.12",
+    "@types/react-dom": "^19.1.9",
+    "@vitejs/plugin-react": "^5.0.2",
+    "autoprefixer": "^10.4.21",
+    "baseui": "^15.0.0",
+    "marked": "^11.1.1",
+    "postcss": "^8.5.6",
+    "react": "^19.1.1",
+    "react-dom": "^19.1.1",
+    "styletron-engine-atomic": "^1.6.2",
+    "styletron-react": "^6.1.1",
+    "tailwindcss": "^4.1.12",
+    "typescript": "^5.9.2"
   }
 }

@@ -1,61 +1,92 @@
-/* Scoped styles for /agents only - won't affect main app */
+/* Import terminal theme CSS custom properties from style guide */
+@import url('../../agents/src/styles.css');
+
+/* Scoped styles for /agents only - leverage terminal theme */
 .agents-registry {
-  background: var(--theme-bg-color);
-  color: var(--theme-text-color);
-  min-height: calc(100vh - 140px); /* Account for header/footer */
+  background: var(--bg-terminal);
+  color: var(--text-terminal);
+  min-height: 100vh;
+  font-family: 'IBM Plex Mono', monospace;
 }
 
-.agents-registry .agent-card {
-  background: var(--theme-card-bg);
-  border: 1px solid var(--theme-border-color);
-  transition: all 0.2s ease;
+/* Terminal window styling from the sophisticated theme */
+.terminal-window {
+  background: var(--bg-primary);
+  border: 1px solid var(--border);
+  border-radius: 8px;
+  margin: 1rem;
+  box-shadow: 0 4px 24px rgba(0, 0, 0, 0.5);
+  animation: slideInFromLeft 0.3s ease-out;
 }
 
-.agents-registry .agent-card:hover {
-  border-color: var(--theme-accent-color);
-  transform: translateY(-2px);
-  box-shadow: 0 4px 12px var(--theme-shadow-color);
+.terminal-header {
+  background: var(--bg-secondary);
+  padding: 0.75rem 1rem;
+  border-bottom: 1px solid var(--border);
+  display: flex;
+  align-items: center;
+  border-radius: 8px 8px 0 0;
 }
 
-.agents-registry .agent-type {
-  color: var(--theme-muted-text);
+.terminal-dots {
+  display: flex;
+  gap: 0.5rem;
+  margin-right: 1rem;
 }
 
-.agents-registry .agent-name {
-  color: var(--theme-heading-color);
+.terminal-dot {
+  width: 12px;
+  height: 12px;
+  border-radius: 50%;
 }
 
-.agents-registry .agent-name:hover {
-  color: var(--theme-accent-color);
+.terminal-title {
+  color: var(--text-terminal);
+  font-size: 0.875rem;
+  font-weight: 500;
 }
 
-.agents-registry .agent-description {
-  color: var(--theme-text-color);
+/* Cursor animation from terminal theme */
+@keyframes blink {
+  0%, 50% { opacity: 1; }
+  51%, 100% { opacity: 0; }
 }
 
-.agents-registry .capability-tag {
-  background: var(--theme-bg-color);
-  border: 1px solid var(--theme-border-color);
-  color: var(--theme-muted-text);
+@keyframes fadeInUp {
+  from {
+    opacity: 0;
+    transform: translateY(20px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
 }
 
-.agents-registry .view-details {
-  color: var(--theme-accent-color);
+@keyframes slideInFromLeft {
+  from {
+    opacity: 0;
+    transform: translateX(-20px);
+  }
+  to {
+    opacity: 1;
+    transform: translateX(0);
+  }
 }
 
-.agents-registry .nav-link {
-  color: var(--theme-muted-text);
-}
+/* Tailwind terminal color utilities */
+.bg-terminal-bg { background-color: var(--bg-terminal); }
+.bg-terminal-primary { background-color: var(--bg-primary); }
+.bg-terminal-secondary { background-color: var(--bg-secondary); }
+.text-terminal-text { color: var(--text-terminal); }
+.text-terminal-muted { color: var(--text-secondary); }
+.text-terminal-accent { color: var(--accent); }
+.border-terminal-border { border-color: var(--border); }
+.bg-terminal-red { background-color: var(--terminal-red); }
+.bg-terminal-yellow { background-color: var(--terminal-yellow); }
+.bg-terminal-green { background-color: var(--terminal-green); }
 
-.agents-registry .nav-link:hover {
-  color: var(--theme-text-color);
-}
-
-.agents-registry .section-heading {
-  color: var(--theme-heading-color);
-}
-
-.agents-registry .overview-card {
-  background: var(--theme-card-bg);
-  border: 1px solid var(--theme-border-color);
+/* Terminal font utilities */
+.font-terminal {
+  font-family: 'IBM Plex Mono', monospace;
 }

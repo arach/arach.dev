@@ -58,6 +58,19 @@ const config = {
           850: '#1a1a1a',
           925: '#111111',
           950: '#0a0a0a',
+        },
+        // Terminal theme colors for agents registry
+        terminal: {
+          bg: '#0f172a',
+          primary: '#1e293b',
+          secondary: '#334155',
+          text: '#fbbf24',
+          muted: '#64748b',
+          accent: '#fbbf24',
+          green: '#22c55e',
+          red: '#ef4444',
+          yellow: '#fbbf24',
+          border: '#475569',
         }
       },
       borderRadius: {
@@ -85,7 +98,31 @@ const config = {
         pulse: {
           '0%, 100%': { opacity: '1' },
           '50%': { opacity: '0.5' }
-        }
+        },
+        blink: {
+          '0%, 50%': { opacity: '1' },
+          '51%, 100%': { opacity: '0' },
+        },
+        fadeInUp: {
+          from: {
+            opacity: '0',
+            transform: 'translateY(20px)',
+          },
+          to: {
+            opacity: '1',
+            transform: 'translateY(0)',
+          },
+        },
+        slideInFromLeft: {
+          from: {
+            opacity: '0',
+            transform: 'translateX(-20px)',
+          },
+          to: {
+            opacity: '1',
+            transform: 'translateX(0)',
+          },
+        },
       },
       borderWidth: {
         'thin': '0.5px',
@@ -95,6 +132,9 @@ const config = {
         "accordion-up": "accordion-up 0.2s ease-out",
         scan: 'scan 8s linear infinite',
         pulse: 'pulse 2s cubic-bezier(0.4, 0, 0.6, 1) infinite',
+        blink: 'blink 1s infinite',
+        fadeInUp: 'fadeInUp 0.5s ease-out forwards',
+        slideInFromLeft: 'slideInFromLeft 0.3s ease-out',
       },
     },
   },

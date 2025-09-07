@@ -1,4 +1,5 @@
 import { defineConfig } from 'vite';
+import react from '@vitejs/plugin-react';
 import { readFileSync, readdirSync, existsSync } from 'fs';
 import { join } from 'path';
 
@@ -18,6 +19,7 @@ export default defineConfig({
     port: 3001
   },
   plugins: [
+    react(),
     {
       name: 'agents-api-and-routing',
       configureServer(server) {
