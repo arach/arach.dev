@@ -1,4 +1,5 @@
 import type { Theme } from '@/types/theme'
+import { getTheme } from './registry'
 
 // Simple theme switching - CSS handles all styling
 export const availableThemes = {
@@ -84,9 +85,9 @@ const createThemeObject = (name: string): Theme => ({
 
 export const themeObjects: Record<ThemeId, Theme> = {
   default: createThemeObject('Default'),
-  terminal: createThemeObject('Terminal'),
-  'terminal-hybrid': createThemeObject('Terminal Hybrid'),
-  directory: createThemeObject('Directory')
+  terminal: getTheme('terminal') || createThemeObject('Terminal'),
+  'terminal-hybrid': getTheme('terminal-hybrid') || createThemeObject('Terminal Hybrid'),
+  directory: getTheme('directory') || createThemeObject('Directory')
 }
 
 export function getThemeIds(): string[] {

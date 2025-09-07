@@ -26,6 +26,7 @@ export function themeToCSSVariables(theme: Theme): Record<string, string> {
   // Background and foreground
   if (theme.colors.background && typeof theme.colors.background === 'string') {
     variables['--background'] = theme.colors.background
+    variables['--color-background'] = theme.colors.background  // For terminal theme compatibility
   }
   if (theme.colors.backgroundDark && typeof theme.colors.backgroundDark === 'string') {
     // For dark mode support
@@ -33,6 +34,7 @@ export function themeToCSSVariables(theme: Theme): Record<string, string> {
   }
   if (theme.colors.foreground && typeof theme.colors.foreground === 'string') {
     variables['--foreground'] = theme.colors.foreground
+    variables['--color-foreground'] = theme.colors.foreground  // For terminal theme compatibility
   }
   if (theme.colors.foregroundDark && typeof theme.colors.foregroundDark === 'string') {
     variables['--foreground-dark'] = theme.colors.foregroundDark
@@ -41,6 +43,7 @@ export function themeToCSSVariables(theme: Theme): Record<string, string> {
   // Card colors
   if (theme.colors.card && typeof theme.colors.card === 'string') {
     variables['--card'] = theme.colors.card
+    variables['--color-card'] = theme.colors.card  // For terminal theme compatibility
     variables['--card-foreground'] = (typeof theme.colors.foreground === 'string' ? theme.colors.foreground : theme.colors.card)
   }
   
@@ -54,7 +57,9 @@ export function themeToCSSVariables(theme: Theme): Record<string, string> {
   const primaryColor = getColorString(theme.colors.primary)
   if (primaryColor) {
     variables['--primary'] = primaryColor
+    variables['--color-primary'] = primaryColor  // For terminal theme compatibility
     variables['--primary-foreground'] = getColorString(theme.colors.primaryForeground) || getColorString(theme.colors.primaryDark) || '#ffffff'
+    variables['--color-primary-foreground'] = variables['--primary-foreground']  // For terminal theme compatibility
   }
   
   // Secondary colors (use accent as fallback)
@@ -69,15 +74,23 @@ export function themeToCSSVariables(theme: Theme): Record<string, string> {
     }
   }
   const secondaryColor = getColorString(theme.colors.secondary) || secondaryFallback
-  if (secondaryColor) variables['--secondary'] = secondaryColor
+  if (secondaryColor) {
+    variables['--secondary'] = secondaryColor
+    variables['--color-secondary'] = secondaryColor  // For terminal theme compatibility
+  }
   const secondaryForeground = getColorString(theme.colors.secondaryForeground) || variables['--foreground']
-  if (secondaryForeground) variables['--secondary-foreground'] = secondaryForeground
+  if (secondaryForeground) {
+    variables['--secondary-foreground'] = secondaryForeground
+    variables['--color-secondary-foreground'] = secondaryForeground  // For terminal theme compatibility
+  }
   
   // Muted colors
   const mutedColor = getColorString(theme.colors.muted)
   if (mutedColor) {
     variables['--muted'] = mutedColor
+    variables['--color-muted'] = mutedColor  // For terminal theme compatibility
     variables['--muted-foreground'] = getColorString(theme.colors.mutedForeground) || getColorString(theme.colors.mutedDark) || variables['--foreground']
+    variables['--color-muted-foreground'] = variables['--muted-foreground']  // For terminal theme compatibility
   }
   
   // Accent colors
@@ -102,11 +115,16 @@ export function themeToCSSVariables(theme: Theme): Record<string, string> {
   // Destructive (use error/warning as fallback)
   const destructiveColor = getColorString(theme.colors.destructive) || getColorString(theme.colors.error) || getColorString(theme.colors.warning) || 'oklch(0.577 0.245 27.325)'
   variables['--destructive'] = destructiveColor
+  variables['--color-destructive'] = destructiveColor  // For terminal theme compatibility
   variables['--destructive-foreground'] = getColorString(theme.colors.destructiveForeground) || '#ffffff'
+  variables['--color-destructive-foreground'] = variables['--destructive-foreground']  // For terminal theme compatibility
   
   // UI elements
   const borderColor = getColorString(theme.colors.border) || getColorString(theme.colors.borderDark) || variables['--muted']
-  if (borderColor) variables['--border'] = borderColor
+  if (borderColor) {
+    variables['--border'] = borderColor
+    variables['--color-border'] = borderColor  // For terminal theme compatibility
+  }
   const inputColor = getColorString(theme.colors.input) || variables['--border']
   if (inputColor) variables['--input'] = inputColor
   
@@ -118,6 +136,26 @@ export function themeToCSSVariables(theme: Theme): Record<string, string> {
   }
   const ringColor = getColorString(theme.colors.ring) || ringFallback
   if (ringColor) variables['--ring'] = ringColor
+  
+  // Status colors for terminal theme compatibility
+  if (theme.colors.accent && typeof theme.colors.accent === 'object') {
+    const accent = theme.colors.accent as any
+    if (accent.success) {
+      variables['--color-success'] = accent.success
+      variables['--color-success-foreground'] = '#ffffff'
+    }
+    if (accent.warning) {
+      variables['--color-warning'] = accent.warning
+      variables['--color-warning-foreground'] = '#000000'
+    }
+    if (accent.error) {
+      variables['--color-destructive'] = accent.error
+      variables['--color-destructive-foreground'] = '#ffffff'
+    }
+    if (accent.primary) {
+      variables['--color-info'] = accent.primary
+    }
+  }
   
   // Chart colors (if available in accent colors)
   if (typeof theme.colors.accent === 'object' && !('DEFAULT' in theme.colors.accent)) {

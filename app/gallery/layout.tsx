@@ -13,7 +13,7 @@ export default function GalleryLayout({
   children: React.ReactNode
 }) {
   return (
-    <div className={`gallery-container`}>
+    <div className="gallery-container min-h-screen gallery-standalone">
       {children}
     </div>
   )

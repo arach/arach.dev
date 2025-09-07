@@ -45,10 +45,29 @@ export function LatticeOSDemo({ theme }: LatticeOSDemoProps) {
         </div>
 
         {/* Tactical Buttons */}
-        <div className="flex gap-3 mb-6">
-          <button className="btn-tactical">Execute Command</button>
-          <button className="btn-tactical">Deploy System</button>
-          <button className="btn-tactical">Emergency Stop</button>
+        <div className="space-y-4 mb-6">
+          <div className="flex flex-wrap gap-3">
+            <button className="btn-tactical btn-primary btn-md">Execute Command</button>
+            <button className="btn-tactical btn-success btn-md">Deploy System</button>
+            <button className="btn-tactical btn-destructive btn-md">Emergency Stop</button>
+          </div>
+          <div className="flex flex-wrap gap-3">
+            <button className="btn-tactical btn-secondary btn-sm">Secondary Action</button>
+            <button className="btn-tactical btn-warning btn-sm">Warning Alert</button>
+            <button className="btn-tactical btn-outline btn-sm">Outline Button</button>
+            <button className="btn-tactical btn-ghost btn-sm">Ghost Button</button>
+          </div>
+          <div className="flex flex-wrap gap-3">
+            <button className="btn-tactical btn-primary btn-lg">Large Primary</button>
+            <button className="btn-tactical btn-secondary btn-lg">Large Secondary</button>
+            <button className="btn-tactical btn-primary btn-md" disabled>Disabled Button</button>
+          </div>
+          <div className="flex flex-wrap gap-3">
+            <button className="btn-command btn-md">Execute Command</button>
+            <button className="btn-alert btn-md">Critical Alert</button>
+            <button className="btn-glow btn-md">Enhanced Glow</button>
+            <button className="btn-stealth btn-md">Stealth Mode</button>
+          </div>
         </div>
 
         {/* Data Grid */}

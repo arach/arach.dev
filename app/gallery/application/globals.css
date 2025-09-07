@@ -1,6 +1,20 @@
 @import "tailwindcss";
 
 @layer components {
+  /* Hide header and footer globally in gallery routes */
+  body header,
+  body footer {
+    display: none !important;
+  }
+  
+  body {
+    display: block !important;
+    flex-direction: unset !important;
+  }
+  
+  body main.flex-grow {
+    padding-top: 0 !important;
+  }
   /* Frame variables for gallery application. These override Tailwind theme
      variables within the gallery frame only, keeping the chrome stable and
      independent of the selected preview theme. */
@@ -147,6 +161,29 @@
   
   /* Terminal theme specific styling */
   .preview-container[data-theme="terminal"] {
+    /* Import terminal theme CSS variables */
+    --color-background: #0a0a0a;
+    --color-foreground: #e8e8e8;
+    --color-primary: #0066cc;
+    --color-primary-foreground: #ffffff;
+    --color-secondary: #1a1a1a;
+    --color-secondary-foreground: #d0d0d0;
+    --color-muted: #1f1f1f;
+    --color-muted-foreground: #888888;
+    --color-border: #333333;
+    --color-success: #00cc66;
+    --color-success-foreground: #ffffff;
+    --color-warning: #ffaa00;
+    --color-warning-foreground: #000000;
+    --color-destructive: #cc0000;
+    --color-destructive-foreground: #ffffff;
+    --color-card: #1a1a1a;
+    --color-card-foreground: #e8e8e8;
+    --color-input: #2a2a2a;
+    --color-ring: #0066cc;
+    --font-family-sans: "Inter", "Carlito", "Segoe UI", system-ui, sans-serif;
+    --font-family-mono: "JetBrains Mono", "Fira Code", "SF Mono", monospace;
+    
     background: linear-gradient(135deg, hsl(var(--color-background)) 0%, hsl(var(--color-muted)) 100%);
     background-attachment: fixed;
   }

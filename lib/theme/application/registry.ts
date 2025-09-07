@@ -24,7 +24,11 @@ export function getTheme(themeId: string): Theme | null {
     return null
   }
   
-  return theme
+  // Ensure the theme has an id property
+  return {
+    ...theme,
+    id: themeId
+  }
 }
 
 // Get all available theme IDs

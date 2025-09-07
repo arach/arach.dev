@@ -5,7 +5,6 @@ import { useSearchParams, useRouter } from 'next/navigation'
 import { getThemeIds, getTheme } from '@/lib/theme/application/registry'
 import '@/lib/theme/application/init'
 import type { Theme } from '@/types/theme'
-import { usePreviewTheme } from '@/hooks/usePreviewTheme'
 
 // Import debug utilities in development
 if (process.env.NODE_ENV === 'development') {
@@ -514,20 +513,11 @@ interface DynamicSectionProps {
 }
 
 function DynamicSection({ sectionId, theme, activeTheme }: DynamicSectionProps) {
-  const { containerRef, updateTheme } = usePreviewTheme({ initialTheme: theme })
-  
-  // Update theme when it changes
-  useEffect(() => {
-    if (theme) {
-      updateTheme(theme)
-    }
-  }, [theme, updateTheme])
-
   if (!theme) {
     return <div className="p-6 text-muted-foreground">No theme data available</div>
   }
 
-  // Wrap all sections in preview container for theme isolation
+  // Simple theme application - just set data-theme attribute
   const renderSection = () => {
     switch (sectionId) {
       case 'typography':
@@ -560,7 +550,7 @@ function DynamicSection({ sectionId, theme, activeTheme }: DynamicSectionProps) 
   }
 
   return (
-    <div ref={containerRef} className="preview-container">
+    <div className="preview-container" data-theme={activeTheme}>
       {renderSection()}
     </div>
   )

@@ -118,17 +118,236 @@
     box-shadow: 0 0 8px hsl(var(--color-destructive) / 0.3);
   }
   
-  /* Tactical buttons with military styling */
+  /* LatticeOS Tactical Button System */
+  
+  /* Base tactical button */
   .btn-tactical {
-    @apply bg-primary text-primary-foreground px-4 py-2 rounded font-medium transition-all;
-    border: 1px solid hsl(var(--color-primary) / 0.5);
-    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
+    @apply px-4 py-2 rounded font-medium transition-all duration-200 cursor-pointer;
+    font-family: var(--font-family-sans);
+    font-weight: 600;
+    letter-spacing: 0.025em;
+    text-transform: uppercase;
+    border: 2px solid;
+    position: relative;
+    overflow: hidden;
   }
   
-  .btn-tactical:hover {
+  /* Primary tactical button - Military blue */
+  .btn-primary {
+    @apply bg-primary text-primary-foreground;
+    border-color: hsl(var(--color-primary) / 0.3);
+    box-shadow: 
+      0 2px 4px rgba(0, 0, 0, 0.3),
+      0 0 8px hsl(var(--color-primary) / 0.2),
+      inset 0 1px 0 hsl(var(--color-primary) / 0.3);
+  }
+  
+  .btn-primary:hover {
     @apply bg-primary/90;
-    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.3), 0 0 12px hsl(var(--color-primary) / 0.2);
+    border-color: hsl(var(--color-primary) / 0.5);
+    box-shadow: 
+      0 4px 8px rgba(0, 0, 0, 0.4),
+      0 0 16px hsl(var(--color-primary) / 0.3),
+      inset 0 1px 0 hsl(var(--color-primary) / 0.4);
     transform: translateY(-1px);
+  }
+  
+  .btn-primary:active {
+    transform: translateY(0);
+    box-shadow: 
+      0 2px 4px rgba(0, 0, 0, 0.3),
+      0 0 8px hsl(var(--color-primary) / 0.2),
+      inset 0 1px 0 hsl(var(--color-primary) / 0.3);
+  }
+  
+  /* Secondary tactical button - Neutral gray */
+  .btn-secondary {
+    @apply bg-secondary text-secondary-foreground;
+    border-color: hsl(var(--color-border) / 0.3);
+    box-shadow: 
+      0 2px 4px rgba(0, 0, 0, 0.3),
+      inset 0 1px 0 hsl(var(--color-border) / 0.2);
+  }
+  
+  .btn-secondary:hover {
+    @apply bg-secondary/90;
+    border-color: hsl(var(--color-border) / 0.5);
+    box-shadow: 
+      0 4px 8px rgba(0, 0, 0, 0.4),
+      inset 0 1px 0 hsl(var(--color-border) / 0.3);
+    transform: translateY(-1px);
+  }
+  
+  /* Success tactical button - Tactical green */
+  .btn-success {
+    @apply bg-success text-success-foreground;
+    border-color: hsl(var(--color-success) / 0.3);
+    box-shadow: 
+      0 2px 4px rgba(0, 0, 0, 0.3),
+      0 0 8px hsl(var(--color-success) / 0.2),
+      inset 0 1px 0 hsl(var(--color-success) / 0.3);
+  }
+  
+  .btn-success:hover {
+    @apply bg-success/90;
+    border-color: hsl(var(--color-success) / 0.5);
+    box-shadow: 
+      0 4px 8px rgba(0, 0, 0, 0.4),
+      0 0 16px hsl(var(--color-success) / 0.3),
+      inset 0 1px 0 hsl(var(--color-success) / 0.4);
+    transform: translateY(-1px);
+  }
+  
+  /* Warning tactical button - Tactical amber */
+  .btn-warning {
+    @apply bg-warning text-warning-foreground;
+    border-color: hsl(var(--color-warning) / 0.3);
+    box-shadow: 
+      0 2px 4px rgba(0, 0, 0, 0.3),
+      0 0 8px hsl(var(--color-warning) / 0.2),
+      inset 0 1px 0 hsl(var(--color-warning) / 0.3);
+  }
+  
+  .btn-warning:hover {
+    @apply bg-warning/90;
+    border-color: hsl(var(--color-warning) / 0.5);
+    box-shadow: 
+      0 4px 8px rgba(0, 0, 0, 0.4),
+      0 0 16px hsl(var(--color-warning) / 0.3),
+      inset 0 1px 0 hsl(var(--color-warning) / 0.4);
+    transform: translateY(-1px);
+  }
+  
+  /* Destructive tactical button - Tactical red */
+  .btn-destructive {
+    @apply bg-destructive text-destructive-foreground;
+    border-color: hsl(var(--color-destructive) / 0.3);
+    box-shadow: 
+      0 2px 4px rgba(0, 0, 0, 0.3),
+      0 0 8px hsl(var(--color-destructive) / 0.2),
+      inset 0 1px 0 hsl(var(--color-destructive) / 0.3);
+  }
+  
+  .btn-destructive:hover {
+    @apply bg-destructive/90;
+    border-color: hsl(var(--color-destructive) / 0.5);
+    box-shadow: 
+      0 4px 8px rgba(0, 0, 0, 0.4),
+      0 0 16px hsl(var(--color-destructive) / 0.3),
+      inset 0 1px 0 hsl(var(--color-destructive) / 0.4);
+    transform: translateY(-1px);
+  }
+  
+  /* Ghost tactical button - Transparent with border */
+  .btn-ghost {
+    @apply bg-transparent text-foreground;
+    border-color: hsl(var(--color-border) / 0.2);
+    box-shadow: inset 0 1px 0 hsl(var(--color-border) / 0.1);
+  }
+  
+  .btn-ghost:hover {
+    @apply bg-muted/20;
+    border-color: hsl(var(--color-border) / 0.4);
+    box-shadow: 
+      0 2px 4px rgba(0, 0, 0, 0.2),
+      inset 0 1px 0 hsl(var(--color-border) / 0.2);
+    transform: translateY(-1px);
+  }
+  
+  /* Outline tactical button - Border only */
+  .btn-outline {
+    @apply bg-transparent text-foreground;
+    border-color: hsl(var(--color-primary) / 0.3);
+    box-shadow: inset 0 1px 0 hsl(var(--color-primary) / 0.1);
+  }
+  
+  .btn-outline:hover {
+    @apply bg-primary/10;
+    border-color: hsl(var(--color-primary) / 0.5);
+    box-shadow: 
+      0 2px 4px rgba(0, 0, 0, 0.2),
+      0 0 8px hsl(var(--color-primary) / 0.1),
+      inset 0 1px 0 hsl(var(--color-primary) / 0.2);
+    transform: translateY(-1px);
+  }
+  
+  /* Button sizes */
+  .btn-sm {
+    @apply px-3 py-1.5 text-xs;
+  }
+  
+  .btn-md {
+    @apply px-4 py-2 text-sm;
+  }
+  
+  .btn-lg {
+    @apply px-6 py-3 text-base;
+  }
+  
+  /* Disabled state */
+  .btn-tactical:disabled {
+    @apply opacity-50 cursor-not-allowed;
+    transform: none !important;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2) !important;
+  }
+  
+  /* Special LatticeOS button variants */
+  
+  /* Command button - For system commands */
+  .btn-command {
+    @apply btn-tactical btn-primary;
+    font-family: var(--font-family-mono);
+    position: relative;
+  }
+  
+  .btn-command::before {
+    content: '>';
+    position: absolute;
+    left: 8px;
+    opacity: 0.7;
+  }
+  
+  .btn-command {
+    padding-left: 2rem;
+  }
+  
+  /* Alert button - For critical actions */
+  .btn-alert {
+    @apply btn-tactical btn-destructive;
+    animation: pulse-alert 2s infinite;
+  }
+  
+  @keyframes pulse-alert {
+    0%, 100% { box-shadow: 0 2px 4px rgba(0, 0, 0, 0.3), 0 0 8px hsl(var(--color-destructive) / 0.2); }
+    50% { box-shadow: 0 2px 4px rgba(0, 0, 0, 0.3), 0 0 16px hsl(var(--color-destructive) / 0.4); }
+  }
+  
+  /* Stealth button - Minimal visibility */
+  .btn-stealth {
+    @apply btn-tactical btn-ghost;
+    border-color: hsl(var(--color-border) / 0.2);
+    opacity: 0.7;
+  }
+  
+  .btn-stealth:hover {
+    opacity: 1;
+    border-color: hsl(var(--color-border) / 0.6);
+  }
+  
+  /* Glow button - Enhanced visibility */
+  .btn-glow {
+    @apply btn-tactical btn-primary;
+    box-shadow: 
+      0 2px 4px rgba(0, 0, 0, 0.3),
+      0 0 12px hsl(var(--color-primary) / 0.4),
+      inset 0 1px 0 hsl(var(--color-primary) / 0.3);
+  }
+  
+  .btn-glow:hover {
+    box-shadow: 
+      0 4px 8px rgba(0, 0, 0, 0.4),
+      0 0 20px hsl(var(--color-primary) / 0.6),
+      inset 0 1px 0 hsl(var(--color-primary) / 0.4);
   }
   
   /* Data display with tactical grid */

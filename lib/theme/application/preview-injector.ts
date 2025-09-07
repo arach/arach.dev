@@ -36,14 +36,7 @@ export function injectPreviewTheme(theme: Theme, container: HTMLElement): void {
     container.classList.remove('dark')
   }
   
-  console.log(`Injected theme "${theme.id}" into preview container`, {
-    variables: Object.keys(variables),
-    fonts: {
-      sans: variables['--font-family-sans'],
-      mono: variables['--font-family-mono'],
-      heading: variables['--font-family-heading']
-    }
-  })
+  console.log(`Injected theme "${theme.id}" into preview container`)
 }
 
 /**

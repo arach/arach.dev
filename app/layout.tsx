@@ -9,6 +9,7 @@ import { ThemePicker } from "@/components/ThemePicker";
 import { ConsoleArt } from "@/components/ConsoleArt";
 import { IBM_Plex_Mono } from "next/font/google";
 import { GeistMono, GeistSans } from "geist/font";
+import { ConditionalLayout } from "@/components/ConditionalLayout";
 
 const ibmPlexMono = IBM_Plex_Mono({ 
   subsets: ["latin"], 
@@ -89,15 +90,14 @@ export default function RootLayout({
             <ConsoleArt />
           </div>
           
-          <Header />
-          
-          <main className="flex-grow pt-0">
-            {children}
-          </main>
-          
-          <Footer />
-          
-          <ThemePicker />
+          <ConditionalLayout>
+            <Header />
+            <main className="flex-grow pt-0">
+              {children}
+            </main>
+            <Footer />
+            <ThemePicker />
+          </ConditionalLayout>
           
           <Script
             src="https://www.googletagmanager.com/gtag/js?id=G-XXXXXXXXXX"

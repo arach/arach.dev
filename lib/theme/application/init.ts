@@ -8,9 +8,40 @@ import { validateAndNormalize } from './factory'
 
 // Create comprehensive theme objects for backward compatibility with gallery application
 const terminalThemeCompat = {
+  id: 'terminal',
   name: 'Terminal',
   description: 'LatticeOS-inspired military-grade interface with tactical aesthetics and precision-focused UI',
   colors: { 
+    // Core colors for CSS generator compatibility
+    background: '#0a0a0a',        // Deep tactical black
+    foreground: '#e8e8e8',        // High-contrast white
+    card: '#1a1a1a',              // Dark panel background
+    cardForeground: '#e8e8e8',
+    popover: '#1f1f1f',           // Slightly lighter for popovers
+    popoverForeground: '#e8e8e8',
+    
+    // Primary colors
+    primary: '#0066cc',           // Military blue
+    primaryForeground: '#ffffff',
+    
+    // Secondary colors
+    secondary: '#1a1a1a',         // Dark panel background
+    secondaryForeground: '#d0d0d0',
+    
+    // Muted colors
+    muted: '#1f1f1f',             // Slightly lighter than secondary
+    mutedForeground: '#888888',   // Reduced contrast for secondary text
+    
+    // Border and input
+    border: '#333333',            // Tactical gray borders
+    input: '#2a2a2a',             // Input background
+    ring: '#0066cc',              // Focus ring color
+    
+    // Status colors
+    destructive: '#cc0000',       // Tactical red
+    destructiveForeground: '#ffffff',
+    
+    // Legacy structure for backward compatibility
     gray: { 950: '#0a0a0a', 900: '#1a1a1a', 800: '#1f1f1f', 700: '#2a2a2a', 600: '#333333' },
     accent: { 
       primary: '#0066cc',    // Military blue
@@ -31,13 +62,13 @@ const terminalThemeCompat = {
   },
   components: {
     button: {
-      primary: 'btn-primary',
-      secondary: 'btn-secondary',
-      destructive: 'btn-destructive',
-      outline: 'btn-outline',
-      ghost: 'btn-ghost',
-      success: 'btn-success',
-      warning: 'btn-warning'
+      primary: 'btn-tactical btn-primary btn-md',
+      secondary: 'btn-tactical btn-secondary btn-md',
+      destructive: 'btn-tactical btn-destructive btn-md',
+      outline: 'btn-tactical btn-outline btn-md',
+      ghost: 'btn-tactical btn-ghost btn-md',
+      success: 'btn-tactical btn-success btn-md',
+      warning: 'btn-tactical btn-warning btn-md'
     },
     input: {
       default: 'input input-default',
@@ -114,12 +145,14 @@ const terminalThemeCompat = {
 
 const terminalHybridCompat = {
   ...terminalThemeCompat,
+  id: 'terminal-hybrid',
   name: 'Terminal Hybrid',
   description: 'Hybrid terminal theme with CSS variables'
 }
 
 const directoryCompat = {
   ...terminalThemeCompat,
+  id: 'directory',
   name: 'Directory',
   description: 'Directory-style theme'
 }
