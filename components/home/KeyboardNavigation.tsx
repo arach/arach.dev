@@ -6,7 +6,7 @@ import { useAudioFeedback } from '@/hooks/useAudioFeedback'
 interface Project {
   title: string
   description: string
-  link: string
+  link?: string
   github: string
   tags: string[]
   preview: string

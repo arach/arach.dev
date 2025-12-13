@@ -6,7 +6,7 @@ import { GitHubContributions } from './'
 interface Project {
   title: string
   description: string
-  link: string
+  link?: string
   github: string
   tags: string[]
   preview: string

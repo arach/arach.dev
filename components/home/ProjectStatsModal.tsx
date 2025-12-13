@@ -9,7 +9,7 @@ import { X, BarChart3 } from 'lucide-react'
 interface Project {
   title: string
   description: string
-  link: string
+  link?: string
   github: string
   tags: string[]
   preview: string
