@@ -241,6 +241,29 @@ export const projects: Project[] = [
     color: '#ec4899',
     icon: '🔔',
   },
+  {
+    slug: 'clipper',
+    title: 'Clipper',
+    description: 'Video compression TUI with clipboard sharing',
+    longDescription: `Clipper is a terminal UI for compressing videos and copying them straight to your clipboard.
+    Drop files, auto-detect presets from filenames, watch folders for batch processing, and share with a single keystroke.`,
+    tags: ['CLI', 'TUI', 'Python'],
+    tech: ['Python', 'Textual', 'ffmpeg', 'Watchdog'],
+    links: {
+      github: 'https://github.com/arach/clipper',
+    },
+    features: [
+      'Vim-style keybindings',
+      'Quality presets (social, web, archive, tiny)',
+      'Filename-based preset detection',
+      'Watch folder for auto-processing',
+      'One-key clipboard sharing',
+    ],
+    status: 'active',
+    preview: 'Drop, compress, share. Vim keybindings, watch folders, clipboard integration.',
+    color: '#22c55e',
+    icon: '✂️',
+  },
 ];
 
 export function getProjectBySlug(slug: string): Project | undefined {
