@@ -40,6 +40,7 @@ function HomeContent() {
     { title: "Grab", description: "Lightweight macOS menu bar app for screenshots & clipboard", link: "https://arach.github.io/grab", github: "https://github.com/arach/grab", tags: ["macOS", "Swift"], preview: "Menu bar capture tool. Screenshots, clipboard history, global hotkeys." },
     { title: "Tempo", description: "Life enrichment planner - stack by importance, not time", link: "https://arach.github.io/tempo", github: "https://github.com/arach/tempo", tags: ["web", "Next.js"], preview: "No schedules, just priorities. Enrichment, Connection, Growth, Creative." },
     { title: "Peal", description: "Web-based notification sound designer", link: "https://arach.github.io/peal", github: "https://github.com/arach/peal", tags: ["web", "TypeScript"], preview: "Batch generate 50 unique sounds. Waveform viz, effects, and CLI: npx peal add" },
+    { title: "Clipper", description: "Video compression TUI with clipboard sharing", github: "https://github.com/arach/clipper", tags: ["CLI", "Python"], preview: "Drop, compress, share. Vim keybindings, watch folders, clipboard integration." },
   ];
   return (
     <GitHubProvider username="arach">
