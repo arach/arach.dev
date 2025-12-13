@@ -5,7 +5,7 @@ export const sunsetTheme = {
   fonts: {
     sans: '"Lora", var(--font-geist-sans)',
     serif: '"Playfair Display", Georgia, serif',
-    mono: '"JetBrains Mono", "Fira Code", var(--font-ibm-plex-mono)',
+    mono: '"JetBrains Mono", "Fira Code", var(--font-geist-mono), ui-monospace, monospace',
     display: '"Playfair Display"', // Elegant serif for headings
   },
   colors: {

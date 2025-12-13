@@ -58,7 +58,7 @@ export class ThemeEngine {
   static generateCSS(theme: Theme): string {
     // Default font fallbacks
     const defaultSans = 'var(--font-geist-sans), -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif';
-    const defaultMono = 'var(--font-ibm-plex-mono), ui-monospace, SFMono-Regular, monospace';
+    const defaultMono = 'var(--font-geist-mono), ui-monospace, SFMono-Regular, monospace';
     const defaultSerif = 'Georgia, "Times New Roman", serif';
     
     // Get font definitions with fallbacks

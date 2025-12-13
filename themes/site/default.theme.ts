@@ -3,8 +3,8 @@ export const defaultTheme = {
   id: 'default',
   // Define fonts once
   fonts: {
-    sans: 'var(--font-geist-sans)',
-    mono: 'var(--font-ibm-plex-mono)',
+    sans: 'var(--font-geist-sans), system-ui, sans-serif',
+    mono: 'var(--font-geist-mono), ui-monospace, monospace',
   },
   colors: {
     bg: '#ffffff',

@@ -4,7 +4,7 @@ export const oceanTheme = {
   // Define fonts - ocean uses clean, modern sans fonts
   fonts: {
     sans: '"DM Sans", var(--font-geist-sans)',
-    mono: 'var(--font-ibm-plex-mono)',
+    mono: 'var(--font-geist-mono), ui-monospace, monospace',
     display: '"Outfit"', // Modern display font for headings
   },
   colors: {

@@ -4,7 +4,7 @@ export const cyberpunkTheme = {
   // Define fonts once - cyberpunk uses special display fonts
   fonts: {
     sans: '"Exo 2", var(--font-geist-sans)',
-    mono: '"Fira Code", "Victor Mono", var(--font-ibm-plex-mono)',
+    mono: '"Fira Code", "Victor Mono", var(--font-geist-mono), ui-monospace, monospace',
     display: '"Orbitron"', // Futuristic display font
   },
   colors: {

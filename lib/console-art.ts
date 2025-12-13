@@ -30,8 +30,8 @@ export function initConsoleArt() {
   const mutedColor = computedStyle.getPropertyValue('--theme-muted-color').trim() || '#94a3b8';
   
   // Get fonts from CSS variables
-  const fontFamily = computedStyle.getPropertyValue('--font-ibm-plex-mono').trim() || '"IBM Plex Mono"';
-  const monoFont = `${fontFamily}, monospace`;
+  const fontFamily = computedStyle.getPropertyValue('--font-geist-mono').trim() || '"Geist Mono"';
+  const monoFont = `${fontFamily}, ui-monospace, monospace`;
   const sansFont = computedStyle.getPropertyValue('--font-geist-sans').trim() || 
                    computedStyle.getPropertyValue('--font-sans').trim() || 
                    '-apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif';

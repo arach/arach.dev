@@ -3,9 +3,9 @@ export const terminalTheme = {
   id: 'terminal',
   // Define fonts - terminal uses monospace fonts throughout
   fonts: {
-    sans: 'var(--font-ibm-plex-mono)',
-    mono: 'var(--font-ibm-plex-mono)',
-    display: 'var(--font-ibm-plex-mono)', // Monospace for everything
+    sans: 'var(--font-geist-mono), ui-monospace, monospace',
+    mono: 'var(--font-geist-mono), ui-monospace, monospace',
+    display: 'var(--font-geist-mono), ui-monospace, monospace', // Monospace for everything
   },
   colors: {
     bg: '#0a0a0b',

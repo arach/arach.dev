@@ -1,4 +1,3 @@
-import { IBM_Plex_Mono } from "next/font/google";
 import { GeistMono } from "geist/font/mono";
 import { GeistSans } from "geist/font/sans";
 import type { Metadata } from 'next'
@@ -18,14 +17,6 @@ const criticalCSS = fs.readFileSync(
   path.join(process.cwd(), 'app', 'critical.css'),
   'utf8'
 );
-
-const ibmPlexMono = IBM_Plex_Mono({ 
-  subsets: ["latin"], 
-  weight: ['400'], // Only load essential weight
-  variable: "--font-ibm-plex-mono",
-  display: 'optional', // Don't block render for this font
-  preload: false, // Don't preload to reduce initial load
-});
 
 export const metadata: Metadata = {
   title: "arach.dev",
@@ -66,7 +57,7 @@ export default function RootLayout({
         {/* Inline critical CSS for immediate render */}
         <style dangerouslySetInnerHTML={{ __html: criticalCSS }} />
       </head>
-      <body className={`${ibmPlexMono.variable} ${GeistMono.className} font-mono flex flex-col min-h-screen`}>
+      <body className={`${GeistMono.className} font-mono flex flex-col min-h-screen`}>
         <ThemeProvider>
           <Header />
           <main className="flex-grow pt-0">

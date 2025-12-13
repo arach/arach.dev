@@ -5,7 +5,7 @@ export const paperTheme = {
   fonts: {
     sans: '"Crimson Text", var(--font-geist-sans)',
     serif: '"Libre Baskerville", Georgia, serif',
-    mono: '"Courier Prime", "Courier New", var(--font-ibm-plex-mono)',
+    mono: '"Courier Prime", "Courier New", var(--font-geist-mono), ui-monospace, monospace',
     display: '"Libre Baskerville"', // Classic serif for headings
   },
   colors: {

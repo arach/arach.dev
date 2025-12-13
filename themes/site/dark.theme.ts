@@ -4,7 +4,7 @@ export const darkTheme = {
   // Define fonts - dark theme uses modern sans fonts
   fonts: {
     sans: '"Space Grotesk", "Inter", var(--font-geist-sans)',
-    mono: 'var(--font-ibm-plex-mono)',
+    mono: 'var(--font-geist-mono), ui-monospace, monospace',
     display: '"Space Grotesk"',
   },
   colors: {
