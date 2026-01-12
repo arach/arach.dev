@@ -16,6 +16,7 @@ export interface Project {
   preview: string;
   color: string; // Accent color for this project
   icon?: string; // Emoji or icon
+  websiteUrl?: string; // Live website URL for screenshots/previews
   screenshots?: string[];
   metrics?: {
     stars?: number;
@@ -263,6 +264,103 @@ export const projects: Project[] = [
     preview: 'Drop, compress, share. 4 presets (social/web/archive/tiny), watch folders, clipboard copy.',
     color: '#22c55e',
     icon: '✂️',
+  },
+  {
+    slug: 'og',
+    title: 'OG',
+    description: 'Declarative Open Graph image generation with zero design effort',
+    longDescription: `OG is a Node.js library for generating beautiful social media preview images programmatically.
+    Four pre-built templates (branded, minimal, docs, editor-dark) handle common use cases. Includes CLI tools for batch generation, URL validation, and sitemap-wide auditing.`,
+    tags: ['npm', 'TypeScript', 'developer-tools'],
+    tech: ['Node.js', 'TypeScript', 'Puppeteer', 'Google Fonts'],
+    links: {
+      github: 'https://github.com/arach/og',
+      website: 'https://og.arach.dev',
+    },
+    features: [
+      'Four pre-built templates (branded/minimal/docs/editor-dark)',
+      'CLI for batch generation from config files',
+      'URL validator for checking existing OG tags',
+      'Sitemap auditor for site-wide validation',
+      'Local preview server for rapid iteration',
+    ],
+    status: 'active',
+    preview: 'Beautiful OG images with zero design. 4 templates, CLI batch generation, sitemap auditor.',
+    color: '#f97316',
+    icon: '🖼️',
+    websiteUrl: 'https://og.arach.dev',
+  },
+  {
+    slug: 'vif',
+    title: 'Vif',
+    description: 'Declarative screen capture built for AI agents',
+    longDescription: `Vif is a CLI tool for automating video and screenshot generation on macOS. Designed for AI agents with a file-first architecture—everything is YAML storyboards, version-controlled takes, and CLI commands. Perfect for generating app demos, documentation assets, and marketing materials through conversation.`,
+    tags: ['CLI', 'macOS', 'AI'],
+    tech: ['Node.js', 'TypeScript', 'FFmpeg', 'macOS APIs'],
+    links: {
+      github: 'https://github.com/arach/vif',
+      website: 'https://vif.jdi.sh',
+    },
+    features: [
+      'YAML storyboards for declarative video composition',
+      'Version-controlled takes for iteration',
+      'Audio analysis with BPM detection and mixing',
+      'Window discovery by app name',
+      'Agent-first: edit YAML, run vif, iterate',
+    ],
+    status: 'active',
+    preview: 'Screen capture for AI agents. YAML storyboards, versioned takes, audio mixing.',
+    color: '#0ea5e9',
+    icon: '🎬',
+    websiteUrl: 'https://vif.jdi.sh',
+  },
+  {
+    slug: 'arc',
+    title: 'Arc',
+    description: 'Visual diagram editor with TypeScript export',
+    longDescription: `Arc is a drag-and-drop diagram editor for creating architecture diagrams. Design system architectures visually, then export to clean TypeScript for embedding in documentation sites. Features infinite canvas, grid snapping, multiple node sizes, and customizable connector styles.`,
+    tags: ['web', 'React', 'developer-tools'],
+    tech: ['React', 'TypeScript', 'Canvas API', 'Framer Motion'],
+    links: {
+      github: 'https://github.com/arach/arc',
+      website: 'https://arc.jdi.sh',
+    },
+    features: [
+      'Drag-and-drop node placement',
+      'Export to TypeScript, JSON, SVG, PNG',
+      'Multiple node sizes and color themes',
+      'Customizable connector styles with labels',
+      'Shareable diagram links',
+    ],
+    status: 'active',
+    preview: 'Visual diagrams to TypeScript. Drag-drop editor, multiple exports, shareable links.',
+    color: '#8b5cf6',
+    icon: '📐',
+    websiteUrl: 'https://arc.jdi.sh',
+  },
+  {
+    slug: 'hooked',
+    title: 'Hooked',
+    description: 'Voice alerts and task loops for Claude Code',
+    longDescription: `Hooked is a TypeScript toolkit that supercharges Claude Code with voice notifications and automated continuation loops. Get spoken alerts when Claude needs attention, and define completion criteria like "tests passing" to keep Claude working autonomously until goals are met.`,
+    tags: ['CLI', 'TypeScript', 'AI'],
+    tech: ['TypeScript', 'Node.js', 'SpeakEasy', 'Claude Code Hooks'],
+    links: {
+      github: 'https://github.com/arach/hooked',
+      website: 'https://hooked.arach.dev',
+    },
+    features: [
+      'Voice alerts via SpeakEasy integration',
+      'Until loops: keep working until tests/build pass',
+      'Multiple preset modes (test/build/typecheck/lint)',
+      'Web dashboard for history and configuration',
+      'Multi-session support with separate objectives',
+    ],
+    status: 'active',
+    preview: 'Voice alerts + until loops. "Keep working until tests pass." Web dashboard included.',
+    color: '#ec4899',
+    icon: '🪝',
+    websiteUrl: 'https://hooked.arach.dev',
   },
 ];
 

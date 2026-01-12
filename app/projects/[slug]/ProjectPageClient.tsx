@@ -3,6 +3,7 @@
 import Link from 'next/link';
 import { ArrowLeft, Github, Globe } from 'lucide-react';
 import ThemedDottedGrid from '@/components/ThemedDottedGrid';
+import { BrowserFrame } from '@/components/BrowserFrame';
 import type { Project } from '@/lib/projects';
 import { motion } from 'framer-motion';
 import { useState, useEffect } from 'react';
@@ -121,6 +122,17 @@ export default function ProjectPageClient({ project, projectNumber }: ProjectPag
                 </a>
               )}
             </div>
+
+            {/* Website Preview */}
+            {project.websiteUrl && (
+              <section className="mb-12">
+                <BrowserFrame
+                  src={`/screenshots/${project.slug}.png`}
+                  url={project.websiteUrl}
+                  alt={`${project.title} website preview`}
+                />
+              </section>
+            )}
 
             {/* Long Description */}
             <section className="mb-12">
