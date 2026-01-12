@@ -8,7 +8,7 @@ interface Project {
   title: string;
   description: string;
   link?: string;
-  github: string;
+  github?: string;
   tags: string[];
   preview?: string; // Optional - not used in compact view
 }
@@ -145,22 +145,24 @@ export function CompactTypographyCard({
         >
           <ArrowRight className="w-3 h-3" />
         </a>
-        <a
-          href={project.github}
-          target="_blank"
-          rel="noopener noreferrer"
-          className={`
-            inline-flex items-center justify-center
-            w-6 h-6 rounded-full
-            transition-all duration-500
-            ${isKeyboardFocused 
-              ? 'text-blue-600 bg-blue-100' 
-              : 'text-gray-400 hover:text-gray-600 hover:bg-gray-100'}
-          `}
-          onClick={(e) => e.stopPropagation()}
-        >
-          <Github className="w-3 h-3" />
-        </a>
+        {project.github && (
+          <a
+            href={project.github}
+            target="_blank"
+            rel="noopener noreferrer"
+            className={`
+              inline-flex items-center justify-center
+              w-6 h-6 rounded-full
+              transition-all duration-500
+              ${isKeyboardFocused
+                ? 'text-blue-600 bg-blue-100'
+                : 'text-gray-400 hover:text-gray-600 hover:bg-gray-100'}
+            `}
+            onClick={(e) => e.stopPropagation()}
+          >
+            <Github className="w-3 h-3" />
+          </a>
+        )}
       </div>
 
       {/* Subtle border - only on hover or focus */}

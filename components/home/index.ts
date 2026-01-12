@@ -5,6 +5,7 @@ export { HomePage } from './HomePage'
 export { HeroASCIIBanner } from './HeroASCIIBanner'
 export { CompactTypographyCard } from './CompactTypographyCard'
 export { TypographyProjectCard } from './TypographyProjectCard'
+export { ProjectHoverPreview } from './ProjectHoverPreview'
 
 // Modal Components
 export { HelpModal } from './HelpModal'

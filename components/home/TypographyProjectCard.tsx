@@ -8,7 +8,7 @@ interface Project {
   title: string;
   description: string;
   link?: string;
-  github: string;
+  github?: string;
   tags: string[];
   preview: string;
 }

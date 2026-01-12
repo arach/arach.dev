@@ -10,6 +10,7 @@ import { TooltipProvider } from "@/components/ui"
 import {
   HeroASCIIBanner,
   CompactTypographyCard,
+  ProjectHoverPreview,
   useKeyboardNavigation,
   ProjectStatsModal,
   HeaderActions,
@@ -22,7 +23,7 @@ interface Project {
   title: string
   description: string
   link?: string
-  github: string
+  github?: string
   tags: string[]
   preview: string
 }
@@ -338,25 +339,32 @@ export function HomePage({ projects }: { projects: Project[] }) {
               transition={{ duration: 0.3 }}
               className="grid grid-cols-1 md:grid-cols-2 gap-3 sm:gap-4"
             >
-              {filteredProjects.map((project, index) => (
-                <CompactTypographyCard
-                  key={`${selectedCategory}-${project.title}`}
-                  project={project}
-                  index={index}
-                  isKeyboardFocused={focusedIndex === index && keyboardMode}
-                  onMouseEnter={() => {
-                    if (!keyboardMode) playHoverSound()
-                  }}
-                  onClick={() => {
-                    playClickSound()
-                    const slug = project.title.toLowerCase().replace(/\s+/g, '-')
-                    window.location.href = `/projects/${slug}`
-                  }}
-                  cardRef={(el) => {
-                    if (el) cardRefs.current[index] = el;
-                  }}
-                />
-              ))}
+              {filteredProjects.map((project, index) => {
+                const slug = project.title.toLowerCase().replace(/\s+/g, '-')
+                return (
+                  <ProjectHoverPreview
+                    key={`${selectedCategory}-${project.title}`}
+                    slug={slug}
+                    title={project.title}
+                  >
+                    <CompactTypographyCard
+                      project={project}
+                      index={index}
+                      isKeyboardFocused={focusedIndex === index && keyboardMode}
+                      onMouseEnter={() => {
+                        if (!keyboardMode) playHoverSound()
+                      }}
+                      onClick={() => {
+                        playClickSound()
+                        window.location.href = `/projects/${slug}`
+                      }}
+                      cardRef={(el) => {
+                        if (el) cardRefs.current[index] = el;
+                      }}
+                    />
+                  </ProjectHoverPreview>
+                )
+              })}
             </motion.div>
           </AnimatePresence>
         </Section>
