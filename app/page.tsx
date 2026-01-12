@@ -32,7 +32,7 @@ function HomeContent() {
   
   // Projects ordered by most recent GitHub activity
   const projects = [
-    { title: "Talkie", description: "Multi-platform communication app with iOS, macOS, and backend", link: "https://usetalkie.com", github: "https://github.com/arach/talkie", tags: ["iOS", "macOS", "Swift"], preview: "Cross-platform walkie-talkie. Push-to-talk, real-time audio, native apps." },
+    { title: "Talkie", description: "Multi-platform communication app with iOS, macOS, and backend", link: "https://usetalkie.com", tags: ["iOS", "macOS", "Swift"], preview: "Cross-platform walkie-talkie. Push-to-talk, real-time audio, native apps." },
     { title: "OG", description: "Declarative Open Graph image generation with zero design effort", link: "https://og.arach.dev", github: "https://github.com/arach/og", tags: ["npm", "TypeScript"], preview: "Beautiful OG images with zero design. 4 templates, CLI batch generation, sitemap auditor." },
     { title: "Vif", description: "Declarative screen capture built for AI agents", link: "https://vif.jdi.sh", github: "https://github.com/arach/vif", tags: ["CLI", "macOS"], preview: "Screen capture for AI agents. YAML storyboards, versioned takes, audio mixing." },
     { title: "Arc", description: "Visual diagram editor with TypeScript export", link: "https://arc.jdi.sh", github: "https://github.com/arach/arc", tags: ["web", "React"], preview: "Visual diagrams to TypeScript. Drag-drop editor, multiple exports, shareable links." },

@@ -35,7 +35,6 @@ export const projects: Project[] = [
     tags: ['iOS', 'macOS', 'Swift'],
     tech: ['Swift', 'SwiftUI', 'WebRTC', 'Node.js', 'WebSockets'],
     links: {
-      github: 'https://github.com/arach/talkie',
       website: 'https://usetalkie.com',
     },
     features: [
