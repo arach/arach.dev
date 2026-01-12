@@ -19,6 +19,7 @@ interface ProjectScreenshot {
 
 // Projects with their live website URLs
 const projects: ProjectScreenshot[] = [
+  { slug: 'talkie', url: 'https://usetalkie.com', name: 'Talkie' },
   { slug: 'scout', url: 'https://arach.github.io/scout', name: 'Scout' },
   { slug: 'blink', url: 'https://arach.github.io/blink', name: 'Blink' },
   { slug: 'pomo', url: 'https://arach.github.io/pomo', name: 'Pomo' },
