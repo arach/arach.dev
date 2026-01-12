@@ -41,6 +41,10 @@ function HomeContent() {
     { title: "Tempo", description: "Life enrichment planner - stack by importance, not time", link: "https://arach.github.io/tempo", github: "https://github.com/arach/tempo", tags: ["web", "Next.js"], preview: "No schedules, just priorities. Enrichment, Connection, Growth, Creative." },
     { title: "Peal", description: "Web-based notification sound designer", link: "https://arach.github.io/peal", github: "https://github.com/arach/peal", tags: ["web", "TypeScript"], preview: "Batch generate 50 unique sounds. Waveform viz, effects, and CLI: npx peal add" },
     { title: "Clipper", description: "Video compression TUI with presets and watch mode", github: "https://github.com/arach/clipper", tags: ["CLI", "TUI", "Python"], preview: "Drop, compress, share. 4 presets (social/web/archive/tiny), watch folders, clipboard copy." },
+    { title: "OG", description: "Declarative Open Graph image generation with zero design effort", link: "https://og.arach.dev", github: "https://github.com/arach/og", tags: ["npm", "TypeScript"], preview: "Beautiful OG images with zero design. 4 templates, CLI batch generation, sitemap auditor." },
+    { title: "Vif", description: "Declarative screen capture built for AI agents", link: "https://vif.jdi.sh", github: "https://github.com/arach/vif", tags: ["CLI", "macOS"], preview: "Screen capture for AI agents. YAML storyboards, versioned takes, audio mixing." },
+    { title: "Arc", description: "Visual diagram editor with TypeScript export", link: "https://arc.jdi.sh", github: "https://github.com/arach/arc", tags: ["web", "React"], preview: "Visual diagrams to TypeScript. Drag-drop editor, multiple exports, shareable links." },
+    { title: "Hooked", description: "Voice alerts and task loops for Claude Code", link: "https://hooked.arach.dev", github: "https://github.com/arach/hooked", tags: ["CLI", "TypeScript"], preview: "Voice alerts + until loops. \"Keep working until tests pass.\" Web dashboard included." },
   ];
   return (
     <GitHubProvider username="arach">
