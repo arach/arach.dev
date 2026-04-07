@@ -4,11 +4,11 @@ const nextConfig = {
     return [
       {
         source: '/lab',
-        destination: 'https://training-lab-nine.vercel.app/lab',
+        destination: 'https://lab-plum-iota.vercel.app/lab',
       },
       {
         source: '/lab/:path*',
-        destination: 'https://training-lab-nine.vercel.app/lab/:path*',
+        destination: 'https://lab-plum-iota.vercel.app/lab/:path*',
       },
     ];
   },
