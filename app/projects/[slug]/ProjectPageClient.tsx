@@ -127,7 +127,7 @@ export default function ProjectPageClient({ project, projectNumber }: ProjectPag
             {project.websiteUrl && (
               <section className="mb-12">
                 <BrowserFrame
-                  src={`/screenshots/${project.slug}.png`}
+                  live
                   url={project.websiteUrl}
                   alt={`${project.title} website preview`}
                 />

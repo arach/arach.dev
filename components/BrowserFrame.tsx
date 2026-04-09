@@ -4,18 +4,21 @@ import Image from 'next/image';
 import { ExternalLink } from 'lucide-react';
 
 interface BrowserFrameProps {
-  src: string;
   url: string;
   alt: string;
   className?: string;
+  /** Render a live iframe instead of a static screenshot */
+  live?: boolean;
+  /** Static screenshot path (used when live is false) */
+  src?: string;
 }
 
 /**
- * A macOS-style browser frame that wraps a screenshot
- * Features traffic lights, URL bar, and optional click-through to live site
+ * A macOS-style browser frame.
+ * When `live` is true, renders a live iframe of the URL.
+ * Otherwise renders a static screenshot (requires `src`).
  */
-export function BrowserFrame({ src, url, alt, className = '' }: BrowserFrameProps) {
-  // Extract display URL (without protocol)
+export function BrowserFrame({ src, url, alt, live = false, className = '' }: BrowserFrameProps) {
   const displayUrl = url.replace(/^https?:\/\//, '');
 
   return (
@@ -46,21 +49,33 @@ export function BrowserFrame({ src, url, alt, className = '' }: BrowserFrameProp
         <div className="w-14" />
       </div>
 
-      {/* Screenshot Content */}
-      <a
-        href={url}
-        target="_blank"
-        rel="noopener noreferrer"
-        className="block relative aspect-[16/10] bg-gray-50 dark:bg-gray-900 hover:opacity-95 transition-opacity"
-      >
-        <Image
-          src={src}
-          alt={alt}
-          fill
-          className="object-cover object-top"
-          sizes="(max-width: 768px) 100vw, 800px"
-        />
-      </a>
+      {/* Content: live iframe or static screenshot */}
+      {live ? (
+        <div className="relative aspect-[16/10] bg-gray-50 dark:bg-gray-900">
+          <iframe
+            src={url}
+            title={alt}
+            className="absolute inset-0 w-full h-full border-0"
+            loading="lazy"
+            sandbox="allow-scripts allow-same-origin allow-forms allow-popups"
+          />
+        </div>
+      ) : (
+        <a
+          href={url}
+          target="_blank"
+          rel="noopener noreferrer"
+          className="block relative aspect-[16/10] bg-gray-50 dark:bg-gray-900 hover:opacity-95 transition-opacity"
+        >
+          <Image
+            src={src ?? ''}
+            alt={alt}
+            fill
+            className="object-cover object-top"
+            sizes="(max-width: 768px) 100vw, 800px"
+          />
+        </a>
+      )}
     </div>
   );
 }
