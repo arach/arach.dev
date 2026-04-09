@@ -9,6 +9,7 @@ import Script from "next/script";
 import { SpeedInsights } from "@vercel/speed-insights/next";
 import ThemePicker from "@/components/ThemePicker";
 import { ConsoleArt } from "@/components/ConsoleArt";
+import { GoogleAnalytics } from "@/components/GoogleAnalytics";
 import fs from 'fs';
 import path from 'path';
 
@@ -66,6 +67,7 @@ export default function RootLayout({
           <Footer />
           <ThemePicker />
           <ConsoleArt />
+          <GoogleAnalytics />
           <SpeedInsights />
         </ThemeProvider>
       </body>

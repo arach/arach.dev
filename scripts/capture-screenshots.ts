@@ -19,22 +19,18 @@ interface ProjectScreenshot {
 
 // Projects with their live website URLs
 const projects: ProjectScreenshot[] = [
+  { slug: 'openscout', url: 'https://openscout.app', name: 'OpenScout' },
   { slug: 'talkie', url: 'https://usetalkie.com', name: 'Talkie' },
-  { slug: 'scout', url: 'https://arach.github.io/scout', name: 'Scout' },
-  { slug: 'blink', url: 'https://arach.github.io/blink', name: 'Blink' },
-  { slug: 'pomo', url: 'https://arach.github.io/pomo', name: 'Pomo' },
-  { slug: 'speakeasy', url: 'https://speakeasy.arach.dev', name: 'Speakeasy' },
-  { slug: 'reflow', url: 'https://arach.github.io/reflow', name: 'Reflow' },
-  { slug: '2048ish', url: 'https://arach.github.io/2048ish', name: '2048ish' },
-  { slug: 'grab', url: 'https://arach.github.io/grab', name: 'Grab' },
-  { slug: 'tempo', url: 'https://arach.github.io/tempo', name: 'Tempo' },
-  { slug: 'peal', url: 'https://arach.github.io/peal', name: 'Peal' },
-  { slug: 'clipper', url: 'https://github.com/arach/clipper', name: 'Clipper' },
-  // New projects
-  { slug: 'og', url: 'https://og.arach.dev', name: 'OG' },
-  { slug: 'vif', url: 'https://vif.jdi.sh', name: 'Vif' },
+  { slug: 'lattices', url: 'https://lattices.dev', name: 'Lattices' },
+  { slug: 'linea', url: 'https://uselinea.com', name: 'Linea' },
+  { slug: 'hudson', url: 'https://hudsonos.com', name: 'Hudson' },
+  { slug: 'fabric', url: 'https://fab.run', name: 'Fabric' },
   { slug: 'arc', url: 'https://arc.jdi.sh', name: 'Arc' },
+  { slug: 'dewey', url: 'https://dewey.arach.dev', name: 'Dewey' },
+  { slug: 'og', url: 'https://og.arach.dev', name: 'OG' },
+  { slug: 'speakeasy', url: 'https://speakeasy.arach.dev', name: 'Speakeasy' },
   { slug: 'hooked', url: 'https://hooked.arach.dev', name: 'Hooked' },
+  { slug: '2048ish', url: 'https://arach.github.io/2048ish', name: '2048ish' },
 ];
 
 async function captureScreenshot(

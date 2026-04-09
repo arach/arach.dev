@@ -50,6 +50,8 @@ export default function Header() {
                 </Link>
                 <nav>
                     <ul className="flex space-x-6">
+                        <li><Link href="/ideas" className="transition-colors cursor-pointer hover:opacity-80"
+                            style={{ color: 'var(--theme-header-text)' }}>Ideas</Link></li>
                         <li><Link href="/github" className="transition-colors cursor-pointer hover:opacity-80"
                             style={{ color: 'var(--theme-header-text)' }}>GitHub</Link></li>
                         <li><Link href="/about" className="transition-colors cursor-pointer hover:opacity-80"

@@ -28,6 +28,30 @@ export interface Project {
 // Projects ordered by most recent GitHub activity
 export const projects: Project[] = [
   {
+    slug: 'openscout',
+    title: 'OpenScout',
+    description: 'Multi-agent broker runtime for AI coding harnesses',
+    longDescription: `OpenScout is a desktop app, CLI, and broker runtime for coordinating multiple AI coding agents. The broker is the only writer of canonical state — conversations, work, deliveries, and bindings are addressable, replayable, and observable. Harness-agnostic across Claude Code, Codex, tmux, and future tools.`,
+    tags: ['desktop', 'CLI', 'AI'],
+    tech: ['Bun', 'TypeScript', 'Electron', 'React'],
+    links: {
+      github: 'https://github.com/arach/openscout',
+      website: 'https://openscout.app',
+    },
+    features: [
+      'Broker as the canonical state writer',
+      'Addressable agents, conversations, messages, invocations',
+      'Replayable from stored records, not terminal scrollback',
+      'Harness-agnostic (Claude Code, Codex, tmux)',
+      'Published @openscout/scout CLI wrapper',
+    ],
+    status: 'active',
+    preview: 'Multi-agent broker for AI coding. Canonical state, harness-agnostic, replayable.',
+    color: '#0ea5e9',
+    icon: '🔭',
+    websiteUrl: 'https://openscout.app',
+  },
+  {
     slug: 'lattices',
     title: 'Lattices',
     description: 'Agentic window manager for macOS with tmux, OCR, and desktop APIs',
