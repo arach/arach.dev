@@ -39,3 +39,5 @@ next-env.d.ts
 .claude/
 CLAUDE.md
 pnpm-workspace.yaml
+# OpenScout local state
+.openscout/project.json
