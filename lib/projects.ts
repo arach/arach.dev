@@ -76,6 +76,28 @@ export const projects: Project[] = [
     websiteUrl: 'https://lattices.dev',
   },
   {
+    slug: 'linea',
+    title: 'Linea',
+    description: 'Local-first PDF reading studio',
+    longDescription: `Linea is a local-first PDF reader and annotation studio. Built for deep reading without cloud sync or subscriptions — your documents stay on your device. Designed for researchers, engineers, and anyone who needs focused, distraction-free reading with powerful annotation tools.`,
+    tags: ['desktop', 'macOS', 'productivity'],
+    tech: ['Swift', 'SwiftUI', 'PDFKit', 'Core Data'],
+    links: {
+      github: 'https://github.com/arach/linea',
+    },
+    features: [
+      'Local-first — no cloud, no subscriptions',
+      'Annotation and highlighting tools',
+      'Distraction-free reading mode',
+      'Fast document indexing and search',
+      'Native macOS performance',
+    ],
+    status: 'active',
+    preview: 'Local-first PDF reading. No cloud, no subscriptions. Annotations, search, native performance.',
+    color: '#f59e0b',
+    icon: '📄',
+  },
+  {
     slug: 'devmux',
     title: 'Devmux',
     description: 'Claude Code + dev server, side by side in tmux',
@@ -119,7 +141,7 @@ export const projects: Project[] = [
     ],
     status: 'active',
     preview: 'Canvas workspace + HUD chrome. A richer shell for multi-app React tools.',
-    color: '#10b981',
+    color: '#34d399',
     icon: '🎛️',
     websiteUrl: 'https://hudson-arach.vercel.app',
   },
@@ -131,6 +153,7 @@ export const projects: Project[] = [
     tags: ['iOS', 'macOS', 'Swift'],
     tech: ['Swift', 'SwiftUI', 'WebRTC', 'Node.js', 'WebSockets'],
     links: {
+      github: 'https://github.com/arach/usetalkie.com',
       website: 'https://usetalkie.com',
     },
     features: [
@@ -145,30 +168,6 @@ export const projects: Project[] = [
     color: '#6366f1',
     icon: '📻',
     websiteUrl: 'https://usetalkie.com',
-  },
-  {
-    slug: 'scout',
-    title: 'Scout',
-    description: 'Local-first voice capture and dictation workspace for agent-forward workflows',
-    longDescription: `Scout is evolving from a straightforward dictation tool into a richer local-first capture surface for agent workflows. It stays grounded in private transcription and fast voice input, but the newer direction is more ambitious: voice capture that can plug into broader thinking, retrieval, and workflow systems without shipping your raw data to the cloud.`,
-    tags: ['desktop', 'Tauri', 'AI'],
-    tech: ['Tauri', 'React', 'TypeScript', 'Whisper AI', 'Rust'],
-    links: {
-      github: 'https://github.com/arach/openscout',
-      website: 'https://openscout.app/',
-    },
-    features: [
-      'Local-first transcription and voice capture',
-      'Fast memo-style input for agent workflows',
-      'Private on-device model usage where possible',
-      'A bridge from voice notes into structured context',
-      'Evolving toward a broader agent-forward workspace',
-    ],
-    status: 'active',
-    preview: 'Local-first voice capture evolving into an agent-forward workspace.',
-    color: '#10b981',
-    icon: '🎙️',
-    websiteUrl: 'https://openscout.app/',
   },
   {
     slug: 'fabric',
@@ -189,7 +188,7 @@ export const projects: Project[] = [
     ],
     status: 'active',
     preview: 'Containers for agentic development. Cleaner environments, less setup drift.',
-    color: '#f97316',
+    color: '#ea580c',
     icon: '🧱',
   },
   {
@@ -201,7 +200,7 @@ export const projects: Project[] = [
     tech: ['TypeScript', 'Node.js', 'Static site tooling', 'Content pipelines'],
     links: {
       github: 'https://github.com/arach/dewey',
-      website: 'http://dewey.arach.dev/',
+      website: 'https://dewey.arach.dev/',
     },
     features: [
       'Audit and score documentation quality',
@@ -214,7 +213,7 @@ export const projects: Project[] = [
     preview: 'Audit, score, and publish docs that humans and AI agents can both use.',
     color: '#a855f7',
     icon: '📚',
-    websiteUrl: 'http://dewey.arach.dev/',
+    websiteUrl: 'https://dewey.arach.dev/',
   },
   {
     slug: 'og',
@@ -261,7 +260,7 @@ export const projects: Project[] = [
     ],
     status: 'active',
     preview: 'Screen capture for AI agents. YAML storyboards, versioned takes, audio mixing.',
-    color: '#0ea5e9',
+    color: '#38bdf8',
     icon: '🎬',
     websiteUrl: 'https://vif.jdi.sh',
   },
@@ -333,7 +332,7 @@ export const projects: Project[] = [
     ],
     status: 'active',
     preview: 'Voice alerts + until loops. "Keep working until tests pass." Web dashboard included.',
-    color: '#ec4899',
+    color: '#f472b6',
     icon: '🪝',
     websiteUrl: 'https://hooked.arach.dev',
   },
@@ -529,6 +528,10 @@ export const projects: Project[] = [
     icon: '🌊',
   },
 ];
+
+export function getHomepageProjects(): Project[] {
+  return projects;
+}
 
 export function getProjectBySlug(slug: string): Project | undefined {
   return projects.find(p => p.slug === slug);
