@@ -43,9 +43,17 @@
   body {
     background: var(--theme-bg-color);
     color: var(--theme-text-color);
+    font-family: var(--theme-body-font, var(--font-geist-sans));
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+    text-rendering: optimizeLegibility;
+    font-feature-settings: "ss01", "cv11";
     transition: background-color 0.3s ease, color 0.3s ease;
   }
 
+  /* Default heading rhythm.
+     Page-level components own size + weight via Tailwind utilities;
+     these globals just establish color, family, and tighter tracking. */
   h1,
   h2,
   h3,
@@ -53,29 +61,14 @@
   h5,
   h6 {
     color: var(--theme-heading-color);
-    font-family: var(--theme-header-font);
-    font-weight: 600;
-    letter-spacing: -0.02em;
+    font-family: var(--theme-heading-font, var(--theme-header-font));
+    font-weight: 500;
+    letter-spacing: -0.015em;
   }
-  
-  /* Ensure good readability for h2, h3, h4 specifically */
-  h2 {
-    color: var(--theme-heading-color);
-    font-size: 1.5rem;
-    font-weight: 700;
-  }
-  
-  h3 {
-    color: var(--theme-heading-color);
-    font-size: 1.25rem;
-    font-weight: 600;
-  }
-  
-  h4 {
-    color: var(--theme-heading-color);
-    font-size: 1.125rem;
-    font-weight: 600;
-  }
+
+  /* Tighter optical tracking at display sizes. */
+  h1 { letter-spacing: -0.025em; }
+  h2 { letter-spacing: -0.02em; }
 
   /* Apply theme text color to main content paragraphs only */
   main > p:not([class*="text-"]),

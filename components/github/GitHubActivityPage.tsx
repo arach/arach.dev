@@ -2,41 +2,12 @@
 
 import { useState, useEffect, useMemo, useCallback } from "react"
 import { motion, AnimatePresence } from "framer-motion"
-import { Button } from "@/components/ui/button"
-import { Card, CardHeader, CardTitle, CardDescription, CardContent } from "@/components/ui/card"
 import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "@/components/ui/tooltip"
-import {
-  Github,
-  AlertCircle,
-  TrendingUp,
-  Calendar,
-  Target,
-  Activity,
-  BarChart3,
-  ArrowLeft,
-  ExternalLink,
-  Users,
-  BookOpen,
-} from "lucide-react"
+import { AlertCircle, ArrowLeft, ExternalLink } from "lucide-react"
 import Link from "next/link"
 import CurrentMonthInsights from "./CurrentMonthInsights"
-import type { ContributionDay, GitHubStats, MonthlyStats } from "@/types/github"
+import type { ContributionDay, MonthlyStats } from "@/types/github"
 import { useGitHub } from "@/lib/github-context"
-
-// Keep only the interfaces not in types/github.ts
-interface GitHubRepo {
-  id: number
-  name: string
-  full_name: string
-  description: string | null
-  html_url: string
-  stargazers_count: number
-  forks_count: number
-  language: string | null
-  updated_at: string
-  topics: string[]
-  homepage: string | null
-}
 
 interface Streak {
   id: number
@@ -48,355 +19,381 @@ interface Streak {
   dates: string[]
 }
 
+const cardSurface: React.CSSProperties = {
+  background: "var(--theme-card-bg)",
+  borderColor: "var(--theme-border-color)",
+  boxShadow: "0 12px 40px -28px var(--theme-shadow-color)",
+}
+
+const heatmapCellColor = (level: number) => {
+  if (level <= 0) return "var(--theme-border-color)"
+  const pct = [0, 25, 50, 75, 100][Math.min(level, 4)]
+  return `color-mix(in srgb, var(--theme-accent-color) ${pct}%, transparent)`
+}
+
+function PromptHeading({ children }: { children: React.ReactNode }) {
+  return (
+    <p
+      className="mb-4 flex items-center gap-2 text-[11px] font-mono uppercase tracking-[0.22em]"
+      style={{ color: "var(--theme-muted-color)" }}
+    >
+      <span style={{ color: "var(--theme-accent-color)" }}>&gt;</span>
+      <span>{children}</span>
+    </p>
+  )
+}
+
+function Stat({
+  label,
+  value,
+  sublabel,
+  emphasis = false,
+}: {
+  label: string
+  value: number | string
+  sublabel?: string
+  emphasis?: boolean
+}) {
+  return (
+    <div className="rounded-2xl border px-5 py-5 sm:px-6 sm:py-6" style={cardSurface}>
+      <p
+        className="text-[10px] font-mono uppercase tracking-[0.22em]"
+        style={{ color: "var(--theme-muted-color)" }}
+      >
+        {label}
+      </p>
+      <p
+        className="mt-3 font-mono text-4xl font-light tabular-nums sm:text-5xl"
+        style={{
+          color: emphasis ? "var(--theme-accent-color)" : "var(--theme-text-color)",
+        }}
+      >
+        {value}
+      </p>
+      {sublabel ? (
+        <p
+          className="mt-2 text-[11px] font-mono uppercase tracking-[0.18em]"
+          style={{ color: "var(--theme-muted-color)" }}
+        >
+          {sublabel}
+        </p>
+      ) : null}
+    </div>
+  )
+}
+
+function TabLink({
+  active,
+  onClick,
+  children,
+}: {
+  active: boolean
+  onClick: () => void
+  children: React.ReactNode
+}) {
+  return (
+    <button
+      type="button"
+      onClick={onClick}
+      className="relative pb-2 font-mono text-[11px] uppercase tracking-[0.22em] transition-opacity hover:opacity-80"
+      style={{ color: active ? "var(--theme-accent-color)" : "var(--theme-muted-color)" }}
+    >
+      {children}
+      <span
+        className="absolute -bottom-px left-0 h-px w-full transition-opacity"
+        style={{
+          background: "var(--theme-accent-color)",
+          opacity: active ? 1 : 0,
+        }}
+      />
+    </button>
+  )
+}
+
 export default function GitHubActivityPage({ username = "arach" }: { username?: string }) {
   const { contributions, stats, loading, error, dataSource, refetch } = useGitHub()
   const [monthlyStats, setMonthlyStats] = useState<MonthlyStats[]>([])
   const [streaks, setStreaks] = useState<Streak[]>([])
   const [selectedView, setSelectedView] = useState<"overview" | "calendar" | "streaks">("overview")
-  const [repos, setRepos] = useState<GitHubRepo[]>([])
-  
-  // Add calendar-specific state
+
   const [selectedCalendarMonth, setSelectedCalendarMonth] = useState(new Date().getMonth())
   const [selectedCalendarYear, setSelectedCalendarYear] = useState(new Date().getFullYear())
   const [selectedDay, setSelectedDay] = useState<ContributionDay | null>(null)
 
-  const calculateStats = useCallback((contributions: ContributionDay[]): GitHubStats => {
-    const threeMonthContributions = contributions.reduce((sum, day) => sum + day.count, 0)
-    const totalForks = repos.reduce((sum, repo) => sum + repo.forks_count, 0)
-
-    let currentStreak = 0
-    let longestStreak = 0
-    let tempStreak = 0
-
-    const sortedContributions = [...contributions].sort(
-      (a, b) => new Date(a.date).getTime() - new Date(b.date).getTime(),
-    )
-
-    const reversedContributions = [...sortedContributions].reverse()
-    for (const day of reversedContributions) {
-      if (day.count > 0) {
-        currentStreak++
-      } else {
-        break
-      }
-    }
-
-    for (const day of sortedContributions) {
-      if (day.count > 0) {
-        tempStreak++
-        longestStreak = Math.max(longestStreak, tempStreak)
-      } else {
-        tempStreak = 0
-      }
-    }
-
-    return {
-      totalCommits: threeMonthContributions,
-      totalForks,
-      currentStreak,
-      longestStreak,
-      totalContributions: threeMonthContributions,
-      threeMonthContributions,
-    }
-  }, [repos])
-
-  // Use shared GitHub data from context
   useEffect(() => {
     if (contributions.length > 0) {
-      const calculatedStreaks = calculateStreaks(contributions)
-      setStreaks(calculatedStreaks)
-      
-      const monthlyStatsData = calculateMonthlyStats(contributions)
-      setMonthlyStats(monthlyStatsData)
+      setStreaks(calculateStreaks(contributions))
+      setMonthlyStats(calculateMonthlyStats(contributions))
     }
   }, [contributions])
 
   const calculateStreaks = (contributions: ContributionDay[]): Streak[] => {
-    const sortedContributions = [...contributions].sort(
+    const sorted = [...contributions].sort(
       (a, b) => new Date(a.date).getTime() - new Date(b.date).getTime(),
     )
-
-    const streaks: Streak[] = []
-    let currentStreak: ContributionDay[] = []
+    const out: Streak[] = []
+    let current: ContributionDay[] = []
     let streakId = 0
 
-    for (const day of sortedContributions) {
-      if (day.count > 0) {
-        currentStreak.push(day)
-      } else {
-        if (currentStreak.length >= 3) {
-          const totalContributions = currentStreak.reduce((sum, d) => sum + d.count, 0)
-          streaks.push({
-            id: streakId++,
-            startDate: currentStreak[0].date,
-            endDate: currentStreak[currentStreak.length - 1].date,
-            length: currentStreak.length,
-            totalContributions,
-            averagePerDay: Math.round((totalContributions / currentStreak.length) * 10) / 10,
-            dates: currentStreak.map((d) => d.date),
-          })
-        }
-        currentStreak = []
+    const close = () => {
+      if (current.length >= 3) {
+        const total = current.reduce((s, d) => s + d.count, 0)
+        out.push({
+          id: streakId++,
+          startDate: current[0].date,
+          endDate: current[current.length - 1].date,
+          length: current.length,
+          totalContributions: total,
+          averagePerDay: Math.round((total / current.length) * 10) / 10,
+          dates: current.map((d) => d.date),
+        })
       }
+      current = []
     }
 
-    // Handle streak that goes to the end
-    if (currentStreak.length >= 3) {
-      const totalContributions = currentStreak.reduce((sum, d) => sum + d.count, 0)
-      streaks.push({
-        id: streakId++,
-        startDate: currentStreak[0].date,
-        endDate: currentStreak[currentStreak.length - 1].date,
-        length: currentStreak.length,
-        totalContributions,
-        averagePerDay: Math.round((totalContributions / currentStreak.length) * 10) / 10,
-        dates: currentStreak.map((d) => d.date),
-      })
+    for (const day of sorted) {
+      if (day.count > 0) current.push(day)
+      else close()
     }
+    close()
 
-    return streaks.sort((a, b) => b.length - a.length)
+    return out.sort((a, b) => b.length - a.length)
   }
 
   const calculateMonthlyStats = (contributions: ContributionDay[]): MonthlyStats[] => {
     const monthlyData = new Map<string, ContributionDay[]>()
     const today = new Date()
-    
-    // Calculate which months to include (3 full months + current)
-    const currentMonth = today.getMonth()
-    const currentYear = today.getFullYear()
     const monthsToInclude = new Set<string>()
-    
-    // Add current month
-    monthsToInclude.add(`${currentYear}-${String(currentMonth + 1).padStart(2, "0")}`)
-    
-    // Add 3 previous months
+
+    monthsToInclude.add(`${today.getFullYear()}-${String(today.getMonth() + 1).padStart(2, "0")}`)
     for (let i = 1; i <= 3; i++) {
-      const targetDate = new Date(currentYear, currentMonth - i, 1)
-      monthsToInclude.add(`${targetDate.getFullYear()}-${String(targetDate.getMonth() + 1).padStart(2, "0")}`)
+      const t = new Date(today.getFullYear(), today.getMonth() - i, 1)
+      monthsToInclude.add(`${t.getFullYear()}-${String(t.getMonth() + 1).padStart(2, "0")}`)
     }
 
     contributions.forEach((day) => {
       const date = new Date(day.date)
-      const monthKey = `${date.getFullYear()}-${String(date.getMonth() + 1).padStart(2, "0")}`
-
-      if (monthsToInclude.has(monthKey)) {
-        if (!monthlyData.has(monthKey)) {
-          monthlyData.set(monthKey, [])
-        }
-        monthlyData.get(monthKey)!.push(day)
+      const key = `${date.getFullYear()}-${String(date.getMonth() + 1).padStart(2, "0")}`
+      if (monthsToInclude.has(key)) {
+        if (!monthlyData.has(key)) monthlyData.set(key, [])
+        monthlyData.get(key)!.push(day)
       }
     })
 
     return Array.from(monthlyData.entries())
-      .map(([monthKey, days]) => {
-        const [year, month] = monthKey.split("-")
-        const date = new Date(Number.parseInt(year), Number.parseInt(month) - 1, 1)
+      .map(([key, days]) => {
+        const [year, month] = key.split("-")
+        const date = new Date(Number(year), Number(month) - 1, 1)
         const monthName = date.toLocaleDateString("en-US", { month: "short" })
+        const total = days.reduce((s, d) => s + d.count, 0)
+        const active = days.filter((d) => d.count > 0).length
+        const avg = Math.round((total / days.length) * 10) / 10
 
-        const totalContributions = days.reduce((sum, day) => sum + day.count, 0)
-        const activeDays = days.filter((day) => day.count > 0).length
-        const averagePerDay = Math.round((totalContributions / days.length) * 10) / 10
-
-        const isCurrentMonth = date.getFullYear() === today.getFullYear() && date.getMonth() === today.getMonth()
-
-        let longestStreak = 0
-        let currentStreak = 0
-        const sortedDays = days.sort((a, b) => new Date(a.date).getTime() - new Date(b.date).getTime())
-
-        for (const day of sortedDays) {
-          if (day.count > 0) {
-            currentStreak++
-            longestStreak = Math.max(longestStreak, currentStreak)
-          } else {
-            currentStreak = 0
-          }
+        let longest = 0, run = 0
+        for (const d of [...days].sort((a, b) => new Date(a.date).getTime() - new Date(b.date).getTime())) {
+          if (d.count > 0) { run++; longest = Math.max(longest, run) } else run = 0
         }
 
-        const weekdays = days
-          .filter((day) => {
-            const date = new Date(day.date)
-            const dayOfWeek = date.getDay()
-            return dayOfWeek >= 1 && dayOfWeek <= 5
-          })
-          .reduce((sum, day) => sum + day.count, 0)
+        const weekdays = days.filter((d) => {
+          const dow = new Date(d.date).getDay()
+          return dow >= 1 && dow <= 5
+        }).reduce((s, d) => s + d.count, 0)
 
-        const weekends = days
-          .filter((day) => {
-            const date = new Date(day.date)
-            const dayOfWeek = date.getDay()
-            return dayOfWeek === 0 || dayOfWeek === 6
-          })
-          .reduce((sum, day) => sum + day.count, 0)
+        const weekends = days.filter((d) => {
+          const dow = new Date(d.date).getDay()
+          return dow === 0 || dow === 6
+        }).reduce((s, d) => s + d.count, 0)
 
         return {
           month: monthName,
-          year: Number.parseInt(year),
-          contributions: totalContributions,
-          activeDays,
-          averagePerDay,
-          longestStreak,
+          year: Number(year),
+          contributions: total,
+          activeDays: active,
+          averagePerDay: avg,
+          longestStreak: longest,
           weekdayContributions: weekdays,
           weekendContributions: weekends,
-          isCurrentMonth,
+          isCurrentMonth: date.getFullYear() === today.getFullYear() && date.getMonth() === today.getMonth(),
         }
       })
       .sort((a, b) => {
-        const monthOrder = ["Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"]
-        const dateA = new Date(a.year, monthOrder.indexOf(a.month))
-        const dateB = new Date(b.year, monthOrder.indexOf(b.month))
-        return dateA.getTime() - dateB.getTime()
+        const order = ["Jan","Feb","Mar","Apr","May","Jun","Jul","Aug","Sep","Oct","Nov","Dec"]
+        return new Date(a.year, order.indexOf(a.month)).getTime()
+          - new Date(b.year, order.indexOf(b.month)).getTime()
       })
-  }
-
-  const getContributionColor = (level: number) => {
-    const colors = [
-      "#f3f4f6",
-      "#fed7aa",
-      "#fdba74",
-      "#fb923c",
-      "#ea580c"
-    ]
-    return colors[level] || colors[0]
   }
 
   const getDataSourceInfo = () => {
     switch (dataSource) {
-      case "api":
-        return { label: "Live", color: "text-green-500" }
-      case "cache-stale":
-        return { label: "Cached", color: "text-blue-500" }
-      case "mock":
-        return { label: "Demo", color: "text-yellow-500" }
-      default:
-        return { label: "Loading", color: "text-gray-500" }
+      case "api":         return { label: "live" }
+      case "cache-stale": return { label: "cached" }
+      case "mock":        return { label: "demo" }
+      default:            return { label: "loading" }
     }
   }
-
   const sourceInfo = getDataSourceInfo()
 
-  // Helper functions for calendar view
   const getCalendarDays = (year: number, month: number) => {
     const firstDay = new Date(year, month, 1)
-    const lastDay = new Date(year, month + 1, 0)
     const startDate = new Date(firstDay)
-    startDate.setDate(startDate.getDate() - firstDay.getDay()) // Start from Sunday
+    startDate.setDate(startDate.getDate() - firstDay.getDay())
 
     const days = []
-    const currentDate = new Date(startDate)
-
-    // Generate 6 weeks (42 days) to ensure full calendar grid
+    const cur = new Date(startDate)
     for (let i = 0; i < 42; i++) {
       days.push({
-        day: currentDate.getDate(),
-        dateString: currentDate.toISOString().split("T")[0],
-        isCurrentMonth: currentDate.getMonth() === month,
+        day: cur.getDate(),
+        dateString: cur.toISOString().split("T")[0],
+        isCurrentMonth: cur.getMonth() === month,
       })
-      currentDate.setDate(currentDate.getDate() + 1)
+      cur.setDate(cur.getDate() + 1)
     }
-
     return days
   }
 
   const getMonthData = useCallback((year: number, month: number) => {
     const monthContributions = contributions.filter((c) => {
-      const date = new Date(c.date)
-      return date.getFullYear() === year && date.getMonth() === month
+      const d = new Date(c.date)
+      return d.getFullYear() === year && d.getMonth() === month
     })
 
-    const totalContributions = monthContributions.reduce((sum, c) => sum + c.count, 0)
-    const activeDays = monthContributions.filter((c) => c.count > 0).length
-    const averagePerDay =
-      monthContributions.length > 0 ? Math.round((totalContributions / monthContributions.length) * 10) / 10 : 0
-    const bestDay = monthContributions.length > 0 ? Math.max(...monthContributions.map((c) => c.count)) : 0
+    const total = monthContributions.reduce((s, c) => s + c.count, 0)
+    const active = monthContributions.filter((c) => c.count > 0).length
+    const avg = monthContributions.length > 0 ? Math.round((total / monthContributions.length) * 10) / 10 : 0
+    const best = monthContributions.length > 0 ? Math.max(...monthContributions.map((c) => c.count)) : 0
 
-    // Calculate longest streak in this month
-    let longestStreak = 0
-    let currentStreak = 0
-    const sortedDays = monthContributions.sort((a, b) => new Date(a.date).getTime() - new Date(b.date).getTime())
-
-    for (const day of sortedDays) {
-      if (day.count > 0) {
-        currentStreak++
-        longestStreak = Math.max(longestStreak, currentStreak)
-      } else {
-        currentStreak = 0
-      }
+    let longest = 0, run = 0
+    for (const d of [...monthContributions].sort((a, b) => new Date(a.date).getTime() - new Date(b.date).getTime())) {
+      if (d.count > 0) { run++; longest = Math.max(longest, run) } else run = 0
     }
 
-    // Weekday vs weekend contributions
-    const weekdayContributions = monthContributions
-      .filter((c) => {
-        const dayOfWeek = new Date(c.date).getDay()
-        return dayOfWeek >= 1 && dayOfWeek <= 5 && c.count > 0
-      })
-      .reduce((sum, c) => sum + c.count, 0)
+    const weekdays = monthContributions.filter((c) => {
+      const dow = new Date(c.date).getDay()
+      return dow >= 1 && dow <= 5 && c.count > 0
+    }).reduce((s, c) => s + c.count, 0)
 
-    const weekendContributions = monthContributions
-      .filter((c) => {
-        const dayOfWeek = new Date(c.date).getDay()
-        return (dayOfWeek === 0 || dayOfWeek === 6) && c.count > 0
-      })
-      .reduce((sum, c) => sum + c.count, 0)
+    const weekends = monthContributions.filter((c) => {
+      const dow = new Date(c.date).getDay()
+      return (dow === 0 || dow === 6) && c.count > 0
+    }).reduce((s, c) => s + c.count, 0)
 
     const today = new Date()
     const isCurrentMonth = year === today.getFullYear() && month === today.getMonth()
-    const daysElapsed = isCurrentMonth ? today.getDate() : new Date(year, month + 1, 0).getDate()
     const totalDaysInMonth = new Date(year, month + 1, 0).getDate()
+    const daysElapsed = isCurrentMonth ? today.getDate() : totalDaysInMonth
 
     return {
-      totalContributions,
-      activeDays,
-      averagePerDay,
-      bestDay,
-      longestStreak,
-      weekdayContributions,
-      weekendContributions,
+      totalContributions: total,
+      activeDays: active,
+      averagePerDay: avg,
+      bestDay: best,
+      longestStreak: longest,
+      weekdayContributions: weekdays,
+      weekendContributions: weekends,
       isCurrentMonth,
       daysElapsed,
       totalDaysInMonth,
     }
   }, [contributions])
 
-  // Memoized values for calendar
-  const calendarDays = useMemo(() => {
-    return getCalendarDays(selectedCalendarYear, selectedCalendarMonth)
-  }, [selectedCalendarYear, selectedCalendarMonth])
+  const calendarDays = useMemo(
+    () => getCalendarDays(selectedCalendarYear, selectedCalendarMonth),
+    [selectedCalendarYear, selectedCalendarMonth],
+  )
+  const monthData = useMemo(
+    () => getMonthData(selectedCalendarYear, selectedCalendarMonth),
+    [selectedCalendarYear, selectedCalendarMonth, getMonthData],
+  )
 
-  const monthData = useMemo(() => {
-    return getMonthData(selectedCalendarYear, selectedCalendarMonth)
-  }, [selectedCalendarYear, selectedCalendarMonth, getMonthData])
+  const HeatCell = ({ level, size = 12 }: { level: number; size?: number }) => (
+    <div
+      className="rounded-sm transition-transform duration-150 hover:scale-125"
+      style={{
+        width: size,
+        height: size,
+        backgroundColor: heatmapCellColor(level),
+      }}
+    />
+  )
+
+  const Legend = () => (
+    <div
+      className="flex items-center justify-center gap-2 text-[10px] font-mono uppercase tracking-[0.18em]"
+      style={{ color: "var(--theme-muted-color)" }}
+    >
+      <span>less</span>
+      <div className="flex gap-0.5">
+        {[0, 1, 2, 3, 4].map((level) => (
+          <div
+            key={level}
+            className="h-3 w-3 rounded-sm"
+            style={{ backgroundColor: heatmapCellColor(level) }}
+          />
+        ))}
+      </div>
+      <span>more</span>
+    </div>
+  )
 
   return (
     <TooltipProvider>
-      <div className="space-y-6">
-        {/* Header */}
-        <div className="flex items-center justify-between">
-          <div className="flex items-center gap-4">
-            <Link href="/">
-              <Button variant="ghost" size="sm" className="gap-2">
-                <ArrowLeft className="w-4 h-4" />
-                Back
-              </Button>
-            </Link>
-            <h1 className="text-2xl font-bold flex items-center gap-2">
-              <Github className="w-6 h-6" />
-              GitHub Activity
-            </h1>
-          </div>
+      <div className="mx-auto max-w-5xl">
+        {/* Top nav back-link */}
+        <div className="mb-8">
+          <Link
+            href="/"
+            className="inline-flex items-center gap-2 text-[11px] font-mono uppercase tracking-[0.18em] transition-opacity hover:opacity-70"
+            style={{ color: "var(--theme-muted-color)" }}
+          >
+            <ArrowLeft className="h-3.5 w-3.5" />
+            arach.dev
+          </Link>
         </div>
 
-        {/* Tab Navigation */}
-        <div className="flex gap-2 border-b pb-2">
+        {/* Editorial header */}
+        <header className="mb-10">
+          <p className="flex items-center gap-2 text-[11px] font-mono uppercase tracking-[0.22em]">
+            <span style={{ color: "var(--theme-accent-color)" }}>&gt;</span>
+            <span style={{ color: "var(--theme-muted-color)" }}>git log --since=3.months</span>
+          </p>
+          <h1 className="mt-3 text-[2.5rem] font-medium leading-[1.05] tracking-[-0.025em] sm:text-[3.25rem]">
+            Activity
+            <span style={{ color: "var(--theme-accent-color)" }}>.</span>
+          </h1>
+          <div
+            className="mt-2 flex flex-wrap items-center gap-x-3 gap-y-1 font-mono text-xs uppercase tracking-[0.22em]"
+            style={{ color: "var(--theme-muted-color)" }}
+          >
+            <span>@{username}</span>
+            <span style={{ opacity: 0.4 }}>·</span>
+            <span className="inline-flex items-center gap-1.5">
+              <span
+                className="h-1.5 w-1.5 rounded-full"
+                style={{
+                  background:
+                    sourceInfo.label === "live"
+                      ? "var(--theme-accent-color)"
+                      : "var(--theme-muted-color)",
+                }}
+              />
+              {sourceInfo.label}
+            </span>
+          </div>
+        </header>
+
+        {/* Tabs */}
+        <div
+          className="mb-10 flex gap-6 border-b pb-1"
+          style={{ borderColor: "var(--theme-border-color)" }}
+        >
           {(["overview", "calendar", "streaks"] as const).map((view) => (
-            <Button
+            <TabLink
               key={view}
-              variant={selectedView === view ? "default" : "ghost"}
-              size="sm"
+              active={selectedView === view}
               onClick={() => setSelectedView(view)}
-              className="capitalize"
             >
               {view}
-            </Button>
+            </TabLink>
           ))}
         </div>
 
@@ -404,297 +401,226 @@ export default function GitHubActivityPage({ username = "arach" }: { username?: 
         <AnimatePresence mode="wait">
           {loading && (
             <motion.div
+              key="loading"
               initial={{ opacity: 0 }}
               animate={{ opacity: 1 }}
               exit={{ opacity: 0 }}
-              className="flex items-center justify-center py-12"
+              className="flex items-center justify-center py-16"
             >
-              <div className="text-center">
-                <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-blue-500 mx-auto mb-4" />
-                <p className="text-gray-600">Loading GitHub data...</p>
-              </div>
+              <p
+                className="font-mono text-xs uppercase tracking-[0.22em]"
+                style={{ color: "var(--theme-muted-color)" }}
+              >
+                loading…
+              </p>
             </motion.div>
           )}
 
           {error && !loading && (
             <motion.div
+              key="error"
               initial={{ opacity: 0 }}
               animate={{ opacity: 1 }}
               exit={{ opacity: 0 }}
-              className="text-center py-12"
+              className="rounded-2xl border px-6 py-8 text-center"
+              style={cardSurface}
             >
-              <AlertCircle className="w-12 h-12 text-red-500 mx-auto mb-4" />
-              <p className="text-red-600 mb-4">Failed to load GitHub data</p>
-                              <Button onClick={refetch} variant="outline">
-                Retry
-              </Button>
+              <AlertCircle className="mx-auto mb-3 h-6 w-6" style={{ color: "var(--theme-accent-color)" }} />
+              <p className="text-sm" style={{ color: "var(--theme-muted-color)" }}>
+                Failed to load GitHub data.
+              </p>
+              <button
+                onClick={refetch}
+                className="mt-4 font-mono text-[11px] uppercase tracking-[0.22em] transition-opacity hover:opacity-70"
+                style={{ color: "var(--theme-accent-color)" }}
+              >
+                &gt; retry
+              </button>
             </motion.div>
           )}
 
           {!loading && !error && selectedView === "overview" && (
             <motion.div
               key="overview"
-              initial={{ opacity: 0, y: 20 }}
+              initial={{ opacity: 0, y: 12 }}
               animate={{ opacity: 1, y: 0 }}
-              exit={{ opacity: 0, y: -20 }}
-              className="space-y-6"
+              exit={{ opacity: 0, y: -12 }}
+              className="space-y-10"
             >
-              {/* Stats and Activity Grid */}
               {stats && (
-                <div className="space-y-6">
-                  {/* Top Stats Cards - 4 columns */}
-                  <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
-                    <Card>
-                      <CardContent className="p-6">
-                        <div className="flex items-center justify-between">
-                          <div>
-                            <p className="text-sm font-medium text-gray-600">Total Contributions</p>
-                            <p className="text-3xl font-bold text-blue-600">{stats.threeMonthContributions}</p>
-                            <p className="text-xs text-gray-500">Last 3 months + current</p>
-                          </div>
-                          <Activity className="w-8 h-8 text-blue-500" />
-                        </div>
-                      </CardContent>
-                    </Card>
+                <>
+                  <section>
+                    <PromptHeading>at-a-glance</PromptHeading>
+                    <div className="grid grid-cols-2 gap-3 lg:grid-cols-4">
+                      <Stat
+                        label="contributions"
+                        value={stats.threeMonthContributions}
+                        sublabel="last 3 months"
+                        emphasis
+                      />
+                      <Stat
+                        label="current streak"
+                        value={stats.currentStreak}
+                        sublabel="days in a row"
+                      />
+                      <Stat
+                        label="longest streak"
+                        value={stats.longestStreak}
+                        sublabel="days · 3 mo"
+                      />
+                      <Stat
+                        label="active days"
+                        value={contributions.filter((d) => d.count > 0).length}
+                        sublabel={`of ${contributions.length}`}
+                      />
+                    </div>
+                  </section>
 
-                    <Card>
-                      <CardContent className="p-6">
-                        <div className="flex items-center justify-between">
-                          <div>
-                            <p className="text-sm font-medium text-gray-600">Current Streak</p>
-                            <p className="text-3xl font-bold text-orange-600 flex items-center gap-2">
-                              {stats.currentStreak > 0 && <span className="text-2xl">🔥</span>}
-                              {stats.currentStreak}
-                            </p>
-                            <p className="text-xs text-gray-500">Days in a row</p>
-                          </div>
-                          <Target className="w-8 h-8 text-orange-500" />
-                        </div>
-                      </CardContent>
-                    </Card>
-
-                    <Card>
-                      <CardContent className="p-6">
-                        <div className="flex items-center justify-between">
-                          <div>
-                            <p className="text-sm font-medium text-gray-600">Longest Streak</p>
-                            <p className="text-3xl font-bold text-green-600">{stats.longestStreak}</p>
-                            <p className="text-xs text-gray-500">Days (3 months)</p>
-                          </div>
-                          <TrendingUp className="w-8 h-8 text-green-500" />
-                        </div>
-                      </CardContent>
-                    </Card>
-
-                    <Card>
-                      <CardContent className="p-6">
-                        <div className="flex items-center justify-between">
-                          <div>
-                            <p className="text-sm font-medium text-gray-600">Active Days</p>
-                            <p className="text-3xl font-bold text-purple-600">
-                              {contributions.filter((d) => d.count > 0).length}
-                            </p>
-                            <p className="text-xs text-gray-500">Out of {contributions.length}</p>
-                          </div>
-                          <Calendar className="w-8 h-8 text-purple-500" />
-                        </div>
-                      </CardContent>
-                    </Card>
-                  </div>
-
-                  {/* Middle Row - Contribution Activity and Monthly Breakdown side by side */}
-                  <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
-                    {/* Contribution Activity */}
-                    <Card>
-                      <CardHeader className="pb-3">
-                        <CardTitle className="flex items-center gap-2 text-base">
-                          <Activity className="w-4 h-4" />
-                          Contribution Activity
-                        </CardTitle>
-                        <CardDescription className="text-xs">Last 3 months</CardDescription>
-                      </CardHeader>
-                      <CardContent className="pt-0">
-                        <div className="space-y-3">
-                          {/* Monthly calendar grids */}
-                          {(() => {
-                            const monthlyContributions = new Map<string, ContributionDay[]>()
-                            const monthOrder: string[] = []
-                            
-                            const today = new Date()
-                            const currentMonth = today.getMonth()
-                            const currentYear = today.getFullYear()
-                            const monthsToInclude = new Set<string>()
-                            
-                            for (let i = 1; i <= 3; i++) {
-                              const targetDate = new Date(currentYear, currentMonth - i, 1)
-                              monthsToInclude.add(`${targetDate.getFullYear()}-${targetDate.getMonth()}`)
+                  <section className="grid grid-cols-1 gap-6 lg:grid-cols-2">
+                    {/* Heatmap */}
+                    <div className="rounded-2xl border px-5 py-5 sm:px-6 sm:py-6" style={cardSurface}>
+                      <PromptHeading>cat activity.log</PromptHeading>
+                      {(() => {
+                        const today = new Date()
+                        const monthsToInclude = new Set<string>()
+                        for (let i = 1; i <= 3; i++) {
+                          const t = new Date(today.getFullYear(), today.getMonth() - i, 1)
+                          monthsToInclude.add(`${t.getFullYear()}-${t.getMonth()}`)
+                        }
+                        const monthBuckets = new Map<string, ContributionDay[]>()
+                        contributions.forEach((day) => {
+                          const date = new Date(day.date)
+                          const key = `${date.getFullYear()}-${date.getMonth()}`
+                          if (monthsToInclude.has(key)) {
+                            if (!monthBuckets.has(key)) monthBuckets.set(key, [])
+                            monthBuckets.get(key)!.push(day)
+                          }
+                        })
+                        const monthGrids = Array.from(monthBuckets.keys())
+                          .sort((a, b) => {
+                            const [ya, ma] = a.split("-").map(Number)
+                            const [yb, mb] = b.split("-").map(Number)
+                            return new Date(ya, ma).getTime() - new Date(yb, mb).getTime()
+                          })
+                          .map((key) => {
+                            const [year, month] = key.split("-").map(Number)
+                            const days = monthBuckets.get(key)!
+                            const monthName = new Date(year, month).toLocaleDateString("en-US", { month: "short" })
+                            const firstDay = new Date(year, month, 1)
+                            const lastDay = new Date(year, month + 1, 0)
+                            const padding = firstDay.getDay()
+                            const total = lastDay.getDate()
+                            const cells: (ContributionDay | null)[] = []
+                            for (let i = 0; i < padding; i++) cells.push(null)
+                            for (let day = 1; day <= total; day++) {
+                              const dateStr = `${year}-${String(month + 1).padStart(2, "0")}-${String(day).padStart(2, "0")}`
+                              const c = days.find((d) => d.date === dateStr)
+                              cells.push(c || { date: dateStr, count: 0, level: 0 })
                             }
-                            
-                            contributions.forEach(day => {
-                              const date = new Date(day.date)
-                              const monthKey = `${date.getFullYear()}-${date.getMonth()}`
-                              
-                              if (monthsToInclude.has(monthKey)) {
-                                if (!monthlyContributions.has(monthKey)) {
-                                  monthlyContributions.set(monthKey, [])
-                                  monthOrder.push(monthKey)
-                                }
-                                monthlyContributions.get(monthKey)!.push(day)
-                              }
-                            })
+                            return { monthName, year, cells, key }
+                          })
 
-                            monthOrder.sort((a, b) => {
-                              const [yearA, monthA] = a.split('-').map(Number)
-                              const [yearB, monthB] = b.split('-').map(Number)
-                              const dateA = new Date(yearA, monthA)
-                              const dateB = new Date(yearB, monthB)
-                              return dateA.getTime() - dateB.getTime()
-                            })
-
-                            const monthGrids = monthOrder.map(monthKey => {
-                              const [year, month] = monthKey.split('-').map(Number)
-                              const monthData = monthlyContributions.get(monthKey) || []
-                              const monthName = new Date(year, month).toLocaleDateString('en-US', { month: 'short' })
-                              
-                              const firstDay = new Date(year, month, 1)
-                              const lastDay = new Date(year, month + 1, 0)
-                              const startPadding = firstDay.getDay()
-                              const totalDays = lastDay.getDate()
-                              
-                              const calendarDays: (ContributionDay | null)[] = []
-                              
-                              for (let i = 0; i < startPadding; i++) {
-                                calendarDays.push(null)
-                              }
-                              
-                              for (let day = 1; day <= totalDays; day++) {
-                                const dateStr = `${year}-${String(month + 1).padStart(2, '0')}-${String(day).padStart(2, '0')}`
-                                const contribution = monthData.find(c => c.date === dateStr)
-                                const defaultContribution: ContributionDay = { date: dateStr, count: 0, level: 0 }
-                                calendarDays.push(contribution || defaultContribution)
-                              }
-                              
-                              return { monthName, year, calendarDays, monthKey }
-                            })
-
-                            return (
-                              <div className="grid grid-cols-3 gap-2">
-                                {monthGrids.map(({ monthName, year, calendarDays, monthKey }) => (
-                                  <div key={monthKey} className="bg-gray-50 rounded-lg p-2">
-                                    <h4 className="text-xs font-semibold text-gray-700 mb-1">
-                                      {monthName} {year}
-                                    </h4>
-                                    <div className="grid grid-cols-7 gap-0.5 text-xs text-gray-500 mb-1">
-                                      {['S', 'M', 'T', 'W', 'T', 'F', 'S'].map((day, i) => (
-                                        <div key={i} className="w-3 h-3 flex items-center justify-center text-[9px]">
-                                          {day}
-                                        </div>
-                                      ))}
-                                    </div>
-                                    <div className="grid grid-cols-7 gap-0.5">
-                                      {calendarDays.map((day, index) => (
-                                        <div key={index}>
-                                          {day ? (
-                                            <Tooltip delayDuration={0}>
-                                              <TooltipTrigger asChild>
-                                                <div
-                                                  className="w-3 h-3 rounded-sm cursor-pointer hover:scale-125 transition-transform"
-                                                  style={{ backgroundColor: getContributionColor(day.level) }}
-                                                />
-                                              </TooltipTrigger>
-                                              <TooltipContent>
-                                                <div>
-                                                  <p className="font-medium text-xs">
-                                                    {day.count === 0
-                                                      ? "No contributions"
-                                                      : `${day.count} contribution${day.count === 1 ? "" : "s"}`}
-                                                  </p>
-                                                  <p className="opacity-75 text-xs">
-                                                    {new Date(day.date).toLocaleDateString("en-US", {
-                                                      weekday: "short",
-                                                      month: "short",
-                                                      day: "numeric",
-                                                    })}
-                                                  </p>
-                                                </div>
-                                              </TooltipContent>
-                                            </Tooltip>
-                                          ) : (
-                                            <div className="w-3 h-3" />
-                                          )}
-                                        </div>
-                                      ))}
-                                    </div>
+                        return (
+                          <>
+                            <div className="grid grid-cols-3 gap-3">
+                              {monthGrids.map(({ monthName, year, cells, key }) => (
+                                <div key={key}>
+                                  <h4
+                                    className="mb-2 font-mono text-[10px] uppercase tracking-[0.22em]"
+                                    style={{ color: "var(--theme-muted-color)" }}
+                                  >
+                                    {monthName} {year}
+                                  </h4>
+                                  <div
+                                    className="mb-1 grid grid-cols-7 gap-0.5 font-mono text-[8px]"
+                                    style={{ color: "var(--theme-muted-color)", opacity: 0.5 }}
+                                  >
+                                    {["s", "m", "t", "w", "t", "f", "s"].map((d, i) => (
+                                      <div key={i} className="flex h-3 w-3 items-center justify-center">
+                                        {d}
+                                      </div>
+                                    ))}
                                   </div>
-                                ))}
-                              </div>
-                            )
-                          })()}
-
-                          {/* Legend */}
-                          <div className="flex items-center justify-center gap-2 text-xs text-gray-500">
-                            <span>Less</span>
-                            <div className="flex gap-0.5">
-                              {[0, 1, 2, 3, 4].map((level) => (
-                                <div
-                                  key={level}
-                                  className="w-3 h-3 rounded-sm"
-                                  style={{ backgroundColor: getContributionColor(level) }}
-                                />
-                              ))}
-                            </div>
-                            <span>More</span>
-                          </div>
-                        </div>
-                      </CardContent>
-                    </Card>
-
-                    {/* Monthly Breakdown */}
-                    {monthlyStats.length > 0 && (
-                      <Card>
-                        <CardHeader className="pb-3">
-                          <CardTitle className="flex items-center gap-2 text-base">
-                            <BarChart3 className="w-4 h-4" />
-                            Monthly Breakdown
-                          </CardTitle>
-                          <CardDescription className="text-xs">Contribution summary by month</CardDescription>
-                        </CardHeader>
-                        <CardContent className="pt-0">
-                          <div className="grid grid-cols-3 gap-2">
-                            {monthlyStats.filter(m => !m.isCurrentMonth).map((month) => (
-                              <div key={`${month.year}-${month.month}`} className="p-2 bg-gray-50 rounded-lg">
-                                <h3 className="font-medium text-xs mb-2">
-                                  {month.month} {month.year}
-                                </h3>
-                                <div className="space-y-1 text-[10px]">
-                                  <div className="flex justify-between">
-                                    <span className="text-gray-600">Contributions:</span>
-                                    <span className="font-medium">{month.contributions}</span>
-                                  </div>
-                                  <div className="flex justify-between">
-                                    <span className="text-gray-600">Active days:</span>
-                                    <span className="font-medium">{month.activeDays}</span>
-                                  </div>
-                                  <div className="flex justify-between">
-                                    <span className="text-gray-600">Avg/day:</span>
-                                    <span className="font-medium">{month.averagePerDay}</span>
+                                  <div className="grid grid-cols-7 gap-0.5">
+                                    {cells.map((day, i) =>
+                                      day ? (
+                                        <Tooltip key={i} delayDuration={0}>
+                                          <TooltipTrigger asChild>
+                                            <div className="h-3 w-3 cursor-pointer">
+                                              <HeatCell level={day.level} />
+                                            </div>
+                                          </TooltipTrigger>
+                                          <TooltipContent>
+                                            <div className="text-xs">
+                                              <p className="font-medium">
+                                                {day.count === 0
+                                                  ? "No contributions"
+                                                  : `${day.count} contribution${day.count === 1 ? "" : "s"}`}
+                                              </p>
+                                              <p className="opacity-75">
+                                                {new Date(day.date).toLocaleDateString("en-US", {
+                                                  weekday: "short",
+                                                  month: "short",
+                                                  day: "numeric",
+                                                })}
+                                              </p>
+                                            </div>
+                                          </TooltipContent>
+                                        </Tooltip>
+                                      ) : (
+                                        <div key={i} className="h-3 w-3" />
+                                      ),
+                                    )}
                                   </div>
                                 </div>
-                              </div>
-                            ))}
-                          </div>
-                        </CardContent>
-                      </Card>
-                    )}
-                  </div>
+                              ))}
+                            </div>
+                            <div className="mt-5">
+                              <Legend />
+                            </div>
+                          </>
+                        )
+                      })()}
+                    </div>
 
-                  {/* Current Month Insights - Full width at bottom */}
-                  <CurrentMonthInsights 
+                    {/* Monthly breakdown */}
+                    <div className="rounded-2xl border px-5 py-5 sm:px-6 sm:py-6" style={cardSurface}>
+                      <PromptHeading>by month</PromptHeading>
+                      <ul className="space-y-3 font-mono text-xs sm:text-sm">
+                        {monthlyStats.filter((m) => !m.isCurrentMonth).map((m) => (
+                          <li
+                            key={`${m.year}-${m.month}`}
+                            className="flex items-baseline justify-between border-b pb-2 last:border-b-0 last:pb-0"
+                            style={{ borderColor: "var(--theme-border-color)" }}
+                          >
+                            <span
+                              className="uppercase tracking-[0.18em]"
+                              style={{ color: "var(--theme-muted-color)" }}
+                            >
+                              {m.month} {String(m.year).slice(-2)}
+                            </span>
+                            <span className="flex items-baseline gap-3">
+                              <span style={{ color: "var(--theme-text-color)" }}>
+                                {m.contributions}
+                              </span>
+                              <span
+                                className="text-[10px] tabular-nums uppercase tracking-[0.18em]"
+                                style={{ color: "var(--theme-muted-color)", opacity: 0.7 }}
+                              >
+                                {m.activeDays}d · {m.averagePerDay}/d
+                              </span>
+                            </span>
+                          </li>
+                        ))}
+                      </ul>
+                    </div>
+                  </section>
+
+                  <CurrentMonthInsights
                     contributions={contributions}
                     monthlyStats={monthlyStats}
-                    getContributionColor={getContributionColor}
                   />
-                </div>
+                </>
               )}
             </motion.div>
           )}
@@ -702,377 +628,316 @@ export default function GitHubActivityPage({ username = "arach" }: { username?: 
           {!loading && !error && selectedView === "calendar" && (
             <motion.div
               key="calendar"
-              initial={{ opacity: 0, y: 20 }}
+              initial={{ opacity: 0, y: 12 }}
               animate={{ opacity: 1, y: 0 }}
-              exit={{ opacity: 0, y: -20 }}
+              exit={{ opacity: 0, y: -12 }}
               className="space-y-6"
             >
-              {/* Calendar Controls and Stats */}
-              <div className="grid grid-cols-1 lg:grid-cols-4 gap-6">
-                {/* Calendar Navigation */}
-                <Card className="lg:col-span-3">
-                  <CardHeader className="pb-3">
-                    <div className="flex items-center justify-between">
-                      <CardTitle className="flex items-center gap-2">
-                        <Calendar className="w-5 h-5" />
-                        Contribution Calendar
-                      </CardTitle>
-                      <div className="flex items-center gap-2">
-                        <Button
-                          variant="outline"
-                          size="sm"
-                          onClick={() => {
-                            const today = new Date()
-                            setSelectedCalendarMonth(today.getMonth())
-                            setSelectedCalendarYear(today.getFullYear())
-                          }}
-                        >
-                          Today
-                        </Button>
-                      </div>
-                    </div>
-                    <CardDescription>Interactive monthly view of your GitHub contributions</CardDescription>
-                  </CardHeader>
-                  <CardContent>
-                    {/* Month/Year Selector */}
-                    <div className="flex items-center justify-between mb-6">
-                      <div className="flex items-center gap-4">
-                        <Button
-                          variant="outline"
-                          size="sm"
-                          onClick={() => {
-                            if (selectedCalendarMonth === 0) {
-                              setSelectedCalendarMonth(11)
-                              setSelectedCalendarYear(selectedCalendarYear - 1)
-                            } else {
-                              setSelectedCalendarMonth(selectedCalendarMonth - 1)
-                            }
-                          }}
-                        >
-                          ←
-                        </Button>
-                        <h3 className="text-xl font-semibold min-w-[200px] text-center">
-                          {new Date(selectedCalendarYear, selectedCalendarMonth).toLocaleDateString("en-US", {
-                            month: "long",
-                            year: "numeric",
-                          })}
-                        </h3>
-                        <Button
-                          variant="outline"
-                          size="sm"
-                          onClick={() => {
-                            if (selectedCalendarMonth === 11) {
-                              setSelectedCalendarMonth(0)
-                              setSelectedCalendarYear(selectedCalendarYear + 1)
-                            } else {
-                              setSelectedCalendarMonth(selectedCalendarMonth + 1)
-                            }
-                          }}
-                        >
-                          →
-                        </Button>
-                      </div>
-                      <div className="flex items-center gap-2 text-xs text-gray-500">
-                        <span>Less</span>
-                        <div className="flex gap-1">
-                          {[0, 1, 2, 3, 4].map((level) => (
-                            <div
-                              key={level}
-                              className="w-5 h-5 rounded-sm"
-                              style={{ backgroundColor: getContributionColor(level) }}
-                            />
-                          ))}
-                        </div>
-                        <span>More</span>
-                      </div>
-                    </div>
+              <div className="grid grid-cols-1 gap-6 lg:grid-cols-3">
+                <div
+                  className="rounded-2xl border px-5 py-5 sm:px-6 sm:py-6 lg:col-span-2"
+                  style={cardSurface}
+                >
+                  <PromptHeading>cal {new Date(selectedCalendarYear, selectedCalendarMonth).toLocaleDateString("en-US", { month: "long", year: "numeric" }).toLowerCase()}</PromptHeading>
 
-                    {/* Calendar Grid */}
-                    <div className="space-y-2">
-                      {/* Day headers */}
-                      <div className="grid grid-cols-7 gap-2 mb-2">
-                        {["Sun", "Mon", "Tue", "Wed", "Thu", "Fri", "Sat"].map((day) => (
-                          <div key={day} className="text-center text-xs font-medium text-gray-500 py-2">
-                            {day}
-                          </div>
-                        ))}
-                      </div>
-
-                      {/* Calendar days */}
-                      <div className="grid grid-cols-7 gap-2">
-                        {calendarDays.map((day, index) => {
-                          const dayData = contributions.find((c) => c.date === day.dateString)
-                          const isToday = day.dateString === new Date().toISOString().split("T")[0]
-                          const isCurrentMonth = day.isCurrentMonth
-                          const isInStreak = streaks.some((streak) => streak.dates.includes(day.dateString))
-
-                          return (
-                            <Tooltip delayDuration={0} key={index}>
-                              <TooltipTrigger asChild>
-                                <div
-                                  className={`
-                                    relative aspect-square rounded-lg cursor-pointer transition-all duration-200 hover:scale-110 hover:shadow-md
-                                    ${isCurrentMonth ? "" : "opacity-30"}
-                                    ${isToday ? "ring-2 ring-blue-500 ring-offset-1" : ""}
-                                  `}
-                                  style={{
-                                    backgroundColor: dayData
-                                      ? getContributionColor(dayData.level)
-                                      : isCurrentMonth
-                                        ? "#f3f4f6"
-                                        : "#f9fafb",
-                                  }}
-                                  onClick={() => dayData && setSelectedDay(dayData)}
-                                >
-                                  {/* Day number */}
-                                  <div
-                                    className={`
-                                      absolute inset-0 flex items-center justify-center text-xs font-medium
-                                      ${
-                                        dayData && dayData.level > 2
-                                          ? "text-white"
-                                          : isCurrentMonth
-                                            ? "text-gray-900"
-                                            : "text-gray-400"
-                                      }
-                                    `}
-                                  >
-                                    {day.day}
-                                  </div>
-
-                                  {/* Streak indicator */}
-                                  {isInStreak && <div className="absolute -top-1 -right-1 text-xs">🔥</div>}
-
-                                  {/* Today indicator */}
-                                  {isToday && (
-                                    <div className="absolute -bottom-1 left-1/2 transform -translate-x-1/2 w-1 h-1 bg-blue-500 rounded-full" />
-                                  )}
-                                </div>
-                              </TooltipTrigger>
-                              <TooltipContent>
-                                <div className="text-xs">
-                                  <p className="font-medium">
-                                    {new Date(day.dateString).toLocaleDateString("en-US", {
-                                      weekday: "long",
-                                      month: "long",
-                                      day: "numeric",
-                                      year: "numeric",
-                                    })}
-                                  </p>
-                                  <p>
-                                    {dayData?.count === 0 || !dayData
-                                      ? "No contributions"
-                                      : `${dayData.count} contribution${dayData.count === 1 ? "" : "s"}`}
-                                  </p>
-                                  {isInStreak && <p className="text-orange-400">Part of streak</p>}
-                                  {isToday && <p className="text-blue-400">Today</p>}
-                                </div>
-                              </TooltipContent>
-                            </Tooltip>
-                          )
+                  <div className="mb-6 flex items-center justify-between">
+                    <div className="flex items-center gap-3">
+                      <button
+                        onClick={() => {
+                          if (selectedCalendarMonth === 0) {
+                            setSelectedCalendarMonth(11)
+                            setSelectedCalendarYear(selectedCalendarYear - 1)
+                          } else setSelectedCalendarMonth(selectedCalendarMonth - 1)
+                        }}
+                        className="font-mono text-base transition-opacity hover:opacity-60"
+                        style={{ color: "var(--theme-muted-color)" }}
+                        aria-label="Previous month"
+                      >
+                        ←
+                      </button>
+                      <h3 className="min-w-[180px] text-center text-lg font-medium tracking-tight">
+                        {new Date(selectedCalendarYear, selectedCalendarMonth).toLocaleDateString("en-US", {
+                          month: "long",
+                          year: "numeric",
                         })}
-                      </div>
+                      </h3>
+                      <button
+                        onClick={() => {
+                          if (selectedCalendarMonth === 11) {
+                            setSelectedCalendarMonth(0)
+                            setSelectedCalendarYear(selectedCalendarYear + 1)
+                          } else setSelectedCalendarMonth(selectedCalendarMonth + 1)
+                        }}
+                        className="font-mono text-base transition-opacity hover:opacity-60"
+                        style={{ color: "var(--theme-muted-color)" }}
+                        aria-label="Next month"
+                      >
+                        →
+                      </button>
                     </div>
-                  </CardContent>
-                </Card>
+                    <button
+                      onClick={() => {
+                        const t = new Date()
+                        setSelectedCalendarMonth(t.getMonth())
+                        setSelectedCalendarYear(t.getFullYear())
+                      }}
+                      className="font-mono text-[11px] uppercase tracking-[0.22em] transition-opacity hover:opacity-70"
+                      style={{ color: "var(--theme-muted-color)" }}
+                    >
+                      today
+                    </button>
+                  </div>
 
-                {/* Monthly Stats Sidebar */}
-                <Card>
-                  <CardHeader className="pb-3">
-                    <CardTitle className="text-lg">Monthly Stats</CardTitle>
-                    <CardDescription>
-                      {new Date(selectedCalendarYear, selectedCalendarMonth).toLocaleDateString("en-US", {
-                        month: "long",
-                        year: "numeric",
-                      })}
-                    </CardDescription>
-                  </CardHeader>
-                  <CardContent>
-                    <div className="space-y-4">
-                      <div className="text-center p-4 bg-blue-50 rounded-lg">
-                        <div className="text-2xl font-bold text-blue-600">{monthData.totalContributions}</div>
-                        <div className="text-sm text-blue-700">Total Contributions</div>
-                      </div>
+                  <div className="mb-2 grid grid-cols-7 gap-2 font-mono text-[10px] uppercase tracking-[0.22em]" style={{ color: "var(--theme-muted-color)" }}>
+                    {["sun", "mon", "tue", "wed", "thu", "fri", "sat"].map((d) => (
+                      <div key={d} className="py-1 text-center">{d}</div>
+                    ))}
+                  </div>
 
-                      <div className="space-y-3">
-                        <div className="flex justify-between items-center">
-                          <span className="text-sm text-gray-600">Active days</span>
-                          <span className="font-medium">{monthData.activeDays}</span>
-                        </div>
-                        <div className="flex justify-between items-center">
-                          <span className="text-sm text-gray-600">Average per day</span>
-                          <span className="font-medium">{monthData.averagePerDay}</span>
-                        </div>
-                        <div className="flex justify-between items-center">
-                          <span className="text-sm text-gray-600">Best day</span>
-                          <span className="font-medium">{monthData.bestDay}</span>
-                        </div>
-                        <div className="flex justify-between items-center">
-                          <span className="text-sm text-gray-600">Longest streak</span>
-                          <span className="font-medium">{monthData.longestStreak} days</span>
-                        </div>
-                      </div>
-
-                      <div className="pt-3 border-t">
-                        <div className="text-sm text-gray-600 mb-2">Activity distribution</div>
-                        <div className="space-y-2">
-                          <div className="flex justify-between text-xs">
-                            <span>Weekdays</span>
-                            <span>{monthData.weekdayContributions}</span>
-                          </div>
-                          <div className="flex justify-between text-xs">
-                            <span>Weekends</span>
-                            <span>{monthData.weekendContributions}</span>
-                          </div>
-                        </div>
-                      </div>
-
-                      {monthData.isCurrentMonth && (
-                        <div className="pt-3 border-t">
-                          <div className="text-xs text-gray-500 text-center">
-                            {monthData.daysElapsed} of {monthData.totalDaysInMonth} days elapsed
-                          </div>
-                          <div className="w-full bg-gray-200 rounded-full h-2 mt-2">
-                            <div
-                              className="bg-blue-500 h-2 rounded-full transition-all duration-300"
+                  <div className="grid grid-cols-7 gap-2">
+                    {calendarDays.map((day, i) => {
+                      const dayData = contributions.find((c) => c.date === day.dateString)
+                      const isToday = day.dateString === new Date().toISOString().split("T")[0]
+                      const isInStreak = streaks.some((s) => s.dates.includes(day.dateString))
+                      const level = dayData?.level ?? 0
+                      return (
+                        <Tooltip key={i} delayDuration={0}>
+                          <TooltipTrigger asChild>
+                            <button
+                              type="button"
+                              onClick={() => dayData && setSelectedDay(dayData)}
+                              className="relative aspect-square rounded-lg transition-all duration-200 hover:-translate-y-0.5"
                               style={{
-                                width: `${(monthData.daysElapsed / monthData.totalDaysInMonth) * 100}%`,
+                                background: heatmapCellColor(level),
+                                opacity: day.isCurrentMonth ? 1 : 0.25,
+                                outline: isToday ? `1px solid var(--theme-accent-color)` : "none",
+                                outlineOffset: 2,
                               }}
-                            />
-                          </div>
-                        </div>
-                      )}
+                            >
+                              <span
+                                className="absolute inset-0 flex items-center justify-center font-mono text-xs tabular-nums"
+                                style={{
+                                  color: level > 2 ? "var(--theme-bg-color)" : "var(--theme-text-color)",
+                                }}
+                              >
+                                {day.day}
+                              </span>
+                              {isInStreak && (
+                                <span
+                                  className="absolute right-1 top-1 h-1 w-1 rounded-full"
+                                  style={{ background: "var(--theme-accent-color)" }}
+                                />
+                              )}
+                            </button>
+                          </TooltipTrigger>
+                          <TooltipContent>
+                            <div className="text-xs">
+                              <p className="font-medium">
+                                {new Date(day.dateString).toLocaleDateString("en-US", {
+                                  weekday: "long", month: "long", day: "numeric", year: "numeric",
+                                })}
+                              </p>
+                              <p>
+                                {dayData?.count === 0 || !dayData
+                                  ? "No contributions"
+                                  : `${dayData.count} contribution${dayData.count === 1 ? "" : "s"}`}
+                              </p>
+                            </div>
+                          </TooltipContent>
+                        </Tooltip>
+                      )
+                    })}
+                  </div>
+                </div>
+
+                {/* Sidebar stats */}
+                <div className="rounded-2xl border px-5 py-5 sm:px-6 sm:py-6" style={cardSurface}>
+                  <PromptHeading>stats</PromptHeading>
+                  <p
+                    className="mt-1 font-mono text-3xl font-light tabular-nums"
+                    style={{ color: "var(--theme-accent-color)" }}
+                  >
+                    {monthData.totalContributions}
+                  </p>
+                  <p
+                    className="mt-1 font-mono text-[10px] uppercase tracking-[0.22em]"
+                    style={{ color: "var(--theme-muted-color)" }}
+                  >
+                    contributions
+                  </p>
+
+                  <ul className="mt-6 space-y-3 font-mono text-xs">
+                    {[
+                      ["active days", monthData.activeDays],
+                      ["avg per day", monthData.averagePerDay],
+                      ["best day", monthData.bestDay],
+                      ["longest streak", `${monthData.longestStreak}d`],
+                    ].map(([k, v]) => (
+                      <li
+                        key={k as string}
+                        className="flex items-baseline justify-between border-b pb-2 last:border-b-0 last:pb-0"
+                        style={{ borderColor: "var(--theme-border-color)" }}
+                      >
+                        <span
+                          className="uppercase tracking-[0.18em]"
+                          style={{ color: "var(--theme-muted-color)" }}
+                        >
+                          {k}
+                        </span>
+                        <span style={{ color: "var(--theme-text-color)" }}>{v}</span>
+                      </li>
+                    ))}
+                  </ul>
+
+                  <div
+                    className="mt-6 border-t pt-4 font-mono text-xs"
+                    style={{ borderColor: "var(--theme-border-color)" }}
+                  >
+                    <p className="uppercase tracking-[0.18em]" style={{ color: "var(--theme-muted-color)" }}>
+                      distribution
+                    </p>
+                    <ul className="mt-3 space-y-2">
+                      <li className="flex justify-between">
+                        <span style={{ color: "var(--theme-muted-color)" }}>weekdays</span>
+                        <span>{monthData.weekdayContributions}</span>
+                      </li>
+                      <li className="flex justify-between">
+                        <span style={{ color: "var(--theme-muted-color)" }}>weekends</span>
+                        <span>{monthData.weekendContributions}</span>
+                      </li>
+                    </ul>
+                  </div>
+
+                  {monthData.isCurrentMonth && (
+                    <div
+                      className="mt-6 border-t pt-4 font-mono text-[11px]"
+                      style={{ borderColor: "var(--theme-border-color)" }}
+                    >
+                      <p
+                        className="text-center uppercase tracking-[0.22em]"
+                        style={{ color: "var(--theme-muted-color)" }}
+                      >
+                        {monthData.daysElapsed} of {monthData.totalDaysInMonth}
+                      </p>
+                      <div
+                        className="mt-2 h-px w-full overflow-hidden rounded-full"
+                        style={{ background: "var(--theme-border-color)" }}
+                      >
+                        <div
+                          className="h-px transition-all duration-300"
+                          style={{
+                            width: `${(monthData.daysElapsed / monthData.totalDaysInMonth) * 100}%`,
+                            background: "var(--theme-accent-color)",
+                          }}
+                        />
+                      </div>
                     </div>
-                  </CardContent>
-                </Card>
+                  )}
+                </div>
               </div>
 
-              {/* Selected Day Details */}
               <AnimatePresence>
                 {selectedDay && (
                   <motion.div
-                    initial={{ opacity: 0, y: 20 }}
+                    initial={{ opacity: 0, y: 12 }}
                     animate={{ opacity: 1, y: 0 }}
-                    exit={{ opacity: 0, y: -20 }}
+                    exit={{ opacity: 0, y: -12 }}
+                    className="rounded-2xl border px-5 py-5 sm:px-6 sm:py-6"
+                    style={cardSurface}
                   >
-                    <Card>
-                      <CardHeader className="pb-3">
-                        <div className="flex items-center justify-between">
-                          <CardTitle className="flex items-center gap-2">
-                            <Activity className="w-5 h-5" />
-                            Day Details
-                          </CardTitle>
-                          <Button variant="ghost" size="sm" onClick={() => setSelectedDay(null)}>
-                            ×
-                          </Button>
+                    <div className="mb-4 flex items-center justify-between">
+                      <PromptHeading>day --details</PromptHeading>
+                      <button
+                        onClick={() => setSelectedDay(null)}
+                        className="font-mono text-base transition-opacity hover:opacity-60"
+                        style={{ color: "var(--theme-muted-color)" }}
+                        aria-label="Close day details"
+                      >
+                        ×
+                      </button>
+                    </div>
+                    <div className="grid grid-cols-1 gap-6 md:grid-cols-3">
+                      <div>
+                        <h3 className="text-lg font-medium tracking-tight">
+                          {new Date(selectedDay.date).toLocaleDateString("en-US", {
+                            weekday: "long", month: "long", day: "numeric", year: "numeric",
+                          })}
+                        </h3>
+                        <p className="mt-1 text-sm" style={{ color: "var(--theme-muted-color)" }}>
+                          {selectedDay.count === 0
+                            ? "No contributions"
+                            : `${selectedDay.count} contribution${selectedDay.count === 1 ? "" : "s"}`}
+                        </p>
+                        <div className="mt-4 flex items-center gap-2 font-mono text-xs">
+                          <div
+                            className="h-3 w-3 rounded-sm"
+                            style={{ backgroundColor: heatmapCellColor(selectedDay.level) }}
+                          />
+                          <span
+                            className="uppercase tracking-[0.18em]"
+                            style={{ color: "var(--theme-muted-color)" }}
+                          >
+                            {["none", "low", "medium", "high", "very high"][selectedDay.level]}
+                          </span>
                         </div>
-                      </CardHeader>
-                      <CardContent>
-                        <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-                          <div className="space-y-4">
-                            <div>
-                              <h3 className="font-medium text-lg">
-                                {new Date(selectedDay.date).toLocaleDateString("en-US", {
-                                  weekday: "long",
-                                  month: "long",
-                                  day: "numeric",
-                                  year: "numeric",
-                                })}
-                              </h3>
-                              <p className="text-sm text-gray-600">
-                                {selectedDay.count === 0
-                                  ? "No contributions"
-                                  : `${selectedDay.count} contribution${selectedDay.count === 1 ? "" : "s"}`}
-                              </p>
-                            </div>
+                      </div>
 
-                            <div className="space-y-2">
-                              <div className="flex items-center gap-2">
-                                <div
-                                  className="w-4 h-4 rounded-sm"
-                                  style={{ backgroundColor: getContributionColor(selectedDay.level) }}
-                                />
-                                <span className="text-sm">
-                                  Activity level: {["None", "Low", "Medium", "High", "Very High"][selectedDay.level]}
-                                </span>
-                              </div>
-
-                              {streaks.some((streak) => streak.dates.includes(selectedDay.date)) && (
-                                <div className="flex items-center gap-2">
-                                  <span className="text-sm">🔥</span>
-                                  <span className="text-sm text-orange-600">Part of a contribution streak</span>
-                                </div>
-                              )}
-
-                              <div className="text-xs text-gray-500">
-                                Day {new Date(selectedDay.date).getDate()} of{" "}
-                                {new Date(selectedDay.date).toLocaleDateString("en-US", { month: "long" })}
-                              </div>
-                            </div>
-                          </div>
-
-                          <div className="space-y-4">
-                            <div>
-                              <h4 className="font-medium mb-2">Context</h4>
-                              <div className="space-y-1 text-sm text-gray-600">
+                      <div className="font-mono text-xs leading-7" style={{ color: "var(--theme-muted-color)" }}>
+                        <p>
+                          <span className="uppercase tracking-[0.18em]">day</span>{" "}
+                          {new Date(selectedDay.date).toLocaleDateString("en-US", { weekday: "long" })}
+                        </p>
+                        {(() => {
+                          const idx = contributions.findIndex((c) => c.date === selectedDay.date)
+                          const prev = idx > 0 ? contributions[idx - 1] : null
+                          const next = idx < contributions.length - 1 ? contributions[idx + 1] : null
+                          return (
+                            <>
+                              {prev && (
                                 <p>
-                                  Day of week:{" "}
-                                  {new Date(selectedDay.date).toLocaleDateString("en-US", { weekday: "long" })}
+                                  <span className="uppercase tracking-[0.18em]">prev</span> {prev.count}
                                 </p>
-                                <p>Week of year: {Math.ceil(new Date(selectedDay.date).getDate() / 7)}</p>
-                                {(() => {
-                                  const dayIndex = contributions.findIndex((c) => c.date === selectedDay.date)
-                                  const prevDay = dayIndex > 0 ? contributions[dayIndex - 1] : null
-                                  const nextDay =
-                                    dayIndex < contributions.length - 1 ? contributions[dayIndex + 1] : null
-                                  return (
-                                    <>
-                                      {prevDay && <p>Previous day: {prevDay.count} contributions</p>}
-                                      {nextDay && <p>Next day: {nextDay.count} contributions</p>}
-                                    </>
-                                  )
-                                })()}
-                              </div>
-                            </div>
-                          </div>
+                              )}
+                              {next && (
+                                <p>
+                                  <span className="uppercase tracking-[0.18em]">next</span> {next.count}
+                                </p>
+                              )}
+                            </>
+                          )
+                        })()}
+                      </div>
 
-                          <div className="space-y-4">
-                            <div>
-                              <h4 className="font-medium mb-2">Quick Actions</h4>
-                              <div className="space-y-2">
-                                <Button
-                                  variant="outline"
-                                  size="sm"
-                                  className="w-full justify-start bg-transparent"
-                                  onClick={() => {
-                                    const date = new Date(selectedDay.date)
-                                    setSelectedCalendarMonth(date.getMonth())
-                                    setSelectedCalendarYear(date.getFullYear())
-                                  }}
-                                >
-                                  <Calendar className="w-4 h-4 mr-2" />
-                                  View Month
-                                </Button>
-                                <Button
-                                  variant="outline"
-                                  size="sm"
-                                  className="w-full justify-start bg-transparent"
-                                  onClick={() => {
-                                    window.open(
-                                      `https://github.com/${username}?tab=overview&from=${selectedDay.date}&to=${selectedDay.date}`,
-                                      "_blank",
-                                    )
-                                  }}
-                                >
-                                  <ExternalLink className="w-4 h-4 mr-2" />
-                                  View on GitHub
-                                </Button>
-                              </div>
-                            </div>
-                          </div>
-                        </div>
-                      </CardContent>
-                    </Card>
+                      <div className="flex flex-col gap-2">
+                        <button
+                          onClick={() => {
+                            const date = new Date(selectedDay.date)
+                            setSelectedCalendarMonth(date.getMonth())
+                            setSelectedCalendarYear(date.getFullYear())
+                          }}
+                          className="rounded-lg border px-3 py-2 text-left font-mono text-[11px] uppercase tracking-[0.22em] transition-opacity hover:opacity-70"
+                          style={{
+                            borderColor: "var(--theme-border-color)",
+                            color: "var(--theme-muted-color)",
+                          }}
+                        >
+                          &gt; view month
+                        </button>
+                        <a
+                          href={`https://github.com/${username}?tab=overview&from=${selectedDay.date}&to=${selectedDay.date}`}
+                          target="_blank"
+                          rel="noopener noreferrer"
+                          className="inline-flex items-center justify-between rounded-lg border px-3 py-2 font-mono text-[11px] uppercase tracking-[0.22em] transition-opacity hover:opacity-70"
+                          style={{
+                            borderColor: "var(--theme-border-color)",
+                            color: "var(--theme-muted-color)",
+                          }}
+                        >
+                          <span>&gt; open github</span>
+                          <ExternalLink className="h-3 w-3" />
+                        </a>
+                      </div>
+                    </div>
                   </motion.div>
                 )}
               </AnimatePresence>
@@ -1082,336 +947,214 @@ export default function GitHubActivityPage({ username = "arach" }: { username?: 
           {!loading && !error && selectedView === "streaks" && (
             <motion.div
               key="streaks"
-              initial={{ opacity: 0, y: 20 }}
+              initial={{ opacity: 0, y: 12 }}
               animate={{ opacity: 1, y: 0 }}
-              exit={{ opacity: 0, y: -20 }}
-              className="space-y-6"
+              exit={{ opacity: 0, y: -12 }}
+              className="space-y-10"
             >
-              {/* Streak Overview Cards */}
-              <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-                <Card>
-                  <CardContent className="p-6">
-                    <div className="flex items-center justify-between">
-                      <div>
-                        <p className="text-sm font-medium text-gray-600">Current Streak</p>
-                        <p className="text-3xl font-bold text-orange-600 flex items-center gap-2">
-                          {stats && stats.currentStreak > 0 && <span className="text-2xl">🔥</span>}
-                          {stats?.currentStreak || 0}
-                        </p>
-                        <p className="text-xs text-gray-500">Days in a row</p>
-                      </div>
-                      <Target className="w-8 h-8 text-orange-500" />
-                    </div>
-                  </CardContent>
-                </Card>
+              <section>
+                <PromptHeading>streaks</PromptHeading>
+                <div className="grid grid-cols-1 gap-3 md:grid-cols-3">
+                  <Stat label="current" value={stats?.currentStreak ?? 0} sublabel="days in a row" emphasis />
+                  <Stat label="longest" value={stats?.longestStreak ?? 0} sublabel="days · 3 mo" />
+                  <Stat label="total streaks" value={streaks.length} sublabel="3+ days" />
+                </div>
+              </section>
 
-                <Card>
-                  <CardContent className="p-6">
-                    <div className="flex items-center justify-between">
-                      <div>
-                        <p className="text-sm font-medium text-gray-600">Longest Streak</p>
-                        <p className="text-3xl font-bold text-green-600">{stats?.longestStreak || 0}</p>
-                        <p className="text-xs text-gray-500">Days (3 months)</p>
-                      </div>
-                      <TrendingUp className="w-8 h-8 text-green-500" />
-                    </div>
-                  </CardContent>
-                </Card>
-
-                <Card>
-                  <CardContent className="p-6">
-                    <div className="flex items-center justify-between">
-                      <div>
-                        <p className="text-sm font-medium text-gray-600">Total Streaks</p>
-                        <p className="text-3xl font-bold text-blue-600">{streaks.length}</p>
-                        <p className="text-xs text-gray-500">3+ day streaks</p>
-                      </div>
-                      <Activity className="w-8 h-8 text-blue-500" />
-                    </div>
-                  </CardContent>
-                </Card>
-              </div>
-
-              {/* Streak Timeline */}
-              <Card>
-                <CardHeader>
-                  <CardTitle className="flex items-center gap-2">
-                    <Target className="w-5 h-5" />
-                    Streak Timeline
-                  </CardTitle>
-                  <CardDescription>
-                    Visual representation of your contribution streaks over the last 3 months
-                  </CardDescription>
-                </CardHeader>
-                <CardContent>
-                  <div className="space-y-4">
-                    {/* Timeline visualization */}
-                    <div className="relative">
-                      <div className="flex gap-0.5 overflow-x-auto pb-2">
-                        {contributions.map((day, index) => {
-                          const isInStreak = streaks.some((streak) => streak.dates.includes(day.date))
-                          const isStreakStart = streaks.some((streak) => streak.startDate === day.date)
-                          const isStreakEnd = streaks.some((streak) => streak.endDate === day.date)
-
-                          return (
-                            <Tooltip delayDuration={0} key={day.date}>
-                              <TooltipTrigger asChild>
-                                <div className="relative">
-                                  <div
-                                    className={`w-3 h-8 cursor-pointer transition-all duration-200 hover:scale-110 ${
-                                      day.count > 0
-                                        ? isInStreak
-                                          ? "bg-orange-500 hover:bg-orange-600"
-                                          : "bg-gray-300 hover:bg-gray-400"
-                                        : "bg-gray-100"
-                                    } ${isStreakStart ? "rounded-l-md" : isStreakEnd ? "rounded-r-md" : ""}`}
-                                  />
-                                  {isStreakStart && <div className="absolute -top-2 left-0 text-xs">🔥</div>}
-                                </div>
-                              </TooltipTrigger>
-                              <TooltipContent>
-                                <div className="text-xs">
-                                  <p className="font-medium">
-                                    {new Date(day.date).toLocaleDateString("en-US", {
-                                      weekday: "short",
-                                      month: "short",
-                                      day: "numeric",
-                                    })}
-                                  </p>
-                                  <p>
-                                    {day.count === 0
-                                      ? "No contributions"
-                                      : `${day.count} contribution${day.count === 1 ? "" : "s"}`}
-                                  </p>
-                                  {isInStreak && <p className="text-orange-400">Part of streak</p>}
-                                </div>
-                              </TooltipContent>
-                            </Tooltip>
-                          )
-                        })}
-                      </div>
-
-                      {/* Legend */}
-                      <div className="flex items-center gap-4 text-xs text-gray-500 mt-2">
-                        <div className="flex items-center gap-1">
-                          <div className="w-3 h-3 bg-orange-500 rounded-sm"></div>
-                          <span>Streak days</span>
-                        </div>
-                        <div className="flex items-center gap-1">
-                          <div className="w-3 h-3 bg-gray-300 rounded-sm"></div>
-                          <span>Active days</span>
-                        </div>
-                        <div className="flex items-center gap-1">
-                          <div className="w-3 h-3 bg-gray-100 rounded-sm"></div>
-                          <span>Inactive days</span>
-                        </div>
-                      </div>
-                    </div>
-                  </div>
-                </CardContent>
-              </Card>
-
-              {/* Detailed Streak List */}
-              <Card>
-                <CardHeader>
-                  <CardTitle className="flex items-center gap-2">
-                    <Activity className="w-5 h-5" />
-                    Streak Details
-                  </CardTitle>
-                  <CardDescription>All streaks of 3+ consecutive days in the last 3 months</CardDescription>
-                </CardHeader>
-                <CardContent>
-                  {streaks.length > 0 ? (
-                    <div className="space-y-4">
-                      {streaks.map((streak, index) => (
-                        <motion.div
-                          key={streak.id}
-                          initial={{ opacity: 0, x: -20 }}
-                          animate={{ opacity: 1, x: 0 }}
-                          transition={{ duration: 0.3, delay: index * 0.1 }}
-                          className="border border-gray-200 rounded-lg p-4 hover:shadow-md transition-shadow"
-                        >
-                          <div className="flex items-center justify-between mb-3">
-                            <div className="flex items-center gap-3">
-                              <div className="flex items-center gap-1">
-                                <span className="text-lg">🔥</span>
-                                <span className="font-bold text-lg text-orange-600">{streak.length} days</span>
-                              </div>
-                              <div className="text-sm text-gray-500">#{index + 1} longest streak</div>
-                            </div>
-                            <div className="text-right">
-                              <div className="text-sm font-medium text-gray-900">
-                                {streak.totalContributions} contributions
-                              </div>
-                              <div className="text-xs text-gray-500">{streak.averagePerDay} avg/day</div>
-                            </div>
-                          </div>
-
-                          <div className="flex items-center justify-between text-sm">
-                            <div>
-                              <span className="text-gray-600">Started:</span>
-                              <span className="ml-2 font-medium">
-                                {new Date(streak.startDate).toLocaleDateString("en-US", {
-                                  month: "short",
-                                  day: "numeric",
-                                  year: "numeric",
-                                })}
-                              </span>
-                            </div>
-                            <div>
-                              <span className="text-gray-600">Ended:</span>
-                              <span className="ml-2 font-medium">
-                                {new Date(streak.endDate).toLocaleDateString("en-US", {
-                                  month: "short",
-                                  day: "numeric",
-                                  year: "numeric",
-                                })}
-                              </span>
-                            </div>
-                          </div>
-
-                          {/* Mini streak visualization */}
-                          <div className="mt-3 flex gap-0.5 overflow-x-auto">
-                            {streak.dates.map((date) => {
-                              const dayData = contributions.find((d) => d.date === date)
-                              return (
-                                <Tooltip delayDuration={0} key={date}>
-                                  <TooltipTrigger asChild>
-                                    <div
-                                      className="w-2 h-6 bg-orange-400 hover:bg-orange-500 cursor-pointer transition-colors rounded-sm"
-                                      style={{
-                                        opacity: dayData ? Math.max(0.3, dayData.count / 10) : 0.3,
-                                      }}
-                                    />
-                                  </TooltipTrigger>
-                                  <TooltipContent>
-                                    <div className="text-xs">
-                                      <p className="font-medium">
-                                        {new Date(date).toLocaleDateString("en-US", {
-                                          month: "short",
-                                          day: "numeric",
-                                        })}
-                                      </p>
-                                      <p>{dayData?.count || 0} contributions</p>
-                                    </div>
-                                  </TooltipContent>
-                                </Tooltip>
-                              )
-                            })}
-                          </div>
-                        </motion.div>
-                      ))}
-                    </div>
-                  ) : (
-                    <div className="text-center py-8">
-                      <Target className="w-12 h-12 text-gray-300 mx-auto mb-4" />
-                      <h3 className="text-lg font-medium text-gray-900 mb-2">No Streaks Found</h3>
-                      <p className="text-gray-500">
-                        No streaks of 3+ consecutive days found in the last 3 months.
-                        <br />
-                        Keep contributing to build your first streak! 🔥
-                      </p>
-                    </div>
-                  )}
-                </CardContent>
-              </Card>
-
-              {/* Streak Statistics */}
-              <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-                <Card>
-                  <CardHeader>
-                    <CardTitle className="text-lg">Streak Performance</CardTitle>
-                  </CardHeader>
-                  <CardContent>
-                    <div className="space-y-4">
-                      <div className="flex justify-between items-center">
-                        <span className="text-sm text-gray-600">Average streak length</span>
-                        <span className="font-medium">
-                          {streaks.length > 0
-                            ? Math.round((streaks.reduce((sum, s) => sum + s.length, 0) / streaks.length) * 10) / 10
-                            : 0}{" "}
-                          days
-                        </span>
-                      </div>
-                      <div className="flex justify-between items-center">
-                        <span className="text-sm text-gray-600">Total streak days</span>
-                        <span className="font-medium">{streaks.reduce((sum, s) => sum + s.length, 0)} days</span>
-                      </div>
-                      <div className="flex justify-between items-center">
-                        <span className="text-sm text-gray-600">Streak contribution rate</span>
-                        <span className="font-medium">
-                          {contributions.length > 0
-                            ? Math.round((streaks.reduce((sum, s) => sum + s.length, 0) / contributions.length) * 100)
-                            : 0}
-                          %
-                        </span>
-                      </div>
-                      <div className="flex justify-between items-center">
-                        <span className="text-sm text-gray-600">Best streak contributions</span>
-                        <span className="font-medium">
-                          {streaks.length > 0 ? Math.max(...streaks.map((s) => s.totalContributions)) : 0}
-                        </span>
-                      </div>
-                    </div>
-                  </CardContent>
-                </Card>
-
-                <Card>
-                  <CardHeader>
-                    <CardTitle className="text-lg">Streak Insights</CardTitle>
-                  </CardHeader>
-                  <CardContent>
-                    <div className="space-y-4">
-                      {streaks.length > 0 ? (
-                        <>
-                          <div className="p-3 bg-orange-50 rounded-lg">
-                            <div className="flex items-center gap-2 mb-1">
-                              <span className="text-orange-600">🏆</span>
-                              <span className="font-medium text-orange-800">Best Streak</span>
-                            </div>
-                            <p className="text-sm text-orange-700">
-                              Your longest streak was <strong>{streaks[0].length} days</strong> with{" "}
-                              <strong>{streaks[0].totalContributions} contributions</strong>
+              {/* Streak timeline */}
+              <section className="rounded-2xl border px-5 py-5 sm:px-6 sm:py-6" style={cardSurface}>
+                <PromptHeading>timeline</PromptHeading>
+                <div className="flex gap-0.5 overflow-x-auto pb-2">
+                  {contributions.map((day) => {
+                    const inStreak = streaks.some((s) => s.dates.includes(day.date))
+                    return (
+                      <Tooltip key={day.date} delayDuration={0}>
+                        <TooltipTrigger asChild>
+                          <div
+                            className="h-8 w-2 cursor-pointer rounded-sm transition-transform hover:scale-110"
+                            style={{
+                              background: inStreak
+                                ? "var(--theme-accent-color)"
+                                : day.count > 0
+                                  ? heatmapCellColor(2)
+                                  : "var(--theme-border-color)",
+                              opacity: inStreak ? 1 : day.count > 0 ? 0.85 : 0.6,
+                            }}
+                          />
+                        </TooltipTrigger>
+                        <TooltipContent>
+                          <div className="text-xs">
+                            <p className="font-medium">
+                              {new Date(day.date).toLocaleDateString("en-US", { weekday: "short", month: "short", day: "numeric" })}
                             </p>
+                            <p>{day.count === 0 ? "No contributions" : `${day.count} contribution${day.count === 1 ? "" : "s"}`}</p>
                           </div>
+                        </TooltipContent>
+                      </Tooltip>
+                    )
+                  })}
+                </div>
 
-                          {stats && stats.currentStreak > 0 && (
-                            <div className="p-3 bg-blue-50 rounded-lg">
-                              <div className="flex items-center gap-2 mb-1">
-                                <span className="text-blue-600">🔥</span>
-                                <span className="font-medium text-blue-800">Current Streak</span>
-                              </div>
-                              <p className="text-sm text-blue-700">
-                                You're on a <strong>{stats.currentStreak} day streak</strong>! Keep it going!
+                <div className="mt-4 flex flex-wrap items-center gap-4 font-mono text-[10px] uppercase tracking-[0.18em]" style={{ color: "var(--theme-muted-color)" }}>
+                  <span className="flex items-center gap-1.5">
+                    <span className="h-3 w-3 rounded-sm" style={{ background: "var(--theme-accent-color)" }} />
+                    streak
+                  </span>
+                  <span className="flex items-center gap-1.5">
+                    <span className="h-3 w-3 rounded-sm" style={{ background: heatmapCellColor(2), opacity: 0.85 }} />
+                    active
+                  </span>
+                  <span className="flex items-center gap-1.5">
+                    <span className="h-3 w-3 rounded-sm" style={{ background: "var(--theme-border-color)" }} />
+                    quiet
+                  </span>
+                </div>
+              </section>
+
+              {/* Streak details */}
+              <section>
+                <PromptHeading>streak --list</PromptHeading>
+                {streaks.length > 0 ? (
+                  <div className="space-y-3">
+                    {streaks.map((streak, index) => (
+                      <motion.div
+                        key={streak.id}
+                        initial={{ opacity: 0, x: -12 }}
+                        animate={{ opacity: 1, x: 0 }}
+                        transition={{ duration: 0.3, delay: index * 0.05 }}
+                        className="rounded-2xl border px-5 py-5 sm:px-6 sm:py-6"
+                        style={cardSurface}
+                      >
+                        <div className="flex items-start gap-4 sm:gap-5">
+                          <span
+                            className="font-mono text-3xl font-light leading-none tabular-nums sm:text-4xl"
+                            style={{ color: "var(--theme-muted-color)", opacity: 0.45 }}
+                            aria-hidden
+                          >
+                            {String(index + 1).padStart(2, "0")}
+                          </span>
+                          <div className="min-w-0 flex-1">
+                            <div className="flex flex-wrap items-baseline justify-between gap-2">
+                              <h2 className="text-xl font-medium tracking-tight sm:text-2xl">
+                                <span style={{ color: "var(--theme-accent-color)" }}>{streak.length}</span>
+                                <span className="ml-2 text-sm font-normal" style={{ color: "var(--theme-muted-color)" }}>
+                                  days
+                                </span>
+                              </h2>
+                              <p className="font-mono text-[11px] uppercase tracking-[0.22em]" style={{ color: "var(--theme-muted-color)" }}>
+                                {streak.totalContributions} contributions · {streak.averagePerDay}/d
                               </p>
                             </div>
-                          )}
-
-                          <div className="p-3 bg-green-50 rounded-lg">
-                            <div className="flex items-center gap-2 mb-1">
-                              <span className="text-green-600">📈</span>
-                              <span className="font-medium text-green-800">Consistency</span>
-                            </div>
-                            <p className="text-sm text-green-700">
-                              You've maintained <strong>{streaks.length} streaks</strong> in the last 3 months
+                            <p className="mt-2 font-mono text-xs uppercase tracking-[0.18em]" style={{ color: "var(--theme-muted-color)" }}>
+                              {new Date(streak.startDate).toLocaleDateString("en-US", { month: "short", day: "numeric", year: "numeric" })}
+                              {" → "}
+                              {new Date(streak.endDate).toLocaleDateString("en-US", { month: "short", day: "numeric", year: "numeric" })}
                             </p>
+                            <div className="mt-4 flex flex-wrap gap-0.5">
+                              {streak.dates.map((date) => {
+                                const dayData = contributions.find((d) => d.date === date)
+                                return (
+                                  <Tooltip key={date} delayDuration={0}>
+                                    <TooltipTrigger asChild>
+                                      <div
+                                        className="h-6 w-2 cursor-pointer rounded-sm transition-transform hover:scale-110"
+                                        style={{
+                                          background: "var(--theme-accent-color)",
+                                          opacity: dayData ? Math.max(0.35, Math.min(1, dayData.count / 10)) : 0.35,
+                                        }}
+                                      />
+                                    </TooltipTrigger>
+                                    <TooltipContent>
+                                      <div className="text-xs">
+                                        <p className="font-medium">
+                                          {new Date(date).toLocaleDateString("en-US", { month: "short", day: "numeric" })}
+                                        </p>
+                                        <p>{dayData?.count || 0} contributions</p>
+                                      </div>
+                                    </TooltipContent>
+                                  </Tooltip>
+                                )
+                              })}
+                            </div>
                           </div>
-                        </>
-                      ) : (
-                        <div className="p-3 bg-gray-50 rounded-lg">
-                          <div className="flex items-center gap-2 mb-1">
-                            <span className="text-gray-600">💡</span>
-                            <span className="font-medium text-gray-800">Getting Started</span>
-                          </div>
-                          <p className="text-sm text-gray-700">
-                            Start contributing daily to build your first streak! Even small contributions count.
-                          </p>
                         </div>
+                      </motion.div>
+                    ))}
+                  </div>
+                ) : (
+                  <div className="rounded-2xl border px-6 py-8 text-center" style={cardSurface}>
+                    <p className="text-sm" style={{ color: "var(--theme-muted-color)" }}>
+                      No streaks of 3+ consecutive days in the last 3 months.
+                    </p>
+                  </div>
+                )}
+              </section>
+
+              {/* Performance summary */}
+              <section className="grid grid-cols-1 gap-3 md:grid-cols-2">
+                <div className="rounded-2xl border px-5 py-5 sm:px-6 sm:py-6" style={cardSurface}>
+                  <PromptHeading>performance</PromptHeading>
+                  <ul className="space-y-3 font-mono text-xs sm:text-sm">
+                    {[
+                      ["avg streak", streaks.length > 0
+                        ? `${Math.round((streaks.reduce((s, x) => s + x.length, 0) / streaks.length) * 10) / 10}d`
+                        : "—"],
+                      ["total streak days", `${streaks.reduce((s, x) => s + x.length, 0)}d`],
+                      ["streak rate", contributions.length > 0
+                        ? `${Math.round((streaks.reduce((s, x) => s + x.length, 0) / contributions.length) * 100)}%`
+                        : "0%"],
+                      ["best contribs", streaks.length > 0 ? Math.max(...streaks.map((s) => s.totalContributions)) : 0],
+                    ].map(([k, v]) => (
+                      <li
+                        key={k as string}
+                        className="flex items-baseline justify-between border-b pb-2 last:border-b-0 last:pb-0"
+                        style={{ borderColor: "var(--theme-border-color)" }}
+                      >
+                        <span
+                          className="uppercase tracking-[0.18em]"
+                          style={{ color: "var(--theme-muted-color)" }}
+                        >
+                          {k}
+                        </span>
+                        <span style={{ color: "var(--theme-text-color)" }}>{v}</span>
+                      </li>
+                    ))}
+                  </ul>
+                </div>
+
+                <div className="rounded-2xl border px-5 py-5 sm:px-6 sm:py-6" style={cardSurface}>
+                  <PromptHeading>insight</PromptHeading>
+                  {streaks.length > 0 ? (
+                    <div className="space-y-3 text-sm leading-7">
+                      <p>
+                        <span style={{ color: "var(--theme-muted-color)" }}>longest run </span>
+                        <span style={{ color: "var(--theme-accent-color)" }}>
+                          {streaks[0].length}d
+                        </span>
+                        <span style={{ color: "var(--theme-muted-color)" }}>
+                          {" "}with {streaks[0].totalContributions} contribs.
+                        </span>
+                      </p>
+                      {stats && stats.currentStreak > 0 && (
+                        <p>
+                          <span style={{ color: "var(--theme-muted-color)" }}>currently </span>
+                          <span style={{ color: "var(--theme-accent-color)" }}>
+                            {stats.currentStreak}d
+                          </span>
+                          <span style={{ color: "var(--theme-muted-color)" }}> on the wire.</span>
+                        </p>
                       )}
+                      <p style={{ color: "var(--theme-muted-color)" }}>
+                        {streaks.length} streaks cleared in the last 3 months.
+                      </p>
                     </div>
-                  </CardContent>
-                </Card>
-              </div>
+                  ) : (
+                    <p className="text-sm" style={{ color: "var(--theme-muted-color)" }}>
+                      Nothing to report yet. Ship something. Even small things count.
+                    </p>
+                  )}
+                </div>
+              </section>
             </motion.div>
           )}
         </AnimatePresence>

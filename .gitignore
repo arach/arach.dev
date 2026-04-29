@@ -41,3 +41,6 @@ CLAUDE.md
 pnpm-workspace.yaml
 # OpenScout local state
 .openscout/project.json
+
+# Visual review screenshots (the snapshot script in scripts/visual/ stays tracked)
+scripts/visual/out/

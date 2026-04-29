@@ -22,13 +22,13 @@ A modern, terminal-inspired portfolio website built with Next.js 14, TypeScript,
 First, install dependencies:
 
 ```bash
-pnpm install
+bun install
 ```
 
 Then, run the development server:
 
 ```bash
-pnpm dev
+bun dev
 ```
 
 Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.

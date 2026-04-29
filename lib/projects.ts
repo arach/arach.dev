@@ -16,6 +16,9 @@ export interface Project {
   preview: string;
   color: string; // Accent color for this project
   icon?: string; // Emoji or icon
+  /** Logo path resolved at server-time from public/logos/{slug}.{svg,png,webp}.
+   *  Drop a file there and it appears automatically. */
+  logo?: string;
   websiteUrl?: string; // Live website URL for screenshots/previews
   screenshots?: string[];
   metrics?: {
@@ -33,7 +36,7 @@ export const projects: Project[] = [
     description: 'Multi-agent broker runtime for AI coding harnesses',
     longDescription: `OpenScout is a desktop app, CLI, and broker runtime for coordinating multiple AI coding agents. The broker is the only writer of canonical state — conversations, work, deliveries, and bindings are addressable, replayable, and observable. Harness-agnostic across Claude Code, Codex, tmux, and future tools.`,
     tags: ['desktop', 'CLI', 'AI'],
-    tech: ['Bun', 'TypeScript', 'Electron', 'React'],
+    tech: ['Bun', 'TypeScript', 'React'],
     links: {
       github: 'https://github.com/arach/openscout',
       website: 'https://openscout.app',

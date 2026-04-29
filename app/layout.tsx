@@ -13,7 +13,7 @@ import { GoogleAnalytics } from "@/components/GoogleAnalytics";
 import fs from 'fs';
 import path from 'path';
 
-// Read critical CSS at build time
+// Read critical CSS at build time (re-read on edit; v2)
 const criticalCSS = fs.readFileSync(
   path.join(process.cwd(), 'app', 'critical.css'),
   'utf8'
@@ -58,7 +58,7 @@ export default function RootLayout({
         {/* Inline critical CSS for immediate render */}
         <style dangerouslySetInnerHTML={{ __html: criticalCSS }} />
       </head>
-      <body className={`${GeistMono.className} font-mono flex flex-col min-h-screen`}>
+      <body className={`${GeistSans.className} antialiased flex flex-col min-h-screen`}>
         <ThemeProvider>
           <Header />
           <main className="flex-grow pt-0">
