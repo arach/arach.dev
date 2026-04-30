@@ -1,6 +1,14 @@
 import { GeistMono } from "geist/font/mono";
 import { GeistSans } from "geist/font/sans";
+import { Spectral } from "next/font/google";
 import type { Metadata } from 'next'
+
+const spectral = Spectral({
+  weight: ['400', '500'],
+  style: ['normal'],
+  subsets: ['latin'],
+  variable: '--font-spectral',
+});
 import "./globals.css";
 import Footer from "@/components/Footer";
 import Header from "@/components/Header";
@@ -53,7 +61,7 @@ export default function RootLayout({
   children: React.ReactNode;
 }>) {
   return (
-    <html lang="en" className={`h-full ${GeistMono.variable} ${GeistSans.variable}`}>
+    <html lang="en" className={`h-full ${GeistMono.variable} ${GeistSans.variable} ${spectral.variable}`}>
       <head>
         {/* Inline critical CSS for immediate render */}
         <style dangerouslySetInnerHTML={{ __html: criticalCSS }} />

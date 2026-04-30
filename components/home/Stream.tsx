@@ -83,7 +83,7 @@ export function Stream({ projects, ideas }: StreamProps) {
   }), [stream]);
 
   return (
-    <div className="mx-auto max-w-5xl px-4 py-10 sm:px-6 sm:py-14">
+    <div className="mx-auto max-w-5xl px-4 py-8 sm:px-6 sm:py-10">
       <Masthead />
 
       {/* Stream eyebrow + filters */}
@@ -91,7 +91,10 @@ export function Stream({ projects, ideas }: StreamProps) {
         className="mb-6 flex flex-wrap items-baseline justify-between gap-3 border-b pb-3"
         style={{ borderColor: 'var(--theme-border-color)' }}
       >
-        <h2 className="text-base font-medium tracking-tight sm:text-lg">stream</h2>
+        <h2
+          className="text-lg sm:text-xl"
+          style={{ fontFamily: 'var(--font-spectral)' }}
+        >stream</h2>
         <div className="flex flex-wrap items-center gap-x-4 gap-y-1 font-mono text-[11px] uppercase tracking-[0.16em]">
           {FILTERS.map((f) => {
             const active = filter === f.key;
@@ -140,7 +143,7 @@ export function Stream({ projects, ideas }: StreamProps) {
               />
             )}
             {group.kind === 'project-grid' && (
-              <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 sm:gap-5">
+              <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 sm:items-start sm:gap-5">
                 {group.entries.map((entry) => (
                   <StreamProjectCard
                     key={entry.slug}

@@ -48,8 +48,10 @@ export function StreamIdeaCard({ idea }: StreamIdeaCardProps) {
 
         {/* Title — italic display, slightly more typographic than projects */}
         <h2
-          className="text-2xl font-medium leading-[1.15] tracking-tight transition-colors group-hover:opacity-80 sm:text-3xl"
-          style={{ fontStyle: 'italic' }}
+          className="text-2xl leading-[1.15] tracking-tight transition-colors group-hover:opacity-80 sm:text-3xl"
+          style={{
+            fontFamily: 'var(--font-spectral)',
+          }}
         >
           {idea.title}
         </h2>

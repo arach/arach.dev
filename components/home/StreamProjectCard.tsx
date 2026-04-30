@@ -4,6 +4,7 @@ import Link from 'next/link';
 import { motion } from 'framer-motion';
 import { ArrowUpRight, Github, ExternalLink } from 'lucide-react';
 
+import { ProjectPreviewFrame, ProjectPreviewTile } from '@/components/ProjectPreview';
 import type { Project } from '@/lib/projects';
 
 interface StreamProjectCardProps {
@@ -22,7 +23,7 @@ function Logo({ src, alt, accent, size = 'md' }: { src: string; alt: string; acc
   const dim = size === 'lg' ? 'h-14 w-14 sm:h-16 sm:w-16' : 'h-11 w-11 sm:h-12 sm:w-12';
   return (
     <div
-      className={`flex shrink-0 items-center justify-center overflow-hidden rounded-xl ${dim}`}
+      className={`flex shrink-0 items-center justify-center overflow-hidden rounded-lg ${dim}`}
       style={{
         background: `color-mix(in srgb, ${accent} 6%, transparent)`,
         boxShadow: `inset 0 0 0 1px color-mix(in srgb, ${accent} 18%, transparent)`,
@@ -47,16 +48,12 @@ export function StreamProjectCard({ project, rank, featured = false }: StreamPro
         initial={{ opacity: 0, y: 12 }}
         animate={{ opacity: 1, y: 0 }}
         transition={{ duration: 0.4 }}
-        className="group relative overflow-hidden rounded-2xl border transition-[transform,border-color,box-shadow] duration-300 ease-out hover:-translate-y-0.5"
+        className="group relative overflow-hidden rounded-xl border transition-[transform,border-color,box-shadow] duration-300 ease-out hover:-translate-y-0.5"
         style={cardSurface}
       >
         <div
-          className="absolute inset-y-0 left-0 w-[3px] transition-all duration-500 group-hover:w-[5px]"
-          style={{ background: accent }}
-        />
-        <div
           className="pointer-events-none absolute inset-0 opacity-0 transition-opacity duration-500 group-hover:opacity-100"
-          style={{ background: `radial-gradient(60% 80% at 0% 0%, ${accent}14 0%, transparent 60%)` }}
+          style={{ background: `radial-gradient(60% 80% at 0% 0%, ${accent}0a 0%, transparent 60%)` }}
           aria-hidden
         />
 
@@ -83,7 +80,10 @@ export function StreamProjectCard({ project, rank, featured = false }: StreamPro
                 ))}
               </div>
 
-              <h2 className="text-3xl font-medium leading-[1.05] tracking-tight sm:text-4xl">
+              <h2
+                className="text-3xl leading-[1.05] sm:text-4xl"
+                style={{ fontFamily: 'var(--font-spectral)' }}
+              >
                 <Link
                   href={`/projects/${slug}`}
                   className="transition-colors before:absolute before:inset-0 before:content-[''] group-hover:opacity-90"
@@ -99,6 +99,8 @@ export function StreamProjectCard({ project, rank, featured = false }: StreamPro
                 {project.preview}
               </p>
 
+              <ProjectPreviewFrame project={project} className="relative z-[1] mt-6" />
+
               <ActionRow accent={accent} liveUrl={liveUrl} githubUrl={project.links.github} />
             </div>
           </div>
@@ -112,16 +114,12 @@ export function StreamProjectCard({ project, rank, featured = false }: StreamPro
       initial={{ opacity: 0, y: 12 }}
       animate={{ opacity: 1, y: 0 }}
       transition={{ duration: 0.4 }}
-      className="group relative overflow-hidden rounded-2xl border transition-[transform,border-color,box-shadow] duration-300 ease-out hover:-translate-y-0.5"
+      className="group relative overflow-hidden rounded-xl border transition-[transform,border-color,box-shadow] duration-300 ease-out hover:-translate-y-0.5"
       style={cardSurface}
     >
       <div
-        className="absolute inset-y-0 left-0 w-[2px] transition-all duration-500 group-hover:w-[3px]"
-        style={{ background: accent }}
-      />
-      <div
         className="pointer-events-none absolute inset-0 opacity-0 transition-opacity duration-500 group-hover:opacity-100"
-        style={{ background: `radial-gradient(70% 100% at 0% 50%, ${accent}10 0%, transparent 60%)` }}
+        style={{ background: `radial-gradient(70% 100% at 0% 50%, ${accent}08 0%, transparent 60%)` }}
         aria-hidden
       />
 
@@ -146,7 +144,7 @@ export function StreamProjectCard({ project, rank, featured = false }: StreamPro
               ))}
             </div>
 
-            <h2 className="text-xl font-medium leading-[1.2] tracking-tight sm:text-[22px]">
+            <h2 className="font-mono text-xl font-medium leading-[1.2] tracking-[-0.035em] sm:text-[22px]">
               <Link
                 href={`/projects/${slug}`}
                 className="transition-colors before:absolute before:inset-0 before:content-[''] group-hover:opacity-90"
@@ -166,6 +164,7 @@ export function StreamProjectCard({ project, rank, featured = false }: StreamPro
           </div>
         </div>
       </div>
+      <ProjectPreviewTile project={project} />
     </motion.article>
   );
 }
