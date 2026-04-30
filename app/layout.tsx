@@ -1,6 +1,14 @@
 import { GeistMono } from "geist/font/mono";
 import { GeistSans } from "geist/font/sans";
+import { Spectral } from "next/font/google";
 import type { Metadata } from 'next'
+
+const spectral = Spectral({
+  weight: ['400', '500'],
+  style: ['normal'],
+  subsets: ['latin'],
+  variable: '--font-spectral',
+});
 import "./globals.css";
 import Footer from "@/components/Footer";
 import Header from "@/components/Header";
@@ -13,7 +21,7 @@ import { GoogleAnalytics } from "@/components/GoogleAnalytics";
 import fs from 'fs';
 import path from 'path';
 
-// Read critical CSS at build time
+// Read critical CSS at build time (re-read on edit; v2)
 const criticalCSS = fs.readFileSync(
   path.join(process.cwd(), 'app', 'critical.css'),
   'utf8'
@@ -53,12 +61,12 @@ export default function RootLayout({
   children: React.ReactNode;
 }>) {
   return (
-    <html lang="en" className={`h-full ${GeistMono.variable} ${GeistSans.variable}`}>
+    <html lang="en" className={`h-full ${GeistMono.variable} ${GeistSans.variable} ${spectral.variable}`}>
       <head>
         {/* Inline critical CSS for immediate render */}
         <style dangerouslySetInnerHTML={{ __html: criticalCSS }} />
       </head>
-      <body className={`${GeistMono.className} font-mono flex flex-col min-h-screen`}>
+      <body className={`${GeistSans.className} antialiased flex flex-col min-h-screen`}>
         <ThemeProvider>
           <Header />
           <main className="flex-grow pt-0">

@@ -2,7 +2,9 @@
 
 import React from 'react';
 import { motion } from 'framer-motion';
-import { ArrowRight, Github } from 'lucide-react';
+import { Github } from 'lucide-react';
+
+import { EditorialCard } from '@/components/ui';
 
 interface Project {
   title: string;
@@ -10,7 +12,7 @@ interface Project {
   link?: string;
   github?: string;
   tags: string[];
-  preview?: string; // Optional - not used in compact view
+  preview?: string;
 }
 
 interface CompactTypographyCardProps {
@@ -33,154 +35,44 @@ export function CompactTypographyCard({
   const projectNumber = String(index + 1).padStart(2, '0');
 
   return (
-    <motion.article
+    <motion.div
       ref={cardRef}
-      initial={{ opacity: 0, y: 20 }}
+      initial={{ opacity: 0, y: 16 }}
       animate={{ opacity: 1, y: 0 }}
-      transition={{ duration: 0.5, delay: index * 0.03 }}
-      className={`
-        group relative p-5 sm:p-6 h-full
-        cursor-pointer rounded-lg
-        transition-all duration-500 ease-out
-        hover:bg-gray-500/5 hover:backdrop-blur-sm
-        ${isKeyboardFocused ? 'ring-2 ring-blue-500 ring-offset-2 bg-blue-500/10' : ''}
-      `}
+      transition={{ duration: 0.4, delay: index * 0.03 }}
       onMouseEnter={onMouseEnter}
       onClick={onClick}
+      role="button"
+      tabIndex={0}
+      className="cursor-pointer outline-none"
       style={{ willChange: 'transform, opacity' }}
     >
-      {/* Project Number - Top left corner */}
-      <span className={`
-        absolute top-5 left-5 sm:top-6 sm:left-6
-        font-mono text-2xl font-light
-        transition-all duration-500
-        ${isKeyboardFocused 
-          ? 'text-blue-500 opacity-100' 
-          : 'opacity-20 group-hover:opacity-40'}
-      `}
-      style={{
-        color: isKeyboardFocused ? undefined : 'var(--theme-muted-color)'
-      }}>
-        {projectNumber}
-      </span>
-
-      {/* Main Content - With left padding for number */}
-      <div className="pl-10 sm:pl-12">
-        {/* Title - Smaller but still prominent */}
-        <h3 className={`
-          text-lg sm:text-xl font-bold tracking-tight
-          transition-all duration-500
-          mb-1.5
-          ${isKeyboardFocused 
-            ? 'text-blue-500' 
-            : ''}
-        `}
-        style={{
-          color: isKeyboardFocused ? undefined : 'var(--theme-heading-color, var(--theme-text-color))'
-        }}>
-          {project.title}
-        </h3>
-
-        {/* Description - Compact */}
-        <p className={`
-          text-xs leading-relaxed mb-3
-          transition-all duration-500
-          line-clamp-2
-          font-light
-        `}
-        style={{
-          fontSize: '0.75rem',
-          fontWeight: 300,
-          color: 'var(--theme-muted-color)',
-          opacity: isKeyboardFocused ? 1 : 0.9
-        }}>
-          {project.description}
-        </p>
-
-        {/* Tags - Minimal, inline */}
-        <div className="flex flex-wrap items-center gap-1">
-          {project.tags.slice(0, 3).map((tag) => (
-            <span
-              key={tag}
-              className={`
-                text-[10px] uppercase tracking-wide px-1 py-0.5 rounded-sm 
-                transition-all duration-300 font-normal border
-                ${isKeyboardFocused 
-                  ? 'bg-blue-500/10 text-blue-500 border-blue-500/20' 
-                  : 'bg-opacity-5 hover:bg-opacity-10'}
-              `}
-              style={{
-                backgroundColor: isKeyboardFocused ? undefined : 'var(--theme-card-bg)',
-                color: isKeyboardFocused ? undefined : 'var(--theme-muted-color)',
-                borderColor: isKeyboardFocused ? undefined : 'var(--theme-border-color)',
-              }}
-            >
-              {tag}
-            </span>
-          ))}
-        </div>
-      </div>
-
-      {/* Links - Bottom right corner, always visible but subtle */}
-      <div className={`
-        absolute bottom-5 right-5 sm:bottom-6 sm:right-6
-        flex items-center gap-2
-        transition-all duration-500
-        ${isKeyboardFocused 
-          ? 'opacity-100' 
-          : 'opacity-40 group-hover:opacity-100'}
-      `}>
-        <a
-          href={`/projects/${project.title.toLowerCase().replace(/\s+/g, '-')}`}
-          className={`
-            inline-flex items-center justify-center
-            w-6 h-6 rounded-full
-            transition-all duration-500
-            ${isKeyboardFocused 
-              ? 'text-blue-600 bg-blue-100' 
-              : 'text-gray-400 hover:text-gray-600 hover:bg-gray-100'}
-          `}
-          aria-label="View project details"
-          onClick={(e) => e.stopPropagation()}
-        >
-          <ArrowRight className="w-3 h-3" />
-        </a>
-        {project.github && (
-          <a
-            href={project.github}
-            target="_blank"
-            rel="noopener noreferrer"
-            className={`
-              inline-flex items-center justify-center
-              w-6 h-6 rounded-full
-              transition-all duration-500
-              ${isKeyboardFocused
-                ? 'text-blue-600 bg-blue-100'
-                : 'text-gray-400 hover:text-gray-600 hover:bg-gray-100'}
-            `}
-            onClick={(e) => e.stopPropagation()}
-          >
-            <Github className="w-3 h-3" />
-          </a>
-        )}
-      </div>
-
-      {/* Subtle border - only on hover or focus */}
-      <div className={`
-        absolute inset-0 rounded-lg pointer-events-none
-        transition-all duration-500
-        ${isKeyboardFocused 
-          ? 'border-2 border-blue-500/30' 
-          : 'border border-transparent group-hover:border-gray-500/20'}
-      `} />
-
-      {/* Very subtle gradient overlay on hover - uses currentColor for theme awareness */}
-      <div className={`
-        absolute inset-0 -z-10 rounded-lg
-        transition-all duration-700 ease-out
-        opacity-0 group-hover:opacity-100
-        bg-gradient-to-br from-current/[0.02] via-transparent to-transparent
-      `} />
-    </motion.article>
+      <EditorialCard
+        focused={isKeyboardFocused}
+        leadingNumber={projectNumber}
+        eyebrow={
+          <>
+            {project.tags.slice(0, 3).map((tag) => (
+              <span key={tag}>{tag}</span>
+            ))}
+            {project.github ? (
+              <a
+                href={project.github}
+                target="_blank"
+                rel="noopener noreferrer"
+                onClick={(e) => e.stopPropagation()}
+                className="ml-auto inline-flex items-center gap-1 transition-opacity hover:opacity-100"
+                style={{ opacity: 0.5 }}
+                aria-label={`${project.title} on GitHub`}
+              >
+                <Github className="h-3 w-3" />
+              </a>
+            ) : null}
+          </>
+        }
+        title={project.title}
+        description={project.description}
+      />
+    </motion.div>
   );
 }

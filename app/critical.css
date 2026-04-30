@@ -77,7 +77,10 @@ main {
   padding-top: 0;
 }
 
-header {
+/* Only the layout's top-level page header (direct child of body).
+   Scoped so editorial <header> elements inside content (e.g., a page
+   masthead) don't inherit the dark nav background. */
+body > header {
   background: var(--theme-header-bg);
   color: var(--theme-header-text);
 }

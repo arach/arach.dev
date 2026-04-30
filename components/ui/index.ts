@@ -9,5 +9,6 @@ export { Textarea } from './textarea'
 export { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from './tooltip'
 
 // Custom UI components
+export { EditorialCard } from './EditorialCard'
 export { SocialButton } from './SocialButton'
 export { default as TypeWriter } from './TypeWriter'

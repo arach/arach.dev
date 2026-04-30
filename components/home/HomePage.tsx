@@ -398,9 +398,15 @@ export function HomePage({ projects }: { projects: Project[] }) {
 }
 
 const Section = ({ title, children, headerAction }: { title: string; children: React.ReactNode; headerAction?: React.ReactNode }) => (
-  <motion.section className="mb-6 sm:mb-10" {...fadeInUp}>
-    <div className="hidden sm:flex items-center justify-between mb-6 border-b border-gray-700 pb-2">
-      <h2 className="text-2xl font-bold">{title}</h2>
+  <motion.section className="mb-8 sm:mb-12" {...fadeInUp}>
+    <div
+      className="hidden sm:flex items-baseline justify-between mb-6 pb-3 border-b"
+      style={{ borderColor: 'var(--theme-border-color)' }}
+    >
+      <h2 className="flex items-baseline gap-2 text-xl font-bold tracking-tight">
+        <span className="font-mono text-xs font-normal" style={{ color: 'var(--theme-accent-color)' }}>//</span>
+        <span style={{ color: 'var(--theme-heading-color, var(--theme-text-color))' }}>{title.toLowerCase()}</span>
+      </h2>
       {headerAction}
     </div>
     {children}
