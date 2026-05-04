@@ -10,14 +10,6 @@ const nextConfig = {
         source: '/lab/:path*',
         destination: 'https://lab-plum-iota.vercel.app/lab/:path*',
       },
-      {
-        source: '/share/cc',
-        destination: 'https://narrative-studio-arach.vercel.app/share/cc',
-      },
-      {
-        source: '/share/cc/:path*',
-        destination: 'https://narrative-studio-arach.vercel.app/share/cc/:path*',
-      },
     ];
   },
 };
