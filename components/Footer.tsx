@@ -1,9 +1,17 @@
+'use client';
+
 import Link from "next/link";
 import { Linkedin, Mail } from "lucide-react";
+import { usePathname } from "next/navigation";
 import { SocialButton } from "@/components/ui/SocialButton";
 import GithubIcon from '@/components/icons/GithubIcon';
 
 export default function Footer() {
+    const pathname = usePathname();
+    if (pathname?.startsWith('/labs/ops') || pathname?.startsWith('/about/terminal')) {
+        return null;
+    }
+
     return (
         <footer className="bg-black text-white sticky bottom-0 w-full z-10 font-mono">
             <div className="container mx-auto px-3 py-1 flex flex-row items-center justify-between" style={{ fontSize: '10px' }}>

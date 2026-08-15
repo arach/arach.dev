@@ -30,8 +30,8 @@ export default function Header() {
         return () => window.removeEventListener('scroll', handleScroll);
     }, [lastScrollY]);
 
-    // Don't render header on styleguide pages
-    if (pathname?.startsWith('/styleguide')) {
+    // Don't render header on styleguide pages or the ops lab (owns its chrome)
+    if (pathname?.startsWith('/styleguide') || pathname?.startsWith('/labs/ops') || pathname?.startsWith('/about/terminal')) {
         return null;
     }
 

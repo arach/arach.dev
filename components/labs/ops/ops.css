@@ -1,0 +1,116 @@
+/* Locked "on the keys" world — policy paper, breath teal, copper. */
+
+.ops-root {
+  --ops-display: var(--font-ops-display), var(--theme-heading-font), var(--font-geist-sans), system-ui, sans-serif;
+  --ops-mono: var(--theme-font-mono), var(--font-geist-mono), ui-monospace, monospace;
+  --ops-paper: #efe9dc;
+  --ops-ink: #1c241f;
+  --ops-muted: #5e6a63;
+  --ops-rule: #c9c2b2;
+  --ops-breath: #2f6a62;
+  --ops-key: #c4622d;
+  --ops-accent: var(--ops-breath);
+  color: var(--ops-ink);
+  background: var(--ops-paper);
+}
+
+.ops-wash {
+  background-color: var(--ops-paper);
+  background-image:
+    linear-gradient(180deg, color-mix(in srgb, var(--ops-paper) 42%, transparent) 0%, var(--ops-paper) 58%),
+    var(--ops-wash-image, none),
+    radial-gradient(70% 50% at 80% -10%, color-mix(in srgb, var(--ops-breath) 16%, transparent), transparent 62%),
+    radial-gradient(50% 40% at 0% 100%, color-mix(in srgb, var(--ops-key) 10%, transparent), transparent 70%);
+  background-size: auto, cover, auto, auto;
+  background-position: center top;
+  background-repeat: no-repeat;
+}
+
+.ops-display {
+  font-family: var(--ops-display);
+  font-weight: 800;
+  font-stretch: 75%;
+  font-variation-settings: "wdth" 75, "wght" 800;
+  letter-spacing: -0.02em;
+  line-height: 0.88;
+  text-transform: uppercase;
+  color: var(--ops-ink);
+}
+
+.ops-root h1,
+.ops-root h2,
+.ops-root h3 {
+  color: var(--ops-ink);
+}
+
+.ops-root a:focus-visible,
+.ops-root button:focus-visible {
+  outline: 2px solid var(--ops-breath);
+  outline-offset: 3px;
+}
+
+.ops-label {
+  font-family: var(--ops-mono);
+  font-size: 10px;
+  font-weight: 600;
+  letter-spacing: 0.16em;
+  text-transform: uppercase;
+  color: var(--ops-muted);
+}
+
+.ops-invert {
+  display: inline-block;
+  background: var(--ops-key);
+  color: var(--ops-paper);
+  padding: 0.06em 0.14em 0.02em;
+}
+
+.ops-ticker {
+  overflow: hidden;
+  border-bottom: 1px solid var(--ops-rule);
+  background: color-mix(in srgb, var(--ops-paper) 92%, var(--ops-breath));
+}
+
+.ops-ticker-track {
+  display: flex;
+  width: max-content;
+  animation: ops-ticker 46s linear infinite;
+}
+
+.ops-stamp-spin {
+  animation: ops-stamp 96s linear infinite;
+}
+
+.ops-term {
+  background-color: var(--ops-paper);
+  background-image:
+    linear-gradient(180deg, color-mix(in srgb, var(--ops-paper) 22%, transparent) 0%, color-mix(in srgb, var(--ops-paper) 48%, transparent) 100%),
+    var(--ops-wash-image, none);
+  background-size: auto, cover;
+  background-position: center top;
+  background-repeat: no-repeat;
+}
+
+.ops-work {
+  background-color: color-mix(in srgb, var(--ops-paper) 70%, #fff);
+  background-image: var(--ops-grain-image, none);
+  background-size: 480px 480px;
+  background-blend-mode: soft-light;
+}
+
+@keyframes ops-ticker {
+  from { transform: translateX(0); }
+  to { transform: translateX(-50%); }
+}
+
+@keyframes ops-stamp {
+  from { transform: rotate(0deg); }
+  to { transform: rotate(360deg); }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .ops-ticker-track,
+  .ops-stamp-spin {
+    animation: none;
+  }
+}

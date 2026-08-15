@@ -1,177 +1,152 @@
 'use client';
 
-import React, { useState, useEffect } from 'react';
-import Link from "next/link";
-import { Button } from "@/components/ui/button";
-import { motion } from "framer-motion";
-import CommandLine from '@/components/CommandLine';
-import SpaceGame from '@/components/SpaceGame';
+/*
+  THESIS: this route is a shell session, not an about page wearing a `$`. It
+  refuses the category default on both sides — the neon-on-black hacker terminal
+  and the marketing hero with a prompt glued underneath.
+  OWN-WORLD: the site's locked "on the keys" palette rendered as a hardcopy
+  terminal — policy paper (#efe9dc), ink, breath teal for the prompt, copper for
+  the live signal. One mono face, one left rail, hairline rules, paper tooth.
+  STORY: you land mid-session. Someone already ran `whoami`; the answer is the
+  page. The cursor is waiting for you.
+  FIRST VIEWPORT: full-bleed status line up top, session printing from the top of
+  the field, live prompt directly under the last output line, empty paper below
+  it, hint rail pinned at the bottom.
+  FORM: a printed shell session — chosen over the assigned poster-terminal read
+  because the field must be usable, not framed.
+*/
 
-const TypewriterEffect: React.FC<{ text: string; onComplete?: () => void; isMobile?: boolean }> = ({ text, onComplete, isMobile = false }) => {
-    const [displayText, setDisplayText] = useState('');
-    const [isTyping, setIsTyping] = useState(false);
+import { useEffect, useRef, useState } from 'react';
+import CommandLine, { type CommandLineHandle } from '@/components/CommandLine';
+import { COMMANDS } from '@/lib/Commands';
+import './terminal.css';
 
-    useEffect(() => {
-        if (isTyping || displayText === text) return;
+const PROMPT = 'arach@arach.dev:~$';
+const BOOT_COMMAND = 'whoami';
 
-        setIsTyping(true);
-        setDisplayText('');
-        let i = 0;
-        const charsPerInterval = isMobile ? 20 : 10;
-        const intervalId = setInterval(() => {
-            if (i < text.length) {
-                const nextChunk = text.slice(i, i + charsPerInterval);
-                setDisplayText((prev) => prev + nextChunk);
-                i += charsPerInterval;
-            } else {
-                clearInterval(intervalId);
-                setIsTyping(false);
-                if (onComplete) {
-                    onComplete();
-                }
-            }
-        }, 1);
-        return () => clearInterval(intervalId);
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-    }, []);
+const timeFormat = new Intl.DateTimeFormat('en-US', {
+  hour: '2-digit',
+  minute: '2-digit',
+  second: '2-digit',
+  hour12: false,
+});
 
-    return (
-        <pre className="font-terminal whitespace-pre-wrap overflow-hidden leading-relaxed">
-            {displayText.split('\n').map((line, index) => {
-                if (line.includes('╔') || line.includes('│') || line.includes('╚') ||
-                    line.includes('█') || line.includes('██') || line.includes('╗')) {
-                    return (
-                        <span key={index} className="text-[4px] xs:text-[5px] sm:text-[8px] md:text-[10px] block">
-                            {line}{'\n'}
-                        </span>
-                    );
-                }
-                return <span key={index}>{line}{'\n'}</span>;
-            })}
-        </pre>
-    );
-};
+/* Shells print `Sat Aug 15 15:18:27`, not a locale string with commas. */
+function shellDate(date: Date) {
+  const parts = new Intl.DateTimeFormat('en-US', {
+    weekday: 'short',
+    month: 'short',
+    day: '2-digit',
+    hour: '2-digit',
+    minute: '2-digit',
+    second: '2-digit',
+    hour12: false,
+  }).formatToParts(date);
+  const get = (type: string) => parts.find(p => p.type === type)?.value ?? '';
+  return `${get('weekday')} ${get('month')} ${get('day')} ${get('hour')}:${get('minute')}:${get('second')}`;
+}
 
 export default function AboutTerminalPage() {
-    const [gameActive, setGameActive] = useState(false);
-    const [textComplete, setTextComplete] = useState(false);
-    const [isMobile, setIsMobile] = useState(false);
+  const commandLine = useRef<CommandLineHandle | null>(null);
+  const [clock, setClock] = useState<string | null>(null);
+  const [login, setLogin] = useState<string | null>(null);
 
-    useEffect(() => {
-        const checkMobile = () => {
-            setIsMobile(window.innerWidth < 640);
-        };
-        checkMobile();
-        window.addEventListener('resize', checkMobile);
-        return () => window.removeEventListener('resize', checkMobile);
-    }, []);
+  useEffect(() => {
+    setLogin(shellDate(new Date()));
+    const tick = () => setClock(timeFormat.format(new Date()));
+    tick();
+    const id = window.setInterval(tick, 1000);
+    return () => window.clearInterval(id);
+  }, []);
 
-    const mobileAboutText = `$ whoami
-Arach Tchoupani
-4x CTO · ex-Meta
+  return (
+    <div
+      className="ops-root tty"
+      style={{ ['--tty-grain' as string]: 'url(/labs/ops/grain.png)' }}
+    >
+      <header className="tty-bar">
+        <span className="tty-bar-group">
+          <span className="tty-live" aria-hidden />
+          <span className="tty-bar-host">arach@arach.dev</span>
+          <span className="tty-bar-sep" aria-hidden>·</span>
+          <span>~</span>
+        </span>
+        <span className="tty-bar-group">
+          <span className="hidden sm:inline">tty/1</span>
+          <span className="tty-bar-sep hidden sm:inline" aria-hidden>·</span>
+          <span className="tty-clock" suppressHydrationWarning>{clock ?? '--:--:--'}</span>
+        </span>
+      </header>
 
-$ _
-`;
+      <main
+        className="tty-field"
+        onClick={() => commandLine.current?.focus()}
+      >
+        <div className="tty-session">
+          <p className="tty-muted tty-print" style={{ animationDelay: '40ms' }}>
+            Last login: <span suppressHydrationWarning>{login ?? '—'}</span> on ttys001
+          </p>
 
-    const desktopAboutText = `╔──────────────────────────────────────────────────────────────────────────╗
-│                                                                          │
-│    █████╗ ██████╗  █████╗  ██████╗██╗  ██╗   ██████╗ ███████╗██╗   ██╗   │
-│   ██╔══██╗██╔══██╗██╔══██╗██╔════╝██║  ██║   ██╔══██╗██╔════╝██║   ██║   │
-│   ███████║██████╔╝███████║██║     ███████║   ██║  ██║█████╗  ██║   ██║   │
-│   ██╔══██║██╔══██╗██╔══██║██║     ██╔══██║   ██║  ██║██╔══╝  ╚██╗ ██╔╝   │
-│   ██║  ██║██║  ██║██║  ██║╚██████╗██║  ██║██╗██████╔╝███████╗ ╚████╔╝    │
-│   ╚═╝  ╚═╝╚═╝  ╚═╝╚═╝  ╚═╝ ╚═════╝╚═╝  ╚═╝╚═╝╚═════╝ ╚══════╝  ╚═══╝     │
-│                                                                          │
-╚──────────────────────────────────────────────────────────────────────────╝
-
-arach@arach.dev:~$ cat about.txt
-========================================
-           ARACH TCHOUPANI
-========================================
-
-PROFESSIONAL EXPERIENCE:
-• 4x ex-CTO (led engineering teams from seed to Series B)
-• 2x ex-founder (built and scaled technical products)
-• ex-Meta Engineering (infrastructure and developer tools)
-
-TECHNICAL LEADERSHIP:
-• Built and led engineering teams of 5-50+ engineers
-• Architected systems handling millions of users
-• Specialized in developer experience and platform
-  engineering
-
-TECH STACK:
-• Languages: TypeScript, Python, Go, Rust, Swift
-• Frontend: React, Next.js, Tauri, SwiftUI
-• Backend: Node.js, FastAPI, GraphQL, gRPC
-• Infrastructure: AWS, GCP, Kubernetes, Terraform
-• Databases: PostgreSQL, Redis, DynamoDB, MongoDB
-
-CURRENT FOCUS:
-• code every day
-
-CONTACT:
-• GitHub: @arach
-• Email: arach@arach.dev
-• Location: San Francisco, CA or Montreal, CA
-
-========================================
-
-arach@arach.dev:~$ _
-Type 'help' for available commands.`;
-
-    const aboutText = isMobile ? mobileAboutText : desktopAboutText;
-
-    return (
-        <div className="min-h-screen flex flex-col font-terminal text-orange-400 bg-slate-800">
-            <div className="flex-grow flex items-start justify-center overflow-auto">
-                <motion.div
-                    initial={{ opacity: 0 }}
-                    animate={{ opacity: 1 }}
-                    transition={{ duration: 0.3 }}
-                    className="w-full h-full bg-slate-800"
-                >
-                    <div className="hidden sm:block border-b border-slate-600 p-2 text-orange-400 font-terminal">
-                        <div className="flex items-center justify-between max-w-4xl mx-auto">
-                            <div className="flex items-center">
-                                <div className="mr-2 flex space-x-1">
-                                    <div className="w-3 h-3 rounded-full bg-red-500"></div>
-                                    <div className="w-3 h-3 rounded-full bg-yellow-500"></div>
-                                    <div className="w-3 h-3 rounded-full bg-green-500"></div>
-                                </div>
-                                arach.dev Terminal
-                            </div>
-                            <div className="text-xs">About · Terminal</div>
-                        </div>
-                    </div>
-                    <div className="p-4 sm:p-8 text-orange-400 max-w-4xl mx-auto">
-                        <TypewriterEffect text={aboutText} onComplete={() => setTextComplete(true)} isMobile={isMobile} />
-                        {textComplete && (
-                            <div className="mt-4 font-terminal">
-                                <CommandLine onGameStart={() => setGameActive(true)} />
-                            </div>
-                        )}
-                        {gameActive && <SpaceGame />}
-                    </div>
-                </motion.div>
-            </div>
-            <motion.div
-                initial={{ opacity: 0, y: 20 }}
-                animate={{ opacity: 1, y: 0 }}
-                transition={{ duration: 0.5, delay: 0.5 }}
-                className="flex justify-center pb-6 gap-4"
+          <p className="tty-print" style={{ animationDelay: '200ms', marginTop: '1.6em' }}>
+            <span className="tty-accent">{PROMPT}</span>{' '}
+            <span
+              className="tty-type"
+              style={{ ['--tty-type-width' as string]: `${BOOT_COMMAND.length}ch` }}
             >
-                <Link href="/about">
-                    <Button variant="outline" className="bg-slate-700 text-orange-400 border-orange-400 hover:bg-orange-400 hover:text-slate-800 transition-colors duration-300 font-terminal text-xs">
-                        Back to About
-                    </Button>
-                </Link>
-                <Link href="/github">
-                    <Button variant="outline" className="bg-slate-700 text-orange-400 border-orange-400 hover:bg-orange-400 hover:text-slate-800 transition-colors duration-300 font-terminal text-xs">
-                        View GitHub Activity
-                    </Button>
-                </Link>
-            </motion.div>
+              {BOOT_COMMAND}
+            </span>
+          </p>
+
+          <p className="tty-name tty-print" style={{ animationDelay: '860ms', marginTop: '1.6em' }}>
+            Arach Tchoupani
+          </p>
+
+          <p className="tty-lede tty-print" style={{ animationDelay: '960ms', marginTop: '1em' }}>
+            Local-first tools for AI agents, including typography, keyboard
+            shortcuts, and interaction design.
+          </p>
+
+          <p className="tty-muted tty-print" style={{ animationDelay: '1060ms', marginTop: '1.6em' }}>
+            Montreal / SF
+            <span className="tty-bar-sep"> · </span>
+            <a className="tty-link" href="https://github.com/arach" rel="me noreferrer" target="_blank">
+              github.com/arach
+            </a>
+            <span className="tty-bar-sep"> · </span>
+            <a className="tty-link" href="mailto:arach@arach.dev">arach@arach.dev</a>
+          </p>
+
+          <div className="tty-print" style={{ animationDelay: '1300ms', marginTop: '1.6em' }}>
+            <CommandLine
+              className="tty-cli"
+              initialOutput={[]}
+              promptLabel={PROMPT}
+              echoPrefix={PROMPT}
+              blockCursor
+              autoScroll
+              completions={COMMANDS}
+              handleRef={commandLine}
+            />
+          </div>
         </div>
-    );
+      </main>
+
+      <footer className="tty-hints">
+        <span className="tty-hints-label">try</span>
+        <span className="tty-chips">
+          {COMMANDS.map((cmd) => (
+            <button
+              key={cmd}
+              type="button"
+              className="tty-chip"
+              onClick={() => commandLine.current?.run(cmd)}
+            >
+              {cmd}
+            </button>
+          ))}
+        </span>
+        <span className="tty-keys">↑ history · tab completes</span>
+      </footer>
+    </div>
+  );
 }
