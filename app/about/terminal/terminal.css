@@ -1,0 +1,337 @@
+/*
+  A hardcopy terminal. The "on the keys" world (policy paper, ink, breath teal,
+  copper) rendered as a live shell rather than a poster: status line, printed
+  session, live prompt. Tokens come from components/labs/ops/ops.css.
+*/
+
+.tty {
+  --tty-pad: clamp(1.15rem, 4.2vw, 2.6rem);
+  --tty-rule: var(--ops-rule);
+  --tty-dim: var(--ops-muted);
+  --tty-accent: var(--ops-breath);
+  --tty-key: var(--ops-key);
+
+  position: relative;
+  isolation: isolate;
+  display: flex;
+  flex-direction: column;
+  /* A fixed height, not a min-height: the field must be the only scroller. */
+  height: 100vh;
+  height: 100dvh;
+  background-color: var(--ops-paper);
+  color: var(--ops-ink);
+  font-family: var(--ops-mono);
+  font-variant-ligatures: none;
+  overflow: hidden;
+}
+
+/* Paper tooth. Atmosphere only — it never becomes an image. */
+.tty::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  z-index: -2;
+  pointer-events: none;
+  background-image: var(--tty-grain, none);
+  background-size: 420px 420px;
+  opacity: 0.3;
+  mix-blend-mode: soft-light;
+}
+
+/* A breath of teal off the top-right, copper settling into the bottom-left. */
+.tty::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+  z-index: -1;
+  pointer-events: none;
+  background:
+    radial-gradient(115% 78% at 82% -14%, color-mix(in srgb, var(--tty-accent) 14%, transparent), transparent 62%),
+    radial-gradient(85% 55% at -6% 112%, color-mix(in srgb, var(--tty-key) 10%, transparent), transparent 68%);
+}
+
+/* ── status line ───────────────────────────────────────────── */
+
+.tty-bar {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 1.25rem;
+  padding: 0.62rem var(--tty-pad);
+  border-bottom: 1px solid var(--tty-rule);
+  background: color-mix(in srgb, var(--ops-paper) 95%, var(--ops-ink));
+  font-size: 10px;
+  font-weight: 500;
+  letter-spacing: 0.15em;
+  text-transform: uppercase;
+  color: var(--tty-dim);
+}
+
+@media (min-width: 640px) {
+  .tty-bar { font-size: 10.5px; }
+}
+
+.tty-bar-group {
+  display: flex;
+  align-items: center;
+  gap: 0.55rem;
+  min-width: 0;
+}
+
+.tty-bar-host {
+  color: color-mix(in srgb, var(--ops-ink) 78%, transparent);
+}
+
+.tty-bar-sep {
+  color: var(--tty-rule);
+}
+
+.tty-clock {
+  font-variant-numeric: tabular-nums;
+  letter-spacing: 0.1em;
+}
+
+.tty-live {
+  width: 5px;
+  height: 5px;
+  border-radius: 50%;
+  background: var(--tty-key);
+  box-shadow: 0 0 0 3px color-mix(in srgb, var(--tty-key) 16%, transparent);
+  animation: tty-breathe 3.2s ease-in-out infinite;
+}
+
+/* ── session field ─────────────────────────────────────────── */
+
+.tty-field {
+  flex: 1;
+  min-height: 0;
+  overflow-y: auto;
+  overscroll-behavior: contain;
+  padding: clamp(1.7rem, 5vh, 3rem) var(--tty-pad) clamp(2rem, 8vh, 4rem);
+  scrollbar-width: thin;
+  scrollbar-color: color-mix(in srgb, var(--ops-ink) 22%, transparent) transparent;
+  cursor: text;
+}
+
+.tty-field::-webkit-scrollbar { width: 9px; }
+.tty-field::-webkit-scrollbar-thumb {
+  background: color-mix(in srgb, var(--ops-ink) 18%, transparent);
+  border-radius: 99px;
+  border: 3px solid transparent;
+  background-clip: content-box;
+}
+
+.tty-session {
+  max-width: 74ch;
+  font-size: 13.5px;
+  line-height: 1.9;
+}
+
+@media (min-width: 640px) {
+  .tty-session { font-size: 15px; }
+}
+
+.tty-muted { color: var(--tty-dim); }
+.tty-accent { color: var(--tty-accent); }
+
+.tty-name {
+  font-size: 1.15em;
+  letter-spacing: 0.01em;
+  color: var(--ops-ink);
+}
+
+.tty-lede {
+  color: color-mix(in srgb, var(--ops-ink) 88%, transparent);
+  text-wrap: pretty;
+}
+
+.tty-link {
+  color: var(--tty-dim);
+  text-decoration: underline;
+  text-decoration-color: var(--tty-rule);
+  text-underline-offset: 0.22em;
+  transition: color 140ms ease, text-decoration-color 140ms ease;
+}
+
+.tty-link:hover {
+  color: var(--ops-ink);
+  text-decoration-color: var(--tty-key);
+}
+
+.tty-link:focus-visible {
+  outline: 2px solid var(--tty-accent);
+  outline-offset: 3px;
+}
+
+/* Scrollback printed by the shell inherits the session's type outright. */
+.tty-cli {
+  color: color-mix(in srgb, var(--ops-ink) 82%, transparent);
+}
+
+.tty-cli p {
+  margin-bottom: 0;
+}
+
+/* ── prompt + block caret ──────────────────────────────────── */
+
+.tty-input-wrap {
+  position: relative;
+  display: block;
+  flex: 1 1 auto;
+  min-width: 0;
+}
+
+.tty-input {
+  position: relative;
+  z-index: 1;
+  width: 100%;
+  min-width: 0;
+  background: transparent;
+  border: 0;
+  outline: none;
+  font: inherit;
+  letter-spacing: inherit;
+  padding: 0;
+}
+
+.tty-caret {
+  position: absolute;
+  top: 0.08em;
+  z-index: 0;
+  width: 1ch;
+  height: 1.18em;
+  background: color-mix(in srgb, var(--tty-accent) 32%, transparent);
+  animation: tty-blink 1.15s steps(1) infinite;
+}
+
+/* An unfocused terminal holds a hollow block. */
+.tty-caret--idle {
+  background: transparent;
+  box-shadow: inset 0 0 0 1px color-mix(in srgb, var(--tty-accent) 42%, transparent);
+  animation: none;
+}
+
+.tty ::selection {
+  background: color-mix(in srgb, var(--tty-accent) 22%, transparent);
+}
+
+/* ── boot reveal: the session prints itself once ───────────── */
+
+.tty-print {
+  opacity: 0;
+  animation: tty-print 260ms ease-out forwards;
+}
+
+.tty-type {
+  display: inline-block;
+  overflow: hidden;
+  white-space: nowrap;
+  vertical-align: bottom;
+  width: 0;
+  animation: tty-type 340ms steps(6, end) 0.34s forwards;
+}
+
+/* ── hint rail ─────────────────────────────────────────────── */
+
+.tty-hints {
+  display: flex;
+  align-items: center;
+  gap: 0.9rem;
+  padding: 0.6rem var(--tty-pad);
+  border-top: 1px solid var(--tty-rule);
+  background: color-mix(in srgb, var(--ops-paper) 95%, var(--ops-ink));
+  font-size: 10.5px;
+  color: var(--tty-dim);
+}
+
+.tty-hints-label {
+  flex-shrink: 0;
+  letter-spacing: 0.15em;
+  text-transform: uppercase;
+  font-size: 10px;
+}
+
+.tty-chips {
+  display: flex;
+  align-items: center;
+  gap: 0.4rem;
+  overflow-x: auto;
+  scrollbar-width: none;
+  padding: 2px 0;
+}
+
+.tty-chips::-webkit-scrollbar { display: none; }
+
+.tty-chip {
+  flex-shrink: 0;
+  padding: 0.16rem 0.5rem 0.2rem;
+  border: 1px solid var(--tty-rule);
+  border-radius: 3px;
+  background: color-mix(in srgb, var(--ops-paper) 55%, #fff);
+  box-shadow: 0 1px 1.5px -0.5px color-mix(in srgb, var(--ops-ink) 22%, transparent);
+  color: var(--tty-dim);
+  font: inherit;
+  font-size: 11px;
+  letter-spacing: 0.02em;
+  white-space: nowrap;
+  transition: transform 90ms ease, box-shadow 90ms ease, color 120ms ease, border-color 120ms ease;
+}
+
+.tty-chip:hover {
+  color: var(--ops-ink);
+  border-color: color-mix(in srgb, var(--tty-key) 55%, var(--tty-rule));
+}
+
+.tty-chip:active {
+  transform: translateY(1px);
+  box-shadow: none;
+}
+
+.tty-chip:focus-visible {
+  outline: 2px solid var(--tty-accent);
+  outline-offset: 2px;
+}
+
+.tty-keys {
+  display: none;
+  flex-shrink: 0;
+  margin-left: auto;
+  letter-spacing: 0.06em;
+  color: color-mix(in srgb, var(--ops-muted) 82%, transparent);
+}
+
+@media (min-width: 860px) {
+  .tty-keys { display: block; }
+}
+
+/* ── motion ────────────────────────────────────────────────── */
+
+@keyframes tty-blink {
+  0%, 52% { opacity: 1; }
+  53%, 100% { opacity: 0; }
+}
+
+@keyframes tty-print {
+  from { opacity: 0; transform: translateY(2px); }
+  to { opacity: 1; transform: none; }
+}
+
+@keyframes tty-type {
+  to { width: var(--tty-type-width, 6ch); }
+}
+
+@keyframes tty-breathe {
+  0%, 100% { opacity: 1; }
+  50% { opacity: 0.35; }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .tty-print,
+  .tty-type,
+  .tty-caret,
+  .tty-live {
+    animation: none;
+  }
+  .tty-print { opacity: 1; transform: none; }
+  .tty-type { width: var(--tty-type-width, 6ch); }
+}

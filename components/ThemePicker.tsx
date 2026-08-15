@@ -11,8 +11,8 @@ export default function ThemePicker() {
   const [isOpen, setIsOpen] = useState(false);
   const pathname = usePathname();
   
-  // Don't render on gallery pages - they have their own theme system
-  if (pathname?.startsWith('/gallery')) {
+  // Don't render on surfaces that own their palette end to end
+  if (pathname?.startsWith('/gallery') || pathname?.startsWith('/about/terminal')) {
     return null;
   }
   

@@ -1,32 +1,50 @@
+export const COMMANDS = [
+    'help',
+    'whoami',
+    'about',
+    'contact',
+    'start space',
+    'start tetris',
+    'clear',
+    'exit',
+] as const
+
 export function executeCommand(command: string, onGameStart: (game: string) => void): string[] {
     switch (command) {
         case 'help':
             return [
                 'Available commands:',
+                '  whoami - Who is behind this shell',
                 '  contact - Show contact information',
+                '  about - Open the about page',
                 '  start space - Start the space game',
                 '  start tetris - Start the Tetris game',
+                '  clear - Clear the screen',
                 '  exit - Return to homepage'
+            ]
+        case 'whoami':
+            return [
+                'Arach Tchoupani',
+                '',
+                'Local-first tools for AI agents, including typography,',
+                'keyboard shortcuts, and interaction design.',
+                '',
+                'Montreal / SF · github.com/arach · arach@arach.dev'
             ]
         case 'contact':
             return [
-                '════════════════════════════════════════',
-                '           Contact Information          ',
-                '════════════════════════════════════════',
+                'Contact',
                 '',
-                '  GitHub:   @arach',
-                '  Email:    arach@arach.dev',
-                '  Calendar: cal.com/arach/intro-chat',
-                '  Location: San Francisco, CA',
+                '  github    github.com/arach',
+                '  email     arach@arach.dev',
+                '  calendar  cal.com/arach/intro-chat',
+                '  based     Montreal / SF',
                 '',
-                '  Feel free to reach out for:',
-                '  • Collaborations',
-                '  • Consulting opportunities',
-                '  • Technical discussions',
-                '  • Or just to chat about tech!',
-                '',
-                '════════════════════════════════════════'
+                '  Open to collaborations, consulting, and technical discussions.'
             ]
+        case 'about':
+            window.location.href = '/about'
+            return []
         case 'start space':
             onGameStart('space')
             return ['Starting space game...', 'Use your mouse to control the spaceship!']
