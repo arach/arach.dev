@@ -404,63 +404,9 @@ const StaticPathBackground: React.FC<StaticPathBackgroundProps> = ({
         const generatedPaths = generatePaths(hotspots, windowSize.width, windowSize.height);
         setAllPaths(generatedPaths);
         
-        // Don't auto-store paths - we'll manually populate the database when needed
+        // Generated paths stay local; the shared cache is read-only.
         console.log(`[StaticPathBackground] Generated ${generatedPaths.length} paths locally`);
         
-        // Expose a way to manually store paths if needed (e.g., from debug toolbar)
-        if (typeof window !== 'undefined') {
-          (window as any).__storePaths = () => {
-            console.log('[StaticPathBackground] Manually storing paths to database...');
-            
-            // Group paths by starting hotspot to ensure distribution
-            const pathsByHotspot = new Map<string, typeof generatedPaths>();
-            generatedPaths.forEach(path => {
-              if (!pathsByHotspot.has(path.from)) {
-                pathsByHotspot.set(path.from, []);
-              }
-              pathsByHotspot.get(path.from)!.push(path);
-            });
-            
-            // Select a balanced set of paths - take a few from each hotspot
-            const selectedPaths: typeof generatedPaths = [];
-            const maxPathsPerHotspot = 10;
-            
-            pathsByHotspot.forEach((paths, hotspotId) => {
-              // Take up to maxPathsPerHotspot from each hotspot
-              const pathsToTake = Math.min(paths.length, maxPathsPerHotspot);
-              selectedPaths.push(...paths.slice(0, pathsToTake));
-            });
-            
-            // Limit to 500 total
-            const pathsForApi = selectedPaths.slice(0, 500).map((path, index) => ({
-              from: path.from,
-              to: path.to,
-              variation: index % 5,
-              points: path.points,
-              distance: Math.sqrt(
-                Math.pow(path.points[0].x - path.points[path.points.length - 1].x, 2) +
-                Math.pow(path.points[0].y - path.points[path.points.length - 1].y, 2)
-              ),
-            }));
-            
-            console.log(`[StaticPathBackground] Storing ${pathsForApi.length} paths from ${pathsByHotspot.size} hotspots`);
-            
-            fetch('/api/paths', {
-              method: 'POST',
-              headers: { 'Content-Type': 'application/json' },
-              body: JSON.stringify({
-                paths: pathsForApi,
-                viewport: { width: windowSize.width, height: windowSize.height },
-              }),
-            }).then(res => {
-              if (res.ok) {
-                console.log('[StaticPathBackground] Paths manually stored successfully');
-              }
-            }).catch(err => {
-              console.error('[StaticPathBackground] Manual storage failed:', err);
-            });
-          };
-        }
       } catch (error) {
         console.error('[StaticPathBackground] Error fetching/generating paths:', error);
         // Fallback to generating paths locally
@@ -940,7 +886,6 @@ const StaticPathBackground: React.FC<StaticPathBackgroundProps> = ({
             <div className="pl-2">• 🔵 Quadrant labels (cyan)</div>
             <div className="text-yellow-400">Console Commands:</div>
             <div className="pl-2">• __toggleDebug() - Toggle debug</div>
-            <div className="pl-2">• __storePaths() - Store to DB</div>
           </div>
         </div>
       )}
