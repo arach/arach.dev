@@ -3,26 +3,14 @@ import { neon } from "@neondatabase/serverless";
 
 const sql = process.env.DATABASE_URL ? neon(process.env.DATABASE_URL) : null;
 
-interface PathRecord {
-  id: number;
-  path_key: string;
-  from_hotspot: string;
-  to_hotspot: string;
-  variation: number;
-  points: { x: number; y: number }[];
-  distance: number;
-  viewport_width: number;
-  viewport_height: number;
-}
-
 export async function GET(request: NextRequest) {
   const { searchParams } = new URL(request.url);
-  const width = parseInt(searchParams.get("width") || "0");
-  const height = parseInt(searchParams.get("height") || "0");
+  const width = Number(searchParams.get("width"));
+  const height = Number(searchParams.get("height"));
 
-  if (!width || !height) {
+  if (![width, height].every(value => Number.isInteger(value) && value > 0 && value <= 16384)) {
     return NextResponse.json(
-      { error: "Width and height are required" },
+      { error: "Width and height must be integers between 1 and 16384" },
       { status: 400 }
     );
   }
@@ -129,118 +117,6 @@ export async function GET(request: NextRequest) {
     console.error("[Paths API] Error fetching paths:", error);
     return NextResponse.json(
       { error: "Failed to fetch paths", cached: false },
-      { status: 500 }
-    );
-  }
-}
-
-export async function POST(request: NextRequest) {
-  try {
-    if (!sql) {
-      return NextResponse.json(
-        { error: "Database connection not available" },
-        { status: 503 }
-      );
-    }
-
-    const body = await request.json();
-    const { paths, viewport } = body;
-
-    if (!paths || !viewport || !viewport.width || !viewport.height) {
-      return NextResponse.json(
-        { error: "Paths and viewport dimensions are required" },
-        { status: 400 }
-      );
-    }
-
-    console.log(`[Paths API] Storing ${paths.length} paths`);
-
-    // Calculate the bounding box for all paths
-    let globalMaxX = 0;
-    let globalMaxY = 0;
-    let globalMinX = Infinity;
-    let globalMinY = Infinity;
-
-    // First pass: calculate global bounds
-    for (const path of paths) {
-      for (const point of path.points) {
-        globalMaxX = Math.max(globalMaxX, point.x);
-        globalMaxY = Math.max(globalMaxY, point.y);
-        globalMinX = Math.min(globalMinX, point.x);
-        globalMinY = Math.min(globalMinY, point.y);
-      }
-    }
-
-    console.log(`[Paths API] Bounding box: (${globalMinX},${globalMinY}) to (${globalMaxX},${globalMaxY})`);
-
-    // Delete existing paths with smaller bounds
-    await sql`
-      DELETE FROM background_paths
-      WHERE max_x <= ${globalMaxX} AND max_y <= ${globalMaxY}
-    `;
-
-    // Insert new paths with bounding box info
-    let insertedCount = 0;
-    for (const path of paths) {
-      const pathKey = `${path.from}_to_${path.to}_v${path.variation || 0}_${globalMaxX}x${globalMaxY}`;
-      
-      // Calculate bounds for this specific path
-      let pathMaxX = 0;
-      let pathMaxY = 0;
-      let pathMinX = Infinity;
-      let pathMinY = Infinity;
-      
-      for (const point of path.points) {
-        pathMaxX = Math.max(pathMaxX, point.x);
-        pathMaxY = Math.max(pathMaxY, point.y);
-        pathMinX = Math.min(pathMinX, point.x);
-        pathMinY = Math.min(pathMinY, point.y);
-      }
-      
-      try {
-        await sql`
-          INSERT INTO background_paths (
-            path_key, from_hotspot, to_hotspot, variation, 
-            points, distance, viewport_width, viewport_height,
-            max_x, max_y, min_x, min_y
-          ) VALUES (
-            ${pathKey}, ${path.from}, ${path.to}, ${path.variation || 0},
-            ${JSON.stringify(path.points)}, ${path.distance},
-            ${viewport.width}, ${viewport.height},
-            ${pathMaxX}, ${pathMaxY}, ${pathMinX}, ${pathMinY}
-          )
-          ON CONFLICT (path_key) 
-          DO UPDATE SET 
-            points = EXCLUDED.points,
-            distance = EXCLUDED.distance,
-            max_x = EXCLUDED.max_x,
-            max_y = EXCLUDED.max_y,
-            min_x = EXCLUDED.min_x,
-            min_y = EXCLUDED.min_y,
-            updated_at = NOW()
-        `;
-        insertedCount++;
-      } catch (err) {
-        console.error(`[Paths API] Error inserting path ${pathKey}:`, err);
-      }
-    }
-
-    // Clean up old viewport sizes
-    // TODO: Create cleanup_old_viewport_paths() function in database
-    // const cleanupResult = await sql`SELECT cleanup_old_viewport_paths() as deleted_count`;
-    // const deletedCount = cleanupResult[0]?.deleted_count || 0;
-
-    console.log(`[Paths API] Stored ${insertedCount} paths`);
-
-    return NextResponse.json({
-      success: true,
-      stored: insertedCount,
-      viewport,
-    });
-  } catch (error) {
-    console.error("[Paths API] Error storing paths:", error);
-    return NextResponse.json(
-      { error: "Failed to store paths" },
       { status: 500 }
     );
   }
