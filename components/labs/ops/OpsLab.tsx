@@ -20,14 +20,13 @@ const SCREENSHOTS = new Set([
   'linea',
   'hud',
   'talkie',
-  'fabric',
   'dewey',
+  'fab',
   'og',
-  'vif',
+  'vox',
   'arc',
   'speakeasy',
-  'hooked',
-  'blink',
+  'canvas',
   '2048ish',
 ]);
 

@@ -75,7 +75,7 @@ export default function OgShowcasePage() {
           </div>
           
           <div>
-            <h3 style={{ fontSize: '14px', marginBottom: '10px' }}>02. Blink</h3>
+            <h3 style={{ fontSize: '14px', marginBottom: '10px' }}>02. Canvas</h3>
             <div style={{ 
               border: '2px solid #333',
               borderRadius: '8px',
@@ -83,15 +83,15 @@ export default function OgShowcasePage() {
             }}>
               {/* eslint-disable-next-line @next/next/no-img-element */}
           <img 
-                src="/projects/blink/og.png"
-                alt="Blink project OG"
+                src="/projects/canvas/og.png"
+                alt="Canvas project OG"
                 width={600}
                 height={315}
                 style={{ display: 'block', width: '100%', height: 'auto' }}
               />
             </div>
             <code style={{ fontSize: '10px', color: '#666', display: 'block', marginTop: '5px' }}>
-              /projects/blink/og.png
+              /projects/canvas/og.png
             </code>
           </div>
         </div>
