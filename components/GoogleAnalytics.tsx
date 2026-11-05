@@ -1,4 +1,5 @@
 import { createAnalyticsScript, PULSE_PROPERTY_ID } from '@/lib/analytics';
+import Script from 'next/script';
 
 export function GoogleAnalytics() {
   const script = createAnalyticsScript({
@@ -10,6 +11,6 @@ export function GoogleAnalytics() {
   if (!script) return null;
 
   return (
-    <script id="site-analytics" dangerouslySetInnerHTML={{ __html: script }} />
+    <Script id="site-analytics" strategy="afterInteractive" dangerouslySetInnerHTML={{ __html: script }} />
   );
 }
