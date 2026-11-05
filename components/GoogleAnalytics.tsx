@@ -1,28 +1,16 @@
+import { createAnalyticsScript, PULSE_PROPERTY_ID } from '@/lib/analytics';
 import Script from 'next/script';
 
 export function GoogleAnalytics() {
-  const gaId = process.env.NEXT_PUBLIC_GA_MEASUREMENT_ID;
-
-  if (!gaId) {
-    return null;
-  }
+  const script = createAnalyticsScript({
+    nodeEnv: process.env.NODE_ENV,
+    vercelEnv: process.env.VERCEL_ENV,
+    measurementId: process.env.NEXT_PUBLIC_GA_MEASUREMENT_ID,
+    pulsePropertyId: PULSE_PROPERTY_ID,
+  });
+  if (!script) return null;
 
   return (
-    <>
-      <Script
-        src={`https://www.googletagmanager.com/gtag/js?id=${gaId}`}
-        strategy="afterInteractive"
-      />
-      <Script id="google-analytics" strategy="afterInteractive">
-        {`
-          window.dataLayer = window.dataLayer || [];
-          function gtag(){dataLayer.push(arguments);}
-          gtag('js', new Date());
-          gtag('config', '${gaId}', {
-            page_path: window.location.pathname,
-          });
-        `}
-      </Script>
-    </>
+    <Script id="site-analytics" strategy="afterInteractive" dangerouslySetInnerHTML={{ __html: script }} />
   );
 }

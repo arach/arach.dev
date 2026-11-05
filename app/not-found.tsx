@@ -1,8 +1,14 @@
 import NotFound from '@/components/NotFound';
+import type { Metadata } from 'next';
+
+export const metadata: Metadata = {
+    title: { absolute: '404: Page not found | arach.dev' },
+};
 
 export default function CustomNotFound() {
     return (
-        <NotFound
+        <div data-pulse-not-found="true">
+          <NotFound
             domain="arach.dev"
             siteStructure={[
                 'index.html',
@@ -12,6 +18,7 @@ export default function CustomNotFound() {
             ]}
             buttonText="Return to arach.dev"
             buttonLink="/"
-        />
+          />
+        </div>
     );
 }

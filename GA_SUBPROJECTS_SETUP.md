@@ -1,86 +1,52 @@
-# Google Analytics Setup for Subprojects
+# Analytics for arach.dev and subprojects
 
-Your main arach.dev site is now configured with Google Analytics (G-GSHDZPFRZG).
+arach.dev uses the Google Analytics measurement ID supplied by
+`NEXT_PUBLIC_GA_MEASUREMENT_ID` (currently `G-GSHDZPFRZG`). Its Pulse property ID is
+`525091599`. These identifiers have different purposes; do not substitute a
+measurement ID for a property ID.
 
-## For GitHub Pages Subprojects
+## Production collection
 
-Add this snippet to the `<head>` section of your HTML files in each subproject:
+`components/GoogleAnalytics.tsx` uses `lib/analytics.ts` to load GA and Pulse only
+after all of these checks pass:
 
-```html
-<!-- Google Analytics -->
-<script async src="https://www.googletagmanager.com/gtag/js?id=G-GSHDZPFRZG"></script>
-<script>
-  window.dataLayer = window.dataLayer || [];
-  function gtag(){dataLayer.push(arguments);}
-  gtag('js', new Date());
-  gtag('config', 'G-GSHDZPFRZG');
-</script>
-```
+- The build is production; Vercel preview and development environments are disabled.
+- The browser origin is exactly `https://arach.dev` or `https://www.arach.dev`.
+- The URL does not contain `analytics=off`.
+- The browser has not enabled Do Not Track or Global Privacy Control.
 
-## Projects to Update
+The origin check runs before either external script is loaded. A production
+build served on localhost, a LAN hostname, or a Vercel preview URL therefore
+does not collect analytics. `NODE_ENV=production` alone is insufficient because
+preview builds also use that value. The same gate applies to 404 pages.
 
-Based on your projects list, here are the GitHub Pages sites that should include GA:
+Pulse records the requested URL and uses the explicit marker in
+`app/not-found.tsx` to distinguish the site's missing-page view. The marker is a
+page signal; it does not inspect the HTTP response status.
 
-- **Blink**: https://arach.github.io/blink
-- **Scout**: https://arach.github.io/scout
-- **Peal**: https://arach.github.io/peal
-- **Pomo**: https://arach.github.io/pomo
-- **2048ish**: https://arach.github.io/2048ish
-- **Grab**: https://arach.github.io/grab
-- **Tempo**: https://arach.github.io/tempo
-- **Reflow**: https://arach.github.io/reflow
+## Adding another project
 
-## For React/Next.js Subprojects
+Confirm the intended GA property and web stream in Google Analytics Admin.
+Use that project's measurement ID, exact production origins, and Pulse
+property ID if Pulse tracking is enabled. Do not copy arach.dev's identifiers
+or broaden its allowlist to include local or preview hosts.
 
-If a subproject uses React or Next.js, you can copy the `GoogleAnalytics` component:
+If a property intentionally contains multiple public sites, retain the
+hostname when reporting traffic so those sites are not confused with each
+other. Sharing a measurement ID also shares that property's reporting; it does
+not create a separate project.
 
-```tsx
-// components/GoogleAnalytics.tsx
-import Script from 'next/script'; // or use regular <script> tags for non-Next.js
+For a Next.js project, adapt this repository's gated bootstrap. For a static
+site, apply the same browser checks before creating the external script tags.
+Never paste an unconditional GA loader into a shared layout or static page.
 
-export function GoogleAnalytics() {
-  return (
-    <>
-      <Script
-        src="https://www.googletagmanager.com/gtag/js?id=G-GSHDZPFRZG"
-        strategy="afterInteractive"
-      />
-      <Script id="google-analytics" strategy="afterInteractive">
-        {`
-          window.dataLayer = window.dataLayer || [];
-          function gtag(){dataLayer.push(arguments);}
-          gtag('js', new Date());
-          gtag('config', 'G-GSHDZPFRZG');
-        `}
-      </Script>
-    </>
-  );
-}
-```
+## Verification without production traffic
 
-Then import and add `<GoogleAnalytics />` to your root layout or main component.
+Run `bun test tests/analytics.test.ts` to exercise the bootstrap in a VM with
+stubbed scripts and no network. The tests cover local production builds,
+preview URLs, exact production origins, privacy signals, and duplicate loading.
 
-## For Hosted Sites
-
-Sites with custom domains (like Talkie at usetalkie.com) should also include the same GA snippet in their HTML head section.
-
-## Testing
-
-1. Visit your site in a browser
-2. Open Developer Tools > Network tab
-3. Look for requests to `googletagmanager.com` or `google-analytics.com`
-4. Or check Real-Time reports in Google Analytics dashboard
-
-## Environment Variables (Optional)
-
-For better security in projects with build systems, use environment variables:
-
-```bash
-# .env.local
-NEXT_PUBLIC_GA_MEASUREMENT_ID=G-GSHDZPFRZG
-```
-
-Then reference it in code:
-```typescript
-const gaId = process.env.NEXT_PUBLIC_GA_MEASUREMENT_ID;
-```
+Use `?analytics=off` for browser QA on the production site, retaining it on each
+navigation. Confirm that no GA or Pulse script or collector request is sent.
+Raw HTTP source checks execute no JavaScript and do not emit analytics events.
+Only send a real production beacon when that verification is explicitly wanted.
