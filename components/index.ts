@@ -22,11 +22,9 @@ export { default as TetrisGame } from './TetrisGame'
 export { default as InteractiveBackground } from './InteractiveBackground'
 export { default as DottedBackground } from './DottedBackground'
 export { default as DottedGrid } from './DottedGrid'
-export { default as ThemedDottedGrid } from './ThemedDottedGrid'
 export { default as StaticPathBackground } from './StaticPathBackground'
 
 // Theme components
-export { default as ThemePicker } from './ThemePicker'
 
 // Command line component
 export { default as CommandLine } from './CommandLine'

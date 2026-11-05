@@ -2,13 +2,13 @@
 
 /* Theme variables defaults - MUST be defined first */
 :root {
-  --theme-bg-color: #ffffff;
-  --theme-text-color: #111827;
-  --theme-ascii-color: #000000;
-  --theme-border-color: #e5e7eb;
-  --theme-muted-text: #6b7280;
-  --theme-header-bg: rgba(0, 0, 0, 1);
-  --theme-header-text: #ffffff;
+  --theme-bg-color: #f4f5f7;
+  --theme-text-color: #0b1640;
+  --theme-ascii-color: #0b1640;
+  --theme-border-color: rgba(11, 22, 64, 0.12);
+  --theme-muted-text: rgba(11, 22, 64, 0.72);
+  --theme-header-bg: rgba(244, 245, 247, 0.86);
+  --theme-header-text: #0b1640;
 }
 
 * {
@@ -22,7 +22,7 @@ html {
 }
 
 body {
-  font-family: ui-monospace, SFMono-Regular, "SF Mono", Monaco, Consolas, "Liberation Mono", "Courier New", monospace;
+  font-family: var(--font-geist-sans), system-ui, sans-serif;
   background: var(--theme-bg-color);
   color: var(--theme-text-color);
   display: flex;

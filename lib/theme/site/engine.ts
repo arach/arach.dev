@@ -22,7 +22,10 @@ type Theme = {
     text: string;
     accent: string;
     muted: string;
+    faint?: string;
     border: string;
+    rule?: string; // Strong rule above section heads
+    grid?: string; // Blueprint grid lines
     card: string;
     shadow: string;
   };
@@ -89,13 +92,17 @@ export class ThemeEngine {
         --theme-text-color: ${theme.colors.text};
         --theme-accent-color: ${theme.colors.accent};
         --theme-muted-color: ${theme.colors.muted};
+        --theme-faint-color: ${theme.colors.faint || theme.colors.muted};
         --theme-border-color: ${theme.colors.border};
+        --theme-rule-color: ${theme.colors.rule || theme.colors.text};
+        --theme-grid-color: ${theme.colors.grid || 'transparent'};
         --theme-card-bg: ${theme.colors.card};
         --theme-shadow-color: ${theme.colors.shadow};
         
         /* Header */
         --theme-header-bg: ${theme.header.bg};
         --theme-header-text-color: ${theme.header.text};
+        --theme-header-text: ${theme.header.text};
         --theme-header-font: ${headerFont};
         
         /* Typography */
@@ -107,6 +114,7 @@ export class ThemeEngine {
         --theme-code-font: ${codeFont};
         
         /* Effects */
+        color-scheme: ${theme.id === 'dark' ? 'dark' : 'light'};
         --theme-dot-opacity: ${theme.effects.dotOpacity};
         --theme-blur: ${theme.effects.blur};
       }

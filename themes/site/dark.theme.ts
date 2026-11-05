@@ -1,39 +1,33 @@
+// Warm graphite with a CRT-amber accent — the dark side of arach.io's classic template.
 export const darkTheme = {
-  name: 'Midnight',
+  name: 'Dark',
   id: 'dark',
-  // Define fonts - dark theme uses modern sans fonts
   fonts: {
-    sans: '"Space Grotesk", "Inter", var(--font-geist-sans)',
+    sans: 'var(--font-geist-sans), system-ui, sans-serif',
     mono: 'var(--font-geist-mono), ui-monospace, monospace',
-    display: '"Space Grotesk"',
   },
   colors: {
-    bg: '#0a0a0a',
-    text: '#e5e5e5',
-    accent: '#60a5fa',
-    muted: '#a3a3a3',
-    border: '#262626',
-    card: '#171717',
+    bg: '#0b0a09',
+    text: '#eee8dc',
+    accent: '#f2ac3e',
+    muted: 'rgba(238, 232, 220, 0.7)',
+    faint: 'rgba(238, 232, 220, 0.38)',
+    border: 'rgba(238, 232, 220, 0.1)',
+    rule: 'rgba(238, 232, 220, 0.2)',
+    grid: 'rgba(242, 172, 62, 0.05)',
+    card: '#141311',
     shadow: 'rgba(0, 0, 0, 0.5)',
   },
   header: {
-    bg: 'rgba(17, 17, 17, 0.95)',
-    text: '#ffffff',
-    // font defaults to fonts.sans (Space Grotesk)
+    bg: 'rgba(11, 10, 9, 0.86)',
+    text: '#eee8dc',
   },
   typography: {
-    headingColor: '#60a5fa',
-    bodyColor: '#e5e5e5',
-    // headingFont defaults to fonts.sans
-    // bodyFont defaults to fonts.sans
-    // codeFont defaults to fonts.mono
+    headingColor: '#eee8dc',
+    bodyColor: '#eee8dc',
   },
   effects: {
-    dotOpacity: '0.25',
-    blur: '16px',
+    dotOpacity: '0.2',
+    blur: '10px',
   },
-  fontImports: [
-    'https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;600;700&display=swap',
-    'https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&display=swap',
-  ],
 } as const;

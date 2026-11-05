@@ -1,23 +1,15 @@
 import { GeistMono } from "geist/font/mono";
 import { GeistSans } from "geist/font/sans";
-import { Spectral } from "next/font/google";
 import type { Metadata } from 'next'
-
-const spectral = Spectral({
-  weight: ['400', '500'],
-  style: ['normal'],
-  subsets: ['latin'],
-  variable: '--font-spectral',
-});
 import "./globals.css";
 import Footer from "@/components/Footer";
 import Header from "@/components/Header";
 import { ThemeProvider } from "@/lib/theme/site/provider";
-import Script from "next/script";
 import { SpeedInsights } from "@vercel/speed-insights/next";
-import ThemePicker from "@/components/ThemePicker";
+import { themesCSS, themeBootScript } from "@/lib/theme/site/themes";
 import { ConsoleArt } from "@/components/ConsoleArt";
 import { GoogleAnalytics } from "@/components/GoogleAnalytics";
+import Script from "next/script";
 import fs from 'fs';
 import path from 'path';
 
@@ -61,10 +53,12 @@ export default function RootLayout({
   children: React.ReactNode;
 }>) {
   return (
-    <html lang="en" className={`h-full ${GeistMono.variable} ${GeistSans.variable} ${spectral.variable}`}>
+    <html lang="en" data-theme="default" suppressHydrationWarning className={`h-full ${GeistMono.variable} ${GeistSans.variable}`}>
       <head>
         {/* Inline critical CSS for immediate render */}
         <style dangerouslySetInnerHTML={{ __html: criticalCSS }} />
+        <style dangerouslySetInnerHTML={{ __html: themesCSS }} />
+        <Script id="theme-boot" strategy="beforeInteractive">{themeBootScript}</Script>
       </head>
       <body className={`${GeistSans.className} antialiased flex flex-col min-h-screen`}>
         <ThemeProvider>
@@ -73,7 +67,6 @@ export default function RootLayout({
             {children}
           </main>
           <Footer />
-          <ThemePicker />
           <ConsoleArt />
           <GoogleAnalytics />
           <SpeedInsights />

@@ -13,7 +13,7 @@ export function initConsoleArt() {
   
   // Determine ASCII color based on theme (matching homepage logic)
   let asciiColor: string;
-  if (['dark', 'terminal', 'ocean', 'cyberpunk'].includes(currentTheme)) {
+  if (currentTheme === 'dark') {
     // Dark/vibrant themes use accent color
     asciiColor = computedStyle.getPropertyValue('--theme-accent-color').trim() || '#60a5fa';
   } else {
@@ -112,7 +112,7 @@ export function initConsoleArt() {
 %c• Use Vim keys (h,j,k,l) to navigate projects
 %c• Press 'n/p' to switch between project categories
 
-%c🎨 Theme IDs: %cdefault, dark, terminal, ocean, sunset, cyberpunk, paper
+%c🎨 Theme IDs: %cdefault, dark
 `,
         `color: ${accentColor}; font-family: ${monoFont};`,
         `color: ${successColor}; font-weight: bold; font-size: 14px;`,
@@ -188,13 +188,8 @@ export function initConsoleArt() {
 
 %c🎨 Site Themes:
 
-%c• default%c   - Clean and modern light theme
-%c• dark%c      - Sleek dark mode experience  
-%c• terminal%c  - Classic terminal green on black
-%c• ocean%c     - Deep blue oceanic vibes
-%c• sunset%c    - Warm orange and pink gradients
-%c• cyberpunk%c - Neon purple and cyan aesthetics
-%c• paper%c     - Minimalist paper-like theme
+%c• default%c   - Cyanotype paper with a blueprint grid
+%c• dark%c      - Warm graphite with an amber accent
 
 %c💡 Usage: %carach.theme('dark')%c to switch themes
 
@@ -204,18 +199,13 @@ export function initConsoleArt() {
         'color: #10b981; font-weight: bold; font-size: 14px;',
         'color: #60a5fa; font-family: monospace; font-weight: bold;', 'color: #94a3b8;',
         'color: #60a5fa; font-family: monospace; font-weight: bold;', 'color: #94a3b8;',
-        'color: #60a5fa; font-family: monospace; font-weight: bold;', 'color: #94a3b8;',
-        'color: #60a5fa; font-family: monospace; font-weight: bold;', 'color: #94a3b8;',
-        'color: #60a5fa; font-family: monospace; font-weight: bold;', 'color: #94a3b8;',
-        'color: #60a5fa; font-family: monospace; font-weight: bold;', 'color: #94a3b8;',
-        'color: #60a5fa; font-family: monospace; font-weight: bold;', 'color: #94a3b8;',
         'color: #fbbf24; font-weight: bold;', 'color: #10b981; font-family: monospace;', 'color: #fbbf24;',
         'color: #60a5fa; font-weight: bold;', 'color: #94a3b8;'
       );
     },
 
     theme(id: string) {
-      const validThemes = ['default', 'dark', 'terminal', 'ocean', 'sunset', 'cyberpunk', 'paper'];
+      const validThemes = ['default', 'dark'];
       if (!validThemes.includes(id)) {
         console.error(`%cInvalid theme: ${id}`, `color: ${errorColor};`);
         console.log(`%cValid themes: ${validThemes.join(', ')}`, `color: ${mutedColor};`);
@@ -420,14 +410,6 @@ export function initConsoleArt() {
 
   // Attach to window
   (window as any).arach = arach;
-
-  // Listen for theme change events from console
-  window.addEventListener('console-theme-change', (event: any) => {
-    const themeButton = document.querySelector(`[data-theme-id="${event.detail.theme}"]`) as HTMLElement;
-    if (themeButton) {
-      themeButton.click();
-    }
-  });
 
   // Add a hidden Konami code easter egg
   let konamiSequence: string[] = [];
