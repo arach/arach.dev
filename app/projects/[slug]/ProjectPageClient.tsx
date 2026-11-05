@@ -1,213 +1,134 @@
-'use client';
-
 import Link from 'next/link';
-import { ArrowLeft, Github, Globe } from 'lucide-react';
-import ThemedDottedGrid from '@/components/ThemedDottedGrid';
-import { BrowserFrame } from '@/components/BrowserFrame';
+import { ArrowLeft } from 'lucide-react';
+
+import { ProjectPreviewFrame } from '@/components/ProjectPreview';
 import type { Project } from '@/lib/projects';
-import { motion } from 'framer-motion';
-import { useState, useEffect } from 'react';
 
 interface ProjectPageClientProps {
   project: Project;
   projectNumber: string;
 }
 
+const STATUS_LABEL: Record<Project['status'], string> = {
+  active: 'Active',
+  maintained: 'Maintained',
+  archived: 'Archived',
+};
+
+const rowBorder: React.CSSProperties = { borderColor: 'var(--theme-border-color)' };
+
+function SectionHead({ index, children }: { index: string; children: React.ReactNode }) {
+  return (
+    <div className="section-head">
+      <h2 className="fig" style={{ color: 'var(--theme-text-color)' }}>
+        ( {index} ) {children}
+      </h2>
+    </div>
+  );
+}
+
 export default function ProjectPageClient({ project, projectNumber }: ProjectPageClientProps) {
-  const [mounted, setMounted] = useState(false);
-
-  useEffect(() => {
-    setMounted(true);
-  }, []);
-
-  // Helper to convert hex to rgba
-  const hexToRgba = (hex: string, alpha: number) => {
-    if (!hex) return `rgba(0, 0, 0, ${alpha})`;
-    const r = parseInt(hex.slice(1, 3), 16);
-    const g = parseInt(hex.slice(3, 5), 16);
-    const b = parseInt(hex.slice(5, 7), 16);
-    return `rgba(${r}, ${g}, ${b}, ${alpha})`;
-  };
-
-  if (!mounted) {
-    return null; // Prevent hydration mismatch
-  }
+  const liveUrl = project.links.website || project.links.demo;
+  const facts: { label: string; value: React.ReactNode }[] = [
+    { label: 'Status', value: STATUS_LABEL[project.status] },
+    ...(liveUrl
+      ? [{ label: 'Live', value: <a href={liveUrl} target="_blank" rel="noopener noreferrer" className="link-quiet">{liveUrl.replace(/^https?:\/\//, '').replace(/\/$/, '')} ↗</a> }]
+      : []),
+    ...(project.links.github
+      ? [{ label: 'Source', value: <a href={project.links.github} target="_blank" rel="noopener noreferrer" className="link-quiet">{project.links.github.replace(/^https?:\/\/(www\.)?/, '')} ↗</a> }]
+      : []),
+  ];
 
   return (
-    <>
-      {/* Theme-aware background */}
-      <ThemedDottedGrid />
-      
-      <div className="container mx-auto px-4 py-6 min-h-[90vh] relative z-10">
-        {/* Large project number in left margin - closer to content */}
-        <div className="hidden xl:block">
-          <span 
-            className="fixed text-[180px] font-mono font-light opacity-[0.08] select-none pointer-events-none"
-            style={{
-              right: 'calc(50% + 24rem)',
-              top: '8rem',
-            }}
-          >
-            {projectNumber}
-          </span>
+    <div className="mx-auto max-w-5xl px-4 pb-8 sm:px-6">
+      <header className="relative pb-12 pt-10 sm:pb-14">
+        <div aria-hidden className="bp-grid pointer-events-none absolute inset-y-0 left-1/2 -z-10 w-screen -translate-x-1/2" />
+        <Link href="/" className="fig link-quiet inline-flex items-center gap-2">
+          <ArrowLeft className="h-3.5 w-3.5" />
+          All work
+        </Link>
+
+        <div className="fig mt-10 flex flex-wrap items-center gap-x-2.5 gap-y-1">
+          <span className="tabular-nums" style={{ color: 'var(--theme-faint-color)' }}>{projectNumber}</span>
+          {project.tags.map((tag) => (
+            <span key={tag} className="contents">
+              <span style={{ color: 'var(--theme-faint-color)' }}>/</span>
+              <span>{tag}</span>
+            </span>
+          ))}
         </div>
-        
-        <motion.main 
-          initial={{ opacity: 0 }}
-          animate={{ opacity: 1 }}
-          transition={{ duration: 0.4 }}
-          className="pb-20"
-        >
-          <div className="max-w-3xl mx-auto">
-            {/* Back Link */}
-            <Link 
-              href="/" 
-              className="inline-flex items-center gap-1.5 text-xs mb-8 opacity-60 hover:opacity-100 transition-opacity text-muted-foreground"
+
+        <div className="mt-6 flex items-center gap-4">
+          {project.logo ? (
+            <div
+              className="flex h-14 w-14 shrink-0 items-center justify-center border"
+              style={{ borderColor: 'var(--theme-border-color)', background: 'var(--theme-card-bg)' }}
             >
-              <ArrowLeft className="w-3 h-3" />
-              <span>Back to projects</span>
-            </Link>
-
-            {/* Project Header */}
-            <div className="mb-8">
-              <h1 className="text-2xl font-bold mb-2 text-foreground">
-                {project.title}
-              </h1>
-              <p className="text-sm opacity-70 text-muted-foreground">
-                {project.description}
-              </p>
+              {/* eslint-disable-next-line @next/next/no-img-element */}
+              <img src={project.logo} alt="" className="h-[70%] w-[70%] object-contain" />
             </div>
+          ) : null}
+          <h1 className="text-[40px] font-bold leading-[1.02] tracking-[-0.035em] sm:text-[56px]">
+            {project.title}
+          </h1>
+        </div>
 
-            {/* Status and Links */}
-            <div className="flex flex-wrap items-center gap-4 mb-8">
-              <span
-                className="inline-flex items-center px-3 py-1 rounded text-[11px] font-medium"
-                style={{
-                  backgroundColor: project.status === 'active'
-                    ? hexToRgba(project.color, 0.1)
-                    : project.status === 'maintained'
-                    ? hexToRgba('#f59e0b', 0.1)
-                    : 'rgba(107, 114, 128, 0.1)',
-                  color: project.status === 'active'
-                    ? project.color
-                    : project.status === 'maintained'
-                    ? '#f59e0b'
-                    : '#6b7280',
-                }}
-              >
-                {project.status === 'active' ? 'Active' : project.status === 'maintained' ? 'Maintained' : 'Archived'}
-              </span>
+        <p className="mt-5 max-w-[56ch] text-[18px] font-normal leading-[1.6]" style={{ color: 'var(--theme-muted-color)' }}>
+          {project.description}
+        </p>
+      </header>
 
-              {project.links.github && (
-                <a
-                  href={project.links.github}
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  className="inline-flex items-center gap-1.5 text-[11px] opacity-60 hover:opacity-100 transition-opacity text-muted-foreground"
-                >
-                  <Github className="w-3 h-3" />
-                  <span>View Source</span>
-                </a>
-              )}
-              
-              {project.links.website && (
-                <a
-                  href={project.links.website}
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  className="inline-flex items-center gap-1.5 text-[11px] opacity-60 hover:opacity-100 transition-opacity text-muted-foreground"
-                >
-                  <Globe className="w-3 h-3" />
-                  <span>Live Demo</span>
-                </a>
-              )}
-            </div>
+      <ProjectPreviewFrame project={project} label={`Fig. ${projectNumber}`} priority className="mb-16" />
 
-            {/* Website Preview */}
-            {project.websiteUrl && (
-              <section className="mb-12">
-                <BrowserFrame
-                  live
-                  url={project.websiteUrl}
-                  alt={`${project.title} website preview`}
-                />
-              </section>
-            )}
+      <div className="grid gap-x-12 gap-y-16 lg:grid-cols-[minmax(0,7fr)_minmax(0,4fr)]">
+        <div className="min-w-0">
+          <section className="mb-16">
+            <SectionHead index="01">Overview</SectionHead>
+            <p className="max-w-[62ch] text-[17px] font-normal leading-[1.7]">{project.longDescription}</p>
+          </section>
 
-            {/* Long Description */}
-            <section className="mb-12">
-              <p className="text-sm leading-relaxed opacity-90 text-foreground">
-                {project.longDescription}
-              </p>
+          {project.features && project.features.length > 0 ? (
+            <section>
+              <SectionHead index="02">Features</SectionHead>
+              <ol className="border-t" style={rowBorder}>
+                {project.features.map((feature, i) => (
+                  <li key={feature} className="flex gap-4 border-b py-3 text-[15px] font-normal leading-[1.6]" style={rowBorder}>
+                    <span className="fig shrink-0 pt-0.5 tabular-nums" style={{ color: 'var(--theme-faint-color)' }}>
+                      {String(i + 1).padStart(2, '0')}
+                    </span>
+                    <span>{feature}</span>
+                  </li>
+                ))}
+              </ol>
             </section>
+          ) : null}
+        </div>
 
-            {/* Features */}
-            {project.features && project.features.length > 0 && (
-              <section className="mb-12">
-                <h2 className="text-xs font-medium uppercase tracking-wider opacity-50 mb-4 text-muted-foreground">
-                  Features
-                </h2>
-                <div className="space-y-2">
-                  {project.features.map((feature, index) => (
-                    <div
-                      key={index}
-                      className="flex items-start gap-3 p-3 rounded-md transition-colors hover:bg-muted/20"
-                    >
-                      <span
-                        className="w-1 h-1 rounded-full mt-1.5 flex-shrink-0"
-                        style={{ backgroundColor: project.color }}
-                      />
-                      <span className="text-xs leading-relaxed text-foreground">
-                        {feature}
-                      </span>
-                    </div>
-                  ))}
-                </div>
-              </section>
-            )}
-
-            {/* Tech Stack */}
-            {project.tech && project.tech.length > 0 && (
-              <section className="mb-12">
-                <h2 className="text-xs font-medium uppercase tracking-wider opacity-50 mb-4 text-muted-foreground">
-                  Built With
-                </h2>
-                <div className="flex flex-wrap gap-2">
-                  {project.tech.map((tech) => (
-                    <span
-                      key={tech}
-                      className="px-3 py-1 rounded-full text-[10px] font-medium"
-                      style={{
-                        backgroundColor: hexToRgba(project.color, 0.08),
-                        color: project.color,
-                        border: `1px solid ${hexToRgba(project.color, 0.2)}`,
-                      }}
-                    >
+        <aside className="min-w-0">
+          <SectionHead index="—">Details</SectionHead>
+          <dl className="border-t" style={rowBorder}>
+            {facts.map(({ label, value }) => (
+              <div key={label} className="grid grid-cols-[96px_minmax(0,1fr)] gap-4 border-b py-3" style={rowBorder}>
+                <dt className="fig pt-0.5">{label}</dt>
+                <dd className="min-w-0 truncate font-mono text-[13px]">{value}</dd>
+              </div>
+            ))}
+            {project.tech && project.tech.length > 0 ? (
+              <div className="grid grid-cols-[96px_minmax(0,1fr)] gap-4 border-b py-3" style={rowBorder}>
+                <dt className="fig pt-0.5">Built with</dt>
+                <dd className="font-mono text-[13px] leading-[1.7]">
+                  {project.tech.map((tech, i) => (
+                    <span key={tech}>
+                      {i > 0 ? <span style={{ color: 'var(--theme-faint-color)' }}>{' / '}</span> : null}
                       {tech}
                     </span>
                   ))}
-                </div>
-              </section>
-            )}
-
-            {/* Tags */}
-            {project.tags && project.tags.length > 0 && (
-              <section className="pt-8 border-t border-border">
-                <div className="flex flex-wrap gap-2">
-                  {project.tags.map((tag) => (
-                    <span
-                      key={tag}
-                      className="text-[10px] opacity-40 text-muted-foreground"
-                    >
-                      #{tag}
-                    </span>
-                  ))}
-                </div>
-              </section>
-            )}
-          </div>
-        </motion.main>
+                </dd>
+              </div>
+            ) : null}
+          </dl>
+        </aside>
       </div>
-    </>
+    </div>
   );
 }

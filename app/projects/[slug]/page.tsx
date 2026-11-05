@@ -1,5 +1,6 @@
 import { notFound } from 'next/navigation';
 import { getProjectBySlug, projects } from '@/lib/projects';
+import { getProjectWithAssets } from '@/lib/projects-server';
 import type { Metadata } from 'next';
 import ProjectPageClient from './ProjectPageClient';
 
@@ -49,7 +50,7 @@ export async function generateMetadata({ params }: { params: Promise<{ slug: str
 
 export default async function ProjectPage({ params }: { params: Promise<{ slug: string }> }) {
   const resolvedParams = await params;
-  const project = getProjectBySlug(resolvedParams.slug);
+  const project = getProjectWithAssets(resolvedParams.slug);
 
   if (!project) {
     notFound();

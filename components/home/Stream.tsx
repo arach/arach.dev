@@ -83,19 +83,15 @@ export function Stream({ projects, ideas }: StreamProps) {
   }), [stream]);
 
   return (
-    <div className="mx-auto max-w-5xl px-4 py-8 sm:px-6 sm:py-10">
+    <div className="mx-auto max-w-5xl px-4 pb-8 sm:px-6">
       <Masthead />
 
-      {/* Stream eyebrow + filters */}
-      <div
-        className="mb-6 flex flex-wrap items-baseline justify-between gap-3 border-b pb-3"
-        style={{ borderColor: 'var(--theme-border-color)' }}
-      >
-        <h2
-          className="text-lg sm:text-xl"
-          style={{ fontFamily: 'var(--font-spectral)' }}
-        >stream</h2>
-        <div className="flex flex-wrap items-center gap-x-4 gap-y-1 font-mono text-[11px] uppercase tracking-[0.16em]">
+      <section aria-labelledby="stream-heading">
+      <div className="section-head flex-wrap">
+        <h2 id="stream-heading" className="fig" style={{ color: 'var(--theme-text-color)' }}>
+          ( 01 ) Selected work
+        </h2>
+        <div className="fig flex flex-wrap items-center gap-x-4 gap-y-1">
           {FILTERS.map((f) => {
             const active = filter === f.key;
             const count = counts[f.key];
@@ -105,25 +101,14 @@ export function Stream({ projects, ideas }: StreamProps) {
                 key={f.key}
                 type="button"
                 onClick={() => setFilter(f.key)}
-                className="relative pb-1 transition-opacity hover:opacity-80"
-                style={{
-                  color: active ? 'var(--theme-accent-color)' : 'var(--theme-muted-color)',
-                }}
+                aria-pressed={active}
+                className="uppercase tracking-[inherit] transition-colors hover:text-[color:var(--theme-text-color)]"
+                style={{ color: active ? 'var(--theme-accent-color)' : undefined }}
               >
-                <span>{f.label}</span>
-                <span
-                  className="ml-1.5 tabular-nums"
-                  style={{ opacity: active ? 0.85 : 0.55 }}
-                >
-                  {count}
-                </span>
-                <span
-                  className="absolute -bottom-px left-0 h-px w-full transition-opacity"
-                  style={{
-                    background: 'var(--theme-accent-color)',
-                    opacity: active ? 1 : 0,
-                  }}
-                />
+                {active ? '[ ' : ''}
+                {f.label}
+                <span className="ml-1.5 tabular-nums" style={{ opacity: 0.6 }}>{count}</span>
+                {active ? ' ]' : ''}
               </button>
             );
           })}
@@ -132,7 +117,7 @@ export function Stream({ projects, ideas }: StreamProps) {
 
       {/* Grouped layout: featured = full width, regular projects = 2-up grid,
           ideas + plays = full-width breaks */}
-      <div className="space-y-6 sm:space-y-8">
+      <div className="space-y-10 sm:space-y-14">
         {groups.map((group, i) => (
           <Fragment key={i}>
             {group.kind === 'featured' && (
@@ -143,7 +128,7 @@ export function Stream({ projects, ideas }: StreamProps) {
               />
             )}
             {group.kind === 'project-grid' && (
-              <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 sm:items-start sm:gap-5">
+              <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 sm:gap-5">
                 {group.entries.map((entry) => (
                   <StreamProjectCard
                     key={entry.slug}
@@ -154,10 +139,7 @@ export function Stream({ projects, ideas }: StreamProps) {
               </div>
             )}
             {group.kind === 'idea' && (
-              <div
-                className="border-y py-2"
-                style={{ borderColor: 'var(--theme-border-color)' }}
-              >
+              <div className="border-y" style={{ borderColor: 'var(--theme-border-color)' }}>
                 <StreamIdeaCard idea={group.entry.idea} />
               </div>
             )}
@@ -171,6 +153,7 @@ export function Stream({ projects, ideas }: StreamProps) {
           </Fragment>
         ))}
       </div>
+      </section>
     </div>
   );
 }

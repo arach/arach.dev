@@ -37,18 +37,7 @@ export function HomeShell({ projects, ideas }: HomeShellProps) {
 
   return (
     <GitHubProvider username="arach">
-      {/* Soft ambient backdrop — no dotted grid. A pair of very low-opacity
-          accent washes anchor the page without competing with content. */}
-      <div
-        aria-hidden
-        className="pointer-events-none fixed inset-0 -z-10"
-        style={{
-          background:
-            'radial-gradient(60% 50% at 12% -10%, color-mix(in srgb, var(--theme-accent-color) 6%, transparent) 0%, transparent 70%), radial-gradient(50% 40% at 95% 100%, color-mix(in srgb, var(--theme-accent-color) 4%, transparent) 0%, transparent 70%)',
-        }}
-      />
-
-      <div className="relative z-10 min-h-[90vh]">
+      <div className="relative isolate min-h-[90vh] overflow-x-clip">
         <Stream projects={projects} ideas={ideas} />
       </div>
 

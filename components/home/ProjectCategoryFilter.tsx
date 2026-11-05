@@ -97,7 +97,7 @@ export function ProjectCategoryFilter({
             <span className="text-lg">{categories.find((cat) => cat.name === selectedCategory)?.icon}</span>
             <h3 className="font-medium text-sm" style={{ color: 'var(--theme-heading-color)' }}>{selectedCategory}</h3>
           </div>
-          <p className="text-xs" style={{ color: 'var(--theme-muted-text)' }}>
+          <p className="text-xs" style={{ color: 'var(--theme-muted-color)' }}>
             {categories.find((cat) => cat.name === selectedCategory)?.description}
           </p>
         </motion.div>
