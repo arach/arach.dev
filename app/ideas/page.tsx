@@ -6,10 +6,11 @@ import { getAllIdeas } from "@/lib/ideas";
 export const metadata: Metadata = {
   title: "Notes | arach.dev",
   description: "Technical notes on systems, tools, and code structure.",
+  alternates: { canonical: "/ideas" },
   openGraph: {
     title: "Notes | arach.dev",
     description: "Technical notes on systems, tools, and code structure.",
-    url: "https://arach.dev/ideas",
+    url: "/ideas",
     siteName: "arach.dev",
     images: [
       {

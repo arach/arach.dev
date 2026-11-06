@@ -29,7 +29,7 @@ function Logo({ src, alt, size = 'md' }: { src: string; alt: string; size?: 'md'
 function Meta({ number, tags, lead }: { number: string; tags: string[]; lead?: string }) {
   return (
     <div className="fig flex flex-wrap items-center gap-x-2.5 gap-y-1">
-      <span className="tabular-nums" style={{ color: 'var(--theme-faint-color)' }}>{number}</span>
+      <span className="tabular-nums" style={{ color: 'var(--theme-muted-color)' }}>{number}</span>
       {lead ? <span style={{ color: 'var(--theme-accent-color)' }}>{lead}</span> : null}
       {tags.slice(0, 3).map((tag) => (
         <span key={tag} className="contents">
@@ -68,7 +68,7 @@ export function StreamProjectCard({ project, rank, featured = false }: StreamPro
           >
             {project.preview}
           </p>
-          <ActionRow liveUrl={liveUrl} githubUrl={project.links.github} />
+          <ActionRow slug={slug} title={project.title} liveUrl={liveUrl} githubUrl={project.links.github} />
         </div>
 
         <ProjectPreviewFrame project={project} label={`Fig. ${number}`} className="relative z-[1] self-start" />
@@ -106,7 +106,7 @@ export function StreamProjectCard({ project, rank, featured = false }: StreamPro
         </p>
 
         <div className="mt-auto">
-          <ActionRow liveUrl={liveUrl} githubUrl={project.links.github} compact />
+          <ActionRow slug={slug} title={project.title} liveUrl={liveUrl} githubUrl={project.links.github} compact />
         </div>
       </div>
     </article>
@@ -114,20 +114,29 @@ export function StreamProjectCard({ project, rank, featured = false }: StreamPro
 }
 
 function ActionRow({
+  slug,
+  title,
   liveUrl,
   githubUrl,
   compact = false,
 }: {
+  slug: string;
+  title: string;
   liveUrl?: string;
   githubUrl?: string;
   compact?: boolean;
 }) {
   return (
     <div className={`fig relative z-[1] flex items-center gap-5 ${compact ? 'pt-4' : 'mt-6'}`}>
-      <span className="inline-flex items-center gap-1" style={{ color: 'var(--theme-accent-color)' }}>
+      <Link
+        href={`/projects/${slug}`}
+        aria-label={`Read about ${title}`}
+        className="inline-flex items-center gap-1 hover:underline"
+        style={{ color: 'var(--theme-accent-color)' }}
+      >
         Read
-        <ArrowUpRight className="h-3 w-3" />
-      </span>
+        <ArrowUpRight className="h-3 w-3" aria-hidden="true" />
+      </Link>
       {liveUrl ? (
         <a href={liveUrl} target="_blank" rel="noopener noreferrer" className="link-quiet">
           Live ↗

@@ -49,7 +49,7 @@ export default function ProjectPageClient({ project, projectNumber }: ProjectPag
         </Link>
 
         <div className="fig mt-10 flex flex-wrap items-center gap-x-2.5 gap-y-1">
-          <span className="tabular-nums" style={{ color: 'var(--theme-faint-color)' }}>{projectNumber}</span>
+          <span className="tabular-nums" style={{ color: 'var(--theme-muted-color)' }}>{projectNumber}</span>
           {project.tags.map((tag) => (
             <span key={tag} className="contents">
               <span style={{ color: 'var(--theme-faint-color)' }}>/</span>
@@ -93,7 +93,7 @@ export default function ProjectPageClient({ project, projectNumber }: ProjectPag
               <ol className="border-t" style={rowBorder}>
                 {project.features.map((feature, i) => (
                   <li key={feature} className="flex gap-4 border-b py-3 text-[15px] font-normal leading-[1.6]" style={rowBorder}>
-                    <span className="fig shrink-0 pt-0.5 tabular-nums" style={{ color: 'var(--theme-faint-color)' }}>
+                    <span className="fig shrink-0 pt-0.5 tabular-nums" style={{ color: 'var(--theme-muted-color)' }}>
                       {String(i + 1).padStart(2, '0')}
                     </span>
                     <span>{feature}</span>
