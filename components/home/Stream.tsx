@@ -10,6 +10,7 @@ import { Masthead } from './Masthead';
 import { StreamProjectCard } from './StreamProjectCard';
 import { StreamIdeaCard } from './StreamIdeaCard';
 import { StreamPlayEntry } from './StreamPlayEntry';
+import { LabSection } from './LabSection';
 
 interface StreamProps {
   projects: Project[];
@@ -154,6 +155,8 @@ export function Stream({ projects, ideas }: StreamProps) {
         ))}
       </div>
       </section>
+
+      <LabSection />
     </div>
   );
 }

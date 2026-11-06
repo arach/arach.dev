@@ -42,6 +42,10 @@ export function Masthead() {
             <span style={{ color: 'var(--theme-text-color)' }}>{name}</span>
           </span>
         ))}
+        <span style={{ color: 'var(--theme-faint-color)' }}>·</span>
+        <a href="/lab" className="link-quiet" style={{ color: 'var(--theme-accent-color)' }}>
+          Lab: voice notes &amp; tiny models ↗
+        </a>
       </div>
     </header>
   );

@@ -5,7 +5,9 @@ import { usePathname } from "next/navigation";
 import { Moon, Sun } from "lucide-react";
 import { useTheme } from "@/lib/theme/site/provider";
 
-const NAV = [
+// /lab is rewritten to the separate Training Lab app, so it needs a full page load.
+const NAV: { href: string; label: string; external?: boolean }[] = [
+    { href: "/lab", label: "Lab", external: true },
     { href: "/ideas", label: "Notes" },
     { href: "/github", label: "GitHub" },
     { href: "/about", label: "About" },
@@ -37,18 +39,18 @@ export default function Header() {
                 </Link>
                 <nav className="flex items-center gap-4 sm:gap-6">
                     <ul className="flex items-center gap-4 font-mono text-[11px] uppercase tracking-[0.12em] sm:gap-6">
-                        {NAV.map(({ href, label }) => {
+                        {NAV.map(({ href, label, external }) => {
                             const active = pathname === href || pathname?.startsWith(`${href}/`);
+                            const props = {
+                                href,
+                                'aria-current': active ? ('page' as const) : undefined,
+                                className: 'transition-colors hover:text-[color:var(--theme-text-color)]',
+                                style: { color: active ? 'var(--theme-accent-color)' : 'var(--theme-muted-color)' },
+                            };
+                            const text = active ? `[ ${label} ]` : label;
                             return (
                                 <li key={href}>
-                                    <Link
-                                        href={href}
-                                        aria-current={active ? 'page' : undefined}
-                                        className="transition-colors hover:text-[color:var(--theme-text-color)]"
-                                        style={{ color: active ? 'var(--theme-accent-color)' : 'var(--theme-muted-color)' }}
-                                    >
-                                        {active ? `[ ${label} ]` : label}
-                                    </Link>
+                                    {external ? <a {...props}>{text}</a> : <Link {...props}>{text}</Link>}
                                 </li>
                             );
                         })}
