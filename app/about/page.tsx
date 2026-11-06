@@ -40,7 +40,7 @@ const elsewhere: { label: string; handle: string; href: string }[] = [
     { label: 'writing', handle: 'arach.io', href: 'https://arach.io' },
     { label: 'github', handle: '@arach', href: 'https://github.com/arach' },
     { label: 'linkedin', handle: 'in/arach', href: 'https://www.linkedin.com/in/arach/' },
-    { label: 'email', handle: 'arach@arach.dev', href: 'mailto:arach@arach.dev' },
+    { label: 'x', handle: '@arach', href: 'https://x.com/arach' },
 ];
 
 function SectionHead({ index, children, aside }: { index: string; children: React.ReactNode; aside?: React.ReactNode }) {
