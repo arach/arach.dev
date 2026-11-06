@@ -113,7 +113,9 @@ export default function AboutTerminalPage() {
               github.com/arach
             </a>
             <span className="tty-bar-sep"> · </span>
-            <a className="tty-link" href="mailto:arach@arach.dev">arach@arach.dev</a>
+            <a className="tty-link" href="https://x.com/arach" rel="me noreferrer" target="_blank">
+              x.com/arach
+            </a>
           </p>
 
           <div className="tty-print" style={{ animationDelay: '1300ms', marginTop: '1.6em' }}>

@@ -231,7 +231,7 @@ export default function CurrentMonthInsights({
                 </span>
                 {getTrendIcon(paceVsAverage)}
               </div>
-              <div className="mt-2 font-mono text-2xl font-light tabular-nums">{pacePercentage}%</div>
+              <div className="mt-2 font-mono text-2xl font-normal tabular-nums">{pacePercentage}%</div>
               <div
                 className="mt-1 font-mono text-[10px] uppercase tracking-[0.18em]"
                 style={{ color: "var(--theme-muted-color)" }}
@@ -249,7 +249,7 @@ export default function CurrentMonthInsights({
               >
                 projection
               </span>
-              <div className="mt-2 font-mono text-2xl font-light tabular-nums">{projectedTotal}</div>
+              <div className="mt-2 font-mono text-2xl font-normal tabular-nums">{projectedTotal}</div>
               <div
                 className="mt-1 font-mono text-[10px] uppercase tracking-[0.18em]"
                 style={{ color: "var(--theme-muted-color)" }}

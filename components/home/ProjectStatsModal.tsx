@@ -55,7 +55,7 @@ export function ProjectStatsModal({ showStats, onClose, projectStats }: ProjectS
         <div className="mb-3">
           <div className="flex justify-between items-center mb-1">
             <span className="text-xs font-medium" style={{ color: 'var(--theme-text-color)' }}>{label}</span>
-            <span className="text-xs" style={{ color: 'var(--theme-muted-text)' }}>
+            <span className="text-xs" style={{ color: 'var(--theme-muted-color)' }}>
               {count} ({percentage}%)
             </span>
           </div>
@@ -115,15 +115,15 @@ export function ProjectStatsModal({ showStats, onClose, projectStats }: ProjectS
                   <CardContent className="p-0">
                     <div className="space-y-2">
                       <div className="flex justify-between">
-                        <span className="text-xs" style={{ color: 'var(--theme-muted-text)' }}>Total Projects</span>
+                        <span className="text-xs" style={{ color: 'var(--theme-muted-color)' }}>Total Projects</span>
                         <span className="text-sm font-bold text-blue-600">{projectStats.totalProjects}</span>
                       </div>
                       <div className="flex justify-between">
-                        <span className="text-xs" style={{ color: 'var(--theme-muted-text)' }}>Categories</span>
+                        <span className="text-xs" style={{ color: 'var(--theme-muted-color)' }}>Categories</span>
                         <span className="text-sm font-bold text-green-600">{projectStats.categories.length}</span>
                       </div>
                       <div className="flex justify-between">
-                        <span className="text-xs" style={{ color: 'var(--theme-muted-text)' }}>Technologies</span>
+                        <span className="text-xs" style={{ color: 'var(--theme-muted-color)' }}>Technologies</span>
                         <span className="text-sm font-bold text-purple-600">
                           {projectStats.technologies.length}
                         </span>

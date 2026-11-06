@@ -55,7 +55,7 @@ export function TypographyProjectCard({
       {/* Project Number */}
       <span className={`
         absolute left-0 top-8 sm:top-12
-        font-mono text-4xl sm:text-5xl font-light
+        font-mono text-4xl sm:text-5xl font-normal
         transition-all duration-500
         ${isKeyboardFocused 
           ? 'text-blue-500 opacity-100' 

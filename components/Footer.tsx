@@ -1,10 +1,14 @@
 'use client';
 
-import Link from "next/link";
-import { Linkedin, Mail } from "lucide-react";
 import { usePathname } from "next/navigation";
-import { SocialButton } from "@/components/ui/SocialButton";
-import GithubIcon from '@/components/icons/GithubIcon';
+
+const LINKS = [
+    { href: "/lab", label: "Lab" },
+    { href: "https://arach.io", label: "arach.io" },
+    { href: "https://github.com/arach", label: "GitHub" },
+    { href: "https://www.linkedin.com/in/arach/", label: "LinkedIn" },
+    { href: "https://x.com/arach", label: "X" },
+];
 
 export default function Footer() {
     const pathname = usePathname();
@@ -13,23 +17,19 @@ export default function Footer() {
     }
 
     return (
-        <footer className="bg-black text-white sticky bottom-0 w-full z-10 font-mono">
-            <div className="container mx-auto px-3 py-1 flex flex-row items-center justify-between" style={{ fontSize: '10px' }}>
-                <div>
-                    © {new Date().getFullYear()} <span className="hidden sm:inline">Arach Tchoupani</span><span className="sm:hidden">Arach</span>
-                    <span className="hidden md:inline"> · All projects handcrafted with 💙 in Montreal, NY or SF 🛠</span>
-                </div>
-                <div className="flex space-x-3">
-                    <Link href="https://github.com/arach">
-                        <SocialButton icon={GithubIcon} className="h-3 w-3" />
-                    </Link>
-                    <Link href="https://www.linkedin.com/in/arach/" className="hidden sm:block">
-                        <SocialButton icon={Linkedin} className="h-3 w-3" />
-                    </Link>
-                    <Link href="mailto:arach@tchoupani.com">
-                        <SocialButton icon={Mail} className="h-3 w-3" />
-                    </Link>
-                </div>
+        <footer
+            className="mt-16 border-t font-mono text-[10px] uppercase tracking-[0.14em]"
+            style={{ borderColor: 'var(--theme-border-color)', color: 'var(--theme-muted-color)' }}
+        >
+            <div className="flex flex-col gap-1.5 px-4 py-2.5 sm:flex-row sm:items-center sm:justify-between sm:px-6">
+                <span>© {new Date().getFullYear()} Arach Tchoupani · Montreal / SF</span>
+                <ul className="flex flex-wrap gap-x-4 gap-y-1">
+                    {LINKS.map(({ href, label }) => (
+                        <li key={href}>
+                            <a href={href} className="link-quiet">{label}</a>
+                        </li>
+                    ))}
+                </ul>
             </div>
         </footer>
     );

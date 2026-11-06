@@ -1,8 +1,7 @@
 'use client';
 
 import Link from 'next/link';
-import { motion } from 'framer-motion';
-import { ArrowUpRight, Github, ExternalLink } from 'lucide-react';
+import { ArrowUpRight } from 'lucide-react';
 
 import { ProjectPreviewFrame, ProjectPreviewTile } from '@/components/ProjectPreview';
 import type { Project } from '@/lib/projects';
@@ -13,21 +12,12 @@ interface StreamProjectCardProps {
   featured?: boolean;
 }
 
-const cardSurface: React.CSSProperties = {
-  background: 'var(--theme-card-bg)',
-  borderColor: 'var(--theme-border-color)',
-  boxShadow: '0 12px 40px -28px var(--theme-shadow-color)',
-};
-
-function Logo({ src, alt, accent, size = 'md' }: { src: string; alt: string; accent: string; size?: 'md' | 'lg' }) {
-  const dim = size === 'lg' ? 'h-14 w-14 sm:h-16 sm:w-16' : 'h-11 w-11 sm:h-12 sm:w-12';
+function Logo({ src, alt, size = 'md' }: { src: string; alt: string; size?: 'md' | 'lg' }) {
+  const dim = size === 'lg' ? 'h-12 w-12' : 'h-8 w-8';
   return (
     <div
-      className={`flex shrink-0 items-center justify-center overflow-hidden rounded-lg ${dim}`}
-      style={{
-        background: `color-mix(in srgb, ${accent} 6%, transparent)`,
-        boxShadow: `inset 0 0 0 1px color-mix(in srgb, ${accent} 18%, transparent)`,
-      }}
+      className={`flex shrink-0 items-center justify-center overflow-hidden border ${dim}`}
+      style={{ borderColor: 'var(--theme-border-color)', background: 'var(--theme-card-bg)' }}
     >
       {/* Plain <img> so SVGs render at intrinsic crisp resolution and PNG/WebP both work. */}
       {/* eslint-disable-next-line @next/next/no-img-element */}
@@ -36,178 +26,116 @@ function Logo({ src, alt, accent, size = 'md' }: { src: string; alt: string; acc
   );
 }
 
+function Meta({ number, tags, lead }: { number: string; tags: string[]; lead?: string }) {
+  return (
+    <div className="fig flex flex-wrap items-center gap-x-2.5 gap-y-1">
+      <span className="tabular-nums" style={{ color: 'var(--theme-faint-color)' }}>{number}</span>
+      {lead ? <span style={{ color: 'var(--theme-accent-color)' }}>{lead}</span> : null}
+      {tags.slice(0, 3).map((tag) => (
+        <span key={tag} className="contents">
+          <span style={{ color: 'var(--theme-faint-color)' }}>/</span>
+          <span>{tag}</span>
+        </span>
+      ))}
+    </div>
+  );
+}
+
 export function StreamProjectCard({ project, rank, featured = false }: StreamProjectCardProps) {
   const slug = project.slug;
   const number = String(rank + 1).padStart(2, '0');
-  const accent = project.color || 'var(--theme-accent-color)';
   const liveUrl = project.links.website || project.links.demo;
 
   if (featured) {
     return (
-      <motion.article
-        initial={{ opacity: 0, y: 12 }}
-        animate={{ opacity: 1, y: 0 }}
-        transition={{ duration: 0.4 }}
-        className="group relative overflow-hidden rounded-xl border transition-[transform,border-color,box-shadow] duration-300 ease-out hover:-translate-y-0.5"
-        style={cardSurface}
-      >
-        <div
-          className="pointer-events-none absolute inset-0 opacity-0 transition-opacity duration-500 group-hover:opacity-100"
-          style={{ background: `radial-gradient(60% 80% at 0% 0%, ${accent}0a 0%, transparent 60%)` }}
-          aria-hidden
-        />
-
-        <div className="relative px-6 py-7 sm:px-8 sm:py-9">
-          <div className={project.logo ? 'flex items-start gap-5 sm:gap-6' : 'min-w-0'}>
-            {project.logo ? (
-              <Logo src={project.logo} alt={`${project.title} logo`} accent={accent} size="lg" />
-            ) : null}
-            <div className="min-w-0 flex-1">
-              <div
-                className="mb-3 flex flex-wrap items-center gap-x-3 gap-y-1 font-mono text-[10px] uppercase tracking-[0.16em]"
-                style={{ color: 'var(--theme-muted-color)' }}
+      <article className="group relative grid gap-8 lg:grid-cols-[minmax(0,5fr)_minmax(0,7fr)] lg:gap-10">
+        <div className="flex min-w-0 flex-col">
+          <Meta number={number} tags={project.tags} lead="Featured" />
+          <div className="mt-5 flex items-center gap-4">
+            {project.logo ? <Logo src={project.logo} alt={`${project.title} logo`} size="lg" /> : null}
+            <h3 className="text-[34px] font-bold leading-[1.05] tracking-[-0.035em] sm:text-[40px]">
+              <Link
+                href={`/projects/${slug}`}
+                className="transition-colors before:absolute before:inset-0 before:content-[''] group-hover:text-[color:var(--theme-accent-color)]"
               >
-                <span className="tabular-nums" style={{ opacity: 0.6 }}>{number}</span>
-                <span style={{ opacity: 0.4 }}>·</span>
-                <span style={{ color: accent }}>featured</span>
-                <span style={{ opacity: 0.4 }}>·</span>
-                <span>project</span>
-                {project.tags.slice(0, 3).map((tag) => (
-                  <span key={tag} className="contents">
-                    <span style={{ opacity: 0.4 }}>·</span>
-                    <span>{tag}</span>
-                  </span>
-                ))}
-              </div>
-
-              <h2
-                className="text-3xl leading-[1.05] sm:text-4xl"
-                style={{ fontFamily: 'var(--font-spectral)' }}
-              >
-                <Link
-                  href={`/projects/${slug}`}
-                  className="transition-colors before:absolute before:inset-0 before:content-[''] group-hover:opacity-90"
-                >
-                  {project.title}
-                </Link>
-              </h2>
-
-              <p
-                className="mt-3 text-[16px] leading-[1.65] sm:text-[17px]"
-                style={{ color: 'var(--theme-muted-color)' }}
-              >
-                {project.preview}
-              </p>
-
-              <ProjectPreviewFrame project={project} className="relative z-[1] mt-6" />
-
-              <ActionRow accent={accent} liveUrl={liveUrl} githubUrl={project.links.github} />
-            </div>
+                {project.title}
+              </Link>
+            </h3>
           </div>
+          <p
+            className="mt-4 max-w-[46ch] text-[16px] font-normal leading-[1.65] sm:text-[17px]"
+            style={{ color: 'var(--theme-muted-color)' }}
+          >
+            {project.preview}
+          </p>
+          <ActionRow liveUrl={liveUrl} githubUrl={project.links.github} />
         </div>
-      </motion.article>
+
+        <ProjectPreviewFrame project={project} label={`Fig. ${number}`} className="relative z-[1] self-start" />
+      </article>
     );
   }
 
   return (
-    <motion.article
-      initial={{ opacity: 0, y: 12 }}
-      animate={{ opacity: 1, y: 0 }}
-      transition={{ duration: 0.4 }}
-      className="group relative overflow-hidden rounded-xl border transition-[transform,border-color,box-shadow] duration-300 ease-out hover:-translate-y-0.5"
-      style={cardSurface}
+    <article
+      className="group relative flex h-full flex-col border transition-colors duration-200 hover:border-[color:var(--theme-muted-color)]"
+      style={{ background: 'var(--theme-card-bg)', borderColor: 'var(--theme-border-color)' }}
     >
-      <div
-        className="pointer-events-none absolute inset-0 opacity-0 transition-opacity duration-500 group-hover:opacity-100"
-        style={{ background: `radial-gradient(70% 100% at 0% 50%, ${accent}08 0%, transparent 60%)` }}
-        aria-hidden
-      />
+      <ProjectPreviewTile project={project} />
 
-      <div className="relative px-5 py-5 sm:px-6 sm:py-5">
-        <div className={project.logo ? 'flex items-start gap-4 sm:gap-5' : 'min-w-0'}>
-          {project.logo ? (
-            <Logo src={project.logo} alt={`${project.title} logo`} accent={accent} />
-          ) : null}
-          <div className="min-w-0 flex-1">
-            <div
-              className="mb-1.5 flex flex-wrap items-center gap-x-2.5 gap-y-1 font-mono text-[10px] uppercase tracking-[0.16em]"
-              style={{ color: 'var(--theme-muted-color)' }}
+      <div className="flex flex-1 flex-col px-5 py-5">
+        <Meta number={number} tags={project.tags} />
+
+        <div className="mt-3 flex items-center gap-3">
+          {project.logo ? <Logo src={project.logo} alt={`${project.title} logo`} /> : null}
+          <h3 className="text-[22px] font-semibold leading-[1.15] tracking-[-0.025em]">
+            <Link
+              href={`/projects/${slug}`}
+              className="transition-colors before:absolute before:inset-0 before:content-[''] group-hover:text-[color:var(--theme-accent-color)]"
             >
-              <span className="tabular-nums" style={{ opacity: 0.55 }}>{number}</span>
-              <span style={{ opacity: 0.4 }}>·</span>
-              <span>project</span>
-              {project.tags.slice(0, 3).map((tag) => (
-                <span key={tag} className="contents">
-                  <span style={{ opacity: 0.4 }}>·</span>
-                  <span>{tag}</span>
-                </span>
-              ))}
-            </div>
+              {project.title}
+            </Link>
+          </h3>
+        </div>
 
-            <h2 className="font-mono text-xl font-medium leading-[1.2] tracking-[-0.035em] sm:text-[22px]">
-              <Link
-                href={`/projects/${slug}`}
-                className="transition-colors before:absolute before:inset-0 before:content-[''] group-hover:opacity-90"
-              >
-                {project.title}
-              </Link>
-            </h2>
+        <p
+          className="mt-2 text-[15px] font-normal leading-[1.6]"
+          style={{ color: 'var(--theme-muted-color)' }}
+        >
+          {project.description}
+        </p>
 
-            <p
-              className="mt-1.5 text-[14px] leading-[1.6] sm:text-[15px]"
-              style={{ color: 'var(--theme-muted-color)' }}
-            >
-              {project.description}
-            </p>
-
-            <ActionRow accent={accent} liveUrl={liveUrl} githubUrl={project.links.github} compact />
-          </div>
+        <div className="mt-auto">
+          <ActionRow liveUrl={liveUrl} githubUrl={project.links.github} compact />
         </div>
       </div>
-      <ProjectPreviewTile project={project} />
-    </motion.article>
+    </article>
   );
 }
 
 function ActionRow({
-  accent,
   liveUrl,
   githubUrl,
   compact = false,
 }: {
-  accent: string;
   liveUrl?: string;
   githubUrl?: string;
   compact?: boolean;
 }) {
   return (
-    <div className={`relative z-[1] flex items-center gap-4 font-mono text-[11px] uppercase tracking-[0.16em] ${compact ? 'mt-3' : 'mt-5'}`}>
-      <span className="inline-flex items-center gap-1.5" style={{ color: accent }}>
-        read
-        <ArrowUpRight className="h-3 w-3 transition-transform duration-300 group-hover:translate-x-0.5 group-hover:-translate-y-0.5" />
+    <div className={`fig relative z-[1] flex items-center gap-5 ${compact ? 'pt-4' : 'mt-6'}`}>
+      <span className="inline-flex items-center gap-1" style={{ color: 'var(--theme-accent-color)' }}>
+        Read
+        <ArrowUpRight className="h-3 w-3" />
       </span>
       {liveUrl ? (
-        <a
-          href={liveUrl}
-          target="_blank"
-          rel="noopener noreferrer"
-          className="inline-flex items-center gap-1.5 transition-opacity hover:opacity-70"
-          style={{ color: 'var(--theme-muted-color)' }}
-        >
-          <ExternalLink className="h-3 w-3" />
-          live
+        <a href={liveUrl} target="_blank" rel="noopener noreferrer" className="link-quiet">
+          Live ↗
         </a>
       ) : null}
       {githubUrl ? (
-        <a
-          href={githubUrl}
-          target="_blank"
-          rel="noopener noreferrer"
-          className="inline-flex items-center gap-1.5 transition-opacity hover:opacity-70"
-          style={{ color: 'var(--theme-muted-color)' }}
-        >
-          <Github className="h-3 w-3" />
-          source
+        <a href={githubUrl} target="_blank" rel="noopener noreferrer" className="link-quiet">
+          Source ↗
         </a>
       ) : null}
     </div>

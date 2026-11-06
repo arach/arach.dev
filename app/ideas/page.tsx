@@ -4,16 +4,16 @@ import { IdeasPage } from "@/components/ideas/ideas-page";
 import { getAllIdeas } from "@/lib/ideas";
 
 export const metadata: Metadata = {
-  title: "Ideas | arach.dev",
-  description: "Writing on systems, tools, code structure, and product architecture.",
+  title: "Notes | arach.dev",
+  description: "Technical notes on systems, tools, and code structure.",
   openGraph: {
-    title: "Ideas | arach.dev",
-    description: "Writing on systems, tools, code structure, and product architecture.",
+    title: "Notes | arach.dev",
+    description: "Technical notes on systems, tools, and code structure.",
     url: "https://arach.dev/ideas",
     siteName: "arach.dev",
     images: [
       {
-        url: "/api/og?title=IDEAS&subtitle=writing+on+systems%2C+tools%2C+and+product+shape&path=%2Fideas",
+        url: "/api/og?title=NOTES&subtitle=technical+notes+on+systems%2C+tools%2C+and+code+structure&path=%2Fideas",
         width: 1200,
         height: 630,
       },
@@ -23,9 +23,9 @@ export const metadata: Metadata = {
   },
   twitter: {
     card: "summary_large_image",
-    title: "Ideas | arach.dev",
-    description: "Writing on systems, tools, code structure, and product architecture.",
-    images: ["/api/og?title=IDEAS&subtitle=writing+on+systems%2C+tools%2C+and+product+shape&path=%2Fideas"],
+    title: "Notes | arach.dev",
+    description: "Technical notes on systems, tools, and code structure.",
+    images: ["/api/og?title=NOTES&subtitle=technical+notes+on+systems%2C+tools%2C+and+code+structure&path=%2Fideas"],
   },
 };
 

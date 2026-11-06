@@ -20,14 +20,13 @@ const SCREENSHOTS = new Set([
   'linea',
   'hud',
   'talkie',
-  'fabric',
   'dewey',
+  'fab',
   'og',
-  'vif',
+  'vox',
   'arc',
   'speakeasy',
-  'hooked',
-  'blink',
+  'canvas',
   '2048ish',
 ]);
 
@@ -256,7 +255,7 @@ export function OpsLab({
           <div className="flex flex-wrap gap-x-8 gap-y-3 font-mono text-[11px] uppercase tracking-[0.12em]">
             <a href="https://github.com/arach" className="hover:opacity-70">GitHub ↗</a>
             <Link href="/about" className="hover:opacity-70">About ↗</Link>
-            <a href="mailto:arach@arach.dev" className="hover:opacity-70">Email ↗</a>
+            <a href="https://x.com/arach" className="hover:opacity-70">X ↗</a>
           </div>
         </div>
       </footer>

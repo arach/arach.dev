@@ -63,7 +63,7 @@ function Stat({
         {label}
       </p>
       <p
-        className="mt-3 font-mono text-4xl font-light tabular-nums sm:text-5xl"
+        className="mt-3 font-mono text-4xl font-normal tabular-nums sm:text-5xl"
         style={{
           color: emphasis ? "var(--theme-accent-color)" : "var(--theme-text-color)",
         }}
@@ -754,7 +754,7 @@ export default function GitHubActivityPage({ username = "arach" }: { username?: 
                 <div className="rounded-2xl border px-5 py-5 sm:px-6 sm:py-6" style={cardSurface}>
                   <PromptHeading>stats</PromptHeading>
                   <p
-                    className="mt-1 font-mono text-3xl font-light tabular-nums"
+                    className="mt-1 font-mono text-3xl font-normal tabular-nums"
                     style={{ color: "var(--theme-accent-color)" }}
                   >
                     {monthData.totalContributions}
@@ -1027,7 +1027,7 @@ export default function GitHubActivityPage({ username = "arach" }: { username?: 
                       >
                         <div className="flex items-start gap-4 sm:gap-5">
                           <span
-                            className="font-mono text-3xl font-light leading-none tabular-nums sm:text-4xl"
+                            className="font-mono text-3xl font-normal leading-none tabular-nums sm:text-4xl"
                             style={{ color: "var(--theme-muted-color)", opacity: 0.45 }}
                             aria-hidden
                           >

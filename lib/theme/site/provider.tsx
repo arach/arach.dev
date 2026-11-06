@@ -1,80 +1,56 @@
 'use client';
 
-import React, { createContext, useContext, useState, useEffect } from 'react';
-import { ThemeEngine } from './engine';
-import { defaultTheme } from '@/themes/site/default.theme';
-import { darkTheme } from '@/themes/site/dark.theme';
-import { terminalTheme } from '@/themes/site/terminal.theme';
-import { oceanTheme } from '@/themes/site/ocean.theme';
-import { sunsetTheme } from '@/themes/site/sunset.theme';
-import { cyberpunkTheme } from '@/themes/site/cyberpunk.theme';
-import { paperTheme } from '@/themes/site/paper.theme';
-
-// All available themes
-const themes = {
-  default: defaultTheme,
-  dark: darkTheme,
-  terminal: terminalTheme,
-  ocean: oceanTheme,
-  sunset: sunsetTheme,
-  cyberpunk: cyberpunkTheme,
-  paper: paperTheme,
-} as const;
-
-type ThemeId = keyof typeof themes;
+import React, { createContext, useContext, useState, useEffect, useCallback } from 'react';
+import { themes, type ThemeId, STORAGE_KEY } from './themes';
 
 interface ThemeContextValue {
   currentTheme: ThemeId;
   setTheme: (id: ThemeId) => void;
+  toggleTheme: () => void;
   themes: typeof themes;
 }
 
 const ThemeContext = createContext<ThemeContextValue | null>(null);
 
+// Theme CSS is server-rendered and the boot script in app/layout.tsx sets
+// data-theme before first paint. This provider only mirrors and changes it.
 export function ThemeProvider({ children }: { children: React.ReactNode }) {
   const [currentTheme, setCurrentTheme] = useState<ThemeId>('default');
-  const [isClient, setIsClient] = useState(false);
 
-  // Handle client-side only operations
   useEffect(() => {
-    setIsClient(true);
-    
-    // Load saved theme preference
-    const savedTheme = localStorage.getItem('site-theme') as ThemeId;
-    const themeToLoad = savedTheme && themes[savedTheme] ? savedTheme : 'default';
-    
-    // Load the theme CSS
-    ThemeEngine.loadTheme(themes[themeToLoad]).then(() => {
-      setCurrentTheme(themeToLoad);
-      // Remove no-transitions class after theme loads
-      document.documentElement.classList.remove('no-transitions');
-    });
+    const root = document.documentElement;
+    const read = () => {
+      const id = root.getAttribute('data-theme') as ThemeId | null;
+      setCurrentTheme(id && id in themes ? id : 'default');
+    };
+    read();
+
+    // Follow the OS setting until the visitor picks a theme.
+    const media = window.matchMedia('(prefers-color-scheme: dark)');
+    const onChange = () => {
+      let saved: string | null = null;
+      try { saved = localStorage.getItem(STORAGE_KEY); } catch {}
+      if (saved) return;
+      root.setAttribute('data-theme', media.matches ? 'dark' : 'default');
+      read();
+    };
+    media.addEventListener('change', onChange);
+    return () => media.removeEventListener('change', onChange);
   }, []);
 
-  const setTheme = (id: ThemeId) => {
-    const theme = themes[id];
-    if (!theme) return;
+  const setTheme = useCallback((id: ThemeId) => {
+    if (!(id in themes)) return;
+    document.documentElement.setAttribute('data-theme', id);
+    try { localStorage.setItem(STORAGE_KEY, id); } catch {}
+    setCurrentTheme(id);
+  }, []);
 
-    // Add transition class
-    document.documentElement.classList.add('theme-transition');
-    
-    // Load new theme
-    ThemeEngine.loadTheme(theme).then(() => {
-      setCurrentTheme(id);
-    });
-  };
-
-  // During SSR, render with default theme to avoid hydration mismatch
-  if (!isClient) {
-    return (
-      <ThemeContext.Provider value={{ currentTheme: 'default', setTheme, themes }}>
-        {children}
-      </ThemeContext.Provider>
-    );
-  }
+  const toggleTheme = useCallback(() => {
+    setTheme(currentTheme === 'dark' ? 'default' : 'dark');
+  }, [currentTheme, setTheme]);
 
   return (
-    <ThemeContext.Provider value={{ currentTheme, setTheme, themes }}>
+    <ThemeContext.Provider value={{ currentTheme, setTheme, toggleTheme, themes }}>
       {children}
     </ThemeContext.Provider>
   );
