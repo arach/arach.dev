@@ -29,10 +29,11 @@ export async function generateMetadata({ params }: IdeaPostPageProps): Promise<M
   return {
     title: `${idea.title} | arach.dev`,
     description: idea.description,
+    alternates: { canonical: `/ideas/${slug}` },
     openGraph: {
       title: `${idea.title} | arach.dev`,
       description: idea.description,
-      url: `https://arach.dev/ideas/${slug}`,
+      url: `/ideas/${slug}`,
       siteName: "arach.dev",
       images: [{ url: ogUrl, width: 1200, height: 630 }],
       locale: "en_US",

@@ -108,7 +108,7 @@ export function Stream({ projects, ideas }: StreamProps) {
               >
                 {active ? '[ ' : ''}
                 {f.label}
-                <span className="ml-1.5 tabular-nums" style={{ opacity: 0.6 }}>{count}</span>
+                <span className="ml-1.5 tabular-nums">{count}</span>
                 {active ? ' ]' : ''}
               </button>
             );

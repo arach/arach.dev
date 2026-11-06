@@ -44,7 +44,7 @@ export function IdeasPage({ ideas }: { ideas: IdeaSummary[] }) {
 
         {ideas.length === 0 ? (
           <div className="border-y py-10" style={{ borderColor: "var(--theme-border-color)" }}>
-            <p className="fig" style={{ color: "var(--theme-faint-color)" }}>Nothing filed yet</p>
+            <p className="fig" style={{ color: "var(--theme-muted-color)" }}>Nothing filed yet</p>
             <p className="mt-3 max-w-[52ch] text-[16px] font-normal leading-[1.6]" style={{ color: "var(--theme-muted-color)" }}>
               The first notes are in progress. In the meantime, the{" "}
               <Link href="/" className="underline decoration-1 underline-offset-4 hover:text-[color:var(--theme-accent-color)]" style={{ textDecorationColor: "var(--theme-border-color)" }}>
@@ -63,7 +63,7 @@ export function IdeasPage({ ideas }: { ideas: IdeaSummary[] }) {
               <li key={idea.slug} className="border-b" style={{ borderColor: "var(--theme-border-color)" }}>
                 <Link href={`/ideas/${idea.slug}`} className="group grid gap-3 py-6 sm:grid-cols-[180px_minmax(0,1fr)] sm:gap-8">
                   <div className="fig flex flex-wrap gap-x-2.5 sm:flex-col sm:gap-y-1">
-                    <span className="tabular-nums" style={{ color: "var(--theme-faint-color)" }}>
+                    <span className="tabular-nums" style={{ color: "var(--theme-muted-color)" }}>
                       {String(i + 1).padStart(2, "0")}
                     </span>
                     <time dateTime={idea.date}>{formatDate(idea.date)}</time>

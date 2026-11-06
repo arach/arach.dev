@@ -83,7 +83,7 @@ export default function AboutPage() {
                         {experience.map((item) => (
                             <li key={item.prompt} className="grid gap-2 border-b py-6 sm:grid-cols-[220px_minmax(0,1fr)] sm:gap-8" style={rowBorder}>
                                 <h3 className="fig flex gap-3" style={{ color: 'var(--theme-text-color)' }}>
-                                    <span className="tabular-nums" style={{ color: 'var(--theme-faint-color)' }}>{item.prompt}</span>
+                                    <span className="tabular-nums" style={{ color: 'var(--theme-muted-color)' }}>{item.prompt}</span>
                                     {item.role}
                                 </h3>
                                 <p className="max-w-[60ch] text-[16px] font-normal leading-[1.65]" style={{ color: 'var(--theme-muted-color)' }}>

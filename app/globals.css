@@ -208,3 +208,23 @@
     animation-duration: 0.01ms !important;
   }
 }
+
+/* Keyboard bypass: hidden until focused. */
+.skip-link {
+  position: absolute;
+  left: 1rem;
+  top: 0.75rem;
+  z-index: 100;
+  padding: 0.5rem 0.875rem;
+  font-family: var(--font-geist-mono), ui-monospace, monospace;
+  font-size: 12px;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+  color: var(--theme-bg-color);
+  background-color: var(--theme-text-color);
+  transform: translateY(-200%);
+}
+
+.skip-link:focus {
+  transform: translateY(0);
+}

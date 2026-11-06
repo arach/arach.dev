@@ -10,6 +10,7 @@ import { themesCSS, themeBootScript } from "@/lib/theme/site/themes";
 import { ConsoleArt } from "@/components/ConsoleArt";
 import { GoogleAnalytics } from "@/components/GoogleAnalytics";
 import Script from "next/script";
+import { SITE_DESCRIPTION, SITE_URL } from "@/lib/site";
 import fs from 'fs';
 import path from 'path';
 
@@ -21,19 +22,19 @@ const criticalCSS = fs.readFileSync(
 
 export const metadata: Metadata = {
   title: "arach.dev",
-  description: "my dev projects and notes",
-  metadataBase: new URL('https://arach.dev'),
+  description: SITE_DESCRIPTION,
+  metadataBase: new URL(SITE_URL),
   openGraph: {
     title: 'arach.dev',
-    description: 'my dev projects and notes',
-    url: 'https://arach.dev',
+    description: SITE_DESCRIPTION,
+    url: '/',
     siteName: 'arach.dev',
     images: [
       {
         url: '/api/og',
         width: 1200,
         height: 630,
-        alt: 'arach.dev - my dev projects and notes',
+        alt: 'arach.dev',
       },
     ],
     locale: 'en_US',
@@ -42,7 +43,7 @@ export const metadata: Metadata = {
   twitter: {
     card: 'summary_large_image',
     title: 'arach.dev',
-    description: 'my dev projects and notes',
+    description: SITE_DESCRIPTION,
     images: ['/api/og'],
   },
 };
@@ -62,8 +63,11 @@ export default function RootLayout({
       </head>
       <body className={`${GeistSans.className} antialiased flex flex-col min-h-screen`}>
         <ThemeProvider>
+          <a href="#main" className="skip-link">
+            Skip to content
+          </a>
           <Header />
-          <main className="flex-grow pt-0">
+          <main id="main" tabIndex={-1} className="flex-grow pt-0 focus:outline-none">
             {children}
           </main>
           <Footer />
