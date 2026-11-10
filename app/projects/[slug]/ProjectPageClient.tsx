@@ -85,6 +85,14 @@ export default function ProjectPageClient({ project, projectNumber }: ProjectPag
           <section className="mb-16">
             <SectionHead index="01">Overview</SectionHead>
             <p className="max-w-[62ch] text-[17px] font-normal leading-[1.7]">{project.longDescription}</p>
+            {project.links.guide ? (
+              <p className="mt-4 max-w-[62ch] text-[17px] font-normal leading-[1.7]">
+                {project.links.guide.context}{' '}
+                <a className="underline underline-offset-4" href={project.links.guide.href}>
+                  {project.links.guide.label}
+                </a>.
+              </p>
+            ) : null}
           </section>
 
           {project.features && project.features.length > 0 ? (

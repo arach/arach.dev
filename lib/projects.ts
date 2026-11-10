@@ -10,6 +10,7 @@ export interface Project {
     website?: string;
     demo?: string;
     docs?: string;
+    guide?: { href: string; label: string; context: string };
   };
   features: string[];
   status: 'active' | 'maintained' | 'archived';
@@ -135,6 +136,11 @@ export const projects: Project[] = [
     tech: ['Swift', 'SwiftUI', 'CloudKit', 'TypeScript', 'Bun'],
     links: {
       website: 'https://www.talkie.to/',
+      guide: {
+        href: 'https://www.talkie.to/guides/voice-coding',
+        label: 'Read the voice coding guide',
+        context: 'Dictate a prompt in Claude Code, Codex, or Cursor on your Mac. If you’re describing a visual bug, add a screenshot so the agent can see it too.',
+      },
     },
     features: [
       'Mac dictation with a global hotkey',
